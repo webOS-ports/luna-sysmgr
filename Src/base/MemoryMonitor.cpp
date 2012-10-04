@@ -90,7 +90,7 @@ void MemoryMonitor::start()
 	
 	m_timer.start(kTimerMs);
 
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 	m_memWatch = MemchuteWatcherNew(MemoryMonitor::memchuteCallback);
 	if (m_memWatch != NULL) {
 		MemchuteGmainAttach(m_memWatch, HostBase::instance()->mainLoop());
@@ -119,7 +119,7 @@ static const char* nameForState(MemoryMonitor::MemState state)
 
 bool MemoryMonitor::timerTicked()
 {
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 	if (!memRestrict.empty())
 		checkMonitoredProcesses();
 #endif
@@ -312,7 +312,7 @@ int MemoryMonitor::getProcessMemInfo(pid_t pid)
 
 void MemoryMonitor::monitorNativeProcessMemory(pid_t pid, int maxMemAllowed, pid_t updateFromPid)
 {
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 	if(updateFromPid > 0){
 		// updating an existing monitor, so find it and remove it first
 		ProcMemRestrictions::iterator old = memRestrict.find(updateFromPid);
@@ -338,7 +338,7 @@ void MemoryMonitor::monitorNativeProcessMemory(pid_t pid, int maxMemAllowed, pid
 #endif
 }
 
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 int MemoryMonitor::getMonitoredProcessesMemoryOffset()
 {
 	int offset = 0;	
@@ -433,7 +433,7 @@ bool MemoryMonitor::allowNewNativeAppLaunch(int appMemoryRequirement)
 		return false;
 	}
 	
-#if defined(TARGET_DEVICE)  
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 	int lowMemoryEntryRem, criticalMemoryEntryRem, rebootMemoryEntryRem;
 	getMemInfo(lowMemoryEntryRem, criticalMemoryEntryRem, rebootMemoryEntryRem);
 
@@ -451,7 +451,7 @@ bool MemoryMonitor::allowNewNativeAppLaunch(int appMemoryRequirement)
 	return true;
 }
 
-#if defined(TARGET_DEVICE)    
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 void MemoryMonitor::memchuteCallback(MemchuteThreshold threshold)
 {
 	MemoryMonitor* mw = MemoryMonitor::instance();	

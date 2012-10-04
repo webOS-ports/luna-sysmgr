@@ -26,7 +26,7 @@
 
 #include <Qt>
 
-#if (defined(TARGET_DESKTOP) || defined(TARGET_EMULATOR))
+#if (defined(TARGET_DESKTOP) || defined(TARGET_EMULATOR)) || defined(MACHINE_PUBLIC_QUIRKS)
 
 typedef struct {
         int devicekey;

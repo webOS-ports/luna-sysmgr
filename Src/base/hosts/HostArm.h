@@ -33,7 +33,7 @@
 #include "NyxInputControl.h"
 #include "NyxLedControl.h"
 
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 #include "HidLib.h"
 #endif
 #include "lunaservice.h"
@@ -145,7 +145,7 @@ protected:
 
 	virtual void setCentralWidget(QWidget* view);
 
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 	HidHardwareRevision_t m_hwRev;
 	HidHardwarePlatform_t m_hwPlatform;
 #endif

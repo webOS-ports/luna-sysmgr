@@ -31,7 +31,7 @@
 #include "Timer.h"
 #include "Mutex.h"
 
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 extern "C" {
 #include <memchute.h>
 }
@@ -76,7 +76,7 @@ private:
 
 	int getProcessMemInfo(pid_t pid);
 	
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
     static void memchuteCallback(MemchuteThreshold threshold);
 	void memchuteStateChanged();
     int getMonitoredProcessesMemoryOffset();
@@ -93,7 +93,7 @@ private:
 
 	MemState m_state;	
 
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 	MemchuteWatcher* m_memWatch;
 	
 	typedef struct 
