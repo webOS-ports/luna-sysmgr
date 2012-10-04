@@ -83,6 +83,13 @@ contains(MACHINE_NAME, "pyramid") {
 	CONFIG_BUILD += haptics webosdevice
     LIBS += -lqpalm
 }
+contains(MACHINE_NAME, "tuna") {
+    DEFINES += MACHINE_TUNA MACHINE_PUBLIC_QUIRKS
+    TARGET_TYPE = TARGET_DEVICE
+    SOURCES += SoundPlayerDummy.cpp
+    HEADERS += SoundPlayerDummy.h
+    LIBS += -lqpalm
+}
 
 DEFINES += $$TARGET_TYPE HAVE_LUNA_PREF=1 PALM_DEVICE QT_PLUGIN QT_STATICPLUGIN
 
@@ -110,9 +117,13 @@ INCLUDEPATH += \
 
 contains(CONFIG_BUILD, webosdevice) {
     INCLUDEPATH +=  $$(STAGING_INCDIR)/hid/IncsPublic
-    SOURCES += SoundPlayer.cpp
-    HEADERS += SoundPlayer.h
-    LIBS += -lmedia-api  -lserviceinstall -laffinity -lhid -lmemchute
+        contains(MACHINE_NAME, "tuna") {
+        }
+        else {
+            SOURCES += SoundPlayer.cpp
+            HEADERS += SoundPlayer.h
+            LIBS += -lmedia-api  -lserviceinstall -laffinity -lhid $
+        }
 } else {
     warning($$MACHINE_NAME not matched in device.pri)
 
