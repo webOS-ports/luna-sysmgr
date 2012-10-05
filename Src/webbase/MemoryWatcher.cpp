@@ -81,7 +81,7 @@ void MemoryWatcher::start()
 	
 	m_timer.start(kTimerMs);
 
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 	m_memWatch = MemchuteWatcherNew(MemoryWatcher::memchuteCallback);
 	if (m_memWatch != NULL) {
 		MemchuteGmainAttach(m_memWatch, WebAppManager::instance()->mainLoop());
@@ -195,7 +195,7 @@ void MemoryWatcher::doLowMemActions(bool allowExpensive)
     g_warning("MemoryWatcher: RSS usage after low memory actions: %dMB\n", m_currRssUsage);
 }
 
-#if defined(TARGET_DEVICE)    
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 void MemoryWatcher::memchuteCallback(MemchuteThreshold threshold)
 {
 	MemoryWatcher* mw = MemoryWatcher::instance();

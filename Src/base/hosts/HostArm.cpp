@@ -60,7 +60,7 @@
 #include "Logging.h"
 #include "SystemUiController.h"
 
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 #include "HidLib.h"
 #endif
 
@@ -73,7 +73,7 @@
 // TODO: these should come from hidd headers
 #define MAX_HIDD_EVENTS 100 
 
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) 
 //TODO: Move me to a header!
 extern "C" void setTransform(QTransform*);
 extern "C" InputControl* getTouchpanel(void);
@@ -90,7 +90,7 @@ static void bluetoothCallback(bool enable)
 HostArm::HostArm() :
       m_nyxLightNotifier(NULL)
 	, m_nyxProxNotifier(NULL)
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 	, m_hwRev(HidHardwareRevisionEVT1)
 	, m_hwPlatform (HidHardwarePlatformCastle)
 #endif
@@ -110,7 +110,7 @@ HostArm::HostArm() :
     , m_bluetoothKeyboardActive(false)
     , m_OrientationSensor(0)
 {
-#if defined(TARGET_DEVICE)
+#if defined(TARGET_DEVICE) && !defined(MACHINE_PUBLIC_QUIRKS)
 	m_hwRev = HidGetHardwareRevision();
 	m_hwPlatform = HidGetHardwarePlatform();
 	setBluetoothCallback(&bluetoothCallback);
@@ -549,6 +549,7 @@ bool HostArm::switchStateCallback(LSHandle* handle, LSMessage* msg, void* data)
 
 	Qt::Key switchKey = Qt::Key_unknown;
 	switch (switchCode) {
+#if !defined(MACHINE_PUBLIC_QUIRKS)
 	case SW_RINGER:
 		switchKey = Qt::Key_Ringer;
 		break;
@@ -563,10 +564,10 @@ bool HostArm::switchStateCallback(LSHandle* handle, LSMessage* msg, void* data)
 			switchKey = Qt::Key_Headset;
 		}
 		break;
+#endif
 	default: 
 		return true;
 	}
-
 	// SysMgrNativeKeyboardModifier_InitialState is used to signify key events which are sent as initial state events
 	QApplication::postEvent(QApplication::activeWindow(),
 							QKeyEvent::createExtendedKeyEvent(value == 0 ?  QEvent::KeyRelease : QEvent::KeyPress,
@@ -580,6 +581,7 @@ void HostArm::getInitialSwitchStates()
 	LSError err;
 	LSErrorInit(&err);
 
+#if !defined(MACHINE_PUBLIC_QUIRKS)
 	if (!LSCall(m_service, HIDD_RINGER_URI, HIDD_GET_STATE, HostArm::switchStateCallback, (void*)SW_RINGER, NULL, &err))
 		goto Error;
 
@@ -588,6 +590,7 @@ void HostArm::getInitialSwitchStates()
 
 	if (!LSCall(m_service, HIDD_HEADSET_URI, HIDD_GET_STATE, HostArm::switchStateCallback, (void*)SW_HEADPHONE_INSERT, NULL, &err))
 		goto Error;
+#endif
 
 	return;
 
