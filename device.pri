@@ -82,6 +82,19 @@ contains(MACHINE_NAME, "pyramid") {
 	CONFIG_BUILD += haptics webosdevice
     LIBS += -lqpalm
 }
+contains(MACHINE_NAME, "tuna") {
+    DEFINES += MACHINE_TUNA MACHINE_PUBLIC_QUIRKS
+    TARGET_TYPE = TARGET_DEVICE
+    # Don't use webosdevice yet as it will add dependencies on components which are not
+    # opensource yet.
+    # CONFIG_BUILD += webosdevice
+    # Don't use opengl support as the underlaying android EGL/GLES implementation isn't
+    # optmized yet to support two simultanious rendering processes
+    # CONFIG_BUILD += opengl
+    SOURCES += SoundPlayerDummy.cpp
+    HEADERS += SoundPlayerDummy.h
+    LIBS += -lqpalm
+}
 
 DEFINES += $$TARGET_TYPE HAVE_LUNA_PREF=1 PALM_DEVICE QT_PLUGIN QT_STATICPLUGIN
 
@@ -114,5 +127,4 @@ contains(CONFIG_BUILD, webosdevice) {
     LIBS += -lmedia-api  -lserviceinstall -laffinity -lhid -lmemchute
 } else {
     warning($$MACHINE_NAME not matched in device.pri)
-
 }
