@@ -88,9 +88,7 @@ contains(MACHINE_NAME, "tuna") {
     # Don't use webosdevice yet as it will add dependencies on components which are not
     # opensource yet.
     # CONFIG_BUILD += webosdevice
-    # Don't use opengl support as the underlaying android EGL/GLES implementation isn't
-    # optmized yet to support two simultanious rendering processes
-    # CONFIG_BUILD += opengl
+    CONFIG_BUILD += opengl
     SOURCES += SoundPlayerDummy.cpp
     HEADERS += SoundPlayerDummy.h
     LIBS += -lqpalm
