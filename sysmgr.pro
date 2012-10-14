@@ -261,6 +261,7 @@ SOURCES = \
 	StatusBarItemGroup.cpp \
 	StatusBarNotificationArea.cpp \
 	SystemMenu.cpp \
+	GestureArea.cpp \
 	BtDeviceClass.cpp \
 	IMEManager.cpp \
 	TabletKeyboard.cpp \
@@ -439,6 +440,7 @@ HEADERS = \
 	StatusBarItemGroup.h \
 	StatusBarNotificationArea.h \
 	SystemMenu.h \
+	GestureArea.h \
 	BtDeviceClass.h \
 	IMEManager.h \
 	InputMethod.h \
