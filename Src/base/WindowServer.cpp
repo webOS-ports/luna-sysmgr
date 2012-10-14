@@ -167,7 +167,7 @@ public:
 
 		//Add the passed in fps/std_dev value to the circular buffer
 		m_fpsHistory.AddSample(elem, timeMs);
-	
+
 	}
 
 	virtual void dumpFPS()
@@ -212,13 +212,13 @@ static TouchPlot *s_TouchPlot = 0;
 class WindowServerOverlay : public QGraphicsItem
 {
 public:
-	
+
 	WindowServerOverlay() {
 		const HostInfo& info = HostBase::instance()->getInfo();
 		m_width = info.displayWidth;
 		m_height = 20;
 	}
-	
+
 	virtual QRectF boundingRect () const  {
 		return QRectF(-m_width/2, -m_height/2, m_width, m_height);
 	}
@@ -236,7 +236,7 @@ public:
 		painter->setFont(QFont("Prelude", 10));
 		painter->drawText(rect, Qt::AlignLeft, m_string);
 	}
-	
+
 private:
 
 	int m_width;
@@ -486,7 +486,7 @@ WindowServer::WindowServer()
 
 	m_uiElementsGroup->addToGroup(new TouchToShareGlow);
 	m_uiElementsGroup->addToGroup(new WSOverlayScreenShotAnimation);
-	
+
 	m_resizePendingTimer.setInterval(kResizePendingTickIntervalInMS);
 	m_resizePendingTimer.setSingleShot(false);
 	connect(&m_resizePendingTimer, SIGNAL(timeout()), SLOT(slotResizePendingTimerTicked()));
@@ -666,7 +666,7 @@ bool WindowServer::processSystemShortcut(QEvent* event)
 			}
 			break;
 		}
-		case Qt::Key_U: 
+		case Qt::Key_U:
 			// force the device into MSM
 			if (altDown && symDown && keyEvent->type() == QEvent::KeyPress) {
 				SystemService::instance()->enterMSM();
@@ -678,7 +678,7 @@ bool WindowServer::processSystemShortcut(QEvent* event)
 			if (altDown && symDown && keyEvent->type() == QEvent::KeyPress) {
 				static bool doTouchpanelRecording = false;
 				QWSHiddTpHandler* handler = static_cast<QWSHiddTpHandler*>(QWSServer::mouseHandler());
-				if (!doTouchpanelRecording) {	
+				if (!doTouchpanelRecording) {
 					g_message("touch input recording started");
 					doTouchpanelRecording = true;
 					handler->startRecording();
@@ -691,7 +691,7 @@ bool WindowServer::processSystemShortcut(QEvent* event)
 					g_message("touch input recording stopped");
 				}
 			}
-#endif			
+#endif
 			break;
 		}
 		default:
@@ -1021,7 +1021,7 @@ bool WindowServer::takeScreenShot(const char* filePath)
 	QImage screenShot(getScreenShotImage());
 	screenShot.setDotsPerMeterY(screenShot.dotsPerMeterX());
 	bool ret = screenShot.save(filePath);
-	
+
 	if (ret)
 		g_warning("Screenshot: Wrote %s", filePath);
 	else
@@ -1296,7 +1296,7 @@ void WindowServer::applyLaunchFeedback(int centerX, int centerY)
 
 void WindowServer::showReticle(const QPoint& pos)
 {
-	if (m_reticle)
+	if (m_reticle && pos.y() < SystemUiController::instance()->currentUiHeight())
 		m_reticle->startAt(pos);
 }
 
@@ -1440,18 +1440,18 @@ static gpointer PrvSaveScreenShot(gpointer data)
 		return 0;
 
 	::prctl(PR_SET_NAME, "ScreenShotSaver", 0, 0, 0);
-	
+
 	// Low priority thread
 	::setpriority(PRIO_PROCESS, ::getpid(), 5);
-	
+
 	ScreenShotParameter* param = (ScreenShotParameter*) data;
 
 	int angle = 0;
-	
+
 	switch (param->orientation) {
     case OrientationEvent::Orientation_Down:
 		angle = 180;
-		break;				
+		break;
     case OrientationEvent::Orientation_Right:
 		angle = 90;
 		break;
@@ -1507,12 +1507,12 @@ void WindowServer::takeAndSaveScreenShot()
 	QImage image(getScreenShotImageFromFb());
 
 	Q_EMIT signalTookScreenShot();
-	
+
 	ScreenShotParameter* param = new ScreenShotParameter;
 	param->image = image;
 	param->filePath = fullPath;
 	param->orientation = getUiOrientation();
-	
+
 	g_thread_create(PrvSaveScreenShot, param, FALSE, NULL);
 }
 
@@ -1533,7 +1533,7 @@ QImage WindowServer::getScreenShotImage()
 	fbo.release();
 
 #else
-	
+
 	QPixmap pix(m_screenWidth, m_screenHeight);
 	QPainter painter(&pix);
 	render(&painter);
@@ -1569,7 +1569,7 @@ QImage WindowServer::getScreenShotImageFromFb()
 		screenShot = appScreenShot;
 	}
 
-	return screenShot;	
+	return screenShot;
 }
 
 int WindowServer::angleForOrientation(OrientationEvent::Orientation orient)
@@ -1851,11 +1851,13 @@ void WindowServer::rotateUi(OrientationEvent::Orientation newOrientation, UiRota
 	HostBase::instance()->setOrientation(newOrientation);
 	m_currentUiOrientation = newOrientation;
 
+	const HostInfo& info = HostBase::instance()->getInfo();
+
 	if((rotationAngle == 90) || (rotationAngle == -90)) {
 		// need to resize the UI (this calls resizeWindowManagers)
-		SystemUiController::instance()->resizeAndRotateUi(SystemUiController::instance()->currentUiHeight(), SystemUiController::instance()->currentUiWidth(), rotationAngle);
-	} else if (forceResize) {
-		SystemUiController::instance()->resizeAndRotateUi(SystemUiController::instance()->currentUiWidth(), SystemUiController::instance()->currentUiHeight(), rotationAngle);
+		SystemUiController::instance()->resizeAndRotateUi(info.displayHeight, info.displayWidth, rotationAngle);
+	} else {
+		SystemUiController::instance()->resizeAndRotateUi(info.displayWidth, info.displayHeight, rotationAngle);
 	}
 
 	// rotate the UI
@@ -1967,10 +1969,10 @@ void WindowServer::rotationValueChanged(const QVariant& value)
 void WindowServer::slotResizePendingTimerTicked()
 {
     setUiOrientation(m_pendingOrientation, m_pendingRotationType);
-}           
-        
+}
+
 void WindowServer::slotRotationLockChanged(OrientationEvent::Orientation rotationLock)
-{   
+{
 	if(!m_bootingUp) {
         if((rotationLock == OrientationEvent::Orientation_Invalid) && (m_pendingOrientation != m_currentUiOrientation)) {
 			setUiOrientation(m_pendingOrientation);
