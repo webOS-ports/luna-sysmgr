@@ -190,7 +190,10 @@ WindowServerLuna::WindowServerLuna()
 	m_dockModeMenuMgr->setPos (0,0);
 	m_cardMgr->setPos(0, 0);
 	m_overlayMgr->setPos(0, 0);
+
 	m_menuMgr->setPos(0, 0);
+	m_menuMgr->setZValue(100);
+
 	m_dashboardMgr->setPos(0, 0);
 	m_topLevelMgr->setPos(0, 0);
 	m_emergencyModeMgr->setPos(0, 0);
@@ -201,8 +204,8 @@ WindowServerLuna::WindowServerLuna()
 
 	SystemUiController::instance()->setUiRootItemPtr(&m_uiRootItem);
 
-	// always centered
-	m_uiRootItem.setPos(SystemUiController::instance()->currentUiWidth()/2, SystemUiController::instance()->currentUiHeight()/2);
+	// always at top of screen
+	m_uiRootItem.setPos(SystemUiController::instance()->currentUiWidth()/2, (SystemUiController::instance()->currentUiHeight()-GESTURE_AREA_HEIGHT)/2);
 
 	// Trigger the initial layout for the WMs
 	SystemUiController::instance()->init();
@@ -295,8 +298,25 @@ void WindowServerLuna::resizeWindowManagers(int width, int height)
 {
 	WebAppMgrProxy::instance()->uiDimensionsChanged(width, height);
 
-	m_uiRootItem.setBoundingRect(QRectF(-SystemUiController::instance()->currentUiWidth()/2, -SystemUiController::instance()->currentUiHeight()/2,
-								         SystemUiController::instance()->currentUiWidth(), SystemUiController::instance()->currentUiHeight()));
+	m_uiRootItem.setBoundingRect(QRectF(-width/2, -height/2, width, height));
+
+	switch(m_currentUiOrientation)
+	{
+		case OrientationEvent::Orientation_Up:
+			m_uiRootItem.setPos(width/2, height/2);
+			break;
+		case OrientationEvent::Orientation_Down:
+			m_uiRootItem.setPos(width/2, (height/2) + GESTURE_AREA_HEIGHT);
+			break;
+		case OrientationEvent::Orientation_Left:
+			m_uiRootItem.setPos((height/2) + GESTURE_AREA_HEIGHT, width/2);
+			break;
+		case OrientationEvent::Orientation_Right:
+			m_uiRootItem.setPos(height/2, width/2);
+			break;
+		default:
+			break;
+	}
 
 	// clean up any windows still pending a resize
 	m_pendingFlipRequests.clear();
@@ -453,7 +473,7 @@ void WindowServerLuna::slotDisplayStateChange(int state)
 		cancelFullEraseCountdown();
 		if(SystemUiController::instance()->isInDockMode()
 				&& m_dockModeAnimation.state() != QAbstractAnimation::Running
-				&& !DisplayManager::instance()->isOnPuck()) 
+				&& !DisplayManager::instance()->isOnPuck())
 		{
 			//if the display goes OFF while we are in Dock Mode but NOT onthe Dock, the leave Dock Mode
 			dockModeUiTransition(false);
@@ -493,7 +513,7 @@ void WindowServerLuna::slotScreenLockStatusChanged(bool locked)
 	// in Dock Mode the Dock Mode settings override the Lock Screen settings for the visibility of the window managers
 	if(SystemUiController::instance()->isInDockMode())
 		return;
-	
+
 	if(locked) {
         cacheFocusedItem();
 		// Lock screen is visible, so make all window managers under it invisible
@@ -532,7 +552,7 @@ void WindowServerLuna::dockModeUiTransition(bool enter)
 
 	if (m_inDockModeTransition) { // cleanup if already in dock mode animation.
 
-		g_message ("%s: In Dock Mode transition, m_dockModeAnimation is %s", __PRETTY_FUNCTION__, 
+		g_message ("%s: In Dock Mode transition, m_dockModeAnimation is %s", __PRETTY_FUNCTION__,
 				m_dockModeAnimation.state() == QAbstractAnimation::Running ? "running" : "NOT running");
 		if (m_dockModeAnimation.state() == QAbstractAnimation::Running) {
 			g_message ("%s: stopping dock mode animations", __PRETTY_FUNCTION__);
@@ -619,7 +639,7 @@ void WindowServerLuna::reorderWindowManagersForDockMode(bool enabled)
 			m_emergencyModeMgr->setVisible(true);
 			m_drawWallpaper = true;
 		}
-        
+
 	}
 }
 
@@ -670,9 +690,9 @@ void WindowServerLuna::initDockModeAnimations()
 void WindowServerLuna::animateDockMode(bool in)
 {
 	g_message ("%s: in %d", __PRETTY_FUNCTION__, in);
-	
+
 	// this will force a disable direct rendering on any maximized cards
-	//SystemUiController::instance()->setDirectRenderingForWindow(SystemUiController::DISABLE_ALL_DIRECT_RENDERING, NULL, true);		
+	//SystemUiController::instance()->setDirectRenderingForWindow(SystemUiController::DISABLE_ALL_DIRECT_RENDERING, NULL, true);
 	SystemUiController::instance()->enableDirectRendering(false);
 	((DockModeWindowManager*)m_dockModeMgr)->setInModeAnimation(true);
 
@@ -706,14 +726,14 @@ void WindowServerLuna::slotDockAnimationFinished()
 	} else {
 		((DockModeWindowManager*)m_dockModeMgr)->setDockModeState(false);
 		reorderWindowManagersForDockMode(false);
-		
+
 		if(!SystemUiController::instance()->isCardWindowMaximized()
-				&& !SystemUiController::instance()->isScreenLocked()) 
+				&& !SystemUiController::instance()->isScreenLocked())
 		{
 			// Card Minimized, screen unlocked, focus the OverlayWM
 			m_overlayMgr->setFlag(QGraphicsItem::ItemIsFocusable, true);
 			m_overlayMgr->setFocus();
-		} 
+		}
 	}
 
 	((DockModeWindowManager*)m_dockModeMgr)->setInModeAnimation(false);
@@ -731,7 +751,7 @@ void WindowServerLuna::slotDockAnimationFinished()
 
 void WindowServerLuna::setupDockModeAnimations()
 {
-	// this function first takes a screen shot of the device out of dockmode and then in dock mode, 
+	// this function first takes a screen shot of the device out of dockmode and then in dock mode,
 	// irrespective of the direction of animation
 
 	// take a screen shot of outside dock mode
@@ -743,7 +763,7 @@ void WindowServerLuna::setupDockModeAnimations()
 	int displayHeight = hostInfo.displayHeight;
 
 	m_screenShot = takeScreenShot();
-	
+
 	m_screenShotObject = new QGraphicsPixmapObject();
 	m_screenShotObject->setPixmap(m_screenShot);
 	m_screenShotObject->setPos (displayWidth/2,displayHeight/2);
@@ -767,7 +787,7 @@ void WindowServerLuna::setupDockModeAnimations()
 	m_dockFade.setTargetObject(m_dockImageObject);
 	m_dockScale.setTargetObject(NULL);
 	m_dockScale.setTargetObject(m_dockImageObject);
-	
+
 	// adding it to the scene
 	if (m_dockImageObject)
 		scene()->addItem (m_dockImageObject);
@@ -1080,7 +1100,7 @@ void WindowServerLuna::drawBackground ( QPainter * painter, const QRectF & rect 
 		if(!m_wallpaperFullScreen)
 			WindowServer::drawBackground(painter, screenBounds);
 
-		painter->translate(m_screenWidth/2, m_screenHeight/2);
+		painter->translate(m_screenWidth/2, (m_screenHeight - GESTURE_AREA_HEIGHT)/2);
 
 		if(!m_wallpaperFullScreen)
 		{
@@ -1119,7 +1139,7 @@ void WindowServerLuna::drawBackground ( QPainter * painter, const QRectF & rect 
 				painter->rotate(-wallpaperRotation);
 		}
 
-		painter->translate(-(int)m_screenWidth/2, -(int)m_screenHeight/2);
+		painter->translate(-(int)m_screenWidth/2, -(int)(m_screenHeight - GESTURE_AREA_HEIGHT)/2);
 	}
 }
 
