@@ -56,10 +56,11 @@ MenuWindowManager::MenuWindowManager(int maxWidth, int maxHeight)
 	, m_cornerContainer(0)
 	, m_sysMenu(0)
 	, m_systemMenuOpened(false)
+	, m_gestureArea(0)
 {
 	setObjectName("MenuWindowManager");
 
-	connect(SystemUiController::instance(), SIGNAL(signalPositiveSpaceChanged(const QRect&)), 
+	connect(SystemUiController::instance(), SIGNAL(signalPositiveSpaceChanged(const QRect&)),
 			this, SLOT(slotPositiveSpaceChanged(const QRect&)));
 	connect(SystemUiController::instance(), SIGNAL(signalHideMenu()), this, SLOT(closeMenu()));
 	connect(SystemUiController::instance(), SIGNAL(signalCardWindowMaximized()), this, SLOT(closeMenu()));
@@ -82,6 +83,11 @@ MenuWindowManager::MenuWindowManager(int maxWidth, int maxHeight)
 	if(m_sysMenu) {
 		m_sysMenu->setParentItem(this);
 		connect(m_sysMenu, SIGNAL(signalCloseMenu()), this, SLOT(slotCloseSystemMenu()));
+	}
+
+	m_gestureArea = new GestureArea(maxWidth, GESTURE_AREA_HEIGHT);
+	if(m_gestureArea) {
+		m_gestureArea->setParentItem(this);
 	}
 }
 
@@ -110,6 +116,11 @@ void MenuWindowManager::init()
 		m_statusBar->setSystemMenuObject(m_sysMenu);
 		m_sysMenu->setPos(boundingRect().x() + boundingRect().width() - m_sysMenu->boundingRect().width()/2 + offset,
 				          boundingRect().y() + m_statusBar->boundingRect().height() + m_sysMenu->boundingRect().height()/2);
+	}
+
+	if(m_gestureArea) {
+		m_gestureArea->init();
+		m_gestureArea->setZValue(100);
 	}
 
 	if(!Settings::LunaSettings()->tabletUi) {
@@ -152,6 +163,10 @@ void MenuWindowManager::resize(int width, int height)
 	if(m_statusBar) {
 		m_statusBar->resize(width, Settings::LunaSettings()->positiveSpaceTopPadding);
 		m_statusBar->update();
+	}
+
+	if(m_gestureArea) {
+		m_gestureArea->resize(width);
 	}
 
 	for(int i = 0; i < m_winArray.size(); i++){
@@ -207,7 +222,7 @@ void MenuWindowManager::removeWindow(Window* win)
 		m_winArray.remove(removeIndex);
 	delete win;
 
-	SystemUiController::instance()->setMenuVisible(false);	
+	SystemUiController::instance()->setMenuVisible(false);
 }
 
 void MenuWindowManager::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -356,13 +371,13 @@ void MenuWindowManager::positionCornerWindows(const QRect& r)
 		QRectF rect = m_corners[i]->boundingRect();
 
 		setPosTopLeft(m_corners[i], r.x(), r.y());
-	
+
 		i = kTopRightWindowIndex;
 		setPosTopLeft(m_corners[i], trueRight - rect.width(), r.y());
 
 		i = kBottomLeftWindowIndex;
 		setPosTopLeft(m_corners[i], r.x(), trueBottom - rect.height());
-	
+
 		i = kBottomRightWindowIndex;
 		setPosTopLeft(m_corners[i], trueRight - rect.width(), trueBottom - rect.height());
 	}
@@ -371,7 +386,7 @@ void MenuWindowManager::positionCornerWindows(const QRect& r)
 void MenuWindowManager::slotPositiveSpaceChanged(const QRect& r)
 {
 	m_positiveSpace = r;
-	
+
 	positionCornerWindows(r);
 
 	Q_FOREACH(Window* w, m_winArray) {
@@ -406,7 +421,7 @@ void MenuWindowManager::closeMenu()
 		return;
 
 	Window* w = m_winArray[0];
-	
+
 	hideMenuWindow(w);
 }
 
@@ -447,7 +462,7 @@ void MenuWindowManager::showMenuWindow(Window* win)
 	}
 
 	raiseWindow(win);
-	
+
 	setPosTopLeft(win, m_positiveSpace.x(), m_positiveSpace.y());
 	SystemUiController::instance()->setMenuVisible(true);
 
@@ -473,7 +488,7 @@ void MenuWindowManager::hideMenuWindow(Window* win)
 	if (removeIndex != -1)
 		m_winArray.remove(removeIndex);
 
-	SystemUiController::instance()->setMenuVisible(false);	
+	SystemUiController::instance()->setMenuVisible(false);
 
 	update(m_positiveSpace);
 }
