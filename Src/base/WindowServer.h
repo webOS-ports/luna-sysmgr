@@ -351,6 +351,7 @@ private Q_SLOTS:
 
 private:
 
+	bool canShowReticle(const QPoint& pos);
 	void showReticle(const QPoint& pos);
 	void gestureEvent(QGestureEvent* event);
 	void paintBootupScreen();

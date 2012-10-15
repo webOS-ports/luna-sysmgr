@@ -583,7 +583,7 @@ void LockWindow::resize(int width, int height)
 	}
 
 	if(m_gestureArea) {
-		m_gestureArea->resize(width);
+		m_gestureArea->resize(width, height);
 		m_gestureArea->update();
 	}
 
