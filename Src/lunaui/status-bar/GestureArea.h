@@ -41,7 +41,7 @@ public:
 	~GestureArea();
 
 	void init();
-	void resize(int w);
+	void resize(int w, int h);
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
 	void animateBar(int direction);
@@ -60,6 +60,7 @@ private:
 	qreal m_lightbarY;
 	QPoint m_startPos;
 	bool m_fired;
+	bool m_isPortrait;
 
 	QPropertyAnimation* m_focusAnimOut;
 	QPropertyAnimation* m_focusAnimIn;
