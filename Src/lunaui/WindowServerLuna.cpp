@@ -1075,8 +1075,9 @@ void WindowServerLuna::drawBackground ( QPainter * painter, const QRectF & rect 
 
 		if(!m_wallpaperFullScreen)
 			WindowServer::drawBackground(painter, screenBounds);
-
-		painter->translate(m_screenWidth/2, (m_screenHeight - GESTURE_AREA_HEIGHT)/2);
+		
+		//Compensate for Gesture Area
+		painter->translate(m_uiRootItem.pos().x(), m_uiRootItem.pos().y());
 
 		if(!m_wallpaperFullScreen) {
             if(m_currentUiOrientation == OrientationEvent::Orientation_Left) {
@@ -1113,8 +1114,9 @@ void WindowServerLuna::drawBackground ( QPainter * painter, const QRectF & rect 
 			if(wallpaperRotation)
 				painter->rotate(-wallpaperRotation);
 		}
-
-		painter->translate(-(int)m_screenWidth/2, -(int)(m_screenHeight - GESTURE_AREA_HEIGHT)/2);
+		
+		//Un-compensate for Gesture Area
+		painter->translate(-m_uiRootItem.pos().x(), -m_uiRootItem.pos().y());
 	}
 }
 

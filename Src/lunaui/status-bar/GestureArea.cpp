@@ -31,6 +31,9 @@
 #include "Settings.h"
 #include "HostBase.h"
 
+//DEBUG
+#include "WindowServer.h"
+
 enum AnimDir {
 	Up = 0,
 	Left,
@@ -87,11 +90,12 @@ void GestureArea::init()
 	m_gradientFocus = QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2));
 }
 
-void GestureArea::resize(int w)
+void GestureArea::resize(int w, int h)
 {
 	m_bounds = QRect(-w/2, SystemUiController::instance()->currentUiHeight()/2, w, GESTURE_AREA_HEIGHT);
 	m_lightbarY = m_bounds.bottom() - m_lightbarLPixmap->height();
 	m_gradientFocus = QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2));
+	m_isPortrait = (h > w);
 	update();
 }
 
@@ -149,17 +153,13 @@ bool GestureArea::sceneEvent(QEvent* event)
 		if (t) {
 			QTapGesture* tap = static_cast<QTapGesture*>(t);
 			if (tap->state() == Qt::GestureFinished) {
-				if(tap->position().x() > m_bounds.width()/3 && tap->position().x() < (m_bounds.width()/3) * 2)
+				//Is the tap centered? If in portrait, check the x, otherwise check the y
+				if ((m_isPortrait && tap->position().x() > m_bounds.width()/3 && tap->position().x() < (m_bounds.width()/3) * 2)
+				|| (!m_isPortrait && tap->position().y() > m_bounds.width()/3 && tap->position().y() < (m_bounds.width()/3) * 2))
 				{
 					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Home, Qt::NoModifier));
 					animateBar(AnimDir(Up));
 				}
-				/* App switching via tap- fully working, but has potential for accidental trigger
-				else if(tap->position().x() < m_bounds.width()/3)
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Previous, Qt::NoModifier));
-				else if(tap->position().x() > (m_bounds.width()/3) * 2)
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Next, Qt::NoModifier));
-				*/
 			}
 		}
 		return true;
@@ -225,6 +225,17 @@ bool GestureArea::sceneEvent(QEvent* event)
 			if(m_startPos.x() > -m_bounds.width()/3 && m_startPos.x() < m_bounds.width()/3)
 			{
 				//Play Animation And Carry On
+				//DEBUG: Orientation Testing
+				if (window) {
+					if(WindowServer::instance()->getUiOrientation() == OrientationEvent::Orientation_Up)
+						QApplication::postEvent(window, new OrientationEvent(OrientationEvent::Orientation_Right));
+					else if(WindowServer::instance()->getUiOrientation() == OrientationEvent::Orientation_Right)
+						QApplication::postEvent(window, new OrientationEvent(OrientationEvent::Orientation_Down));
+					else if(WindowServer::instance()->getUiOrientation() == OrientationEvent::Orientation_Down)
+						QApplication::postEvent(window, new OrientationEvent(OrientationEvent::Orientation_Left));
+					else if(WindowServer::instance()->getUiOrientation() == OrientationEvent::Orientation_Left)
+						QApplication::postEvent(window, new OrientationEvent(OrientationEvent::Orientation_Up));
+				}
 				animateBar(AnimDir(Right));
 				m_fired = true;
 				return true;
