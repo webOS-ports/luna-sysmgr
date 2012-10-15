@@ -1293,9 +1293,32 @@ void WindowServer::applyLaunchFeedback(int centerX, int centerY)
 {
 }
 
+bool WindowServer::canShowReticle(const QPoint& pos)
+{
+	//If the tap is inside the gesture area, return false
+	if((m_currentUiOrientation == OrientationEvent::Orientation_Up
+	&& pos.y() > SystemUiController::instance()->currentUiHeight())
+	||
+	(m_currentUiOrientation == OrientationEvent::Orientation_Down
+	&& pos.y() < GESTURE_AREA_HEIGHT)
+	||
+	(m_currentUiOrientation == OrientationEvent::Orientation_Left
+	&& pos.x() < GESTURE_AREA_HEIGHT)
+	||
+	(m_currentUiOrientation == OrientationEvent::Orientation_Right
+	&& pos.x() > SystemUiController::instance()->currentUiHeight()))
+		return false;
+	
+	//If there's no input window manager, or the tap doesn't fall inside it, return true
+	if(!m_inputWindowMgr || m_inputWindowMgr->doReticle(pos))
+		return true;
+		
+	return false;
+}
+
 void WindowServer::showReticle(const QPoint& pos)
 {
-	if (m_reticle && pos.y() < SystemUiController::instance()->currentUiHeight())
+	if (m_reticle)
 		m_reticle->startAt(pos);
 }
 
@@ -1304,8 +1327,9 @@ void WindowServer::gestureEvent(QGestureEvent* event)
     if (QGesture* t = event->gesture(Qt::TapGesture)) {
 		QTapGesture* tap = static_cast<QTapGesture*>(t);
 		if (tap->state() == Qt::GestureFinished) {
-			if (!m_inputWindowMgr || m_inputWindowMgr->doReticle(mapToScene(mapFromGlobal(t->hotSpot().toPoint()))))
-				showReticle(mapFromGlobal(t->hotSpot().toPoint()));
+			QPoint mappedPos = mapFromGlobal(t->hotSpot().toPoint());
+			if (canShowReticle(mappedPos))
+				showReticle(mappedPos);
 		}
     }
 }
@@ -1846,7 +1870,7 @@ void WindowServer::rotateUi(OrientationEvent::Orientation newOrientation, UiRota
 
 	const HostInfo& info = HostBase::instance()->getInfo();
 
-	if((rotationAngle == 90) || (rotationAngle == -90)) {
+	if(SystemUiController::instance()->currentUiWidth() < SystemUiController::instance()->currentUiHeight()) {
 		// need to resize the UI (this calls resizeWindowManagers)
 		SystemUiController::instance()->resizeAndRotateUi(info.displayHeight, info.displayWidth, rotationAngle);
 	} else {
