@@ -166,7 +166,7 @@ void MenuWindowManager::resize(int width, int height)
 	}
 
 	if(m_gestureArea) {
-		m_gestureArea->resize(width);
+		m_gestureArea->resize(width, height);
 	}
 
 	for(int i = 0; i < m_winArray.size(); i++){
