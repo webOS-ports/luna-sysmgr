@@ -1225,7 +1225,7 @@ void SystemUiController::resizeAndRotateUi(int width, int height, int rotationAn
 	int uiTop  = (info.displayHeight - m_uiHeight) / 2;
 	int uiLeft = (info.displayWidth - m_uiWidth) / 2;
 
-	m_requestedNegativeSpaceTop =  m_requestedNegativeSpaceTop - m_uiHeight + height;
+	m_requestedNegativeSpaceTop =  m_requestedNegativeSpaceTop - (m_uiHeight + GESTURE_AREA_HEIGHT) + height;
 
 	m_minimumPositiveSpaceHeight = m_uiHeight - Settings::LunaSettings()->positiveSpaceTopPadding;
 
