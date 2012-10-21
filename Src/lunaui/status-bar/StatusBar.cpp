@@ -773,7 +773,7 @@ void StatusBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 			painter->fillRect(m_bounds, m_barColor);
 			painter->setOpacity(opacity);
 		}
-		painter->drawTiledPixmap(m_bounds, *m_bkgPixmap);
+		painter->drawPixmap(m_bounds, *m_bkgPixmap);
 	}
 }
 
