@@ -48,8 +48,6 @@
 #include "FlickGesture.h"
 #include "FlickGestureRecognizer.h"
 
-static const int GESTURE_AREA_HEIGHT = Settings::LunaSettings()->gestureAreaHeight;
-
 static QWidget *viewport(QWidget *widget)
 {
 	QGraphicsView *gView = qobject_cast<QGraphicsView *>(widget);
@@ -87,7 +85,6 @@ public:
 public:
     QRect maxGeometry;
 };
-
 
 class GestureStrip : public QWidget
 {
@@ -487,16 +484,12 @@ void HostQtDesktop::init(int w, int h)
 
         windowWidth = tmp.maxGeometry.width();
         windowHeight = tmp.maxGeometry.height();
-        qDebug() << __PRETTY_FUNCTION__ << "Going fullscreen with width" << windowWidth << "height" << (windowHeight - GESTURE_AREA_HEIGHT);
-    }
-
-    if (GESTURE_AREA_HEIGHT != 0 && (GESTURE_AREA_HEIGHT < (windowHeight/30) || GESTURE_AREA_HEIGHT > (windowHeight/10))) {
-        Settings::LunaSettings()->gestureAreaHeight = (windowHeight/16);
+        qDebug() << __PRETTY_FUNCTION__ << "Going fullscreen with width" << windowWidth << "height" << windowHeight;
     }
 
     m_info.displayBuffer = 0;
     m_info.displayWidth = windowWidth;
-    m_info.displayHeight = windowHeight - GESTURE_AREA_HEIGHT;
+    m_info.displayHeight = windowHeight;
     m_info.displayDepth = 32;
 }
 
@@ -512,7 +505,7 @@ void HostQtDesktop::show()
 	m_widget->setAttribute(Qt::WA_AcceptTouchEvents);
     m_widget->setWindowTitle("Open webOS");
 
-	m_widget->setFixedSize(m_info.displayWidth, m_info.displayHeight + GESTURE_AREA_HEIGHT);
+	m_widget->setFixedSize(m_info.displayWidth, m_info.displayHeight);
 	m_widget->show();
 }
 
@@ -528,15 +521,11 @@ const char* HostQtDesktop::hardwareName() const
 
 void HostQtDesktop::setCentralWidget(QWidget* view)
 {
-	GestureStrip* strip = new GestureStrip(view);
-	strip->setFixedSize(m_widget->width(), GESTURE_AREA_HEIGHT);
-
 	QVBoxLayout* layout = new QVBoxLayout(m_widget);
     layout->setSizeConstraint(QLayout::SetFixedSize);
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(view);
-	layout->addWidget(strip);
 
 	m_keyFilter = new HostQtDesktopKeyFilter;
 	qApp->installEventFilter(m_keyFilter);

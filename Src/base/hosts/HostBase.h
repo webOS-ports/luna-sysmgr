@@ -30,9 +30,6 @@
 #include <Qt>
 #include <QImage>
 
-static const int GESTURE_AREA_HEIGHT = 64;
-static const int GESTURE_AREA_TRIGGER_DIST = 50;
-
 class QWidget;
 
 struct HostInfo

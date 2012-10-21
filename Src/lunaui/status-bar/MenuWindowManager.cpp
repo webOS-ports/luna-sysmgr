@@ -85,7 +85,9 @@ MenuWindowManager::MenuWindowManager(int maxWidth, int maxHeight)
 		connect(m_sysMenu, SIGNAL(signalCloseMenu()), this, SLOT(slotCloseSystemMenu()));
 	}
 
-	m_gestureArea = new GestureArea(maxWidth, GESTURE_AREA_HEIGHT);
+	if(Settings::LunaSettings()->virtualCoreNaviEnabled)
+		m_gestureArea = new GestureArea(maxWidth, Settings::LunaSettings()->virtualCoreNaviHeight);
+		
 	if(m_gestureArea) {
 		m_gestureArea->setParentItem(this);
 	}
@@ -98,6 +100,9 @@ MenuWindowManager::~MenuWindowManager()
 
     if(m_sysMenu)
     	delete m_sysMenu;
+    	
+    if(m_gestureArea)
+    	delete m_gestureArea;
 }
 
 void MenuWindowManager::init()

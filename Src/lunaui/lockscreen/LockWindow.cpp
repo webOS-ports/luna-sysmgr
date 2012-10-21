@@ -427,7 +427,7 @@ void LockWindow::init()
 	m_statusBar->setPos(0, m_bounds.y() + m_statusBar->boundingRect().height() / 2);
 	m_statusBar->setZValue(100);
 
-	m_gestureArea = new GestureArea(m_bounds.width(), GESTURE_AREA_HEIGHT);
+	m_gestureArea = new GestureArea(m_bounds.width(), Settings::LunaSettings()->virtualCoreNaviHeight);
 	m_gestureArea->init();
 	m_gestureArea->setParentItem(this);
 	m_gestureArea->setZValue(100);
