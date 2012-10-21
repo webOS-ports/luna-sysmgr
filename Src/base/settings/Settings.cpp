@@ -114,7 +114,6 @@ Settings::Settings()
         , backlightDarkScale (10)
 	, displayWidth(320)
 	, displayHeight(320)
-	, gestureAreaHeight(50)
 	, displayNumBuffers(3)
 	, ledPulseMaxBrightness (100)
 	, ledPulseDarkBrightness (50)
@@ -405,7 +404,6 @@ void Settings::load(const char* settingsFile)
     KEY_BOOLEAN( "Memory", "AllowAllAppsInLowMemory", allowAllAppsInLowMemory);
 	KEY_INTEGER( "General","DisplayWidth",displayWidth);
 	KEY_INTEGER( "General","DisplayHeight",displayHeight);
-	KEY_INTEGER( "General","GestureAreaHeight",gestureAreaHeight);
 	KEY_INTEGER( "General","DisplayNumBuffers", displayNumBuffers);
 	KEY_INTEGER("General", "MaxPenMoveFreq", maxPenMoveFreq);
 	KEY_INTEGER("General",  "MaxPaintLoad", maxPaintLoad);
@@ -695,6 +693,10 @@ void Settings::postLoad()
 	packageInstallBase = appInstallBase;
 
 	// Piranha flags
+	
+	//Virtual Gesture Area
+	if(!virtualCoreNaviEnabled)
+		virtualCoreNaviHeight = 0;
 }
 
 // Expands "1MB" --> 1048576, "2k" --> 2048, etc.

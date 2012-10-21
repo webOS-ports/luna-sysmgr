@@ -40,9 +40,11 @@ enum AnimDir {
 	Right
 };
 
+static const int GESTURE_AREA_TRIGGER_DIST = Settings::LunaSettings()->virtualCoreNaviHeight/2;
+
 GestureArea::GestureArea(int width, int height)
 {
-	m_bounds = QRect(-width/2, SystemUiController::instance()->currentUiHeight()/2, width, GESTURE_AREA_HEIGHT);
+	m_bounds = QRect(-width/2, SystemUiController::instance()->currentUiHeight()/2, width, height);
 	m_fired = false;
 	m_animDir = AnimDir(Up);
 
@@ -92,7 +94,7 @@ void GestureArea::init()
 
 void GestureArea::resize(int w, int h)
 {
-	m_bounds = QRect(-w/2, SystemUiController::instance()->currentUiHeight()/2, w, GESTURE_AREA_HEIGHT);
+	m_bounds = QRect(-w/2, SystemUiController::instance()->currentUiHeight()/2, w, Settings::LunaSettings()->virtualCoreNaviHeight);
 	m_lightbarY = m_bounds.bottom() - m_lightbarLPixmap->height();
 	m_gradientFocus = QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2));
 	m_isPortrait = (h > w);
@@ -195,7 +197,7 @@ bool GestureArea::sceneEvent(QEvent* event)
 		else if(delta.x() < -GESTURE_AREA_TRIGGER_DIST)
 		{
 			//From the center
-			if(m_startPos.x() > -m_bounds.width()/3 && m_startPos.x() < m_bounds.width()/3)
+			if(m_startPos.x() > -m_bounds.width()/4 && m_startPos.x() < m_bounds.width()/4)
 			{
 				//Back Gesture
 				if (window) {
@@ -207,7 +209,7 @@ bool GestureArea::sceneEvent(QEvent* event)
 			}
 
 			//From the right 1/3rd
-			if(m_startPos.x() > m_bounds.width()/3)
+			if(m_startPos.x() > m_bounds.width()/4)
 			{
 				//Switch to Next App
 				if (window) {
@@ -222,7 +224,7 @@ bool GestureArea::sceneEvent(QEvent* event)
 		else if(delta.x() > GESTURE_AREA_TRIGGER_DIST)
 		{
 			//From the center
-			if(m_startPos.x() > -m_bounds.width()/3 && m_startPos.x() < m_bounds.width()/3)
+			if(m_startPos.x() > -m_bounds.width()/4 && m_startPos.x() < m_bounds.width()/4)
 			{
 				//Play Animation And Carry On
 				//DEBUG: Orientation Testing
@@ -242,7 +244,7 @@ bool GestureArea::sceneEvent(QEvent* event)
 			}
 
 			//From the left 1/3rd
-			if(m_startPos.x() < -m_bounds.width()/3)
+			if(m_startPos.x() < -m_bounds.width()/4)
 			{
 				//Switch to Previous App
 				if (window) {
