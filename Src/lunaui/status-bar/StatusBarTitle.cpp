@@ -25,6 +25,7 @@
 #include "AnimationSettings.h"
 
 #include <QPainter>
+#include <QDebug>
 
 #define TITLE_WIDTH_PADDING   2
 
@@ -33,7 +34,6 @@
 
 #define NO_BORDER_TITLE_LEFT_PADDING    7
 #define BORDER_TITLE_LEFT_PADDING       (-4)
-#define TEXT_BASELINE_OFFSET            (-2)
 
 StatusBarTitle::StatusBarTitle(int width, int height, bool classicUi)
 	: StatusBarItem(StatusBarItem::AlignLeft)
@@ -51,22 +51,25 @@ StatusBarTitle::StatusBarTitle(int width, int height, bool classicUi)
 
 	m_curRect = m_bounds;
 	m_newRect = m_bounds;
+	
+	Settings* settings = Settings::LunaSettings();
 
-	const char* fontName = Settings::LunaSettings()->fontStatusBar.c_str();
-	m_font = new QFont(fontName, 14);
-	m_font->setPixelSize(14);
+	const char* fontName = settings->fontStatusBar.c_str();
+	m_font = new QFont(fontName, 14 * settings->textScale);
+	m_font->setPixelSize(14 * settings->textScale);
 
 	m_font->setLetterSpacing(QFont::PercentageSpacing, kStatusBarQtLetterSpacing);
 
 	if (m_font) {
 		m_font->setBold(true);
 	}
+	
+	m_baselineOffset = -height/3.5;
 
 	QFontMetrics fontMetrics (*m_font);
 
 	connect(&m_anim, SIGNAL(finished()), SLOT(slotAnimFinished()));
-
-	Settings* settings = Settings::LunaSettings();
+	
 	std::string statusBarImagesPath = settings->lunaSystemResourcesPath + "/statusBar/";
 
 	std::string filePath = statusBarImagesPath + "appname-background.png";
@@ -163,7 +166,7 @@ void StatusBarTitle::createTitlePixmap(QPixmap *pix, QRectF &rect)
 	QPainter painter;
 	QFontMetrics fontMetrics(*m_font);
 
-	int baseLine = pix->height()/2 + m_titleRect.height()/2 - fontMetrics.descent() + TEXT_BASELINE_OFFSET;
+	int baseLine = pix->height()/2 + m_titleRect.height()/2 - fontMetrics.descent() + m_baselineOffset;
 
 	pix->fill(Qt::transparent);
 

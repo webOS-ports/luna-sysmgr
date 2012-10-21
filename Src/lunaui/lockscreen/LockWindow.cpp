@@ -421,7 +421,7 @@ void LockWindow::init()
 	// Clock
 	m_clockWin = new ClockWindow();
 	m_clockWin->setParentItem(this);
-	m_clockWin->setPos(0,-(SystemUiController::instance()->currentUiHeight() * 0.35));
+	m_clockWin->setPos(0,-(SystemUiController::instance()->currentUiHeight() * 0.3));
 	m_clockWin->tick();
 
 	// Dashboard Alerts

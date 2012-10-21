@@ -697,6 +697,7 @@ void Settings::postLoad()
 	//UI Scaling for positive space padding
 	positiveSpaceTopPadding *= uiScale;
 	positiveSpaceBottomPadding *= uiScale;
+	statusBarTitleMaxWidth *= uiScale;
 }
 
 // Expands "1MB" --> 1048576, "2k" --> 2048, etc.
