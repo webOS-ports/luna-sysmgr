@@ -1300,10 +1300,10 @@ bool WindowServer::canShowReticle(const QPoint& pos)
 	&& pos.y() > SystemUiController::instance()->currentUiHeight())
 	||
 	(m_currentUiOrientation == OrientationEvent::Orientation_Down
-	&& pos.y() < GESTURE_AREA_HEIGHT)
+	&& pos.y() < Settings::LunaSettings()->virtualCoreNaviHeight)
 	||
 	(m_currentUiOrientation == OrientationEvent::Orientation_Left
-	&& pos.x() < GESTURE_AREA_HEIGHT)
+	&& pos.x() < Settings::LunaSettings()->virtualCoreNaviHeight)
 	||
 	(m_currentUiOrientation == OrientationEvent::Orientation_Right
 	&& pos.x() > SystemUiController::instance()->currentUiHeight()))
