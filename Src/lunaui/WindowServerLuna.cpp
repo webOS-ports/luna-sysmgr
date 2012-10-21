@@ -187,7 +187,7 @@ WindowServerLuna::WindowServerLuna()
 	SystemUiController::instance()->setUiRootItemPtr(&m_uiRootItem);
 
 	// always at top of screen
-	m_uiRootItem.setPos(SystemUiController::instance()->currentUiWidth()/2, (SystemUiController::instance()->currentUiHeight()-GESTURE_AREA_HEIGHT)/2);
+	m_uiRootItem.setPos(SystemUiController::instance()->currentUiWidth()/2, (SystemUiController::instance()->currentUiHeight() - Settings::LunaSettings()->virtualCoreNaviHeight)/2);
 
 	// Trigger the initial layout for the WMs
 	SystemUiController::instance()->init();
@@ -288,10 +288,10 @@ void WindowServerLuna::resizeWindowManagers(int width, int height)
 			m_uiRootItem.setPos(width/2, height/2);
 			break;
 		case OrientationEvent::Orientation_Down:
-			m_uiRootItem.setPos(width/2, (height/2) + GESTURE_AREA_HEIGHT);
+			m_uiRootItem.setPos(width/2, (height/2) + Settings::LunaSettings()->virtualCoreNaviHeight);
 			break;
 		case OrientationEvent::Orientation_Left:
-			m_uiRootItem.setPos((height/2) + GESTURE_AREA_HEIGHT, width/2);
+			m_uiRootItem.setPos((height/2) + Settings::LunaSettings()->virtualCoreNaviHeight, width/2);
 			break;
 		case OrientationEvent::Orientation_Right:
 			m_uiRootItem.setPos(height/2, width/2);
