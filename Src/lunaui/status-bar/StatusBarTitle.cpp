@@ -76,15 +76,9 @@ StatusBarTitle::StatusBarTitle(int width, int height, bool classicUi)
 	m_titleBackground = QPixmap (filePath.c_str());
 	if (m_titleBackground.isNull())
 		g_warning ("Unable to open %s", filePath.c_str());
-
-
-	if(!Settings::LunaSettings()->tabletUi || m_forceClassicUi) {
-		m_newTitle = QPixmap(width + BKGD_LEFT_WIDTH + BKGD_RIGHT_WIDTH, height);
-		m_currentTitle = QPixmap(width + BKGD_LEFT_WIDTH + BKGD_RIGHT_WIDTH, height);
-	} else {
-		m_newTitle     = QPixmap(width, height);
-		m_currentTitle = QPixmap(width, height);
-	}
+	
+	m_newTitle     = QPixmap(width, height);
+	m_currentTitle = QPixmap(width, height);
 
 	m_originalText = " ";
 	setTitleString(std::string("Unknown"), false);
@@ -124,9 +118,7 @@ void StatusBarTitle::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 void StatusBarTitle::setTitleString (std::string title, bool showTitleBorder)
 {
 	bool showBorder;
-	if(!Settings::LunaSettings()->tabletUi) {
-		showBorder = showTitleBorder;
-	} else if (m_forceClassicUi) {
+	if (m_forceClassicUi) {
 		showBorder = true;
 	} else {
 		showBorder = false;
@@ -215,11 +207,7 @@ void StatusBarTitle::animateTitleTransition()
 
 		m_inTransition = true;
 
-		if(!Settings::LunaSettings()->tabletUi) {
-			m_bounds = m_curRect.united(m_newRect);
-		} else {
-			m_bounds = m_curRect;
-		}
+		m_bounds = m_curRect;
 
 		m_anim.start();
 	}
@@ -231,10 +219,8 @@ void StatusBarTitle::animValueChanged(const QVariant& value)
 	{
 		m_newTitleOpacity = (qreal)((qreal)(value.toInt())/ 100.0);
 
-		if(Settings::LunaSettings()->tabletUi) {
-			int width = (int)(((1.0 - m_newTitleOpacity) * (qreal)(m_curRect.width())) + (m_newTitleOpacity * (qreal)(m_newRect.width())));
-			m_bounds.setRect(m_curRect.x(), m_curRect.y(), width, m_curRect.height());
-		}
+		int width = (int)(((1.0 - m_newTitleOpacity) * (qreal)(m_curRect.width())) + (m_newTitleOpacity * (qreal)(m_newRect.width())));
+		m_bounds.setRect(m_curRect.x(), m_curRect.y(), width, m_curRect.height());
 
 		update();
 		Q_EMIT signalBoundingRectChanged();
