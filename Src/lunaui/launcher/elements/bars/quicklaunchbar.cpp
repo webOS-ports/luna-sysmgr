@@ -66,19 +66,15 @@
 #define LA_BUTTON_SIZE 64
 #define MOVING_ICON_Y_OFFSET 15
 
+
 qint32 QuickLaunchBar::sEventCounter0 = 0;
 
 
 static PixButton2State * LoadLauncherAccessButton()
 {
-	//Assumes that the launcher icon is square
-	int buttonWidthScaled = LA_BUTTON_SIZE * Settings::LunaSettings()->uiScale;	
-	
 	QList<QRect> buttonStateCoords;
-	QRect normalRect = QRect(0,0,buttonWidthScaled,buttonWidthScaled);
-	QRect activeRect = QRect(0,buttonWidthScaled,buttonWidthScaled,buttonWidthScaled);
-	buttonStateCoords << normalRect << activeRect;
-	
+	int size = LA_BUTTON_SIZE * Settings::LunaSettings()->uiScale;
+	buttonStateCoords << QRect(0,0,size,size) << QRect(0,size,size,size);
 	QList<PixmapObject *> buttonStatePmos =
 			PixmapObjectLoader::instance()->loadMulti(
 					buttonStateCoords,
@@ -317,17 +313,14 @@ bool QuickLaunchBar::resize(const QSize& s)
 	ThingPaintable::resize(s);	//this will take care of geom and b-rect computation
 
 	//reposition the launcher access button
-	//positions using relative size, so should work at any resolution
+	//TODO: hardcoded to reference topRight of QL
 	if (m_qp_launcherAccessButton)
 	{
-		// Hardcoded to (bottom-right of QL - geometry/2)
-		QPointF laButtonPos = m_geom.bottomRight();
-		laButtonPos += QPoint(
-			-m_qp_launcherAccessButton->geometry().width()/2,
-			-m_qp_launcherAccessButton->geometry().height()/2
-		);
-		
-		m_qp_launcherAccessButton->setPos(laButtonPos);
+		// Changing this for now so that we treat the launcher icon as having the same size of a regular icon, so we can have
+		// everything ordered symmetrically in the QL bar.
+		m_qp_launcherAccessButton->setPos(
+				m_geom.topRight()
+				+QPoint(-IconGeometrySettings::settings()->absoluteGeomSizePx.width()/2, m_qp_launcherAccessButton->geometry().height()/2));
 
 		m_qp_launcherAccessButton->setVisible(true);
 	}
@@ -345,7 +338,7 @@ bool QuickLaunchBar::resize(const QSize& s)
 
 	//the settings spec is relative to the top but m_itemsY will be used as a coordinate in ICS, so remap it so
 	// that it's center-origin based (i.e. it's in ICS)
-	m_itemsY = m_geom.top()+LayoutSettings::settings()->quickLaunchItemAreaOffsetPx.y();
+	m_itemsY = m_geom.top()+LayoutSettings::settings()->quickLaunchItemAreaOffsetPx.y() * Settings::LunaSettings()->uiScale;
 
 	//recompute the position of all the items currently here
 	rearrangeIcons(false);
@@ -634,7 +627,7 @@ QSize QuickLaunchBar::QuickLaunchSizeFromScreenSize(int screenWidth,int screenHe
 {
 	if (LayoutSettings::settings()->quickLaunchBarUseAbsoluteSize)
 	{
-		return QSize(screenWidth,qMin(LayoutSettings::settings()->quickLaunchBarHeightAbsolute,(quint32)screenHeight));
+		return QSize(screenWidth,qMin(LayoutSettings::settings()->quickLaunchBarHeightAbsolute,(quint32)screenHeight) * Settings::LunaSettings()->uiScale);
 	}
 	QSize r = QSize(
 			qBound((quint32)2,
@@ -648,6 +641,11 @@ QSize QuickLaunchBar::QuickLaunchSizeFromScreenSize(int screenWidth,int screenHe
 	//make evenly divisible (multiple of 2)
 	r.setWidth(r.width() - (r.width() % 2));
 	r.setHeight(r.height() - (r.height() % 2));
+	
+	//obey uiScale
+	r.setWidth(r.width() * Settings::LunaSettings()->uiScale);
+	r.setHeight(r.height() * Settings::LunaSettings()->uiScale);
+	
 	return r;
 
 }

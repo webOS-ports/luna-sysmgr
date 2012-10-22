@@ -62,8 +62,8 @@ public:
 		}
 		positionIconWithin();
 
-		QFont font(qFromUtf8Stl(Settings::LunaSettings()->fontQuicklaunch), 18);
-		font.setPixelSize(18);
+		QFont font(qFromUtf8Stl(Settings::LunaSettings()->fontQuicklaunch), 18 * Settings::LunaSettings()->textScale);
+		font.setPixelSize(18 * Settings::LunaSettings()->textScale);
 		font.setStyle(QFont::StyleOblique);
 		QString title = qFromUtf8Stl(LOCALIZED("Just type..."));
 
