@@ -63,18 +63,22 @@
 #define QUICKLAUNCH_BG_TRANSLUCENT QString("/quicklaunch-bg.png")
 
 #define LA_BUTTON_FILEPATH QString("quicklaunch-button-launcher.png")
-#define LA_BUTTON_NORMAL_LOC QRect(0,0,64,64)
-#define LA_BUTTON_ACTIVE_LOC QRect(0,64,64,64)
+#define LA_BUTTON_SIZE 64
 #define MOVING_ICON_Y_OFFSET 15
-
 
 qint32 QuickLaunchBar::sEventCounter0 = 0;
 
 
 static PixButton2State * LoadLauncherAccessButton()
 {
+	//Assumes that the launcher icon is square
+	int buttonWidthScaled = LA_BUTTON_SIZE * Settings::LunaSettings()->uiScale;	
+	
 	QList<QRect> buttonStateCoords;
-	buttonStateCoords << LA_BUTTON_NORMAL_LOC << LA_BUTTON_ACTIVE_LOC;
+	QRect normalRect = QRect(0,0,buttonWidthScaled,buttonWidthScaled);
+	QRect activeRect = QRect(0,buttonWidthScaled,buttonWidthScaled,buttonWidthScaled);
+	buttonStateCoords << normalRect << activeRect;
+	
 	QList<PixmapObject *> buttonStatePmos =
 			PixmapObjectLoader::instance()->loadMulti(
 					buttonStateCoords,
@@ -313,14 +317,17 @@ bool QuickLaunchBar::resize(const QSize& s)
 	ThingPaintable::resize(s);	//this will take care of geom and b-rect computation
 
 	//reposition the launcher access button
-	//TODO: hardcoded to reference topRight of QL
+	//positions using relative size, so should work at any resolution
 	if (m_qp_launcherAccessButton)
 	{
-		// Changing this for now so that we treat the launcher icon as having the same size of a regular icon, so we can have
-		// everything ordered symmetrically in the QL bar.
-		m_qp_launcherAccessButton->setPos(
-				m_geom.topRight()
-				+QPoint(-IconGeometrySettings::settings()->absoluteGeomSizePx.width()/2, LayoutSettings::settings()->quickLaunchBarLauncherAccessButtonOffsetPx.y() + m_qp_launcherAccessButton->geometry().height()/2));
+		// Hardcoded to (bottom-right of QL - geometry/2)
+		QPointF laButtonPos = m_geom.bottomRight();
+		laButtonPos += QPoint(
+			-m_qp_launcherAccessButton->geometry().width()/2,
+			-m_qp_launcherAccessButton->geometry().height()/2
+		);
+		
+		m_qp_launcherAccessButton->setPos(laButtonPos);
 
 		m_qp_launcherAccessButton->setVisible(true);
 	}
