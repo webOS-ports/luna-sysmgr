@@ -120,6 +120,8 @@ public:
         Q_INVOKABLE QString getLocalizedMonth();
         Q_INVOKABLE QString getLocalizedAMPM();
 
+        Q_INVOKABLE QString getSettingUiScale();
+
 	Q_INVOKABLE int orientation() { return m_orientation; }
 	Q_INVOKABLE bool twelveHourClock() { return m_twelveHourClock; }
 

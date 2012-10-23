@@ -313,6 +313,10 @@ QString Runtime::getLocalizedAMPM()
         return locale.pmText();
  }
 
+QString Runtime::getSettingUiScale()
+ {
+         return QString::fromUtf8(Settings::LunaSettings()->uiScale); 
+ }
 
 // ------------------------------------------------------------------
 

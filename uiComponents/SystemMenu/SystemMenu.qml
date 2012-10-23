@@ -9,6 +9,7 @@ Item {
     property int  dividerWidthOffset: 7
     property int  itemIdent:     subItemIdent + headerIdent
     property int  edgeOffset: 11
+    property int  uiScale: runtime.getSettingUiScale();
     property bool flickableOverride: false
 
     property bool airplaneModeInProgress: false
