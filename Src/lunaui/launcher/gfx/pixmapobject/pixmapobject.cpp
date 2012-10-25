@@ -19,7 +19,6 @@
 
 
 #include "pixmapobject.h"
-#include "Settings.h"
 #include <QPainter>
 #include <QPointF>
 #include <QTransform>
@@ -29,7 +28,6 @@ PixmapObject::PixmapObject()
 {
 	m_uid = QUuid::createUuid();
 	pm = new QPixmap();
-	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale);
 }
 
 PixmapObject::PixmapObject( int width, int height)
@@ -37,7 +35,7 @@ PixmapObject::PixmapObject( int width, int height)
 {
 	m_uid = QUuid::createUuid();
 	pm = new QPixmap(width,height);
-	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale);
+	*pm = pm->scaledToHeight(pm->height());
 }
 
 PixmapObject::PixmapObject( const QString & fileName, const char * format, Qt::ImageConversionFlags flags)
@@ -45,7 +43,7 @@ PixmapObject::PixmapObject( const QString & fileName, const char * format, Qt::I
 {
 	m_uid = QUuid::createUuid();
 	pm = new QPixmap(fileName,format,flags);
-	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale);
+	*pm = pm->scaledToHeight(pm->height());
 }
 
 PixmapObject::PixmapObject ( const QString& fileName, const QSize& desiredSize, bool limitOnly, const char * format, Qt::ImageConversionFlags flags )
@@ -65,7 +63,7 @@ PixmapObject::PixmapObject ( const QString& fileName, const QSize& desiredSize, 
 			);
 
 	pm = new QPixmap(QPixmap::fromImage(img.scaled(s,Qt::IgnoreAspectRatio,Qt::SmoothTransformation)));
-	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale);
+	*pm = pm->scaledToHeight(pm->height());
 }
 
 PixmapObject::PixmapObject (QPixmap * p_pixmap)

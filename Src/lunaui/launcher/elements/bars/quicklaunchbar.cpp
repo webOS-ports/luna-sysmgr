@@ -63,7 +63,7 @@
 #define QUICKLAUNCH_BG_TRANSLUCENT QString("/quicklaunch-bg.png")
 
 #define LA_BUTTON_FILEPATH QString("quicklaunch-button-launcher.png")
-#define LA_BUTTON_SIZE 64
+#define LA_BUTTON_SIZE 32
 #define MOVING_ICON_Y_OFFSET 15
 
 
@@ -324,7 +324,7 @@ bool QuickLaunchBar::resize(const QSize& s)
 
 	//the settings spec is relative to the top but m_itemsY will be used as a coordinate in ICS, so remap it so
 	// that it's center-origin based (i.e. it's in ICS)
-	m_itemsY = 14;
+	m_itemsY = 26;
 
 	//reposition the launcher access button
 	//TODO: hardcoded to reference topRight of QL

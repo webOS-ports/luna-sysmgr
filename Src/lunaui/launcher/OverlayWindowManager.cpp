@@ -70,6 +70,8 @@
 #include "gfxsettings.h"
 #include "layoutsettings.h"
 
+#include "Settings.h"
+
 #include <glib.h>
 
 static const int kSlopFactorForClicks = 4;
@@ -77,7 +79,6 @@ static const int kSlopFactorForClicks = 4;
 static const double kDragAnimFactorNumer = 1.0;
 static const double kDragAnimFactorDenom = 1.8;
 static const double kDragScaleFactor = 1.2;
-static const int kMaxDragSide = 64; // clamp the drag image to 128x128
 
 static const char *kOverlayState = "overlayViewState";
 
