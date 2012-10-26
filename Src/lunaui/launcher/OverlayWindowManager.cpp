@@ -70,6 +70,8 @@
 #include "gfxsettings.h"
 #include "layoutsettings.h"
 
+#include "Settings.h"
+
 #include <glib.h>
 
 static const int kSlopFactorForClicks = 4;
@@ -77,7 +79,6 @@ static const int kSlopFactorForClicks = 4;
 static const double kDragAnimFactorNumer = 1.0;
 static const double kDragAnimFactorDenom = 1.8;
 static const double kDragScaleFactor = 1.2;
-static const int kMaxDragSide = 64; // clamp the drag image to 128x128
 
 static const char *kOverlayState = "overlayViewState";
 
@@ -1027,7 +1028,7 @@ void OverlayWindowManager::setupSearchPill()
 
 	PixmapObject * pNormalBgPmo = (PixmapObject *)PixmapObjectLoader::instance()->quickLoadThreeHorizTiled(
 			QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + SEARCHPILL_BACKGROUND_FILEPATH),
-			40,40
+			40 * Settings::LunaSettings()->uiScale,40 * Settings::LunaSettings()->uiScale
 	);
 
 	if (pNormalBgPmo)
@@ -1035,8 +1036,17 @@ void OverlayWindowManager::setupSearchPill()
 		PixmapObject * pIconPmo = PixmapObjectLoader::instance()->quickLoad(
 				QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + SEARCHPILL_ICON_FILEPATH)
 		);
+		
+		quint32 width;
 
-		quint32 width = qMax(LayoutSettings::settings()->searchPillWidth,(quint32)(pIconPmo ? pIconPmo->width() : 0));
+		//If we're in tabletUi, use the search pill width value from LayoutSettings
+		
+		if(Settings::LunaSettings()->tabletUi)
+			width = LayoutSettings::settings()->searchPillWidthPctScreenRelative * qMin(boundingRect().height(), boundingRect().width());
+		//Otherwise, set it to 0.975% of the screen width, webOS phone style
+		else
+			width = 0.975 * qMin(boundingRect().height(), boundingRect().width());
+
 		quint32 height = pNormalBgPmo->height();
 		QRectF pillGeom = DimensionsGlobal::realRectAroundRealPoint(QSize(width - (width %2),height - (height %2)));
 		m_searchPill = new SearchPill(pNormalBgPmo, pIconPmo, pillGeom,this);

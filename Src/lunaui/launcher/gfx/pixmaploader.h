@@ -76,6 +76,8 @@ public:
 
 	virtual Pixmap3HTileObject * quickLoadThreeHorizTiled(const QString& filename,const quint32 topIn,const quint32 bottomIn,
 													const char * format = 0, Qt::ImageConversionFlags flags = Qt::AutoColor,QObject * p_setOwner=0);
+
+	virtual Pixmap3HTileObject * quickLoadThreeHorizTiled(const QString& filename,const quint32 topIn,const quint32 bottomIn,const char * format = 0, Qt::ImageConversionFlags flags = Qt::AutoColor,QObject * p_setOwner=0);
 	virtual Pixmap3VTileObject * quickLoadThreeVertTiled(const QString& filename,const quint32 leftIn,const quint32 rightIn,
 														const char * format = 0, Qt::ImageConversionFlags flags = Qt::AutoColor,QObject * p_setOwner=0);
 
