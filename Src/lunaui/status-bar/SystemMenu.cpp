@@ -94,7 +94,7 @@ SystemMenu::SystemMenu(int width, int height, bool restricted)
 {
 	qmlRegisterType<AnimatedSpinner>("SystemMenu", 1,0, "AnimatedSpinner");
 
-	m_bounds = QRect(-160, -240, 320, 480);
+	m_bounds = QRect(-width/2, -height/2, width, height);
 
 	m_menuHandler = new MenuHandler(this);
 
