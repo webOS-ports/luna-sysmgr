@@ -421,7 +421,7 @@ void LockWindow::init()
 	// Clock
 	m_clockWin = new ClockWindow();
 	m_clockWin->setParentItem(this);
-	m_clockWin->setPos(0,-(SystemUiController::instance()->currentUiHeight() * 0.35));
+	m_clockWin->setPos(0,-(SystemUiController::instance()->currentUiHeight() * 0.3));
 	m_clockWin->tick();
 
 	// Dashboard Alerts
@@ -2249,14 +2249,18 @@ LockButton::LockButton()
 	// padlock images
 	QString filePath = prefix + "/screen-lock-padlock-off.png";
 	m_buttonImages[ImagePadlock] = QPixmap(filePath);
+	m_buttonImages[ImagePadlock] = m_buttonImages[ImagePadlock].scaledToHeight(m_buttonImages[ImagePadlock].height() * Settings::LunaSettings()->uiScale);
 	filePath = prefix + "/screen-lock-padlock-on.png";
 	m_buttonImages[ImagePadlock+1] = QPixmap(filePath);
+	m_buttonImages[ImagePadlock+1] = m_buttonImages[ImagePadlock+1].scaledToHeight(m_buttonImages[ImagePadlock+1].height() * Settings::LunaSettings()->uiScale);
 
 	// incoming call images
 	filePath = prefix + "/screen-lock-incoming-call-off.png";
 	m_buttonImages[ImageIncomingCall] = QPixmap(filePath);
+	m_buttonImages[ImageIncomingCall] = m_buttonImages[ImageIncomingCall].scaledToHeight(m_buttonImages[ImageIncomingCall].height() * Settings::LunaSettings()->uiScale);
 	filePath = prefix + "/screen-lock-incoming-call-on.png";
 	m_buttonImages[ImageIncomingCall+1] = QPixmap(filePath);
+	m_buttonImages[ImageIncomingCall+1] = m_buttonImages[ImageIncomingCall+1].scaledToHeight(m_buttonImages[ImageIncomingCall+1].height() * Settings::LunaSettings()->uiScale);
 
 	setPixmap(m_buttonImages[m_imageType + (m_pressed?1:0)]);
 	setOffset(-boundingRect().width()/2,-boundingRect().height()/2);
@@ -2341,14 +2345,14 @@ HelpWindow::HelpWindow()
 	m_surf = new QPixmap(filePath.c_str());
 
 	const char* fontName = Settings::LunaSettings()->fontLockWindow.c_str();
-	m_font = new QFont(fontName, 20); // $$$ font size
-	m_font->setPixelSize(20);
+	m_font = new QFont(fontName, 20 * Settings::LunaSettings()->textScale); // $$$ font size
+	m_font->setPixelSize(20 * Settings::LunaSettings()->textScale);
 	m_font->setBold(true);
 
 	textLayout.setFont(*m_font);
 
 	if (m_surf) {
-		m_bounds = QRect(-m_surf->width()/2, -m_surf->height()/2, m_surf->width(), m_surf->height());
+		m_bounds = QRect(-m_surf->width()/2, -m_surf->height()/1.5, m_surf->width(), m_surf->height());
 	}
 }
 
@@ -2369,7 +2373,11 @@ void HelpWindow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option
 {
 	// draw the saucer
 	if (m_surf)
+	{
+		painter->scale(Settings::LunaSettings()->uiScale, Settings::LunaSettings()->uiScale);
 		painter->drawPixmap(m_bounds, *m_surf);
+		painter->scale(1.0/Settings::LunaSettings()->uiScale, 1.0/Settings::LunaSettings()->uiScale);
+	}
 
 	QPen oldPen = painter->pen();
 
