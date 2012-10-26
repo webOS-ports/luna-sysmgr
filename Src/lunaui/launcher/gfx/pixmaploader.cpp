@@ -114,6 +114,22 @@ Pixmap3HTileObject * PixmapObjectLoader::quickLoadThreeHorizTiled(const QString&
 	return p;
 }
 
+Pixmap3HTileObject * PixmapObjectLoader::quickLoadThreeHorizTiled(quint32 width, quint32 height, const QString& fileName,const quint32 leftIn,const quint32 rightIn,
+													const char * format, Qt::ImageConversionFlags flags,QObject * p_setOwner)
+{
+	Pixmap3HTileObject * p = new Pixmap3HTileObject(width,height,fileName,leftIn,rightIn,
+			PixmapHTilingStyle::Scale,format,flags);
+
+	if (!(p->valid()))
+	{
+		delete p;	//done this way so that there is no issues if ownership policy from loader -> caller change, in cases where the caller
+		//would want to delete the invalid pixmap
+		return 0;
+	}
+	p->setParent(p_setOwner);
+	return p;
+}
+
 //virtual
 Pixmap3VTileObject * PixmapObjectLoader::quickLoadThreeVertTiled(const QString& fileName,const quint32 topIn,const quint32 bottomIn,
 														const char * format, Qt::ImageConversionFlags flags,QObject * p_setOwner)
