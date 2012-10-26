@@ -166,6 +166,8 @@ Settings::Settings()
 	, launcherScrim("/usr/lib/luna/system/luna-applauncher/images/launcher_scrim.png")
         , firstCardLaunch("/var/luna/preferences/used-first-card")
 	, atlasEnabled(false)
+	, uiScale(1.0)
+	, textScale(1.0)
 	, cardGroupingXDistanceFactor(1.0)
 	, atlasMemThreshold(0)
 	, launcherAtlasStatistics(false)
@@ -506,6 +508,8 @@ void Settings::load(const char* settingsFile)
 	KEY_INTEGER("UI", "SplashIconSize", splashIconSize);
 	KEY_BOOLEAN("UI", "EnableSplashBackgrounds", enableSplashBackgrounds);
 	KEY_BOOLEAN("UI", "AtlasEnabled", atlasEnabled);
+	KEY_DOUBLE("UI", "UiScale", uiScale);
+	KEY_DOUBLE("UI", "TextScale", textScale);
 
 	KEY_INTEGER("UI", "ModalWindowWidth", modalWindowWidth);
 	KEY_INTEGER("UI", "ModalWindowHeight", modalWindowHeight);
@@ -695,6 +699,11 @@ void Settings::postLoad()
 	packageInstallBase = appInstallBase;
 
 	// Piranha flags
+	
+	//UI Scaling for positive space padding
+	positiveSpaceTopPadding *= uiScale;
+	positiveSpaceBottomPadding *= uiScale;
+	statusBarTitleMaxWidth *= uiScale;
 }
 
 // Expands "1MB" --> 1048576, "2k" --> 2048, etc.
