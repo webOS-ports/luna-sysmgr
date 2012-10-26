@@ -158,7 +158,7 @@ StatusBar::StatusBar(StatusBarType type, int width, int height)
 			}
 		}
 		if (m_type == TypeNormal || m_type == TypeDockMode || m_type == TypeFirstUse) {
-			m_titleGroup    = new StatusBarItemGroup(height, true, false, StatusBarItemGroup::AlignLeft);
+			m_titleGroup    = new StatusBarItemGroup(height, false, false, StatusBarItemGroup::AlignLeft);
 			if(m_titleGroup) {
 				m_titleGroup->setParentItem(this);
 				m_titleGroup->setActionable(false);
@@ -773,7 +773,7 @@ void StatusBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 			painter->fillRect(m_bounds, m_barColor);
 			painter->setOpacity(opacity);
 		}
-		painter->drawTiledPixmap(m_bounds, *m_bkgPixmap);
+		painter->drawPixmap(m_bounds, *m_bkgPixmap);
 	}
 }
 

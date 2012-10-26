@@ -54,8 +54,8 @@ void StatusBarIcon::updateBoundingRect(bool forceRepaint)
 {
 	if(m_imgPtr && !m_imgPtr->isNull() && m_visible) {
 		int imgWidth, imgHeight, maxHeight;
-		imgWidth = m_imgPtr->width();
-		imgHeight = m_imgPtr->height();
+		imgWidth = m_imgPtr->width() * Settings::LunaSettings()->uiScale;
+		imgHeight = m_imgPtr->height() * Settings::LunaSettings()->uiScale;
 		maxHeight = Settings::LunaSettings()->positiveSpaceTopPadding - 2;
 
 		if(imgHeight > maxHeight) {
@@ -152,8 +152,8 @@ void StatusBarIcon::paint(QPainter* painter, QPoint centerRight, int fraction)
 		int imgWidth, imgHeight, maxHeight;
 		qreal ratio = 1.0;
 		bool scaled = false;
-		imgWidth = m_imgPtr->width();
-		imgHeight = m_imgPtr->height();
+		imgWidth = m_imgPtr->width() * Settings::LunaSettings()->uiScale;
+		imgHeight = m_imgPtr->height() * Settings::LunaSettings()->uiScale;
 		maxHeight = Settings::LunaSettings()->positiveSpaceTopPadding - 2;
 
 		if(imgHeight > maxHeight) {
