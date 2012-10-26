@@ -26,6 +26,8 @@
 #include "pixmap3vtileobject.h"
 #include "pixmapfilmstripobject.h"
 
+#include "Settings.h"
+
 QPointer<PixmapObjectLoader> PixmapObjectLoader::s_qp_instance = 0;
 
 //static
@@ -135,6 +137,7 @@ QList<PixmapObject *> PixmapObjectLoader::loadMulti(const QList<QRect>& coordina
 {
 	//TODO: a bit wasteful...loads the whole pixmap and then copies
 	QPixmap wholePm = QPixmap(fileName,format,flags);
+	wholePm = wholePm.scaledToHeight(wholePm.height());
 	QList<PixmapObject *> resultList;
 	if (wholePm.isNull())
 	{
