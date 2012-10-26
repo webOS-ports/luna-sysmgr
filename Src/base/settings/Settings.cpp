@@ -168,6 +168,7 @@ Settings::Settings()
 	, atlasEnabled(false)
 	, uiScale(1.0)
 	, textScale(1.0)
+	, imeScale(1.0)
 	, cardGroupingXDistanceFactor(1.0)
 	, atlasMemThreshold(0)
 	, launcherAtlasStatistics(false)
@@ -508,8 +509,9 @@ void Settings::load(const char* settingsFile)
 	KEY_INTEGER("UI", "SplashIconSize", splashIconSize);
 	KEY_BOOLEAN("UI", "EnableSplashBackgrounds", enableSplashBackgrounds);
 	KEY_BOOLEAN("UI", "AtlasEnabled", atlasEnabled);
-	KEY_DOUBLE("UI", "UiScale", uiScale);
+	KEY_DOUBLE("UI", "UIScale", uiScale);
 	KEY_DOUBLE("UI", "TextScale", textScale);
+	KEY_DOUBLE("UI", "IMEScale", imeScale);
 
 	KEY_INTEGER("UI", "ModalWindowWidth", modalWindowWidth);
 	KEY_INTEGER("UI", "ModalWindowHeight", modalWindowHeight);
