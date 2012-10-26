@@ -702,6 +702,7 @@ void Settings::postLoad()
 	positiveSpaceTopPadding *= uiScale;
 	positiveSpaceBottomPadding *= uiScale;
 	statusBarTitleMaxWidth *= uiScale;
+	gapBetweenCardGroups *= uiScale;
 }
 
 // Expands "1MB" --> 1048576, "2k" --> 2048, etc.
