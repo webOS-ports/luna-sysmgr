@@ -26,6 +26,8 @@
 #include "pixmap3vtileobject.h"
 #include "pixmapfilmstripobject.h"
 
+#include "Settings.h"
+
 QPointer<PixmapObjectLoader> PixmapObjectLoader::s_qp_instance = 0;
 
 //static
@@ -112,6 +114,22 @@ Pixmap3HTileObject * PixmapObjectLoader::quickLoadThreeHorizTiled(const QString&
 	return p;
 }
 
+Pixmap3HTileObject * PixmapObjectLoader::quickLoadThreeHorizTiled(const quint32 width, const quint32 height, const QString& fileName,const quint32 leftIn,const quint32 rightIn,
+													const char * format, Qt::ImageConversionFlags flags,QObject * p_setOwner)
+{
+	Pixmap3HTileObject * p = new Pixmap3HTileObject(width,height,fileName,leftIn,rightIn,
+			PixmapHTilingStyle::Scale,format,flags);
+
+	if (!(p->valid()))
+	{
+		delete p;	//done this way so that there is no issues if ownership policy from loader -> caller change, in cases where the caller
+		//would want to delete the invalid pixmap
+		return 0;
+	}
+	p->setParent(p_setOwner);
+	return p;
+}
+
 //virtual
 Pixmap3VTileObject * PixmapObjectLoader::quickLoadThreeVertTiled(const QString& fileName,const quint32 topIn,const quint32 bottomIn,
 														const char * format, Qt::ImageConversionFlags flags,QObject * p_setOwner)
@@ -135,6 +153,7 @@ QList<PixmapObject *> PixmapObjectLoader::loadMulti(const QList<QRect>& coordina
 {
 	//TODO: a bit wasteful...loads the whole pixmap and then copies
 	QPixmap wholePm = QPixmap(fileName,format,flags);
+	wholePm = wholePm.scaledToHeight(wholePm.height());
 	QList<PixmapObject *> resultList;
 	if (wholePm.isNull())
 	{
