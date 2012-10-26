@@ -30,12 +30,11 @@ PixmapObject::PixmapObject()
 	pm = new QPixmap();
 }
 
-PixmapObject::PixmapObject( int width, int height)
+PixmapObject::PixmapObject(int width, int height)
 : m_destroyEmitted(false)
 {
 	m_uid = QUuid::createUuid();
 	pm = new QPixmap(width,height);
-	*pm = pm->scaledToHeight(pm->height());
 }
 
 PixmapObject::PixmapObject( const QString & fileName, const char * format, Qt::ImageConversionFlags flags)
@@ -43,7 +42,6 @@ PixmapObject::PixmapObject( const QString & fileName, const char * format, Qt::I
 {
 	m_uid = QUuid::createUuid();
 	pm = new QPixmap(fileName,format,flags);
-	*pm = pm->scaledToHeight(pm->height());
 }
 
 PixmapObject::PixmapObject ( const QString& fileName, const QSize& desiredSize, bool limitOnly, const char * format, Qt::ImageConversionFlags flags )
@@ -63,7 +61,6 @@ PixmapObject::PixmapObject ( const QString& fileName, const QSize& desiredSize, 
 			);
 
 	pm = new QPixmap(QPixmap::fromImage(img.scaled(s,Qt::IgnoreAspectRatio,Qt::SmoothTransformation)));
-	*pm = pm->scaledToHeight(pm->height());
 }
 
 PixmapObject::PixmapObject (QPixmap * p_pixmap)
