@@ -61,9 +61,10 @@
 
 #define QUICKLAUNCH_BG_SOLID	QString("/quicklaunch-bg-solid.png")
 #define QUICKLAUNCH_BG_TRANSLUCENT QString("/quicklaunch-bg.png")
+#define QUICKLAUNCH_BG_SIZE	QSize(10,105)
 
 #define LA_BUTTON_FILEPATH QString("quicklaunch-button-launcher.png")
-#define LA_BUTTON_SIZE 32
+#define LA_BUTTON_SIZE 64
 #define MOVING_ICON_Y_OFFSET 15
 
 
@@ -77,6 +78,7 @@ static PixButton2State * LoadLauncherAccessButton()
 	buttonStateCoords << QRect(0,0,size,size) << QRect(0,size,size,size);
 	QList<PixmapObject *> buttonStatePmos =
 			PixmapObjectLoader::instance()->loadMulti(
+					Settings::LunaSettings()->uiScale,
 					buttonStateCoords,
 					GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + LA_BUTTON_FILEPATH);
 
@@ -106,11 +108,16 @@ QuickLaunchBar::QuickLaunchBar(const QRectF& geom,Quicklauncher * p_quicklaunche
 
 	m_qp_backgroundTranslucent =
 			PixmapObjectLoader::instance()->quickLoad(
-					QString(GraphicsSettings::settings()->graphicsAssetBaseDirectory + QUICKLAUNCH_BG_TRANSLUCENT)
+					QString(GraphicsSettings::settings()->graphicsAssetBaseDirectory + QUICKLAUNCH_BG_TRANSLUCENT),
+					QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->uiScale,
+					false
+					
 			);
 	m_qp_backgroundSolid =
 				PixmapObjectLoader::instance()->quickLoad(
-						QString(GraphicsSettings::settings()->graphicsAssetBaseDirectory + QUICKLAUNCH_BG_SOLID)
+						QString(GraphicsSettings::settings()->graphicsAssetBaseDirectory + QUICKLAUNCH_BG_SOLID),
+						QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->uiScale,
+						false
 			);
 	m_qp_currentBg = m_qp_backgroundTranslucent;
 
@@ -312,16 +319,6 @@ bool QuickLaunchBar::resize(const QSize& s)
 	}
 	ThingPaintable::resize(s);	//this will take care of geom and b-rect computation
 
-	//item area recalc...item area starts at either:
-	// 1. geom.topLeft   (if the access button is on the right edge)
-	// 2. Point(button.right,geom.top)     (if the access button is on the left edge)
-	//  + settings.quickLaunchItemAreaOffsetPx
-
-	//TODO: for now, access button is hardcoded to the right edge, so it's always (1)
-	
-	m_itemAreaXrange.first = (qint32)(geometry().left());
-	m_itemAreaXrange.second = (qint32)(m_qp_launcherAccessButton->pos().x() - m_qp_launcherAccessButton->geometry().width()*1.25 + m_geom.width()/2);
-
 	//the settings spec is relative to the top but m_itemsY will be used as a coordinate in ICS, so remap it so
 	// that it's center-origin based (i.e. it's in ICS)
 	m_itemsY = 26;
@@ -338,6 +335,16 @@ bool QuickLaunchBar::resize(const QSize& s)
 
 		m_qp_launcherAccessButton->setVisible(true);
 	}
+	
+	//item area recalc...item area starts at either:
+	// 1. geom.topLeft   (if the access button is on the right edge)
+	// 2. Point(button.right,geom.top)     (if the access button is on the left edge)
+	//  + settings.quickLaunchItemAreaOffsetPx
+
+	//TODO: for now, access button is hardcoded to the right edge, so it's always (1)
+	
+	m_itemAreaXrange.first = (qint32)(geometry().left());
+	m_itemAreaXrange.second = (qint32)(m_qp_launcherAccessButton->pos().x() - m_qp_launcherAccessButton->geometry().width()/2);
 
 	//recompute the position of all the items currently here
 	rearrangeIcons(false);
@@ -726,11 +733,6 @@ void QuickLaunchBar::rearrangeIcons(bool animate)
 		
 		idx++;
 	}
-	
-	m_qp_launcherAccessButton->setPos(QPoint(
-			m_geom.right() - m_qp_launcherAccessButton->geometry().width()/1.5
-			, m_itemsY + LayoutSettings::settings()->quickLaunchBarLauncherAccessButtonOffsetPx.y()));
-	
 
 	if(animate && !m_qp_reorderAnimationGroup.isNull() && m_qp_reorderAnimationGroup->animationCount()) {
 		m_qp_reorderAnimationGroup->start(QAbstractAnimation::DeleteWhenStopped);
