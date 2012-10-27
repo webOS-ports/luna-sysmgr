@@ -570,7 +570,7 @@ void LockWindow::resize(int width, int height)
 
 	if(m_clockWin) {
 		m_clockWin->resize(width, height);
-		m_clockWin->setPos(0,-(height * 0.35));
+		m_clockWin->setPos(0,-(height * 0.3));
 		m_clockWin->tick();
 	}
 
@@ -1782,7 +1782,7 @@ void LockWindow::handlePenMoveStateNormal(Event* event)
 	m_lockButton->setPos(event->x, event->y);
 
 	int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
-	if ((distanceSquared > kSaucerRadiusSquared) && (event->y < m_lockButtonY))
+	if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->uiScale) && (event->y < m_lockButtonY))
 		hideHelp();
 	else
 		showHelp();
@@ -1812,7 +1812,7 @@ void LockWindow::handlePenUpStateNormal(Event* event)
 		m_lockButton->press(false);
 
 		int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
-		if ((distanceSquared > kSaucerRadiusSquared) && (event->y < m_lockButtonY)){
+		if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->uiScale) && (event->y < m_lockButtonY)){
 			tryUnlock();
 			SystemService::instance()->postLockButtonTriggered();
 		}
@@ -2396,6 +2396,7 @@ HelpWindow::HelpWindow()
 
 	std::string filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-target-scrim.png";
 	m_surf = new QPixmap(filePath.c_str());
+	*m_surf = m_surf->scaledToHeight(m_surf->height() * Settings::LunaSettings()->uiScale);
 
 	const char* fontName = Settings::LunaSettings()->fontLockWindow.c_str();
 	m_font = new QFont(fontName, 20 * Settings::LunaSettings()->textScale); // $$$ font size
@@ -2427,9 +2428,7 @@ void HelpWindow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option
 	// draw the saucer
 	if (m_surf)
 	{
-		painter->scale(Settings::LunaSettings()->uiScale, Settings::LunaSettings()->uiScale);
 		painter->drawPixmap(m_bounds, *m_surf);
-		painter->scale(1.0/Settings::LunaSettings()->uiScale, 1.0/Settings::LunaSettings()->uiScale);
 	}
 
 	QPen oldPen = painter->pen();
@@ -2451,7 +2450,7 @@ void HelpWindow::setLabel(QString label)
 
 	// create the text layout for the label
 	int leading = fontMetrics.leading();
-	qreal height = 0;
+	qreal height = -fontMetrics.height()/2;
 	textLayout.beginLayout();
 	int i = 0;
 	while (i < 2) {
