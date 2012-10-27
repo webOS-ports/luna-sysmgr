@@ -18,6 +18,10 @@
 
 MACHINE_NAME = $$(MACHINE)
 
+contains(MACHINE_NAME, "qemux86-64") {
+    DEFINES += MACHINE_QEMUX86
+    CONFIG_BUILD += webosemulator
+}
 contains(MACHINE_NAME, "qemux86") {
     DEFINES += MACHINE_QEMUX86
     CONFIG_BUILD += webosemulator
