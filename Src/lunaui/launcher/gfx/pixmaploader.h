@@ -85,6 +85,9 @@ public:
 	virtual QList<PixmapObject *> loadMulti(const QList<QRect>& coordinateRects, const QString& fileName ,
 											const char * format = 0, Qt::ImageConversionFlags flags = Qt::AutoColor,QObject * p_setOwner=0);
 
+	virtual QList<PixmapObject *> loadMulti(qreal scaleFactor, const QList<QRect>& coordinateRects, const QString& fileName ,
+											const char * format = 0, Qt::ImageConversionFlags flags = Qt::AutoColor,QObject * p_setOwner=0);
+
 	virtual PixmapFilmstripObject * quickLoadFilmstrip(const QSize& frameSize,quint32 numFrames,FrameDirection::Enum direction,
 			const QString & fileName,
 			const QPoint& startOffset = QPoint(0,0),

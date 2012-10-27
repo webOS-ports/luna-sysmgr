@@ -399,7 +399,7 @@ IconBase * AppMonitor::createAppIcon(const QString& mainIconFile,const QString& 
 	//try and load its main icon
 	qDebug() << __FUNCTION__ << ": entry: mainIconFile = " << mainIconFile << " , iconLabel = " << iconLabel;
 	int iconSize = 64 * Settings::LunaSettings()->uiScale;
-	IconBase * pMainIcon = IconHeap::makeIconConstrainedStandardFrameAndDecorators(mainIconFile,QSize(iconSize, iconSize));
+	IconBase * pMainIcon = IconHeap::makeIconConstrainedStandardFrameAndDecorators(mainIconFile,QSize(iconSize, iconSize), false);
 	if (!pMainIcon)
 	{
 		//bail'amos!
