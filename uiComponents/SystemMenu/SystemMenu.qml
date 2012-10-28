@@ -3,17 +3,20 @@ import Qt 4.7
 
 Item {
     id: systemmenu
-    property int  maxHeight: 410
-    property int  headerIdent:   14
-    property int  subItemIdent:  16
-    property int  dividerWidthOffset: 7
+    property real uiScale: 1.0
+    property real textScale: 1.0
+    property int  maxWidth: 300 * uiScale
+    property int  maxHeight: 410 * uiScale
+    property int  headerIdent:   14 * uiScale
+    property int  subItemIdent:  16 * uiScale
+    property int  dividerWidthOffset: 7 * uiScale
     property int  itemIdent:     subItemIdent + headerIdent
     property int  edgeOffset: 11
     property bool flickableOverride: false
 
     property bool airplaneModeInProgress: false
 
-    width: 300; height: maxHeight;
+    width: maxWidth; height: maxHeight;
 
     // ------------------------------------------------------------
     // External interface to the System Menu is defined here:
@@ -35,6 +38,14 @@ Item {
         }
         // WORK-AROUND: changing the height directly was not causing atYEnd to update.. this pokes it
         flickableArea.resizeContent(flickableArea.contentWidth, flickableArea.contentHeight, 0.0);
+    }
+
+    function setUiScale(scale) {
+        uiScale = scale;
+    }
+
+    function setTextScale(scale) {
+        textScale = scale;
     }
 
     function setMaximumHeight(height) {
@@ -138,21 +149,26 @@ Item {
                     id: date
                     menuPosition: 1; // top
                     ident: headerIdent;
+                    uiScale: systemmenu.uiScale;
+                    textScale: systemmenu.textScale;
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset}
+                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale;}
 
                 BatteryElement {
                     id: battery
                     ident: headerIdent;
+                    uiScale: systemmenu.uiScale;
+                    textScale: systemmenu.textScale;
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset}
+                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale;}
 
                 BrightnessElement {
                     id: brightness
                     visible:    true
-                    margin:      5;
+                    margin:      5 * uiScale;
+                    uiScale: systemmenu.uiScale;
 
                     onBrightnessChanged: {
                         menuBrightnessChanged(value, save);
@@ -163,7 +179,7 @@ Item {
                     }
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset}
+                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale;}
 
                 WiFiElement {
                     id: wifi
@@ -173,6 +189,8 @@ Item {
                     internalIdent: subItemIdent;
                     active: !airplaneModeInProgress;
                     maxViewHeight : maxHeight - clipRect.anchors.topMargin - clipRect.anchors.bottomMargin;
+                    uiScale: systemmenu.uiScale;
+                    textScale: systemmenu.textScale;
 
                     onMenuCloseRequest: {
                         closeMenuTimer.interval = delayMs;
@@ -186,7 +204,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: wifi.visible; widthOffset: dividerWidthOffset}
+                MenuDivider {visible: wifi.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
 
                 VpnElement {
                     id: vpn
@@ -196,6 +214,8 @@ Item {
                     internalIdent: subItemIdent;
                     active: !airplaneModeInProgress;
                     maxViewHeight : maxHeight - clipRect.anchors.topMargin - clipRect.anchors.bottomMargin;
+                    uiScale: systemmenu.uiScale;
+                    textScale: systemmenu.textScale;
 
                     onMenuCloseRequest: {
                         closeMenuTimer.interval = delayMs;
@@ -209,7 +229,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: vpn.visible; widthOffset: dividerWidthOffset}
+                MenuDivider {visible: vpn.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
 
                 BluetoothElement {
                     id: bluetooth
@@ -219,6 +239,8 @@ Item {
                     internalIdent: subItemIdent;
                     active: !airplaneModeInProgress;
                     maxViewHeight : maxHeight - clipRect.anchors.topMargin - clipRect.anchors.bottomMargin;
+                    uiScale: systemmenu.uiScale;
+                    textScale: systemmenu.textScale;
 
                     onMenuCloseRequest: {
                         closeMenuTimer.interval = delayMs;
@@ -232,7 +254,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: bluetooth.visible; widthOffset: dividerWidthOffset}
+                MenuDivider {visible: bluetooth.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
 
                 AirplaneModeElement {
                     id: airplane
@@ -240,6 +262,8 @@ Item {
                     ident:      headerIdent;
                     objectName: "airplaneMode"
                     selectable: !airplaneModeInProgress;
+                    uiScale: systemmenu.uiScale;
+                    textScale: systemmenu.textScale;
 
                     onAction: {
                         airplaneModeTriggered()
@@ -249,12 +273,14 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: airplane.visible; widthOffset: dividerWidthOffset}
+                MenuDivider {visible: airplane.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
 
                 RotationLockElement {
                     id: rotation
                     visible: true
                     ident:         headerIdent;
+                    uiScale: systemmenu.uiScale;
+                    textScale: systemmenu.textScale;
 
                     onAction: {
                         rotation.delayUpdate = true;
@@ -265,13 +291,15 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: rotation.visible; widthOffset: dividerWidthOffset}
+                MenuDivider {visible: rotation.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
 
                 MuteElement {
                     id: muteControl
                     visible: true
                     menuPosition: 2; // bottom
                     ident:         headerIdent;
+                    uiScale: systemmenu.uiScale;
+                    textScale: systemmenu.textScale;
 
                     onAction: {
                         muteControl.delayUpdate = true;
