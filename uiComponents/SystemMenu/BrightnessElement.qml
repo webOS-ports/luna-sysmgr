@@ -10,21 +10,24 @@ MenuListEntry {
     signal brightnessChanged(real value, bool save)
 
     selectable: false
+    
+    property real uiScale: 1.0
 
     property int margin: 0
-    property int spacing: 5
+    property int spacing: 5 * uiScale
 
     content:
         Item {
             id: brightnessContent
             x: 4
-            width: brightnessElement.width - 8
+            width: brightnessElement.width - 8 * uiScale
             height: brightnessElement.height
 
 
 
             Image {
                 id: imgLess
+        	scale: uiScale;
                 source: "/usr/palm/sysmgr/images/statusBar/brightness-less.png"
                 x: margin
                 y: brightnessElement.height/2 - height/2
@@ -32,6 +35,7 @@ MenuListEntry {
 
             Image {
                 id: imgMore
+        	scale: uiScale;
                 source: "/usr/palm/sysmgr/images/statusBar/brightness-more.png"
                 x: brightnessContent.width - width - margin
                 y: brightnessElement.height/2 - height/2
