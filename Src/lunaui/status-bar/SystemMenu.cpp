@@ -163,6 +163,13 @@ void SystemMenu::init()
 			 m_menuObject = qobject_cast<QGraphicsObject *>(m_qmlMenu->create());
 			 if(m_menuObject) {
 				 m_menuObject->setParentItem(this);
+				 
+				 // scale the system menu
+				 QMetaObject::invokeMethod(m_menuObject, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->uiScale));
+				 QMetaObject::invokeMethod(m_menuObject, "setTextScale", Q_ARG(QVariant, Settings::LunaSettings()->textScale));
+				 
+				 
+				 // setup geometry and positioning
 				 m_rightEdgeOffset = m_menuObject->property("edgeOffset").toInt();
 				 prepareGeometryChange();
 				 m_bounds = QRect(-m_menuObject->boundingRect().width()/2, -m_menuObject->boundingRect().height()/2,
