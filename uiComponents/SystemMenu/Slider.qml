@@ -4,12 +4,13 @@ Item {
     id: slider
     property real  setValue : 0.5
     property bool  active:  true
+    property real  uiScale: 1.75
 
-    property int   railEdgeOffset:   8
+    property real   railEdgeOffset:   8 * uiScale
     property int   railBorderWidth: 11
 
-    property int   handleGrabTolerance: 12
-    property int   railTapTolerance: 20
+    property int   handleGrabTolerance: 12 * uiScale
+    property int   railTapTolerance: 20 * uiScale
     property real  railChangeStep: 0.20
 
     property bool mouseDownOnHandle : false
@@ -140,6 +141,7 @@ Item {
 
     Image {
         id: handle
+        scale: uiScale
         source: "/usr/palm/sysmgr/images/statusBar/slider-handle.png"
         x: railEdgeOffset + ((slider.width - 2*railEdgeOffset) * setValue) - width/2
         y: slider.height/2 - height/2
