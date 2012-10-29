@@ -74,7 +74,7 @@ QFont PageTabBar::staticLabelFontForTabs()
 	{
 		s_tabLabelFont = QFont(QString::fromStdString(Settings::LunaSettings()->fontQuicklaunch));
 		quint32 fontSize = qBound((quint32)2,LayoutSettings::settings()->tabBarTabFontSizePx,(quint32)100);
-		s_tabLabelFont.setPixelSize(fontSize * (Settings::LunaSettings()->textScale * 0.75)); //Tabs are big, don't scale the text so much
+		s_tabLabelFont.setPixelSize(fontSize * (Settings::LunaSettings()->textScale * 0.8)); //Downloads text overruns at full scale
 		s_tabLabelFont.setBold(LayoutSettings::settings()->tabBarTabFontEmbolden);
 	}
 	return s_tabLabelFont;

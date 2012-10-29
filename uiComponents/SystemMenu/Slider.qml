@@ -142,6 +142,7 @@ Item {
     Image {
         id: handle
         scale: uiScale
+        smooth: true
         source: "/usr/palm/sysmgr/images/statusBar/slider-handle.png"
         x: railEdgeOffset + ((slider.width - 2*railEdgeOffset) * setValue) - width/2
         y: slider.height/2 - height/2
