@@ -422,6 +422,11 @@ bool SystemUiController::handleKeyEvent(QKeyEvent *event)
 			if(m_deviceLocked && !m_inDockMode)
 				return false;
 
+			if (m_inDockMode) {
+				enterOrExitDockModeUi(false);
+				return true;
+			}
+
 			if (m_dashboardOpened) {
 				Q_EMIT signalCloseDashboard(true);
 				return true;
@@ -431,10 +436,22 @@ bool SystemUiController::handleKeyEvent(QKeyEvent *event)
 				Q_EMIT signalHideMenu();
 				return true;
 			}
+			
 			if (m_launcherShown && !m_universalSearchShown) {
 				Q_EMIT signalToggleLauncher();
 				return true;
 			}
+			
+			if (m_universalSearchShown) {
+				Q_EMIT signalHideUniversalSearch(false, false);
+				return true;
+			}
+			
+			if (IMEController::instance()->isIMEOpened())
+			{
+				IMEController::instance()->hideIME();
+				return true;
+            		}
 
 			break;
 
@@ -467,10 +484,10 @@ bool SystemUiController::handleKeyEvent(QKeyEvent *event)
 				Q_EMIT signalHideMenu();
 			}
 
-            if (m_universalSearchShown) {
-                Q_EMIT signalHideUniversalSearch(false, false);
-                return true;
-            }
+			if (m_universalSearchShown) {
+			Q_EMIT signalHideUniversalSearch(false, false);
+			return true;
+			}
 
 			if (Preferences::instance()->sysUiNoHomeButtonMode()) {
 				if (m_launcherShown) {
