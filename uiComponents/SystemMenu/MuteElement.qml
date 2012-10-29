@@ -35,6 +35,7 @@ MenuListEntry {
                 x: parent.width - width - iconSpacing - rightMarging
                 anchors.verticalCenter: parent.verticalCenter
                 scale: uiScale
+                smooth: true
 
                 source: "/usr/palm/sysmgr/images/statusBar/icon-mute.png"
              }
@@ -45,6 +46,7 @@ MenuListEntry {
                 x: parent.width - width - iconSpacing - rightMarging
                 anchors.verticalCenter: parent.verticalCenter
                 scale: uiScale
+                smooth: true
 
                 source: "/usr/palm/sysmgr/images/statusBar/icon-mute-off.png"
              }

@@ -33,6 +33,7 @@ MenuListEntry {
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: selectable ? 1.0 : 0.65;
                 scale: uiScale
+                smooth: true
 
                 source: "/usr/palm/sysmgr/images/statusBar/icon-airplane.png"
              }
@@ -44,6 +45,7 @@ MenuListEntry {
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: selectable ? 1.0 : 0.65;
                 scale: uiScale
+                smooth: true
 
                 source: "/usr/palm/sysmgr/images/statusBar/icon-airplane-off.png"
              }
