@@ -27,7 +27,8 @@ MenuListEntry {
 
             Image {
                 id: imgLess
-        	scale: uiScale;
+        	scale: uiScale
+        	smooth: true
                 source: "/usr/palm/sysmgr/images/statusBar/brightness-less.png"
                 x: margin
                 y: brightnessElement.height/2 - height/2
@@ -35,7 +36,8 @@ MenuListEntry {
 
             Image {
                 id: imgMore
-        	scale: uiScale;
+        	scale: uiScale
+        	smooth: true
                 source: "/usr/palm/sysmgr/images/statusBar/brightness-more.png"
                 x: brightnessContent.width - width - margin
                 y: brightnessElement.height/2 - height/2

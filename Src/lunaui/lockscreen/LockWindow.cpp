@@ -2248,18 +2248,18 @@ LockButton::LockButton()
 	// padlock images
 	QString filePath = prefix + "/screen-lock-padlock-off.png";
 	m_buttonImages[ImagePadlock] = QPixmap(filePath);
-	m_buttonImages[ImagePadlock] = m_buttonImages[ImagePadlock].scaledToHeight(m_buttonImages[ImagePadlock].height() * Settings::LunaSettings()->uiScale);
+	m_buttonImages[ImagePadlock] = m_buttonImages[ImagePadlock].scaledToHeight(m_buttonImages[ImagePadlock].height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 	filePath = prefix + "/screen-lock-padlock-on.png";
 	m_buttonImages[ImagePadlock+1] = QPixmap(filePath);
-	m_buttonImages[ImagePadlock+1] = m_buttonImages[ImagePadlock+1].scaledToHeight(m_buttonImages[ImagePadlock+1].height() * Settings::LunaSettings()->uiScale);
+	m_buttonImages[ImagePadlock+1] = m_buttonImages[ImagePadlock+1].scaledToHeight(m_buttonImages[ImagePadlock+1].height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 
 	// incoming call images
 	filePath = prefix + "/screen-lock-incoming-call-off.png";
 	m_buttonImages[ImageIncomingCall] = QPixmap(filePath);
-	m_buttonImages[ImageIncomingCall] = m_buttonImages[ImageIncomingCall].scaledToHeight(m_buttonImages[ImageIncomingCall].height() * Settings::LunaSettings()->uiScale);
+	m_buttonImages[ImageIncomingCall] = m_buttonImages[ImageIncomingCall].scaledToHeight(m_buttonImages[ImageIncomingCall].height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 	filePath = prefix + "/screen-lock-incoming-call-on.png";
 	m_buttonImages[ImageIncomingCall+1] = QPixmap(filePath);
-	m_buttonImages[ImageIncomingCall+1] = m_buttonImages[ImageIncomingCall+1].scaledToHeight(m_buttonImages[ImageIncomingCall+1].height() * Settings::LunaSettings()->uiScale);
+	m_buttonImages[ImageIncomingCall+1] = m_buttonImages[ImageIncomingCall+1].scaledToHeight(m_buttonImages[ImageIncomingCall+1].height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 
 	setPixmap(m_buttonImages[m_imageType + (m_pressed?1:0)]);
 	setOffset(-boundingRect().width()/2,-boundingRect().height()/2);
@@ -2342,7 +2342,7 @@ HelpWindow::HelpWindow()
 
 	std::string filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-target-scrim.png";
 	m_surf = new QPixmap(filePath.c_str());
-	*m_surf = m_surf->scaledToHeight(m_surf->height() * Settings::LunaSettings()->uiScale);
+	*m_surf = m_surf->scaledToHeight(m_surf->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 
 	const char* fontName = Settings::LunaSettings()->fontLockWindow.c_str();
 	m_font = new QFont(fontName, 20 * Settings::LunaSettings()->textScale); // $$$ font size

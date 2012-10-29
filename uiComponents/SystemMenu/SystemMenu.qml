@@ -162,7 +162,7 @@ Item {
                     textScale: systemmenu.textScale;
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale;}
+                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
 
                 BrightnessElement {
                     id: brightness
@@ -179,7 +179,7 @@ Item {
                     }
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale;}
+                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
 
                 WiFiElement {
                     id: wifi
@@ -204,7 +204,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: wifi.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
+                MenuDivider {visible: wifi.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
 
                 VpnElement {
                     id: vpn
@@ -229,7 +229,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: vpn.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
+                MenuDivider {visible: vpn.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
 
                 BluetoothElement {
                     id: bluetooth
@@ -254,7 +254,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: bluetooth.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
+                MenuDivider {visible: bluetooth.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
 
                 AirplaneModeElement {
                     id: airplane
@@ -273,7 +273,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: airplane.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
+                MenuDivider {visible: airplane.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
 
                 RotationLockElement {
                     id: rotation
@@ -291,7 +291,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: rotation.visible; widthOffset: dividerWidthOffset; scale: uiScale;}
+                MenuDivider {visible: rotation.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
 
                 MuteElement {
                     id: muteControl
