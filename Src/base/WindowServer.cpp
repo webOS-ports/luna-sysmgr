@@ -87,6 +87,7 @@
 
 #include "NativeAlertManager.h"
 #include "SingleClickGestureRecognizer.h"
+#include "FlickGestureRecognizer.h"
 #include "QtUtils.h"
 
 
@@ -423,6 +424,7 @@ WindowServer::WindowServer()
 		viewportWidget = new QWidget;
 
 	QGestureRecognizer::registerRecognizer(new SingleClickGestureRecognizer);
+	QGestureRecognizer::registerRecognizer(new FlickGestureRecognizer);
 
 	viewportWidget->setAttribute(Qt::WA_AcceptTouchEvents);
 	viewportWidget->setAttribute(Qt::WA_OpaquePaintEvent, true);
