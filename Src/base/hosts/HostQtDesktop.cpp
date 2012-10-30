@@ -38,8 +38,6 @@
 #include <SysMgrDefs.h>
 
 #include "CustomEvents.h"
-#include "FlickGesture.h"
-#include "FlickGestureRecognizer.h"
 
 static QWidget *viewport(QWidget *widget)
 {
@@ -295,8 +293,6 @@ void HostQtDesktop::init(int w, int h)
 
 void HostQtDesktop::show()
 {
-	QGestureRecognizer::registerRecognizer(new FlickGestureRecognizer);
-
 	m_widget = new QWidget;
 	m_widget->setWindowFlags(Qt::CustomizeWindowHint |
 							 Qt::WindowTitleHint |

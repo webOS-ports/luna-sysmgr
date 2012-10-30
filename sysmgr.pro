@@ -244,6 +244,7 @@ SOURCES = \
 	CardGroup.cpp \
 	KeyboardMapping.cpp \
 	SingleClickGestureRecognizer.cpp \
+	FlickGestureRecognizer.cpp \
 #	BootupAnimation.cpp \
 	ProgressAnimation.cpp \
 	CardHostWindow.cpp \
@@ -422,6 +423,8 @@ HEADERS = \
 	KeyboardMapping.h \
 	SingleClickGestureRecognizer.h \
 	SingleClickGesture.h \
+	FlickGestureRecognizer.h \
+	FlickGesture.h \
 #	BootupAnimation.h \
 	ProgressAnimation.h \
 	CardHostWindow.h \
