@@ -82,7 +82,7 @@ QFont PageTabBar::staticLabelFontForTabs()
 
 PageTabBar::PageTabBar(const QRectF& pageTabBarGeometry,LauncherObject * p_belongsTo)
 : ThingPaintable(pageTabBarGeometry)
-, m_maxTabWidth(150 * Settings::LunaSettings()->uiScale)
+, m_maxTabWidth(150 * Settings::LunaSettings()->layoutScale)
 , m_interactionsBlocked(false)
 , m_qp_currentUIOwner(p_belongsTo)
 , m_qp_backgroundPmo(0)
@@ -137,7 +137,7 @@ QSize PageTabBar::PageTabSizeFromLauncherSize(quint32 launcherWidth,quint32 laun
 	{
 		return QSize(
 				launcherWidth,
-				qMin(launcherHeight,(quint32)(LayoutSettings::settings()->tabBarHeightAbsolute)) * Settings::LunaSettings()->uiScale
+				qMin(launcherHeight,(quint32)(LayoutSettings::settings()->tabBarHeightAbsolute)) * Settings::LunaSettings()->layoutScale
 		);
 	}
 
