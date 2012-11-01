@@ -1735,7 +1735,7 @@ void LockWindow::handlePenMoveStateNormal(Event* event)
 	m_lockButton->setPos(event->x, event->y);
 
 	int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
-	if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->uiScale) && (event->y < m_lockButtonY))
+	if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->layoutScale) && (event->y < m_lockButtonY))
 		hideHelp();
 	else
 		showHelp();
@@ -1765,7 +1765,7 @@ void LockWindow::handlePenUpStateNormal(Event* event)
 		m_lockButton->press(false);
 
 		int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
-		if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->uiScale) && (event->y < m_lockButtonY)){
+		if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->layoutScale) && (event->y < m_lockButtonY)){
 			tryUnlock();
 			SystemService::instance()->postLockButtonTriggered();
 		}
