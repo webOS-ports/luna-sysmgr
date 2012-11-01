@@ -168,6 +168,7 @@ Settings::Settings()
 	, atlasEnabled(false)
 	, uiScale(1.0)
 	, textScale(1.0)
+	, layoutScale(1.0)
 	, imeScale(1.0)
 	, cardGroupingXDistanceFactor(1.0)
 	, atlasMemThreshold(0)
@@ -511,6 +512,7 @@ void Settings::load(const char* settingsFile)
 	KEY_BOOLEAN("UI", "AtlasEnabled", atlasEnabled);
 	KEY_DOUBLE("UI", "UIScale", uiScale);
 	KEY_DOUBLE("UI", "TextScale", textScale);
+	KEY_DOUBLE("UI", "LayoutScale", layoutScale);
 	KEY_DOUBLE("UI", "IMEScale", imeScale);
 
 	KEY_INTEGER("UI", "ModalWindowWidth", modalWindowWidth);
@@ -703,10 +705,10 @@ void Settings::postLoad()
 	// Piranha flags
 	
 	//UI Scaling for positive space padding
-	positiveSpaceTopPadding *= uiScale;
-	positiveSpaceBottomPadding *= uiScale;
-	statusBarTitleMaxWidth *= uiScale;
-	gapBetweenCardGroups *= uiScale;
+	positiveSpaceTopPadding *= layoutScale;
+	positiveSpaceBottomPadding *= layoutScale;
+	statusBarTitleMaxWidth *= textScale;
+	gapBetweenCardGroups *= layoutScale;
 }
 
 // Expands "1MB" --> 1048576, "2k" --> 2048, etc.

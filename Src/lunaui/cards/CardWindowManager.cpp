@@ -2491,7 +2491,7 @@ void CardWindowManager::slotPositiveSpaceChanged(const QRect& r)
 
 		// TODO: this is a temporary solution to fake the existence of the search pill
 		// 	which happens to be 50 pixels tall
-		quint32 pillOffset = 50 * Settings::LunaSettings()->uiScale;
+		quint32 pillOffset = 50 * Settings::LunaSettings()->layoutScale;
 		kActiveScale = ((qreal) (r.height() - pillOffset) * kActiveWindowScale) / (qreal) m_normalScreenBounds.height();
 		kActiveScale = qMax(kMinimumWindowScale, kActiveScale);
 

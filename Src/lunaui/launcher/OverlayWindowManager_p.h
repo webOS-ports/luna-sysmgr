@@ -137,7 +137,7 @@ public:
 		}
 
 		QRectF iconGeom = DimensionsGlobal::realRectAroundRealPoint(m_qp_iconPmo->size());
-		qreal rightOffset = (qreal)qMin((quint32)(LayoutSettings::settings()->searchPillInnerIconRightOffset * Settings::LunaSettings()->uiScale),(quint32)(m_geom.right()-iconGeom.width()));
+		qreal rightOffset = (qreal)qMin((quint32)(LayoutSettings::settings()->searchPillInnerIconRightOffset * Settings::LunaSettings()->layoutScale),(quint32)(m_geom.right()-iconGeom.width()));
 		m_iconPos = QPointF(m_geom.right()-iconGeom.width()-rightOffset,
 				m_geom.top()+(m_geom.height()-iconGeom.height())/2.0);
 	}

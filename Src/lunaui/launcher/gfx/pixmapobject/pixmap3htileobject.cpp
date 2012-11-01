@@ -272,10 +272,18 @@ bool Pixmap3HTileObject::createDestinationRectangles()
 	 m_boundingRect = QRectF();
 	 m_destRects = QVector<QRectF>(3);
 
-    m_destRects[0] = QRectF(0,0,
-             m_sourceRects[0].width() * Settings::LunaSettings()->uiScale,m_destinationSizeRequested.height());
-    m_destRects[2] = QRectF(m_destinationSizeRequested.width()-(m_sourceRects[2].width() * Settings::LunaSettings()->uiScale),0.0,
-                m_sourceRects[2].width() * Settings::LunaSettings()->uiScale,m_destinationSizeRequested.height());
+    m_destRects[0] = QRectF(
+    	     0,
+    	     0,
+             m_sourceRects[0].width(),
+             m_destinationSizeRequested.height()
+             );
+    m_destRects[2] = QRectF(
+    		m_destinationSizeRequested.width()-m_sourceRects[2].width(),
+    		0,
+                m_sourceRects[2].width(),
+                m_destinationSizeRequested.height()
+                );
 
     m_inCoords.setLeft(m_sourceRects[0].width());
     m_inCoords.setRight(m_sourceRects[2].width());
@@ -294,5 +302,6 @@ bool Pixmap3HTileObject::createDestinationRectangles()
     	m_geom |= m_destRects[i];
     }
     m_boundingRect = m_geom.adjusted(-0.5,-0.5,0.5,0.5);
+    
     return true;
 }
