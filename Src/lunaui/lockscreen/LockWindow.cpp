@@ -2438,9 +2438,11 @@ LockBackground::LockBackground()
 	// Load mask pixmaps
 	std::string maskFilePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-wallpaper-mask-bottom.png";
 	m_bottomMask = QPixmap(qFromUtf8Stl(maskFilePath));
+	m_bottomMask = m_bottomMask.scaledToHeight(m_bottomMask.height() * Settings::LunaSettings()->uiScale);
 
 	maskFilePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-wallpaper-mask-top.png";
 	m_topMask = QPixmap(qFromUtf8Stl(maskFilePath));
+	m_topMask = m_topMask.scaledToHeight(m_topMask.height() * Settings::LunaSettings()->uiScale);
 }
 
 LockBackground::~LockBackground()
