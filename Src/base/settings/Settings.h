@@ -168,6 +168,7 @@ public:
 	bool                atlasEnabled;
 	qreal                uiScale;
 	qreal                textScale;
+	qreal                layoutScale;
 	qreal                imeScale;
 	double					cardGroupingXDistanceFactor;
 	int                 atlasMemThreshold;

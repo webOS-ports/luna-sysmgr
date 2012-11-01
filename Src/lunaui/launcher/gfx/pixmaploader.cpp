@@ -114,8 +114,7 @@ Pixmap3HTileObject * PixmapObjectLoader::quickLoadThreeHorizTiled(const QString&
 	return p;
 }
 
-Pixmap3HTileObject * PixmapObjectLoader::quickLoadThreeHorizTiled(const quint32 width, const quint32 height, const QString& fileName,const quint32 leftIn,const quint32 rightIn,
-													const char * format, Qt::ImageConversionFlags flags,QObject * p_setOwner)
+Pixmap3HTileObject * PixmapObjectLoader::quickLoadThreeHorizTiled(const quint32 width, const quint32 height, const QString& fileName,const quint32 leftIn,const quint32 rightIn, const char * format, Qt::ImageConversionFlags flags,QObject * p_setOwner)
 {
 	Pixmap3HTileObject * p = new Pixmap3HTileObject(width,height,fileName,leftIn,rightIn,
 			PixmapHTilingStyle::Scale,format,flags);

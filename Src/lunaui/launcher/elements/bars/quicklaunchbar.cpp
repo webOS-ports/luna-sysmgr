@@ -64,7 +64,7 @@
 #define QUICKLAUNCH_BG_SIZE	QSize(10,105)
 
 #define LA_BUTTON_FILEPATH QString("quicklaunch-button-launcher.png")
-#define LA_BUTTON_SIZE 64
+#define LA_BUTTON_SIZE 64 
 #define MOVING_ICON_Y_OFFSET 15
 
 
@@ -74,7 +74,7 @@ qint32 QuickLaunchBar::sEventCounter0 = 0;
 static PixButton2State * LoadLauncherAccessButton()
 {
 	QList<QRect> buttonStateCoords;
-	int size = LA_BUTTON_SIZE * Settings::LunaSettings()->uiScale;
+	int size = LA_BUTTON_SIZE * Settings::LunaSettings()->layoutScale;
 	buttonStateCoords << QRect(0,0,size,size) << QRect(0,size,size,size);
 	QList<PixmapObject *> buttonStatePmos =
 			PixmapObjectLoader::instance()->loadMulti(
@@ -109,14 +109,14 @@ QuickLaunchBar::QuickLaunchBar(const QRectF& geom,Quicklauncher * p_quicklaunche
 	m_qp_backgroundTranslucent =
 			PixmapObjectLoader::instance()->quickLoad(
 					QString(GraphicsSettings::settings()->graphicsAssetBaseDirectory + QUICKLAUNCH_BG_TRANSLUCENT),
-					QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->uiScale,
+					QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->layoutScale,
 					false
 					
 			);
 	m_qp_backgroundSolid =
 				PixmapObjectLoader::instance()->quickLoad(
 						QString(GraphicsSettings::settings()->graphicsAssetBaseDirectory + QUICKLAUNCH_BG_SOLID),
-						QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->uiScale,
+						QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->layoutScale,
 						false
 			);
 	m_qp_currentBg = m_qp_backgroundTranslucent;
@@ -633,7 +633,7 @@ QSize QuickLaunchBar::QuickLaunchSizeFromScreenSize(int screenWidth,int screenHe
 {
 	if (LayoutSettings::settings()->quickLaunchBarUseAbsoluteSize)
 	{
-		return QSize(screenWidth,qMin(LayoutSettings::settings()->quickLaunchBarHeightAbsolute,(quint32)screenHeight) * Settings::LunaSettings()->uiScale);
+		return QSize(screenWidth,qMin(LayoutSettings::settings()->quickLaunchBarHeightAbsolute,(quint32)screenHeight) * Settings::LunaSettings()->layoutScale);
 	}
 	QSize r = QSize(
 			qBound((quint32)2,
@@ -648,9 +648,9 @@ QSize QuickLaunchBar::QuickLaunchSizeFromScreenSize(int screenWidth,int screenHe
 	r.setWidth(r.width() - (r.width() % 2));
 	r.setHeight(r.height() - (r.height() % 2));
 	
-	//obey uiScale
-	r.setWidth(r.width() * Settings::LunaSettings()->uiScale);
-	r.setHeight(r.height() * Settings::LunaSettings()->uiScale);
+	//obey layoutScale
+	r.setWidth(r.width() * Settings::LunaSettings()->layoutScale);
+	r.setHeight(r.height() * Settings::LunaSettings()->layoutScale);
 	
 	return r;
 
