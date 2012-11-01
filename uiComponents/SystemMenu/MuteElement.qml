@@ -10,9 +10,10 @@ MenuListEntry {
     property bool   newMuteStatus: false
     property real uiScale;
     property real textScale;
+    property real layoutScale;
 
-    property int iconSpacing : 4 * uiScale
-    property int rightMarging: 8 * uiScale
+    property int iconSpacing : 4 * layoutScale
+    property int rightMarging: 8 * layoutScale
 
     content:
         Item {

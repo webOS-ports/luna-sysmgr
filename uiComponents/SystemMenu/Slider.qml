@@ -4,13 +4,14 @@ Item {
     id: slider
     property real  setValue : 0.5
     property bool  active:  true
-    property real  uiScale: 1.75
+    property real  uiScale: 1.0
+    property real  layoutScale: 1.0
 
-    property real   railEdgeOffset:   8 * uiScale
-    property int   railBorderWidth: 11
+    property real   railEdgeOffset:   8 * layoutScale
+    property int   railBorderWidth: 11 * 4
 
-    property int   handleGrabTolerance: 12 * uiScale
-    property int   railTapTolerance: 20 * uiScale
+    property int   handleGrabTolerance: 12 * layoutScale
+    property int   railTapTolerance: 20 * layoutScale
     property real  railChangeStep: 0.20
 
     property bool mouseDownOnHandle : false
@@ -126,7 +127,9 @@ Item {
     BorderImage {
         id: bar
         source: "/usr/palm/sysmgr/images/statusBar/slider-track.png"
-        width: parent.width;
+        width: parent.width / uiScale;
+        scale: uiScale;
+        x: -width/3.5;
         border { left: railBorderWidth; top: 0; right: railBorderWidth; bottom: 0 }
         anchors.verticalCenter: parent.verticalCenter
     }
@@ -134,7 +137,9 @@ Item {
     BorderImage {
         id: barProgress
         source: "/usr/palm/sysmgr/images/statusBar/slider-track-progress.png"
-        width: Math.max(((parent.width - handle.width/2) * setValue + handle.width/2), 2*railBorderWidth)
+        width: Math.max(((parent.width - handle.width/2) * setValue + handle.width/2), 2*railBorderWidth) / uiScale;
+        scale: uiScale;
+        x: -width/3.5;
         border { left: railBorderWidth; top: 0; right: railBorderWidth; bottom: 0 }
         anchors.verticalCenter: parent.verticalCenter
     }
