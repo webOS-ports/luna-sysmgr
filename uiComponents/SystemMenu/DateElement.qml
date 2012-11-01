@@ -2,8 +2,8 @@ import Qt 4.7
 
 MenuListEntry {
     property int ident: 0
-    property real uiScale;
     property real textScale;
+    property real layoutScale;
 
     function updateDate() {
         dateText.text = Qt.formatDate(new Date, Qt.DefaultLocaleLongDate);

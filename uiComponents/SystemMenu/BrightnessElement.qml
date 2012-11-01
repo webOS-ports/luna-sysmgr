@@ -12,15 +12,16 @@ MenuListEntry {
     selectable: false
     
     property real uiScale: 1.0
+    property real layoutScale: 1.0
 
     property int margin: 0
-    property int spacing: 5 * uiScale
+    property int spacing: 5 * layoutScale
 
     content:
         Item {
             id: brightnessContent
             x: 4
-            width: brightnessElement.width - 8 * uiScale
+            width: brightnessElement.width - 8 * layoutScale
             height: brightnessElement.height
 
 
@@ -49,6 +50,8 @@ MenuListEntry {
                 x: brightnessContent.width/2 - width/2
                 y: brightnessContent.height/2 - height/2
                 active: brightnessElement.active
+        	uiScale: brightnessElement.uiScale
+        	layoutScale: brightnessElement.layoutScale
 
                 onValueChanged: {
                     brightnessChanged(value, done);

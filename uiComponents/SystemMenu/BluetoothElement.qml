@@ -7,6 +7,7 @@ Drawer {
     property int internalIdent: 0
     property real uiScale;
     property real textScale;
+    property real layoutScale;
 
     property bool isBluetoothOn: false
     property bool btTurningOn:   false
@@ -142,7 +143,7 @@ Drawer {
     drawerHeader:
     MenuListEntry {
         selectable: bluetoothMenu.active
-        uiScale: bluetoothMenu.uiScale;
+        layoutScale: bluetoothMenu.layoutScale;
         content: Item {
                     width: parent.width;
 
@@ -190,7 +191,7 @@ Drawer {
         MenuListEntry {
             id: bluetoothOnOff
             selectable: true
-            uiScale: bluetoothMenu.uiScale;
+            layoutScale: bluetoothMenu.layoutScale;
             content: Text {
                          id: bluetoothOnOffText;
                          x: ident + internalIdent;
@@ -222,7 +223,7 @@ Drawer {
 
         MenuListEntry {
             selectable: true
-            uiScale: bluetoothMenu.uiScale;
+            layoutScale: bluetoothMenu.layoutScale;
             content: Text {
 		x: ident + internalIdent;
 		text: runtime.getLocalizedString("Bluetooth Preferences");
@@ -248,7 +249,7 @@ Drawer {
             MenuListEntry {
                 id: entry
                 selectable: true
-                uiScale: bluetoothMenu.uiScale;
+                layoutScale: bluetoothMenu.layoutScale;
                 forceSelected: showSelected
 
                 content: BluetoothEntry {

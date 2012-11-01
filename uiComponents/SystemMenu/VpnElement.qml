@@ -7,6 +7,7 @@ Drawer {
     property bool coloseOnConnect: false
     property real uiScale;
     property real textScale;
+    property real layoutScale;
 
     // ------------------------------------------------------------
     // External interface to the VPM Element is defined here:
@@ -71,7 +72,7 @@ Drawer {
     drawerHeader:
     MenuListEntry {
         selectable: vpnMenu.active
-        uiScale: vpnMenu.uiScale;
+        layoutScale: vpnMenu.layoutScale;
         content: Item {
                     width: parent.width;
 
@@ -121,7 +122,7 @@ Drawer {
         MenuListEntry {
             id: vpnPrefs
             selectable: true
-            uiScale: vpnMenu.uiScale;
+            layoutScale: vpnMenu.layoutScale;
             content: Text {
 		x: ident + internalIdent;
 		text: runtime.getLocalizedString("VPN Preferences");
@@ -147,7 +148,7 @@ Drawer {
             MenuListEntry {
                 id: entry
                 selectable: true
-                uiScale: vpnMenu.uiScale;
+                layoutScale: vpnMenu.layoutScale;
                 forceSelected: showSelected
 
                 content: VpnEntry {
