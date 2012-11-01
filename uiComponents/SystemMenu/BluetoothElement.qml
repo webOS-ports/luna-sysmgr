@@ -164,6 +164,7 @@ Drawer {
                         x: bluetoothTitle.width + 20;
                         y:-17
                         on: btTurningOn && bluetoothMenu.isOpen();
+                        scale:uiScale
                     }
 
                     Text {
@@ -186,7 +187,7 @@ Drawer {
         spacing: 0
         width: parent.width
 
-        MenuDivider { id: separator; scale: uiScale; }
+        MenuDivider { id: separator; uiScale: bluetoothMenu.uiScale; }
 
         MenuListEntry {
             id: bluetoothOnOff
@@ -209,7 +210,7 @@ Drawer {
             }
         }
 
-        MenuDivider  { }
+        MenuDivider  { uiScale: bluetoothMenu.uiScale; }
 
         ListView {
 	    id: bluetoothListView
@@ -262,6 +263,9 @@ Drawer {
                             connStatus:   connectionStatus;
                             status:       itemStatus;
                             connected:    isConnected;
+                            uiScale: bluetoothMenu.uiScale;
+                            textScale: bluetoothMenu.textScale;
+                            layoutScale: bluetoothMenu.layoutScale;
                          }
 
                 onAction: {
@@ -282,7 +286,7 @@ Drawer {
                 }
             }
 
-            MenuDivider  { }
+            MenuDivider  { uiScale: bluetoothMenu.uiScale; }
 
         }
 

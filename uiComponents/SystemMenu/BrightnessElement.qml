@@ -15,7 +15,7 @@ MenuListEntry {
     property real layoutScale: 1.0
 
     property int margin: 0
-    property int spacing: 5 * layoutScale
+    property int spacing: 5
 
     content:
         Item {
