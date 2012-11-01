@@ -245,6 +245,8 @@ protected:
 
 	QPointer<PixButton2State> m_qp_launcherAccessButton;
 
+	quint32 m_maxItems;
+
 	//items are constrained to within this x range in ICS
 	QPair<qint32,qint32>	m_itemAreaXrange;
 	//...and this is the centerline
