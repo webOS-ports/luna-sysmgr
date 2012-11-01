@@ -159,9 +159,10 @@ Drawer {
                     AnimatedSpinner {
                     //Spinner {
                         id: wifiSpinner
-                        x: wifiTitle.width + 18;
-                        y:-17
+                        x: wifiTitle.width + 18 * layoutScale;
+                        y: -17 * layoutScale;
                         on:false
+                        scale:uiScale
                     }
 
                     Text {
@@ -184,7 +185,7 @@ Drawer {
         spacing: 0
         width: parent.width
 
-        MenuDivider  { id: separator; scale: uiScale; }
+        MenuDivider  { id: separator; uiScale: wifiMenu.uiScale; }
 
         MenuListEntry {
             id: wifiOnOff
@@ -210,7 +211,7 @@ Drawer {
             }
         }
 
-        MenuDivider { }
+        MenuDivider { uiScale: wifiMenu.uiScale; }
 
         ListView {
             id: wifiListView
@@ -259,6 +260,9 @@ Drawer {
                             status:       itemStatus;
                             statusInBold: boldStatus;
                             connected:    isConnected;
+                            uiScale: wifiMenu.uiScale;
+                            textScale: wifiMenu.textScale;
+                            layoutScale: wifiMenu.layoutScale;
                          }
                 onAction: {
                     itemSelected(index,
@@ -280,7 +284,7 @@ Drawer {
                 }
             }
 
-            MenuDivider { }
+            MenuDivider { uiScale: wifiMenu.uiScale; }
         }
 
     }

@@ -8,11 +8,11 @@ Item {
     property real layoutScale: 1.0
     property int  maxWidth: 300 * layoutScale
     property int  maxHeight: 410 * layoutScale
-    property int  headerIdent:   14 * layoutScale
-    property int  subItemIdent:  16 * layoutScale
-    property int  dividerWidthOffset: 7 * layoutScale
+    property int  headerIdent:   14
+    property int  subItemIdent:  16
+    property int  dividerWidthOffset: 7
     property int  itemIdent:     subItemIdent + headerIdent
-    property int  edgeOffset: 11 * layoutScale
+    property int  edgeOffset: 11
     property bool flickableOverride: false
 
     property bool airplaneModeInProgress: false
@@ -161,7 +161,7 @@ Item {
                     layoutScale: systemmenu.layoutScale;
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale; layoutScale: systemmenu.layoutScale;}
+                MenuDivider {widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
 
                 BatteryElement {
                     id: battery
@@ -170,7 +170,7 @@ Item {
                     layoutScale: systemmenu.layoutScale;
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
+                MenuDivider {widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
 
                 BrightnessElement {
                     id: brightness
@@ -188,7 +188,7 @@ Item {
                     }
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
+                MenuDivider {widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
 
                 WiFiElement {
                     id: wifi
@@ -214,7 +214,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: wifi.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
+                MenuDivider {visible: wifi.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
 
                 VpnElement {
                     id: vpn
@@ -240,7 +240,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: vpn.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
+                MenuDivider {visible: vpn.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
 
                 BluetoothElement {
                     id: bluetooth
@@ -266,7 +266,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: bluetooth.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
+                MenuDivider {visible: bluetooth.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
 
                 AirplaneModeElement {
                     id: airplane
@@ -285,7 +285,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: airplane.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
+                MenuDivider {visible: airplane.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
 
                 RotationLockElement {
                     id: rotation
@@ -304,7 +304,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: rotation.visible; widthOffset: dividerWidthOffset; scale: uiScale; smooth: true;}
+                MenuDivider {visible: rotation.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
 
                 MuteElement {
                     id: muteControl
