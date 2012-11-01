@@ -190,6 +190,7 @@ void SystemMenu::init()
 				 // scale the system menu
 				 QMetaObject::invokeMethod(m_menuObject, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->uiScale));
 				 QMetaObject::invokeMethod(m_menuObject, "setTextScale", Q_ARG(QVariant, Settings::LunaSettings()->textScale));
+				 QMetaObject::invokeMethod(m_menuObject, "setLayoutScale", Q_ARG(QVariant, Settings::LunaSettings()->layoutScale));
 				 
 				 
 				 // setup geometry and positioning

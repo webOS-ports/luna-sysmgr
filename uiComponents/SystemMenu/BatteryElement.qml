@@ -4,8 +4,8 @@ MenuListEntry {
     id: thisElement
     property int ident: 0
     property string batteryText;
-    property real uiScale;
     property real textScale;
+    property real layoutScale;
 
     Connections {
         target: NativeSystemMenuHandler
