@@ -57,6 +57,7 @@
 
 #include <QDebug>
 
+#include "HostBase.h"
 #include "Settings.h"
 
 #define QUICKLAUNCH_BG_SOLID	QString("/quicklaunch-bg-solid.png")
@@ -103,6 +104,7 @@ QuickLaunchBar::QuickLaunchBar(const QRectF& geom,Quicklauncher * p_quicklaunche
 , m_qp_iconInMotion(0)
 , m_iconInMotionCurrentIndex(-1)
 , m_iconShowingFeedback(0)
+, m_maxItems(0)
 , m_feedbackTimer(this)
 {
 
@@ -129,6 +131,12 @@ QuickLaunchBar::QuickLaunchBar(const QRectF& geom,Quicklauncher * p_quicklaunche
 
 		connect(m_qp_launcherAccessButton,SIGNAL(signalContact()),this,SIGNAL(signalToggleLauncher()));
 	}
+	
+	//Calculate maximum items from smallest screen dimension and icon size
+	const HostInfo& info = HostBase::instance()->getInfo();
+	int size = LA_BUTTON_SIZE * Settings::LunaSettings()->layoutScale * 1.25;
+	m_maxItems =  (qMin(info.displayWidth, info.displayHeight) - size) / size;
+	
 	setAcceptTouchEvents(true);
 	grabGesture((Qt::GestureType) SysMgrGestureFlick);
 	grabGesture(Qt::TapAndHoldGesture);
@@ -148,7 +156,7 @@ QuickLaunchBar::~QuickLaunchBar()
 //virtual
 bool QuickLaunchBar::canAcceptIcons()
 {
-	if ((quint32)(m_iconItems.size()) >= LayoutSettings::settings()->quickLaunchMaxItems)
+	if ((quint32)(m_iconItems.size()) >= m_maxItems)
 	{
 		return false;
 	}
@@ -452,7 +460,7 @@ bool QuickLaunchBar::restoreFromSave()
 	//restore only up to the max allowable icons
 	int restoredCount = 0;
 	for (WebOSRestoreObjectList::const_iterator app_it = restoredAppsList.constBegin();
-			((app_it != restoredAppsList.constEnd()) && ((quint32)restoredCount < LayoutSettings::settings()->quickLaunchMaxItems));++app_it)
+			((app_it != restoredAppsList.constEnd()) && ((quint32)restoredCount < m_maxItems));++app_it)
 	{
 		//This is the quicklaunch, which means that the icons here must be CLONES. So each one needs to be cloned before being added here
 		DimensionsSystemInterface::WebOSAppRestoreObject const& pRestoreObj = *app_it;
@@ -781,9 +789,9 @@ bool QuickLaunchBar::addIcon(quint32 index,IconBase * p_icon, bool animate)
 		return false;
 	}
 
-	if ((quint32)(m_iconItems.size()) >= LayoutSettings::settings()->quickLaunchMaxItems)
+	if ((quint32)(m_iconItems.size()) >= m_maxItems)
 	{
-		g_warning("%s: early-exit: max items (%d) reached",__FUNCTION__,LayoutSettings::settings()->quickLaunchMaxItems);
+		g_warning("%s: early-exit: max items (%d) reached",__FUNCTION__,m_maxItems);
 		return false;
 	}
 
@@ -1128,7 +1136,7 @@ IconBase* QuickLaunchBar::iconAtCoordinate(const QPointF& coord)
 //virtual
 qint32 QuickLaunchBar::iconSlotForInsertingAtXCoord(qint32 x)
 {
-	if ((quint32)(m_iconItems.size()) >= LayoutSettings::settings()->quickLaunchMaxItems)
+	if ((quint32)(m_iconItems.size()) >= m_maxItems)
 		return -1;
 
 	// returns the most likely slot a new icon will end up when inserted at the provided X coord
