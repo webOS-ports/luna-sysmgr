@@ -8,10 +8,10 @@ Rectangle {
     property bool selectable: true
     property bool selected: false
     property bool forceSelected: false
-    property real uiScale: 1.0;
+    property real layoutScale: 1.0;
     
     width: parent.width
-    height: 42 * uiScale;
+    height: 42 * layoutScale;
 
     property int menuPosition:0 // 0 = middle, 1 = top, 2 = bottom
 

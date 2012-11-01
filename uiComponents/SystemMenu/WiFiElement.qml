@@ -7,6 +7,7 @@ Drawer {
     property int internalIdent: 0
     property real uiScale;
     property real textScale;
+    property real layoutScale;
 
     property bool isWifiOn: false
     property bool coloseOnConnect: false
@@ -140,7 +141,7 @@ Drawer {
     drawerHeader:
     MenuListEntry {
         selectable: wifiMenu.active
-        uiScale: wifiMenu.uiScale;
+        layoutScale: wifiMenu.layoutScale;
         content: Item {
                     width: parent.width;
 
@@ -188,7 +189,7 @@ Drawer {
         MenuListEntry {
             id: wifiOnOff
             selectable: true
-            uiScale: wifiMenu.uiScale;
+            layoutScale: wifiMenu.layoutScale;
             content: Text {  id: wifiOnOffText;
                              x: ident + internalIdent;
                              text: isWifiOn ? runtime.getLocalizedString("Turn off WiFi") : runtime.getLocalizedString("Turn on WiFi");
@@ -223,7 +224,7 @@ Drawer {
 
         MenuListEntry {
             selectable: true
-            uiScale: wifiMenu.uiScale;
+            layoutScale: wifiMenu.layoutScale;
             content: Text { x: ident + internalIdent; text: runtime.getLocalizedString("Wi-Fi Preferences"); color: "#FFF"; font.bold: false; font.pixelSize: 18 * textScale; font.family: "Prelude"}
             onAction: {
                 clearWifiList()
@@ -243,7 +244,7 @@ Drawer {
             MenuListEntry {
                 id: entry
                 selectable: true
-       		uiScale: wifiMenu.uiScale;
+       		layoutScale: wifiMenu.layoutScale;
                 forceSelected: showSelected
 
                 content: WifiEntry {
