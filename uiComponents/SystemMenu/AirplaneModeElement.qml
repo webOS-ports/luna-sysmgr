@@ -8,8 +8,8 @@ MenuListEntry {
     property real uiScale;
     property real layoutScale;
 
-    property int iconSpacing : 4 * layoutScale
-    property int rightMarging: 8 * layoutScale
+    property int iconSpacing : 4
+    property int rightMarging: 8
 
     content:
         Item {

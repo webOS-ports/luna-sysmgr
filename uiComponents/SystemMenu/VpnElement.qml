@@ -108,7 +108,7 @@ Drawer {
         spacing: 0
         width: parent.width
 
-        MenuDivider { id: separator; scale: uiScale;}
+        MenuDivider { id: separator; uiScale: vpnMenu.uiScale; }
 
         ListView {
 	    id: vpnListView
@@ -160,6 +160,9 @@ Drawer {
                             connected: isConnected;
                             connStatus: connectionStatus;
                             vpnProfileInfo: vpnInfo;
+                            uiScale: vpnMenu.uiScale;
+                            textScale: vpnMenu.textScale;
+                            layoutScale: vpnMenu.layoutScale;
                          }
 
                 onAction: {
@@ -174,7 +177,7 @@ Drawer {
                 }
             }
 
-            MenuDivider { }
+            MenuDivider { uiScale: vpnMenu.uiScale; }
 
         }
 
