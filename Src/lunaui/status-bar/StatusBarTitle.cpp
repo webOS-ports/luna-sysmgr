@@ -25,7 +25,6 @@
 #include "AnimationSettings.h"
 
 #include <QPainter>
-#include <QDebug>
 
 #define TITLE_WIDTH_PADDING   2
 
@@ -64,7 +63,7 @@ StatusBarTitle::StatusBarTitle(int width, int height, bool classicUi)
 		m_font->setBold(true);
 	}
 	
-	m_baselineOffset = -height/3.5;
+	m_baselineOffset = 0;
 
 	QFontMetrics fontMetrics (*m_font);
 
@@ -98,6 +97,7 @@ QRectF StatusBarTitle::boundingRect() const
 
 void StatusBarTitle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
+	painter->translate(0,m_bounds.height()/4);
 	if(!m_inTransition) {
 		painter->drawPixmap(m_bounds, m_currentTitle, QRectF(0, 0, m_bounds.width(), m_bounds.height()));
 	} else {
@@ -113,6 +113,7 @@ void StatusBarTitle::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 
 		painter->setOpacity(oldOpacity);
 	}
+	painter->translate(0,-m_bounds.height()/4);
 }
 
 void StatusBarTitle::setTitleString (std::string title, bool showTitleBorder)
