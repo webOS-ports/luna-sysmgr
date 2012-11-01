@@ -84,7 +84,6 @@ LayoutSettings::LayoutSettings()
 , quickLaunchBarHeightAbsolute(100)
 , quickLaunchBarLauncherAccessButtonOffsetPx(0,-20) // for now, only the Y of this offset is being used
 , quickLaunchItemAreaOffsetPx(0,65)
-, quickLaunchMaxItems(5)
 
 , centerUiVerticalOffset(0)
 
@@ -301,7 +300,6 @@ void LayoutSettings::load(const char* settingsFile)
 	KEYS_POINT("QuickLaunch","quickLaunchItemAreaHorizontalOffsetPx",
 							"quickLaunchItemAreaVerticalOffsetPx",
 							quickLaunchItemAreaOffsetPx);
-	KEY_INTEGER("QuickLaunch","quickLaunchMaxItems",quickLaunchMaxItems);
 
 	KEYS_POINT("Icons","iconVisibleLocationHorizontalOffsetPx","iconVisibleLocationVerticalOffsetPx",iconVisibleLocationOffsetPx);
 

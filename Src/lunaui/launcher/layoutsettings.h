@@ -85,10 +85,6 @@ public:
 	// of the icons that will be in the QL.
 	QPoint quickLaunchItemAreaOffsetPx;
 
-	//you still have to be careful how you set this. It will not prevent things from overlapping. Consider the sizes of your icons
-	// and the potential sizes of the QL (in every screen configuration)
-	quint32 quickLaunchMaxItems;
-
 	qint32 centerUiVerticalOffset;
 
 	qreal searchPillWidthPctScreenRelative;
