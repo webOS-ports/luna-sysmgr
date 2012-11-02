@@ -99,7 +99,7 @@ private:
 	bool     m_actionable;
 	bool     m_mouseDown;
 	QPixmap* m_activeBkgPix;
-//	QPixmap* m_pressedBkgPix;
+	QPixmap* m_pressedBkgPix;
 	QPixmap* m_arrowPix;
 	QPixmap* m_separatorPix;
 

@@ -39,7 +39,7 @@ StatusBarItemGroup::StatusBarItemGroup(int height, bool hasArrow, bool showSepar
 	, m_actionable(false)
 	, m_mouseDown(false)
 	, m_activeBkgPix(0)
-//	, m_pressedBkgPix(0)
+	, m_pressedBkgPix(0)
 	, m_arrowPix(0)
 	, m_separatorPix(0)
 	, m_opacityAnimPtr(0)
@@ -78,8 +78,8 @@ StatusBarItemGroup::~StatusBarItemGroup()
 	if(m_activeBkgPix)
 		delete m_activeBkgPix;
 
-//	if(m_pressedBkgPix)
-//		delete m_pressedBkgPix;
+	if(m_pressedBkgPix)
+		delete m_pressedBkgPix;
 }
 
 void StatusBarItemGroup::setHeight(int h)
@@ -123,13 +123,13 @@ void StatusBarItemGroup::setActionable(bool actionable)
 			m_activeBkgPix = new QPixmap(filePath.c_str());
 		}
 
-//		if(m_actionable && !m_pressedBkgPix) {
-//			Settings* settings = Settings::LunaSettings();
-//			std::string statusBarImagesPath = settings->lunaSystemResourcesPath + "/statusBar/";
-//
-//			std::string filePath = statusBarImagesPath + "status-bar-menu-dropdown-tab-pressed.png";
-//			m_pressedBkgPix = new QPixmap(filePath.c_str());
-//		}
+		if(m_actionable && !m_pressedBkgPix) {
+			Settings* settings = Settings::LunaSettings();
+			std::string statusBarImagesPath = settings->lunaSystemResourcesPath + "/statusBar/";
+
+			std::string filePath = statusBarImagesPath + "status-bar-menu-dropdown-tab-pressed.png";
+			m_pressedBkgPix = new QPixmap(filePath.c_str());
+		}
 	}
 
 	// make sure the arrow is visible, but only when the item is accepting actions
@@ -318,7 +318,7 @@ void StatusBarItemGroup::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	} else {
 		event->accept();
 		m_mouseDown = true;
-//		update();
+		update();
 	}
 }
 
@@ -338,7 +338,7 @@ void StatusBarItemGroup::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 		actionTriggered();
 	}
 	m_mouseDown = false;
-//	update();
+	update();
 }
 
 
@@ -376,14 +376,14 @@ void StatusBarItemGroup::paint(QPainter* painter, const QStyleOptionGraphicsItem
 							*m_activeBkgPix, m_activeBkgPix->width() - margin, 0, margin, m_activeBkgPix->height());
 	}
 
-//	if(m_mouseDown && m_pressedBkgPix) {
-//		painter->drawPixmap(tabRect.x(), tabRect.y(), margin, tabRect.height(),
-//							*m_pressedBkgPix, 0, 0, margin, m_pressedBkgPix->height());
-//		painter->drawPixmap(tabRect.x() + margin, tabRect.y(), tabRect.width() - 2*margin, tabRect.height(),
-//							*m_pressedBkgPix, margin, 0, m_pressedBkgPix->width() - 2*margin, m_pressedBkgPix->height());
-//		painter->drawPixmap(tabRect.x() + tabRect.width() - margin, tabRect.y(), margin, tabRect.height(),
-//							*m_pressedBkgPix, m_pressedBkgPix->width() - margin, 0, margin, m_pressedBkgPix->height());
-//	}
+	if(m_mouseDown && m_pressedBkgPix) {
+		painter->drawPixmap(tabRect.x(), tabRect.y(), margin, tabRect.height(),
+							*m_pressedBkgPix, 0, 0, margin, m_pressedBkgPix->height());
+		painter->drawPixmap(tabRect.x() + margin, tabRect.y(), tabRect.width() - 2*margin, tabRect.height(),
+							*m_pressedBkgPix, margin, 0, m_pressedBkgPix->width() - 2*margin, m_pressedBkgPix->height());
+		painter->drawPixmap(tabRect.x() + tabRect.width() - margin, tabRect.y(), margin, tabRect.height(),
+							*m_pressedBkgPix, m_pressedBkgPix->width() - margin, 0, margin, m_pressedBkgPix->height());
+	}
 
 	if(m_hasArrow && m_arrowPix && !m_arrowPix->isNull() && (m_arrowAnimProg > 0.0)) {
 		painter->setOpacity(m_arrowAnimProg * opacity);
