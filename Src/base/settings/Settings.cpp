@@ -188,7 +188,6 @@ Settings::Settings()
 	, dockModeUserPositions("/var/palm/user-exhibition-apps.json")
 	, dockModeMenuHeight (400)
 	, virtualKeyboardEnabled(false)
-	, showNotificationsAtTop(false)
 	, virtualCoreNaviEnabled(false)
 	, virtualCoreNaviHeight(0)
 	, uiType(UI_LUNA)
@@ -382,7 +381,6 @@ void Settings::load(const char* settingsFile)
 	KEY_BOOLEAN("General", "ShowReticle", showReticle);
 
 	KEY_INTEGER("General", "NotificationSoundDuration", notificationSoundDuration);
-	KEY_BOOLEAN("General", "ShowNotificationsAtTop", showNotificationsAtTop);
 
 	KEY_INTEGER( "CoreNavi", "ThrobberBrightnessInLight", ledPulseMaxBrightness);
 	KEY_INTEGER( "CoreNavi", "ThrobberBrightnessInDark", ledPulseDarkBrightness);
