@@ -373,7 +373,6 @@ HEADERS = \
 	IpcClientHost.h \
 	IpcServer.h \
 	WebAppMgrProxy.h \
-	SoundPlayer.h \
 	SoundPlayerPool.h \
 	MemoryWatcher.h \
 	ProcessBase.h \
