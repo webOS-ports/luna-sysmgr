@@ -166,6 +166,10 @@ public:
 	std::string         launcherScrim;
 	std::string         firstCardLaunch;
 	bool                atlasEnabled;
+	qreal                uiScale;
+	qreal                textScale;
+	qreal                layoutScale;
+	qreal                imeScale;
 	double					cardGroupingXDistanceFactor;
 	int                 atlasMemThreshold;
 	bool                launcherAtlasStatistics;

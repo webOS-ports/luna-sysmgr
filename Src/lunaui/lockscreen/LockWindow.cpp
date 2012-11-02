@@ -426,7 +426,7 @@ void LockWindow::init()
 	// Clock
 	m_clockWin = new ClockWindow();
 	m_clockWin->setParentItem(this);
-	m_clockWin->setPos(0,-(SystemUiController::instance()->currentUiHeight() * 0.35));
+	m_clockWin->setPos(0,-(SystemUiController::instance()->currentUiHeight() * 0.3));
 	m_clockWin->tick();
 
 	// Dashboard Alerts
@@ -545,7 +545,7 @@ void LockWindow::resize(int width, int height)
 
 	if(m_clockWin) {
 		m_clockWin->resize(width, height);
-		m_clockWin->setPos(0,-(height * 0.35));
+		m_clockWin->setPos(0,-(height * 0.3));
 		m_clockWin->tick();
 	}
 
@@ -1744,7 +1744,7 @@ void LockWindow::handlePenMoveStateNormal(Event* event)
 	m_lockButton->setPos(event->x, event->y);
 
 	int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
-	if ((distanceSquared > kSaucerRadiusSquared) && (event->y < m_lockButtonY))
+	if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->layoutScale) && (event->y < m_lockButtonY))
 		hideHelp();
 	else
 		showHelp();
@@ -1774,7 +1774,7 @@ void LockWindow::handlePenUpStateNormal(Event* event)
 		m_lockButton->press(false);
 
 		int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
-		if ((distanceSquared > kSaucerRadiusSquared) && (event->y < m_lockButtonY)){
+		if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->layoutScale) && (event->y < m_lockButtonY)){
 			tryUnlock();
 			SystemService::instance()->postLockButtonTriggered();
 		}
@@ -2258,14 +2258,18 @@ LockButton::LockButton()
 	// padlock images
 	QString filePath = prefix + "/screen-lock-padlock-off.png";
 	m_buttonImages[ImagePadlock] = QPixmap(filePath);
+	m_buttonImages[ImagePadlock] = m_buttonImages[ImagePadlock].scaledToHeight(m_buttonImages[ImagePadlock].height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 	filePath = prefix + "/screen-lock-padlock-on.png";
 	m_buttonImages[ImagePadlock+1] = QPixmap(filePath);
+	m_buttonImages[ImagePadlock+1] = m_buttonImages[ImagePadlock+1].scaledToHeight(m_buttonImages[ImagePadlock+1].height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 
 	// incoming call images
 	filePath = prefix + "/screen-lock-incoming-call-off.png";
 	m_buttonImages[ImageIncomingCall] = QPixmap(filePath);
+	m_buttonImages[ImageIncomingCall] = m_buttonImages[ImageIncomingCall].scaledToHeight(m_buttonImages[ImageIncomingCall].height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 	filePath = prefix + "/screen-lock-incoming-call-on.png";
 	m_buttonImages[ImageIncomingCall+1] = QPixmap(filePath);
+	m_buttonImages[ImageIncomingCall+1] = m_buttonImages[ImageIncomingCall+1].scaledToHeight(m_buttonImages[ImageIncomingCall+1].height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 
 	setPixmap(m_buttonImages[m_imageType + (m_pressed?1:0)]);
 	setOffset(-boundingRect().width()/2,-boundingRect().height()/2);
@@ -2348,16 +2352,17 @@ HelpWindow::HelpWindow()
 
 	std::string filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-target-scrim.png";
 	m_surf = new QPixmap(filePath.c_str());
+	*m_surf = m_surf->scaledToHeight(m_surf->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 
 	const char* fontName = Settings::LunaSettings()->fontLockWindow.c_str();
-	m_font = new QFont(fontName, 20); // $$$ font size
-	m_font->setPixelSize(20);
+	m_font = new QFont(fontName, 20 * Settings::LunaSettings()->textScale); // $$$ font size
+	m_font->setPixelSize(20 * Settings::LunaSettings()->textScale);
 	m_font->setBold(true);
 
 	textLayout.setFont(*m_font);
 
 	if (m_surf) {
-		m_bounds = QRect(-m_surf->width()/2, -m_surf->height()/2, m_surf->width(), m_surf->height());
+		m_bounds = QRect(-m_surf->width()/2, -m_surf->height()/1.5, m_surf->width(), m_surf->height());
 	}
 }
 
@@ -2378,7 +2383,9 @@ void HelpWindow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option
 {
 	// draw the saucer
 	if (m_surf)
+	{
 		painter->drawPixmap(m_bounds, *m_surf);
+	}
 
 	QPen oldPen = painter->pen();
 
@@ -2399,7 +2406,7 @@ void HelpWindow::setLabel(QString label)
 
 	// create the text layout for the label
 	int leading = fontMetrics.leading();
-	qreal height = 0;
+	qreal height = -fontMetrics.height()/2;
 	textLayout.beginLayout();
 	int i = 0;
 	while (i < 2) {
@@ -2441,9 +2448,11 @@ LockBackground::LockBackground()
 	// Load mask pixmaps
 	std::string maskFilePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-wallpaper-mask-bottom.png";
 	m_bottomMask = QPixmap(qFromUtf8Stl(maskFilePath));
+	m_bottomMask = m_bottomMask.scaledToHeight(m_bottomMask.height() * Settings::LunaSettings()->uiScale);
 
 	maskFilePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-wallpaper-mask-top.png";
 	m_topMask = QPixmap(qFromUtf8Stl(maskFilePath));
+	m_topMask = m_topMask.scaledToHeight(m_topMask.height() * Settings::LunaSettings()->uiScale);
 }
 
 LockBackground::~LockBackground()
