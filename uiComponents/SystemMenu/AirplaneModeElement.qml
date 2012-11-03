@@ -8,8 +8,8 @@ MenuListEntry {
     property real uiScale;
     property real layoutScale;
 
-    property int iconSpacing : 4
-    property int rightMarging: 8
+    property int iconSpacing : 16 * layoutScale
+    property int rightMarging: 12 * layoutScale
 
     content:
         Item {
@@ -29,7 +29,7 @@ MenuListEntry {
             Image {
                 id: airplaneIndicatorOn
                 visible: !airplaneOn
-                x: parent.width - width - iconSpacing - rightMarging
+                x: parent.width - (width/2) - iconSpacing - rightMarging
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: selectable ? 1.0 : 0.65;
                 scale: uiScale
@@ -41,7 +41,7 @@ MenuListEntry {
             Image {
                 id: airplaneIndicatorOff
                 visible: airplaneOn
-                x: parent.width - width - iconSpacing - rightMarging
+                x: parent.width - (width/2) - iconSpacing - rightMarging
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: selectable ? 1.0 : 0.65;
                 scale: uiScale

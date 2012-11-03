@@ -89,7 +89,7 @@ Drawer {
 
                     Text {
                         id: vpnTitleState
-                        x: vpnMenu.width - width - 14;
+                        x: vpnMenu.width - width - 14 * layoutScale;
                         anchors.verticalCenter: parent.verticalCenter
                         text: runtime.getLocalizedString("init");
                         width: vpnMenu.width - vpnTitle.width - 35
@@ -108,7 +108,7 @@ Drawer {
         spacing: 0
         width: parent.width
 
-        MenuDivider { id: separator; uiScale: vpnMenu.uiScale; }
+        MenuDivider { id: separator; uiScale: vpnMenu.uiScale; layoutScale: vpnMenu.layoutScale; }
 
         ListView {
 	    id: vpnListView
@@ -177,7 +177,7 @@ Drawer {
                 }
             }
 
-            MenuDivider { uiScale: vpnMenu.uiScale; }
+            MenuDivider { uiScale: vpnMenu.uiScale; layoutScale: vpnMenu.layoutScale; }
 
         }
 

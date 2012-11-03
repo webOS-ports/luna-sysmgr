@@ -8,11 +8,11 @@ Item {
     property real layoutScale: 1.0
     property int  maxWidth: 300 * layoutScale
     property int  maxHeight: 410 * layoutScale
-    property int  headerIdent:   14
-    property int  subItemIdent:  16
-    property int  dividerWidthOffset: 7
+    property int  headerIdent:   14 * layoutScale
+    property int  subItemIdent:  16 * layoutScale
+    property int  dividerWidthOffset: 28 * layoutScale
     property int  itemIdent:     subItemIdent + headerIdent
-    property int  edgeOffset: 11
+    property int  edgeOffset: 11 * layoutScale
     property bool flickableOverride: false
 
     property bool airplaneModeInProgress: false
@@ -118,10 +118,8 @@ Item {
         source: "/usr/palm/sysmgr/images/menu-dropdown-bg.png"
         width: parent.width / uiScale;
         height: Math.min(systemmenu.height / uiScale,  (mainMenu.height + clipRect.anchors.topMargin + clipRect.anchors.bottomMargin) / uiScale);
-        scale: uiScale;
+        transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
         border { left: 120; top: 40; right: 120; bottom: 120 }
-        x: -339
-        y: -462
     }
 
     Rectangle { // clipping rect inside the menu border
@@ -175,7 +173,7 @@ Item {
                 BrightnessElement {
                     id: brightness
                     visible:    true
-                    margin:      5 * uiScale;
+                    margin:      20 * layoutScale;
                     uiScale: systemmenu.uiScale;
                     layoutScale: systemmenu.layoutScale;
 

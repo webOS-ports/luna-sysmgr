@@ -169,7 +169,7 @@ Drawer {
 
                     Text {
                         id: bluetoothTitleState
-                        x: bluetoothMenu.width - width - 14;
+                        x: bluetoothMenu.width - width - 14 * layoutScale;
                         width: bluetoothMenu.width - bluetoothTitle.width - 35
                         horizontalAlignment: Text.AlignRight
                         elide: Text.ElideRight;
@@ -188,7 +188,7 @@ Drawer {
         spacing: 0
         width: parent.width
 
-        MenuDivider { id: separator; uiScale: bluetoothMenu.uiScale; }
+        MenuDivider { id: separator; uiScale: bluetoothMenu.uiScale; layoutScale: bluetoothMenu.layoutScale; }
 
         MenuListEntry {
             id: bluetoothOnOff
@@ -211,7 +211,7 @@ Drawer {
             }
         }
 
-        MenuDivider  { uiScale: bluetoothMenu.uiScale; }
+        MenuDivider  { uiScale: bluetoothMenu.uiScale; layoutScale: bluetoothMenu.layoutScale; }
 
         ListView {
 	    id: bluetoothListView
@@ -287,7 +287,7 @@ Drawer {
                 }
             }
 
-            MenuDivider  { uiScale: bluetoothMenu.uiScale; }
+            MenuDivider  { uiScale: bluetoothMenu.uiScale; layoutScale: bluetoothMenu.layoutScale; }
 
         }
 
