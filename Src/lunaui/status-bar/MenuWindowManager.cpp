@@ -171,7 +171,8 @@ void MenuWindowManager::resize(int width, int height)
 	}
 
 	if(m_gestureArea) {
-		m_gestureArea->resize(width, height);
+		m_gestureArea->resize(width, Settings::LunaSettings()->virtualCoreNaviHeight);
+		m_gestureArea->update();
 	}
 
 	for(int i = 0; i < m_winArray.size(); i++){
