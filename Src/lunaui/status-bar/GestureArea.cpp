@@ -48,17 +48,11 @@ GestureArea::GestureArea(int width, int height)
 	m_fired = false;
 	m_animDir = AnimDir(Up);
 
-	m_radialGrad = QRadialGradient(m_bounds.center(), m_bounds.width()/3);
-	m_radialGrad.setColorAt(0, QColor(0, 0, 0, 0));
-	m_radialGrad.setColorAt(1, QColor(0, 0, 0, 255));
-
 	m_focusAnimOut = new QPropertyAnimation(this, "gradientFocus");
-	m_focusAnimOut->setEasingCurve(14);
 	m_focusAnimOut->setDuration(250);
 	connect(m_focusAnimOut, SIGNAL(finished()), this, SLOT(focusAnimOutFinished()));
 
 	m_focusAnimIn = new QPropertyAnimation(this, "gradientFocus");
-	m_focusAnimOut->setEasingCurve(14);
 	m_focusAnimIn->setDuration(250);
 
 	setAcceptTouchEvents(true);
@@ -91,6 +85,10 @@ void GestureArea::init()
 	*m_lightbarLPixmap = m_lightbarLPixmap->scaledToHeight(m_bounds.height()/1.5);
 	m_lightbarRPixmap = new QPixmap(lightbarRImagePath.c_str());
 	*m_lightbarRPixmap = m_lightbarRPixmap->scaledToHeight(m_bounds.height()/1.5);
+
+	m_radialGrad = QRadialGradient(m_bounds.center(), m_lightbarLPixmap->width() * 2);
+	m_radialGrad.setColorAt(0, QColor(0, 0, 0, 0));
+	m_radialGrad.setColorAt(1, QColor(0, 0, 0, 255));
 
 	m_lightbarY = m_bounds.bottom() - m_lightbarLPixmap->height();
 	m_gradientFocus = QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2));
@@ -284,12 +282,12 @@ void GestureArea::animateBar(int direction)
 	}
 	else if(direction == AnimDir(Right))
 	{
-		m_focusAnimOut->setEndValue(QPointF(m_bounds.right(), m_lightbarY));
+		m_focusAnimOut->setEndValue(QPointF(m_lightbarLPixmap->width() * 2, m_lightbarY));
 		m_animDir = AnimDir(Right);
 	}
 	else if(direction == AnimDir(Left))
 	{
-		m_focusAnimOut->setEndValue(QPointF(m_bounds.left(), m_lightbarY));
+		m_focusAnimOut->setEndValue(QPointF(-m_lightbarLPixmap->width() * 2, m_lightbarY));
 		m_animDir = AnimDir(Left);
 	}
 
@@ -310,12 +308,12 @@ void GestureArea::focusAnimOutFinished()
 	}
 	else if(m_animDir == AnimDir(Right))
 	{
-		m_focusAnimIn->setStartValue(QPointF(m_bounds.left(), m_lightbarY));
+		m_focusAnimIn->setStartValue(QPointF(-m_lightbarLPixmap->width() * 2, m_lightbarY));
 		m_focusAnimIn->setEndValue(QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2)));
 	}
 	else if(m_animDir == AnimDir(Left))
 	{
-		m_focusAnimIn->setStartValue(QPointF(m_bounds.right(), m_lightbarY));
+		m_focusAnimIn->setStartValue(QPointF(m_lightbarLPixmap->width() * 2, m_lightbarY));
 		m_focusAnimIn->setEndValue(QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2)));
 	}
 
