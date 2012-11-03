@@ -69,7 +69,7 @@ MemoryMonitor::MemoryMonitor()
 	snprintf(m_fileName, kFileNameLen - 1, "/proc/%d/statm", getpid());
 
 	char oom_adj[kFileNameLen];
-	snprintf(oom_adj, kFileNameLen - 1, "/proc/%d/oom_adj", getpid());
+	snprintf(oom_adj, kFileNameLen - 1, "/proc/%d/oom_score_adj", getpid());
 	FILE* f = fopen(oom_adj, "wb");
 	if (f) {
 		size_t result = fwrite("-17\n", 4, 1, f);
