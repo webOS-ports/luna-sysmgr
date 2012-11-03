@@ -168,6 +168,7 @@ Settings::Settings()
 	, textScale(1.0)
 	, layoutScale(1.0)
 	, imeScale(1.0)
+	, webAppScale(1.0)
 	, cardGroupingXDistanceFactor(1.0)
 	, atlasMemThreshold(0)
 	, launcherAtlasStatistics(false)
@@ -509,6 +510,7 @@ void Settings::load(const char* settingsFile)
 	KEY_DOUBLE("UI", "TextScale", textScale);
 	KEY_DOUBLE("UI", "LayoutScale", layoutScale);
 	KEY_DOUBLE("UI", "IMEScale", imeScale);
+	KEY_DOUBLE("UI", "WebAppScale", webAppScale);
 
 	KEY_INTEGER("UI", "ModalWindowWidth", modalWindowWidth);
 	KEY_INTEGER("UI", "ModalWindowHeight", modalWindowHeight);
