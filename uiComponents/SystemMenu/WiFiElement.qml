@@ -167,7 +167,7 @@ Drawer {
 
                     Text {
                         id: wifiTitleState
-                        x: wifiMenu.width - width - 14;
+                        x: wifiMenu.width - width - 14 * layoutScale;
                         anchors.verticalCenter: parent.verticalCenter
                         text: runtime.getLocalizedString("init");
                         width: wifiMenu.width - wifiTitle.width - 60
@@ -186,7 +186,7 @@ Drawer {
         spacing: 0
         width: parent.width
 
-        MenuDivider  { id: separator; uiScale: wifiMenu.uiScale; }
+        MenuDivider  { id: separator; uiScale: wifiMenu.uiScale; layoutScale: wifiMenu.layoutScale; }
 
         MenuListEntry {
             id: wifiOnOff
@@ -212,7 +212,7 @@ Drawer {
             }
         }
 
-        MenuDivider { uiScale: wifiMenu.uiScale; }
+        MenuDivider { uiScale: wifiMenu.uiScale; layoutScale: wifiMenu.layoutScale; }
 
         ListView {
             id: wifiListView
@@ -285,7 +285,7 @@ Drawer {
                 }
             }
 
-            MenuDivider { uiScale: wifiMenu.uiScale; }
+            MenuDivider { uiScale: wifiMenu.uiScale; layoutScale: wifiMenu.layoutScale; }
         }
 
     }
