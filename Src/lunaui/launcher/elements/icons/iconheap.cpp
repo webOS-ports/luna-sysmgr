@@ -328,7 +328,7 @@ IconBase * IconHeap::makeIconConstrained(const QString& mainIconFilePath,const Q
 	}
 	
 	quint32 frameSize = qMin(IconLayoutSettings::settings()->reorderablelayout_fixedIconCellSize.width(),
-				IconLayoutSettings::settings()->reorderablelayout_fixedIconCellSize.height());
+				IconLayoutSettings::settings()->reorderablelayout_fixedIconCellSize.height()) * Settings::LunaSettings()->layoutScale;
 	
 	PixmapObject * pFrameIconPmo = PixmapObjectLoader::instance()->quickLoad(frameIconFilePath, QSize(frameSize, frameSize), false);
 	if (!pFrameIconPmo)
