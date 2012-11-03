@@ -53,10 +53,12 @@ GestureArea::GestureArea(int width, int height)
 	m_radialGrad.setColorAt(1, QColor(0, 0, 0, 255));
 
 	m_focusAnimOut = new QPropertyAnimation(this, "gradientFocus");
+	m_focusAnimOut->setEasingCurve(14);
 	m_focusAnimOut->setDuration(250);
 	connect(m_focusAnimOut, SIGNAL(finished()), this, SLOT(focusAnimOutFinished()));
 
 	m_focusAnimIn = new QPropertyAnimation(this, "gradientFocus");
+	m_focusAnimOut->setEasingCurve(14);
 	m_focusAnimIn->setDuration(250);
 
 	setAcceptTouchEvents(true);
@@ -86,7 +88,9 @@ void GestureArea::init()
 	std::string lightbarLImagePath = settings->lunaSystemResourcesPath + "/corenavi/light-bar-bright-left.png";
 	std::string lightbarRImagePath = settings->lunaSystemResourcesPath + "/corenavi/light-bar-bright-right.png";
 	m_lightbarLPixmap = new QPixmap(lightbarLImagePath.c_str());
+	*m_lightbarLPixmap = m_lightbarLPixmap->scaledToHeight(m_bounds.height()/1.5);
 	m_lightbarRPixmap = new QPixmap(lightbarRImagePath.c_str());
+	*m_lightbarRPixmap = m_lightbarRPixmap->scaledToHeight(m_bounds.height()/1.5);
 
 	m_lightbarY = m_bounds.bottom() - m_lightbarLPixmap->height();
 	m_gradientFocus = QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2));
@@ -94,11 +98,10 @@ void GestureArea::init()
 
 void GestureArea::resize(int w, int h)
 {
-	m_bounds = QRect(-w/2, SystemUiController::instance()->currentUiHeight()/2, w, Settings::LunaSettings()->virtualCoreNaviHeight);
+	m_bounds = QRect(-w/2, SystemUiController::instance()->currentUiHeight()/2, w, h);
 	m_lightbarY = m_bounds.bottom() - m_lightbarLPixmap->height();
 	m_gradientFocus = QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2));
 	m_isPortrait = (h > w);
-	update();
 }
 
 void GestureArea::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -276,17 +279,17 @@ void GestureArea::animateBar(int direction)
 	//Animate the gradient in the swiped direction
 	if(direction == AnimDir(Up))
 	{
-		m_focusAnimOut->setStartValue(QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2)));
-		m_focusAnimOut->setEndValue(QPointF(m_gradientFocus.x(), m_lightbarY - m_bounds.width()/3));
+		m_focusAnimOut->setEndValue(QPointF(m_gradientFocus.x(), m_lightbarY - m_bounds.top()));
+		m_animDir = AnimDir(Up);
 	}
 	else if(direction == AnimDir(Right))
 	{
-		m_focusAnimOut->setEndValue(QPointF(m_bounds.width()/3, m_lightbarY));
+		m_focusAnimOut->setEndValue(QPointF(m_bounds.right(), m_lightbarY));
 		m_animDir = AnimDir(Right);
 	}
 	else if(direction == AnimDir(Left))
 	{
-		m_focusAnimOut->setEndValue(QPointF(-m_bounds.width()/3, m_lightbarY));
+		m_focusAnimOut->setEndValue(QPointF(m_bounds.left(), m_lightbarY));
 		m_animDir = AnimDir(Left);
 	}
 
@@ -302,17 +305,17 @@ void GestureArea::focusAnimOutFinished()
 	//Slingshot the animation around from the other side
 	if(m_animDir == AnimDir(Up))
 	{
-		m_focusAnimIn->setStartValue(QPointF(0, m_lightbarY + m_bounds.width()/3));
+		m_focusAnimIn->setStartValue(QPointF(0, m_lightbarY + m_bounds.bottom()));
 		m_focusAnimIn->setEndValue(QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2)));
 	}
 	else if(m_animDir == AnimDir(Right))
 	{
-		m_focusAnimIn->setStartValue(QPointF(-m_bounds.width()/3, m_lightbarY));
+		m_focusAnimIn->setStartValue(QPointF(m_bounds.left(), m_lightbarY));
 		m_focusAnimIn->setEndValue(QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2)));
 	}
 	else if(m_animDir == AnimDir(Left))
 	{
-		m_focusAnimIn->setStartValue(QPointF(m_bounds.width()/3, m_lightbarY));
+		m_focusAnimIn->setStartValue(QPointF(m_bounds.right(), m_lightbarY));
 		m_focusAnimIn->setEndValue(QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2)));
 	}
 
