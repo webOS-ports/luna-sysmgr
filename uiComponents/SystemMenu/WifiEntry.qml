@@ -14,8 +14,8 @@ Item {
     property real textScale: 1.0
     property real layoutScale: 1.0
 
-    property int iconSpacing : 4 * layoutScale
-    property int rightMarging: 3 * layoutScale
+    property int iconSpacing : 16 * layoutScale
+    property int rightMarging: 12 * layoutScale
 
     Item {
         anchors.fill: parent
@@ -24,7 +24,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: name; color: "#FFF";
             horizontalAlignment: Text.AlignLeft
-            width: parent.width - sigStrength.width - check.width - lock.width - rightMarging - 3*iconSpacing - 5
+            width: parent.width - ((sigStrength.width + check.width + lock.width) * uiScale) - rightMarging - 3*iconSpacing - 5
             elide: Text.ElideRight;
             font.bold: false;
             font.pixelSize: 16 * textScale
@@ -45,7 +45,7 @@ Item {
 
     Image {
         id: sigStrength
-        x: parent.width - width - iconSpacing - rightMarging
+        x: parent.width - (width / 2) - iconSpacing - rightMarging
         anchors.verticalCenter: parent.verticalCenter
         scale: uiScale
 
@@ -54,7 +54,7 @@ Item {
 
     Image {
         id: lock
-        x: sigStrength.x - width - iconSpacing
+        x: sigStrength.x - (width / 2) - iconSpacing
         anchors.verticalCenter: parent.verticalCenter
         visible: securityType != ""
         scale: uiScale
@@ -63,7 +63,7 @@ Item {
 
     Image {
         id: check
-        x: lock.x - width - iconSpacing
+        x: lock.x - (width / 2) - iconSpacing
         anchors.verticalCenter: parent.verticalCenter
         visible: connected
         scale: uiScale

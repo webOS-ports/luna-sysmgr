@@ -11,8 +11,8 @@ Item {
     property real textScale: 1.0
     property real layoutScale: 1.0
 
-    property int iconSpacing : 4 * layoutScale
-    property int rightMarging: 8 * layoutScale
+    property int iconSpacing : 16 * layoutScale
+    property int rightMarging: 12 * layoutScale
 
     Item {
         anchors.fill: parent
@@ -21,7 +21,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: name;
             horizontalAlignment: Text.AlignLeft
-            width: parent.width - check.width - rightMarging - iconSpacing - 5
+            width: parent.width - (check.width * uiScale) - rightMarging - iconSpacing - 5
             elide: Text.ElideRight;
             color: "#FFF";
             font.bold: false;
@@ -43,7 +43,7 @@ Item {
 
     Image {
         id: check
-        x: parent.width - width - iconSpacing - rightMarging
+        x: parent.width - (width / 2) - iconSpacing - rightMarging
         anchors.verticalCenter: parent.verticalCenter
         visible: connected
         scale: uiScale

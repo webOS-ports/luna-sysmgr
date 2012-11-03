@@ -128,8 +128,7 @@ Item {
         id: bar
         source: "/usr/palm/sysmgr/images/statusBar/slider-track.png"
         width: parent.width / uiScale;
-        scale: uiScale;
-        x: -width/3.5;
+        transform: Scale { origin.x: 0; origin.y: height/2.75; xScale: uiScale; yScale: uiScale;}
         border { left: railBorderWidth; top: 0; right: railBorderWidth; bottom: 0 }
         anchors.verticalCenter: parent.verticalCenter
     }
@@ -137,9 +136,8 @@ Item {
     BorderImage {
         id: barProgress
         source: "/usr/palm/sysmgr/images/statusBar/slider-track-progress.png"
-        width: Math.max(((parent.width - handle.width/2) * setValue + handle.width/2), 2*railBorderWidth) / uiScale;
-        scale: uiScale;
-        x: -width/3.5;
+        width: Math.max(((parent.width - (handle.width*uiScale)/2) * setValue + (handle.width*uiScale)/2), 2*(railBorderWidth*uiScale)) / uiScale;
+        transform: Scale { origin.x: 0; origin.y: height/2.75; xScale: uiScale; yScale: uiScale;}
         border { left: railBorderWidth; top: 0; right: railBorderWidth; bottom: 0 }
         anchors.verticalCenter: parent.verticalCenter
     }
