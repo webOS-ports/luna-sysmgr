@@ -170,6 +170,7 @@ public:
 	qreal                textScale;
 	qreal                layoutScale;
 	qreal                imeScale;
+	qreal                webAppScale;
 	double					cardGroupingXDistanceFactor;
 	int                 atlasMemThreshold;
 	bool                launcherAtlasStatistics;

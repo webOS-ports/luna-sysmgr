@@ -1151,6 +1151,7 @@ void WindowedWebApp::stageReady()
     qDebug() << __PRETTY_FUNCTION__ << ":" << __LINE__ << (page() ? page()->url() : QUrl());
 	m_stagePreparing = false;
 	m_stageReady = true;
+	page()->page()->mainFrame()->setZoomFactor(Settings::LunaSettings()->webAppScale);
 	page()->setStageReadyPending(false);
 	
 	if (!m_addedToWindowMgr && m_winType != Window::Type_ChildCard) {
