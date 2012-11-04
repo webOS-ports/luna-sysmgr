@@ -63,14 +63,14 @@ const uint64_t cWordDeleteDelay = cFirstRepeatDelay + 1500;
 const QPainter::RenderHints cRenderHints = QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing;
 
 // constants used to draw the popup for extended keys
-const int cPopupFontSize = 22 * Settings::LunaSettings()->imeScale;
-const int cPopupLeftSide = 11;
-const int cPopupRightSide = 10;
-const int cPopupSide = 20;
-const int cPopupPointerStart = 37;
-const int cPopupPointerWidth = 25;
-const int cPopupTopToKey = 10 * Settings::LunaSettings()->imeScale;
-const int cPopupSingleLineMax = 5;	// if more extended chars that this, break-up in two lines
+const int cPopupFontSize = 22 * Settings::LunaSettings()->layoutScale;
+const int cPopupLeftSide = 11 * Settings::LunaSettings()->layoutScale;
+const int cPopupRightSide = 10 * Settings::LunaSettings()->layoutScale;
+const int cPopupSide = 20 * Settings::LunaSettings()->layoutScale;
+const int cPopupPointerStart = 37 * Settings::LunaSettings()->layoutScale;
+const int cPopupPointerWidth = 25 * Settings::LunaSettings()->layoutScale;
+const int cPopupTopToKey = 10 * Settings::LunaSettings()->layoutScale;
+const int cPopupSingleLineMax = 5 * Settings::LunaSettings()->layoutScale;	// if more extended chars that this, break-up in two lines
 const int cPressedTranslateH = 0;
 const int cPressedTranslateV = 0;
 
@@ -99,7 +99,8 @@ public:
 	EVirtualKeyboardSupport	getSupport(int maxWidth, int maxHeight)
 	{
 //		return eVirtualKeyboardSupport_Preferred_SizeAndLocale;		// force phone keyboard for testing!
-		if (maxWidth < 1024 * Settings::LunaSettings()->imeScale && maxHeight < 1024 * Settings::LunaSettings()->imeScale)
+//		if (maxWidth < 1024 && maxHeight < 1024)
+		if (!Settings::LunaSettings()->tabletUi)
 			return eVirtualKeyboardSupport_Preferred_Size;
 		return eVirtualKeyboardSupport_Poor;
 	}
@@ -126,7 +127,7 @@ PhoneKeyboard::PhoneKeyboard(IMEDataInterface * dataInterface) : VirtualKeyboard
 	m_lastUnlockTime(0),
 	m_keyboardTopPading(0),
 	m_requestedHeight(-1),
-	m_9tileCorner(22, 22),
+	m_9tileCorner(22 * Settings::LunaSettings()->layoutScale, 22 * Settings::LunaSettings()->layoutScale),
 	m_keyboardBackgound(NULL),
 	m_keyboardLimitsVersion(0),
 	m_keyboardDirty(true),
@@ -1113,7 +1114,8 @@ void PhoneKeyboard::paint(QPainter & painter)
 			{
 				if (m_keymap.getExtendedChars(QPoint(x, y)) && m_keymap.keyboardToKeyZone(QPoint(x, y), r) > 0)
 				{
-					r.setWidth(r.width() - 9 + m_9tileCorner.m_trimH); r.setHeight(r.height() - 9 + m_9tileCorner.m_trimV);
+					int offset = 9 * Settings::LunaSettings()->layoutScale;
+					r.setWidth(r.width() - offset + m_9tileCorner.m_trimH); r.setHeight(r.height() - offset + m_9tileCorner.m_trimV);
 					renderer.render(r, GlyphSpec(sElipsis, cElipsisFontSize, false, cActiveColor, cActiveColor_back), sFont, Qt::AlignRight | Qt::AlignBottom);
 				}
 			}
