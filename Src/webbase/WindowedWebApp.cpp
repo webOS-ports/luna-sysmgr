@@ -159,7 +159,7 @@ void WindowedWebApp::attach(SysMgrWebBridge* page)
 
     connect(page->page(), SIGNAL(windowCloseRequested()), this, SLOT(closeWindowRequest()));
 
-    page->page()->setViewportSize(QSize(m_windowWidth, m_windowHeight));
+    page->page()->setViewportSize(QSize(m_windowWidth / Settings::LunaSettings()->webAppScale, m_windowHeight / Settings::LunaSettings()->webAppScale));
 
 	if (m_winType != Window::Type_ChildCard) {
 
