@@ -442,16 +442,16 @@ bool SystemUiController::handleKeyEvent(QKeyEvent *event)
 				return true;
 			}
 			
-			if (m_universalSearchShown) {
-				Q_EMIT signalHideUniversalSearch(false, false);
-				return true;
-			}
-			
 			if (IMEController::instance()->isIMEOpened())
 			{
 				IMEController::instance()->hideIME();
 				return true;
             		}
+			
+			if (m_universalSearchShown) {
+				Q_EMIT signalHideUniversalSearch(false, false);
+				return true;
+			}
 
 			break;
 
