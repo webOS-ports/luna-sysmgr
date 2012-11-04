@@ -54,6 +54,7 @@ CardLoading::CardLoading(Window* win)
 		path.append("/loading-glow.png");
 		s_glow = new QPixmap(path);
 		if(s_glow)
+			*s_glow = s_glow->scaledToHeight(s_glow->height() * Settings::LunaSettings()->uiScale);
 			s_glowRefCount++;
 		if (!s_glow || s_glow->isNull()) {
 			g_critical("%s: Failed to load image '%s'", __PRETTY_FUNCTION__, qPrintable(path));
@@ -67,6 +68,7 @@ CardLoading::CardLoading(Window* win)
             path.append("/loading-bg.png");
             s_background = new QPixmap(path);
             if (s_background) {
+		    *s_background = s_background->scaledToHeight(s_background->height() * Settings::LunaSettings()->uiScale);
                     s_backgroundRefCount++;
             }
             if (!s_background || s_background->isNull()) {
@@ -114,6 +116,7 @@ CardLoading::CardLoading(Window* win)
 
             // Load the app / scene specific background if applicable:
             m_background.load(sceneBackgroundName.c_str());
+            m_background = m_background.scaledToHeight(m_background.height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
         }
     }
     else {
@@ -257,7 +260,6 @@ void CardLoading::paint(QPainter* painter, bool maximized)
                 }
                 else if (s_background != 0 && !s_background->isNull()) {
 
-                    initializeRoundedCornerStage();
 #if defined(USE_ROUNDEDCORNER_SHADER)
                     m_shader->setOnPainter(painter);
                     painter->drawPixmap(r, *s_background, s_background->rect());
