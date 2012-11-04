@@ -48,6 +48,9 @@ QPixmap &	IMEPixmap::pixmap()
 		}
 		else
 			m_pixmap.load((Settings::LunaSettings()->lunaSystemResourcesPath + "/keyboard/" + m_name).c_str());
+			
+		m_pixmap = m_pixmap.scaledToHeight(m_pixmap.height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
+			
 		if (m_pixmap.isNull())
 			FAILURE(string_printf("IMEPixmap failed to load keyboard asset '%s'", m_name).c_str());
 	}
