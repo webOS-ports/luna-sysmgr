@@ -121,6 +121,7 @@ void StatusBarItemGroup::setActionable(bool actionable)
 
 			std::string filePath = statusBarImagesPath + "status-bar-menu-dropdown-tab.png";
 			m_activeBkgPix = new QPixmap(filePath.c_str());
+			*m_activeBkgPix = m_activeBkgPix->scaledToHeight(m_activeBkgPix->height() * Settings::LunaSettings()->uiScale);
 		}
 
 //		if(m_actionable && !m_pressedBkgPix) {
@@ -129,6 +130,7 @@ void StatusBarItemGroup::setActionable(bool actionable)
 //
 //			std::string filePath = statusBarImagesPath + "status-bar-menu-dropdown-tab-pressed.png";
 //			m_pressedBkgPix = new QPixmap(filePath.c_str());
+//			*m_pressedBkgPix = m_pressedBkgPix->scaledToHeight(m_pressedBkgPix->height() * Settings::LunaSettings()->uiScale);
 //		}
 	}
 
@@ -355,7 +357,7 @@ void StatusBarItemGroup::paint(QPainter* painter, const QStyleOptionGraphicsItem
 	qreal opacity = painter->opacity();
 	QRectF tabRect;
 
-	static const int margin = 11;
+	static const int margin = 11 * Settings::LunaSettings()->layoutScale;
 
 	if(m_alignment == AlignRight && m_separatorPix) {
 		tabRect = m_bounds.adjusted(m_separatorPix->width() - margin, 0, margin, 0);
