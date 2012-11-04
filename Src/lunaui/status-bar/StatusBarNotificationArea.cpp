@@ -89,6 +89,7 @@ void StatusBarNotificationArea::init(DashboardWindowManager* dwm)
 	m_arrowPix = new QPixmap(filePath.c_str());
 
 	if(m_arrowPix && !m_arrowPix->isNull()) {
+		*m_arrowPix = m_arrowPix->scaledToHeight(m_arrowPix->height() * Settings::LunaSettings()->uiScale);
 		m_maxWidth += m_arrowPix->width() + 2 * ARROW_SPACING;
 		updateBoundingRect();
 	}
