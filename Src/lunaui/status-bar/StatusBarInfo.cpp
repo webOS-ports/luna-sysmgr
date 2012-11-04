@@ -44,6 +44,7 @@ void StatusBarInfoItem::loadImage(int index, std::string imgPath)
 
 	if(!imgPath.empty()) {
 		img.load(imgPath.c_str());
+		img = img.scaledToHeight(img.height() * Settings::LunaSettings()->uiScale);
 	}
 
 	m_images.insert(index, img);
