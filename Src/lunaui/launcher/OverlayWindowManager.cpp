@@ -333,9 +333,12 @@ void OverlayWindowManager::setupDockStateMachine()
 
 	// noDock ---> NormalDock [Trigger: signalFSMShowDock]
 	transition = m_dockStates->noDock->addTransition(this, SIGNAL(signalFSMShowDock()), m_dockStates->dockNormal);
-
-	// noDock ---> NormalDock [Trigger: signalFSMShowLauncher]
-	transition = m_dockStates->noDock->addTransition(this, SIGNAL(signalFSMShowLauncher()), m_dockStates->dockNormal);
+	
+	if(Settings::LunaSettings()->tabletUi)
+	{
+		// noDock ---> NormalDock [Trigger: signalFSMShowLauncher]
+		transition = m_dockStates->noDock->addTransition(this, SIGNAL(signalFSMShowLauncher()), m_dockStates->dockNormal);
+	}
 
 	// noDock ---> DockReorder  [Trigger: signalFSMDragStarted]
 	transition = m_dockStates->noDock->addTransition(this, SIGNAL(signalFSMDragStarted()), m_dockStates->dockReorder);
@@ -352,7 +355,7 @@ void OverlayWindowManager::setupDockStateMachine()
 
 	// NormalDock ---> noDock  [Trigger: signalHideDock]
 	transition = m_dockStates->dockNormal->addTransition(this, SIGNAL(signalFSMHideDock()), m_dockStates->noDock);
-
+	
 	// NormalDock ---> noDock  [Trigger: signalCardWindowAdded]
 	transition = m_dockStates->dockNormal->addTransition(uiController, SIGNAL(signalCardWindowAdded()), m_dockStates->noDock);
 
@@ -1098,11 +1101,15 @@ void OverlayWindowManager::slotSystemAPIToggleLauncher()
 	{
 		//it's down...signal that I want it up
 		Q_EMIT signalFSMShowLauncher();
+		if(!Settings::LunaSettings()->tabletUi)
+			Q_EMIT signalFSMHideDock();
 	}
 	else
 	{
 		//it's up, signal that I want it down
 		Q_EMIT signalFSMHideLauncher();
+		if(!Settings::LunaSettings()->tabletUi)
+			Q_EMIT signalFSMShowDock();
 	}
 }
 
@@ -1151,6 +1158,19 @@ void OverlayWindowManager::slotLauncherReady()
 void OverlayWindowManager::slotLauncherNotReady()
 {
 	//TODO: IMPLEMENT
+}
+
+void OverlayWindowManager::slotPagesStartReorderMode()
+{
+	if(!Settings::LunaSettings()->tabletUi)
+		Q_EMIT signalFSMShowDock();
+}
+
+void OverlayWindowManager::slotPagesEndReorderMode()
+{
+	//Only fire if the launcher is up
+	if(!Settings::LunaSettings()->tabletUi && m_launcherState == StateLauncherRegular)
+		Q_EMIT signalFSMHideDock();
 }
 
 void OverlayWindowManager::slotQuickLaunchReady()
@@ -1604,6 +1624,11 @@ bool OverlayWindowManager::setupLauncher()
 				this,SLOT(slotLauncherReady()));
 	connect(pLauncher,SIGNAL(signalNotReady()),
 				this,SLOT(slotLauncherNotReady()));
+				
+	connect(pLauncher, SIGNAL(signalPagesStartReorderMode()),
+				this,SLOT(slotPagesStartReorderMode()));
+	connect(pLauncher, SIGNAL(signalPagesEndReorderMode()),
+				this,SLOT(slotPagesEndReorderMode()));
 
 	connect(pLauncher,SIGNAL(signalShowMe(DimensionsTypes::ShowCause::Enum)),
 			this, SLOT(slotLauncherRequestShowDimensionsLauncher(DimensionsTypes::ShowCause::Enum)));
