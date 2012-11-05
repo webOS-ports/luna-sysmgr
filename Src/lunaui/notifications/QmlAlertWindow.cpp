@@ -62,6 +62,12 @@ QmlAlertWindow::QmlAlertWindow(const QString& path, int width, int height)
         if (m_qmlComp) {
 			m_gfxObj = qobject_cast<QGraphicsObject*>(m_qmlComp->create());
 			if (m_gfxObj) {
+				// scale the window
+				if(!Settings::LunaSettings()->tabletUi)
+					QMetaObject::invokeMethod(m_gfxObj, "setWidth", Q_ARG(QVariant, width));
+				QMetaObject::invokeMethod(m_gfxObj, "setUiScale", Q_ARG(QVariant, settings->uiScale));
+				QMetaObject::invokeMethod(m_gfxObj, "setTextScale", Q_ARG(QVariant, settings->textScale));
+				QMetaObject::invokeMethod(m_gfxObj, "setLayoutScale", Q_ARG(QVariant, settings->layoutScale));
 				m_gfxObj->setPos(-width/2, -height/2);
 				m_gfxObj->setParentItem(this);
 
