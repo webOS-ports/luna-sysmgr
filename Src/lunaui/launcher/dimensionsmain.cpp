@@ -202,6 +202,10 @@ void DimensionsUI::setupProxySignals()
 //			this, SIGNAL(signalHideMe(DimensionsTypes::HideCause::Enum)));
 	connect(s_qp_primaryLauncher,SIGNAL(signalDropIconOnQuicklaunch(const QString&)),
 			this, SIGNAL(signalDropIconOnQuicklaunch(const QString&)));
+	connect(s_qp_primaryLauncher,SIGNAL(signalPagesStartReorderMode()),
+			this, SIGNAL(signalPagesStartReorderMode()));
+	connect(s_qp_primaryLauncher,SIGNAL(signalPagesEndReorderMode()),
+			this, SIGNAL(signalPagesEndReorderMode()));
 
 
 	////------  DimensionsUI -> LauncherObject
