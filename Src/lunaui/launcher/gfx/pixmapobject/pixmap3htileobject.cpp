@@ -45,7 +45,8 @@ Pixmap3HTileObject::Pixmap3HTileObject(const quint32 width,const quint32 height,
 , m_sourceRects(sliceCoordinates)
 , m_centerTilingStyle(centerTilingStyle)
 {
-
+	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale);
+	
 	if (valid() == false)
 	{
 		return;		//base class failed to load pixmap
@@ -74,6 +75,8 @@ Pixmap3HTileObject::Pixmap3HTileObject( const quint32 width, const quint32 heigh
 : PixmapObject(imageFilename,format,flags)
 , m_centerTilingStyle(centerTilingStyle)
 {
+	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale);
+	
 	if (valid() == false)
 	{
 		return;		//base class failed to load pixmap
