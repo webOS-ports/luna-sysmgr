@@ -81,12 +81,12 @@
 #define LOCK_BUTTON_OFFSET (0.1)
 
 static unsigned int kTopPadding = 0;
-static unsigned int kMaxWidth = 320; // From Larry
+static unsigned int kMaxWidth = 320 * Settings::LunaSettings()->layoutScale; // From Larry
 
-static const unsigned int kAlertsFromBottom = 84;
+static const unsigned int kAlertsFromBottom = 84 * Settings::LunaSettings()->layoutScale;
 static unsigned int kBannerWidgetHeight = 0;
 
-static const int kSaucerRadiusSquared = 146 * 146;
+static const int kSaucerRadiusSquared = (146 * 146) * Settings::LunaSettings()->layoutScale;
 
 static const unsigned int kHideHelpTimeoutInMS = 1000;
 static const unsigned int kPaintTick = 1000;
@@ -98,8 +98,8 @@ static const char* kAnswerPhoneLabel = "Drag up to answer";
 static DashboardWindowManager* getDashboardWindowManager();
 
 static	Pixmap9TileObject* gBackground9Tile;
-static unsigned int kShadowWidth = 10;
-static unsigned int kBackgroundCornerWidth = 9;
+static unsigned int kShadowWidth = 10 * Settings::LunaSettings()->layoutScale;
+static unsigned int kBackgroundCornerWidth = 9 * Settings::LunaSettings()->layoutScale;
 
 
 class LockButton : public QGraphicsPixmapItem
@@ -1744,7 +1744,7 @@ void LockWindow::handlePenMoveStateNormal(Event* event)
 	m_lockButton->setPos(event->x, event->y);
 
 	int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
-	if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->layoutScale) && (event->y < m_lockButtonY))
+	if ((distanceSquared > kSaucerRadiusSquared) && (event->y < m_lockButtonY))
 		hideHelp();
 	else
 		showHelp();
@@ -1774,7 +1774,7 @@ void LockWindow::handlePenUpStateNormal(Event* event)
 		m_lockButton->press(false);
 
 		int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
-		if ((distanceSquared > kSaucerRadiusSquared * Settings::LunaSettings()->layoutScale) && (event->y < m_lockButtonY)){
+		if ((distanceSquared > kSaucerRadiusSquared) && (event->y < m_lockButtonY)){
 			tryUnlock();
 			SystemService::instance()->postLockButtonTriggered();
 		}
@@ -2541,19 +2541,21 @@ DashboardAlerts::DashboardAlerts()
 
 	std::string filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/dashboard-scroll-fade.png";
 	m_scrollFade = QPixmap (filePath.c_str());
+	m_scrollFade = m_scrollFade.scaledToHeight(m_scrollFade.height() * Settings::LunaSettings()->uiScale);
 	if (m_scrollFade.isNull())
 		g_warning ("scrollFade image missing");
 
 	filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-divider.png";
 	m_divider = QPixmap (filePath.c_str());
+	m_divider = m_divider.scaledToHeight(m_divider.height() * Settings::LunaSettings()->uiScale);
 	if (m_divider.isNull())
 		g_warning ("divider image missing");
 
 	kMaxDashboardItems = 6;
-	kDashboardItemHeight = 52; // max height of the dashboard
+	kDashboardItemHeight = 52 * Settings::LunaSettings()->layoutScale; // max height of the dashboard
 	kVisibleDashboard = 5.5;
-	kBottomPadding = 3;
-	kTopPadding = 1;
+	kBottomPadding = 3 * Settings::LunaSettings()->layoutScale;
+	kTopPadding = 1 * Settings::LunaSettings()->layoutScale;
 
 	kDashboardWidgetHeight = kDashboardItemHeight * kVisibleDashboard + m_divider.height() * (kMaxDashboardItems - 1);
 	m_bounds = QRect(-(kMaxWidth/2), -(kDashboardWidgetHeight/2), kMaxWidth, kDashboardWidgetHeight);
