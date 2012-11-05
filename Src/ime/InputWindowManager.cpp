@@ -23,12 +23,15 @@
 
 #include "HostBase.h"
 #include "SystemUiController.h"
+#include "WindowServerLuna.h"
+#include "DashboardWindowContainer.h"
 #include "IMEController.h"
 #include "Utils.h"
 #include "SystemService.h"
 #include "AnimationSettings.h"
 #include "Settings.h"
 
+#include <QDebug>
 
 InputWindowManager::InputWindowManager(int maxWidth, int maxHeight)
 	: WindowManagerBase(maxWidth, maxHeight)
@@ -54,6 +57,10 @@ InputWindowManager::InputWindowManager(int maxWidth, int maxHeight)
                                         SLOT(slotEnterBrickMode(bool)));
     connect(SystemService::instance(), SIGNAL(signalExitBrickMode()), 
                                         SLOT(slotExitBrickMode()));
+                                        
+	DashboardWindowManager* dwm = (DashboardWindowManager*)(static_cast<WindowServerLuna*>(WindowServer::instance())->dashboardWindowManager());
+	connect(dwm, SIGNAL(signalAlertWindowActivated(AlertWindow*)), SLOT(slotAlertWindowActivated(AlertWindow*)));
+	connect(dwm, SIGNAL(signalOpen()), SLOT(signalDashboardOpen()));
 }
 
 void InputWindowManager::init()
@@ -73,10 +80,14 @@ void InputWindowManager::init()
 	
 	m_imeY = Settings::LunaSettings()->positiveSpaceBottomPadding;
 
-    m_fadeAnim.setTargetObject(m_imeView);
-    m_fadeAnim.setPropertyName("opacity");
-    m_fadeAnim.setDuration(AS(brickDuration));
-    m_fadeAnim.setEasingCurve(AS_CURVE(brickCurve));
+	m_fadeAnim.setTargetObject(m_imeView);
+	m_fadeAnim.setPropertyName("opacity");
+	m_fadeAnim.setDuration(AS(brickDuration));
+	m_fadeAnim.setEasingCurve(AS_CURVE(brickCurve));
+
+	m_slideAnim.setTargetObject(this);
+	m_slideAnim.setPropertyName("imeY");
+	m_slideAnim.setDuration(100);
 }
 
 void InputWindowManager::resize(int width, int height)
@@ -138,11 +149,9 @@ void InputWindowManager::slotHideIME()
 	if (m_activeIME)
 		m_activeIME->m_visible.set(false);
 		
-	QPropertyAnimation *animation = new QPropertyAnimation(this, "imeY");
-	animation->setDuration(100);
-	animation->setStartValue(0);
-	animation->setEndValue(Settings::LunaSettings()->positiveSpaceBottomPadding);
-	animation->start();
+	m_slideAnim.setStartValue(0);
+	m_slideAnim.setEndValue(Settings::LunaSettings()->positiveSpaceBottomPadding);
+	m_slideAnim.start();
 
 	int targetTop = SystemUiController::instance()->currentUiHeight() - (SystemUiController::instance()->doesDashboardHaveContent() ? Settings::LunaSettings()->positiveSpaceBottomPadding : 0);
 	SystemUiController::instance()->changeNegativeSpace(targetTop, true);
@@ -157,11 +166,9 @@ void InputWindowManager::slotShowIME()
 	if (m_activeIME)
 		m_activeIME->m_visible.set(true);
 	
-	QPropertyAnimation* animation = new QPropertyAnimation(this, "imeY");
-	animation->setDuration(100);
-	animation->setStartValue(Settings::LunaSettings()->positiveSpaceBottomPadding);
-	animation->setEndValue(0);
-	animation->start();
+	m_slideAnim.setStartValue(Settings::LunaSettings()->positiveSpaceBottomPadding);
+	m_slideAnim.setEndValue(0);
+	m_slideAnim.start();
 
 	int targetTop = SystemUiController::instance()->currentUiHeight() - m_activeIME->m_keyboardHeight.get();
 	SystemUiController::instance()->changeNegativeSpace(targetTop, true);
@@ -201,6 +208,23 @@ void InputWindowManager::slotExitBrickMode()
     m_fadeAnim.setStartValue(m_imeView->opacity());
     m_fadeAnim.setEndValue(1.0);
     m_fadeAnim.start();
+}
+
+void InputWindowManager::slotAlertWindowActivated(AlertWindow* win)
+{
+	if (!m_imeView)
+		return;
+	
+	setImeY(win->boundingRect().height());
+}
+
+void InputWindowManager::slotDashboardOpen()
+{
+	if (!m_imeView)
+		return;
+	
+	DashboardWindowManager* dwm = (DashboardWindowManager*)(static_cast<WindowServerLuna*>(WindowServer::instance())->dashboardWindowManager());
+	setImeY(dwm->dashboardWindowContainer()->boundingRect().height());
 }
 
 void InputWindowManager::setImeY(int imeY)

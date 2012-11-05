@@ -23,6 +23,8 @@
 #define INPUTWINDOWMANAGER_H
 
 #include "WindowManagerBase.h"
+#include "AlertWindow.h"
+#include "DashboardWindowManager.h"
 #include "IMEManager.h"
 #include "IMEView.h"
 
@@ -54,6 +56,9 @@ private Q_SLOTS:
     void slotEnterBrickMode(bool);
     void slotExitBrickMode();
 
+    void slotAlertWindowActivated(AlertWindow* win);
+    void slotDashboardOpen();
+
 private:
 	int imeY() { return m_imeY; }
 	void setImeY(int imeY);
@@ -64,6 +69,7 @@ private:
 	bool m_imeShown;
 	int m_imeY;
     QPropertyAnimation m_fadeAnim;
+    QPropertyAnimation m_slideAnim;
 };
 
 #endif
