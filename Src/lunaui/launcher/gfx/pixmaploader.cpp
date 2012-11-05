@@ -152,37 +152,8 @@ QList<PixmapObject *> PixmapObjectLoader::loadMulti(const QList<QRect>& coordina
 {
 	//TODO: a bit wasteful...loads the whole pixmap and then copies
 	QPixmap wholePm = QPixmap(fileName,format,flags);
-	QList<PixmapObject *> resultList;
-	if (wholePm.isNull())
-	{
-		return QList<PixmapObject *>();
-	}
-	for (QList<QRect>::const_iterator it = coordinateRects.constBegin();
-			it != coordinateRects.constEnd();++it)
-	{
-		QPixmap * pCopyPm = new QPixmap(wholePm.copy(*it));
-		PixmapObject * pPmo = 0;
-		if (pCopyPm->isNull())
-		{
-			delete pCopyPm;
-			pPmo = 0;		//if the copy failed, the spot in the result list still has to be 0 for a placeholder
-		}
-		else
-		{
-			pPmo = new PixmapObject(pCopyPm);
-			pPmo->setParent(p_setOwner);
-		}
-		resultList << pPmo;
-	}
-	return resultList;
-}
-
-QList<PixmapObject *> PixmapObjectLoader::loadMulti(qreal scaleFactor, const QList<QRect>& coordinateRects, const QString& fileName ,
-											const char * format, Qt::ImageConversionFlags flags,QObject * p_setOwner)
-{
-	//TODO: a bit wasteful...loads the whole pixmap and then copies
-	QPixmap wholePm = QPixmap(fileName,format,flags);
-	wholePm = wholePm.scaledToHeight(wholePm.height() * scaleFactor);
+	wholePm = wholePm.scaledToHeight(wholePm.height() * Settings::LunaSettings()->uiScale);
+	
 	QList<PixmapObject *> resultList;
 	if (wholePm.isNull())
 	{

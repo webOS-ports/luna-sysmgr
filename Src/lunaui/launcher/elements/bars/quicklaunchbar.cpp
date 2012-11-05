@@ -79,7 +79,6 @@ static PixButton2State * LoadLauncherAccessButton()
 	buttonStateCoords << QRect(0,0,size,size) << QRect(0,size,size,size);
 	QList<PixmapObject *> buttonStatePmos =
 			PixmapObjectLoader::instance()->loadMulti(
-					Settings::LunaSettings()->uiScale,
 					buttonStateCoords,
 					GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + LA_BUTTON_FILEPATH);
 

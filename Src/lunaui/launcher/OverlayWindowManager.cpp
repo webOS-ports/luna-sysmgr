@@ -1030,10 +1030,10 @@ void OverlayWindowManager::setupSearchPill()
 {
 
 	PixmapObject * pNormalBgPmo = (PixmapObject *)PixmapObjectLoader::instance()->quickLoadThreeHorizTiled(
-			90 * Settings::LunaSettings()->layoutScale,
+			90,
 			50 * Settings::LunaSettings()->layoutScale,
 			QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + SEARCHPILL_BACKGROUND_FILEPATH),
-			40,40
+			40 * Settings::LunaSettings()->layoutScale, 40 * Settings::LunaSettings()->layoutScale
 	);
 
 	if (pNormalBgPmo)
