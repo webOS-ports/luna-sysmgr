@@ -81,6 +81,8 @@ Q_SIGNALS:
 	void signalShowMe(DimensionsTypes::ShowCause::Enum cause = DimensionsTypes::ShowCause::None);
 
 	void signalDropIconOnQuicklaunch(const QString&);
+	void signalPagesStartReorderMode();
+	void signalPagesEndReorderMode();
 
 	void signalRelayOWMHidingLauncher();
 	void signalRelayOWMShowingLauncher();
