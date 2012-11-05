@@ -173,23 +173,26 @@ void PageTabBar::slotAddTab(const QString& labelString,Page * p_refersToPage)
 
  */
 
+	int horzOffset = 20 * Settings::LunaSettings()->layoutScale;
+	int vertOffset = 4 * Settings::LunaSettings()->layoutScale;
+
 	//quickLoadNineTiled: specify in-coordinates in top,bottom,left,right order
 	Pixmap9TileObject * pNormalBgPmo = PixmapObjectLoader::instance()->quickLoadNineTiled(
 			QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + TAB_NORMAL_BACKGROUND_FILEPATH),
-			20,20,4,4
+			horzOffset,horzOffset,vertOffset,vertOffset
 	);
 	Pixmap9TileObject * pSelectedBgPmo = PixmapObjectLoader::instance()->quickLoadNineTiled(
 			QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + TAB_SELECTED_BACKGROUND_FILEPATH),
-			20,20,20,20
+			horzOffset,horzOffset,horzOffset,horzOffset
 	);
 	Pixmap9TileObject * pHighlightedBgPmo = PixmapObjectLoader::instance()->quickLoadNineTiled(
 			QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + TAB_HIGHLIGHTED_BACKGROUND_FILEPATH),
-			20,20,20,20
+			horzOffset,horzOffset,horzOffset,horzOffset
 	);
 
 	Pixmap3VTileObject * pVdiv = PixmapObjectLoader::instance()->quickLoadThreeVertTiled(
 				QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + TAB_VDIV_FILEPATH),
-				20,20
+				horzOffset,horzOffset
 	);
 
 	pPageTab->setBackgrounds(pNormalBgPmo,pSelectedBgPmo,pHighlightedBgPmo);

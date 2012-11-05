@@ -110,7 +110,6 @@ static PixButton2State * LoadDoneButton()
 	buttonStateCoords << DONE_BUTTON_NORMAL_LOC << DONE_BUTTON_ACTIVE_LOC;
 	QList<PixmapObject *> buttonStatePmos =
 			PixmapObjectLoader::instance()->loadMulti(
-					Settings::LunaSettings()->uiScale,
 					buttonStateCoords,
 					GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + DONE_BUTTON_FILEPATH);
 

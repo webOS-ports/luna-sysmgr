@@ -152,7 +152,8 @@ QList<PixmapObject *> PixmapObjectLoader::loadMulti(const QList<QRect>& coordina
 {
 	//TODO: a bit wasteful...loads the whole pixmap and then copies
 	QPixmap wholePm = QPixmap(fileName,format,flags);
-	wholePm = wholePm.scaledToHeight(wholePm.height());
+	wholePm = wholePm.scaledToHeight(wholePm.height() * Settings::LunaSettings()->uiScale);
+	
 	QList<PixmapObject *> resultList;
 	if (wholePm.isNull())
 	{
