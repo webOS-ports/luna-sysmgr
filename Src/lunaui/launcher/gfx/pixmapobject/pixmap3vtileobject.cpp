@@ -21,6 +21,7 @@
 
 #include "pixmap3vtileobject.h"
 #include "dimensionsglobal.h"
+#include "Settings.h"
 
 #include <QPainter>
 #include <QPointF>
@@ -43,7 +44,8 @@ Pixmap3VTileObject::Pixmap3VTileObject(const quint32 width,const quint32 height,
 , m_sourceRects(sliceCoordinates)
 , m_centerTilingStyle(centerTilingStyle)
 {
-
+	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale);
+	
 	if (valid() == false)
 	{
 		return;		//base class failed to load pixmap
@@ -73,6 +75,8 @@ Pixmap3VTileObject::Pixmap3VTileObject( const quint32 width, const quint32 heigh
 : PixmapObject(imageFilename,format,flags)
 , m_centerTilingStyle(centerTilingStyle)
 {
+	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale);
+	
 	if (valid() == false)
 	{
 		return;		//base class failed to load pixmap
