@@ -22,6 +22,7 @@
 #include "overlaylayer.h"
 #include "dimensionslauncher.h"
 #include "pixmapobject.h"
+#include "Settings.h"
 
 #include <QSize>
 #include <QPainter>
@@ -133,7 +134,10 @@ void OverlayLayer::recomputeQuickLaunchShadowPosition()
 	{
 		QRectF r = pLauncherObject->areaQuickLaunchBar();
 		QRectF quickLaunchArea = mapRectFromItem(pLauncherObject,r);
-		m_quickLaunchShadowArea.setTopLeft(quickLaunchArea.topLeft()-QPointF(0.0,(qreal)(m_qp_quickLaunchShadow->height())));
+		if(Settings::LunaSettings()->tabletUi)
+			m_quickLaunchShadowArea.setTopLeft(quickLaunchArea.topLeft()-QPointF(0.0,(qreal)(m_qp_quickLaunchShadow->height())));
+		else
+			m_quickLaunchShadowArea.setTopLeft(m_geom.bottomLeft()-QPointF(0.0,(qreal)(m_qp_quickLaunchShadow->height())));
 		m_quickLaunchShadowArea.setHeight((qreal)(m_qp_quickLaunchShadow->height()));
 		m_quickLaunchShadowArea.setWidth(quickLaunchArea.width());
 	}

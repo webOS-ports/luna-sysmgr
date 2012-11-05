@@ -240,6 +240,8 @@ Q_SIGNALS:
 	void signalLauncherClosed();                    // launcher was closed 
 	void signalUniversalSearchOpened();				//  (obvious)
 	void signalUniversalSearchClosed();
+	void signalPagesStartReorderMode();
+	void signalPagesEndReorderMode();
 
 private Q_SLOTS:
 
@@ -268,6 +270,9 @@ private Q_SLOTS:
 
 	void slotLauncherReady();
 	void slotLauncherNotReady();
+	
+	void slotPagesStartReorderMode();
+	void slotPagesEndReorderMode();
 
 	void slotQuickLaunchReady();
 	void slotQuickLaunchNotReady();

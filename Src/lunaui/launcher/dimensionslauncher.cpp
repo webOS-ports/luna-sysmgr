@@ -1373,9 +1373,14 @@ void LauncherObject::fullSizeInit(quint32 width,quint32 height)
 		}
 		qDebug() << __FUNCTION__ << ": using QuickLaunchArea = " << quickLaunchArea;
 		QSize r = QSize(DimensionsGlobal::roundDown(m_geom.width()),
-				qMax(2,DimensionsGlobal::roundDown(m_geom.bottom()
-													-m_qp_pageTabBar->positionRelativeGeometry().bottom()
-													-quickLaunchArea.height()-1.0)));
+				qMax(2,DimensionsGlobal::roundDown(
+					m_geom.bottom()
+					-m_qp_pageTabBar->positionRelativeGeometry().bottom()
+					-(Settings::LunaSettings()->tabletUi ? quickLaunchArea.height() : 0)
+					-1.0)
+				    )
+				);
+					
 		//make evenly divisible (multiple of 2)
 		r.setWidth(r.width() - (r.width() % 2));
 		r.setHeight(r.height() - (r.height() % 2));
@@ -2246,9 +2251,13 @@ void LauncherObject::resize(int w, int h)
 				quickLaunchArea = m_qp_mainWindow->quickLaunchArea();
 			}
 			QSize r = QSize(DimensionsGlobal::roundDown(m_geom.width()),
-					qMax(2,DimensionsGlobal::roundDown(m_geom.bottom()
-														-m_qp_pageTabBar->positionRelativeGeometry().bottom()
-														-quickLaunchArea.height()-1.0)));
+					qMax(2,DimensionsGlobal::roundDown(
+						m_geom.bottom()
+						-m_qp_pageTabBar->positionRelativeGeometry().bottom()
+						-(Settings::LunaSettings()->tabletUi ? quickLaunchArea.height() : 0)
+						-1.0)
+					    )
+					);
 			//make evenly divisible (multiple of 2)
 			r.setWidth(r.width() - (r.width() % 2));
 			r.setHeight(r.height() - (r.height() % 2));
