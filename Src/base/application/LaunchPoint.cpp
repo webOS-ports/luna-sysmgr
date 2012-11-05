@@ -314,8 +314,8 @@ json_object* LaunchPoint::toJSON() const
 QPixmap LaunchPoint::icon() const
 {
 	//get size of icon from launcher settings!
-	return QPixmap::fromImage(QImage(qFromUtf8Stl(m_iconPath)).scaled(DEFAULT_ICON_W,
-																	DEFAULT_ICON_H,
-																	Qt::IgnoreAspectRatio,
-																	Qt::SmoothTransformation));
+	return QPixmap::fromImage(QImage(qFromUtf8Stl(m_iconPath)).scaled(DEFAULT_ICON_W * Settings::LunaSettings()->layoutScale,
+									DEFAULT_ICON_H * Settings::LunaSettings()->layoutScale,
+									Qt::IgnoreAspectRatio,
+									Qt::SmoothTransformation));
 }
