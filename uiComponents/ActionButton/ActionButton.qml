@@ -7,9 +7,12 @@ Item {
     property bool   affirmative: false
     property bool   negative:    false
     property real   inactiveOpacity: 0.70
+    property real uiScale : 1.0
+    property real textScale : 1.0
+    property real layoutScale : 1.0
 
-    width:  200;
-    height:  40;
+    width:  200 * layoutScale;
+    height:  40 * layoutScale;
 
     BorderImage {
         id: pressedBkg
@@ -17,9 +20,10 @@ Item {
                  ( negative ? ( !isPressed ? "/usr/palm/sysmgr/images/pin/button-red.png"   : "/usr/palm/sysmgr/images/pin/button-red-press.png")   :
                               ( !isPressed ? "/usr/palm/sysmgr/images/pin/button-black.png" : "/usr/palm/sysmgr/images/pin/button-black-press.png")  )
         visible: true;
-        width: parent.width;
-        height: parent.height;
-        border { left: 10; top: 10; right: 10; bottom: 10 }
+        width: parent.width / uiScale;
+        height: parent.height / uiScale;
+        transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+        border { left: 40; top: 40; right: 40; bottom: 40 }
         opacity: active ? 1.0 : inactiveOpacity
     }
 
@@ -29,7 +33,7 @@ Item {
         anchors.centerIn: parent
         color: "#FFF";
         font.bold: true;
-        font.pixelSize: 16
+        font.pixelSize: 16 * textScale
         font.family: "Prelude"
         opacity: active ? 1.0 : inactiveOpacity
     }
