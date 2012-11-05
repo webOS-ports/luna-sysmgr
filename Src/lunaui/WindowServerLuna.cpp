@@ -66,7 +66,7 @@
 #include <QCoreApplication>
 
 static const char* kWindowSrvChnl = "WindowServer";
-static const int kAlertWindowWidth = 320;
+static const int kAlertWindowWidth = 320 * Settings::LunaSettings()->layoutScale;
 
 
 WindowServerLuna::WindowServerLuna()
@@ -1325,7 +1325,9 @@ void WindowServerLuna::createMemoryAlertWindow()
 
 	std::string qmlSrcPath = Settings::LunaSettings()->lunaQmlUiComponentsPath + "MemoryAlert/alert.qml";
 
-	m_memoryAlert = new QmlAlertWindow(qmlSrcPath.c_str(), kAlertWindowWidth, 160);
+	int width = Settings::LunaSettings()->tabletUi ? kAlertWindowWidth : SystemUiController::instance()->currentUiWidth();
+	int height = 160 * Settings::LunaSettings()->layoutScale;
+	m_memoryAlert = new QmlAlertWindow(qmlSrcPath.c_str(), width, height);
 	addWindow(m_memoryAlert.data());
 }
 
@@ -1336,7 +1338,10 @@ void WindowServerLuna::createMsmEntryFailedAlertWindow()
 
 	std::string qmlSrcPath = Settings::LunaSettings()->lunaQmlUiComponentsPath + "MsmEntryFailed/alert.qml";
 
-	m_msmEntryFailedAlert = new QmlAlertWindow(qmlSrcPath.c_str(), kAlertWindowWidth, 160);
+
+	int width = Settings::LunaSettings()->tabletUi ? kAlertWindowWidth : SystemUiController::instance()->currentUiWidth();
+	int height = 160 * Settings::LunaSettings()->layoutScale;
+	m_msmEntryFailedAlert = new QmlAlertWindow(qmlSrcPath.c_str(), width, height);
 	addWindow(m_msmEntryFailedAlert.data());
 }
 
@@ -1352,7 +1357,10 @@ void WindowServerLuna::createDismissCardWindow()
 
         std::string qmlSrcPath = Settings::LunaSettings()->lunaQmlUiComponentsPath + "DismissCardTutorial/dismissDialog.qml";
 
-        m_dismissCardDialog = new QmlAlertWindow(qmlSrcPath.c_str(), kAlertWindowWidth, 170);
+
+	int width = Settings::LunaSettings()->tabletUi ? kAlertWindowWidth : SystemUiController::instance()->currentUiWidth();
+	int height = 170 * Settings::LunaSettings()->layoutScale;
+        m_dismissCardDialog = new QmlAlertWindow(qmlSrcPath.c_str(), width, height);
         addWindow(m_dismissCardDialog.data());
 }
 
