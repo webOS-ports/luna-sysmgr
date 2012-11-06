@@ -22,6 +22,7 @@
 
 #include "KeyLocationRecorder.h"
 #include "PalmIMEHelpers.h"
+#include "HostBase.h"
 #include "Settings.h"
 #include "SingletonTimer.h"
 #include "Utils.h"
@@ -172,9 +173,15 @@ PhoneKeyboard::PhoneKeyboard(IMEDataInterface * dataInterface) : VirtualKeyboard
 
 	for (int r = 0; r < PhoneKeymap::cKeymapRows; ++r)
 		m_keymap.setRowHeight(r, m_white_key.height() / 2);
+	
+	//Calculate height relative to screen size
+	const HostInfo& info = HostBase::instance()->getInfo();
+	const Settings* ls = Settings::LunaSettings();
+	const int portraitRes = qMax(info.displayWidth, info.displayHeight);
+	const int landscapeRes = qMin(info.displayWidth, info.displayHeight);
 
-	m_presetHeight[0] = 377 * Settings::LunaSettings()->imeScale;	// portrait
-	m_presetHeight[1] = 260 * Settings::LunaSettings()->imeScale;	// landscape
+	m_presetHeight[0] = (portraitRes - ls->virtualCoreNaviHeight - ls->positiveSpaceTopPadding) * 0.475;	// portrait
+	m_presetHeight[1] = (landscapeRes - ls->virtualCoreNaviHeight - ls->positiveSpaceTopPadding) * 0.5;	// landscape
 
 	connect(&m_IMEDataInterface->m_availableSpace, SIGNAL(valueChanged(const QRect &)), SLOT(availableSpaceChanged(const QRect &)));
 	connect(&m_IMEDataInterface->m_visible, SIGNAL(valueChanged(const bool &)), SLOT(visibleChanged(const bool &)));
