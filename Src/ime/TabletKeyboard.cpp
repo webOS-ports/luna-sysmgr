@@ -21,6 +21,7 @@
 
 #include "KeyLocationRecorder.h"
 #include "PalmIMEHelpers.h"
+#include "HostBase.h"
 #include "Settings.h"
 #include "SingletonTimer.h"
 #include "Utils.h"
@@ -181,10 +182,15 @@ TabletKeyboard::TabletKeyboard(IMEDataInterface * dataInterface) : VirtualKeyboa
 	for (int r = 1; r < TabletKeymap::cKeymapRows; ++r)
 		m_keymap.setRowHeight(r, m_white_key.height() / 2);
 
-	m_presetHeight[cKey_Resize_Tiny - cKey_Resize_First] = 243 * Settings::LunaSettings()->imeScale;
-	m_presetHeight[cKey_Resize_Small - cKey_Resize_First] = 291 * Settings::LunaSettings()->imeScale;
-	m_presetHeight[cKey_Resize_Default - cKey_Resize_First] = 340 * Settings::LunaSettings()->imeScale;
-	m_presetHeight[cKey_Resize_Large - cKey_Resize_First] = 393 * Settings::LunaSettings()->imeScale;
+	//Calculate height relative to landscape screen height
+	const HostInfo& info = HostBase::instance()->getInfo();
+	const Settings* ls = Settings::LunaSettings();
+	const int landscapeRes = qMin(info.displayWidth, info.displayHeight);
+
+	m_presetHeight[cKey_Resize_Tiny - cKey_Resize_First] = (landscapeRes - ls->virtualCoreNaviHeight - ls->positiveSpaceTopPadding) * 0.315;
+	m_presetHeight[cKey_Resize_Small - cKey_Resize_First] = (landscapeRes - ls->virtualCoreNaviHeight - ls->positiveSpaceTopPadding) * 0.38;
+	m_presetHeight[cKey_Resize_Default - cKey_Resize_First] = (landscapeRes - ls->virtualCoreNaviHeight - ls->positiveSpaceTopPadding) * 0.45;
+	m_presetHeight[cKey_Resize_Large - cKey_Resize_First] = (landscapeRes - ls->virtualCoreNaviHeight - ls->positiveSpaceTopPadding) * 0.5;
 
 	connect(&m_IMEDataInterface->m_availableSpace, SIGNAL(valueChanged(const QRect &)), SLOT(availableSpaceChanged(const QRect &)));
 	connect(&m_IMEDataInterface->m_visible, SIGNAL(valueChanged(const bool &)), SLOT(visibleChanged(const bool &)));
