@@ -156,13 +156,8 @@ bool GestureArea::sceneEvent(QEvent* event)
 		if (t) {
 			QTapGesture* tap = static_cast<QTapGesture*>(t);
 			if (tap->state() == Qt::GestureFinished) {
-				//Is the tap centered? If in portrait, check the x, otherwise check the y
-				if ((m_isPortrait && tap->position().x() > m_bounds.width()/3 && tap->position().x() < (m_bounds.width()/3) * 2)
-				|| (!m_isPortrait && tap->position().y() > m_bounds.width()/3 && tap->position().y() < (m_bounds.width()/3) * 2))
-				{
-					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Home, Qt::NoModifier));
-					animateBar(AnimDir(Up));
-				}
+				QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Home, Qt::NoModifier));
+				animateBar(AnimDir(Up));
 			}
 		}
 		return true;
