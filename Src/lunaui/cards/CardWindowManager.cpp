@@ -274,7 +274,8 @@ void CardWindowManager::resize(int width, int height)
 
 	m_targetPositiveSpace = SystemUiController::instance()->positiveSpaceBounds();
 
-	kWindowOrigin = boundingRect().y() + ((m_normalScreenBounds.y() + 48) + (int) ((m_normalScreenBounds.height() - 48) * kWindowOriginRatio));
+	int offset = 48 * Settings::LunaSettings()->layoutScale;
+	kWindowOrigin = boundingRect().y() + ((m_normalScreenBounds.y() + offset) + (int) ((m_normalScreenBounds.height() - offset) * kWindowOriginRatio));
 
     updateAngryCardThreshold();
 
