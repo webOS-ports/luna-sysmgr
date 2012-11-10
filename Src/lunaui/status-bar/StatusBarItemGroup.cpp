@@ -121,7 +121,7 @@ void StatusBarItemGroup::setActionable(bool actionable)
 
 			std::string filePath = statusBarImagesPath + "status-bar-menu-dropdown-tab.png";
 			m_activeBkgPix = new QPixmap(filePath.c_str());
-			*m_activeBkgPix = m_activeBkgPix->scaledToHeight(m_activeBkgPix->height() * Settings::LunaSettings()->uiScale);
+			*m_activeBkgPix = m_activeBkgPix->scaledToHeight(m_activeBkgPix->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 		}
 
 //		if(m_actionable && !m_pressedBkgPix) {
@@ -130,7 +130,7 @@ void StatusBarItemGroup::setActionable(bool actionable)
 //
 //			std::string filePath = statusBarImagesPath + "status-bar-menu-dropdown-tab-pressed.png";
 //			m_pressedBkgPix = new QPixmap(filePath.c_str());
-//			*m_pressedBkgPix = m_pressedBkgPix->scaledToHeight(m_pressedBkgPix->height() * Settings::LunaSettings()->uiScale);
+//			*m_pressedBkgPix = m_pressedBkgPix->scaledToHeight(m_pressedBkgPix->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 //		}
 	}
 
