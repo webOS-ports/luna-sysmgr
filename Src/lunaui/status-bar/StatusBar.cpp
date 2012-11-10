@@ -145,7 +145,7 @@ StatusBar::StatusBar(StatusBarType type, int width, int height)
 		if(m_clock)
 			m_clock->setParentItem(this);
 
-		if(m_type == TypeNormal || m_type == TypeDockMode) {
+		if(m_type == TypeNormal || m_type == TypeDockMode || m_type == TypeLockScreen) {
 			m_systemUiGroup = new StatusBarItemGroup(height, false, false, StatusBarItemGroup::AlignRight);
 			if(m_systemUiGroup) {
 				m_systemUiGroup->setParentItem(this);
@@ -157,7 +157,7 @@ StatusBar::StatusBar(StatusBarType type, int width, int height)
 					m_systemUiGroup->addItem(m_infoItems);
 			}
 		}
-		if (m_type == TypeNormal || m_type == TypeDockMode || m_type == TypeFirstUse) {
+		if (m_type == TypeNormal || m_type == TypeDockMode || m_type == TypeFirstUse || m_type == TypeLockScreen) {
 			m_titleGroup    = new StatusBarItemGroup(height, false, false, StatusBarItemGroup::AlignLeft);
 			if(m_titleGroup) {
 				m_titleGroup->setParentItem(this);
@@ -414,7 +414,7 @@ void StatusBar::layout()
 		}
 	} else {
 		// static layout (for Phone UI)
-		if(m_type == TypeNormal || m_type == TypeFirstUse) {
+		if(m_type == TypeNormal || m_type == TypeFirstUse || m_type == TypeLockScreen) {
 			// This item is Left Aligned (The position  of the icon is the position of the LEFT EDGE of the bounding rect)
 			if(m_titleGroup)
 				m_titleGroup->setPos(-m_bounds.width()/2, 0);
