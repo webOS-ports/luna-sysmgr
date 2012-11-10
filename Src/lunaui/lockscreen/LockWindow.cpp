@@ -2438,11 +2438,11 @@ LockBackground::LockBackground()
 	// Load mask pixmaps
 	std::string maskFilePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-wallpaper-mask-bottom.png";
 	m_bottomMask = QPixmap(qFromUtf8Stl(maskFilePath));
-	m_bottomMask = m_bottomMask.scaledToHeight(m_bottomMask.height() * Settings::LunaSettings()->uiScale);
+	m_bottomMask = m_bottomMask.scaledToHeight(m_bottomMask.height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 
 	maskFilePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-wallpaper-mask-top.png";
 	m_topMask = QPixmap(qFromUtf8Stl(maskFilePath));
-	m_topMask = m_topMask.scaledToHeight(m_topMask.height() * Settings::LunaSettings()->uiScale);
+	m_topMask = m_topMask.scaledToHeight(m_topMask.height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 }
 
 LockBackground::~LockBackground()
@@ -2538,13 +2538,13 @@ DashboardAlerts::DashboardAlerts()
 
 	std::string filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/dashboard-scroll-fade.png";
 	m_scrollFade = QPixmap (filePath.c_str());
-	m_scrollFade = m_scrollFade.scaledToHeight(m_scrollFade.height() * Settings::LunaSettings()->uiScale);
+	m_scrollFade = m_scrollFade.scaledToHeight(m_scrollFade.height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 	if (m_scrollFade.isNull())
 		g_warning ("scrollFade image missing");
 
 	filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-divider.png";
 	m_divider = QPixmap (filePath.c_str());
-	m_divider = m_divider.scaledToHeight(m_divider.height() * Settings::LunaSettings()->uiScale);
+	m_divider = m_divider.scaledToHeight(m_divider.height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 	if (m_divider.isNull())
 		g_warning ("divider image missing");
 
