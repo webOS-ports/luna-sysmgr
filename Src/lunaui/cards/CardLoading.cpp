@@ -54,7 +54,7 @@ CardLoading::CardLoading(Window* win)
 		path.append("/loading-glow.png");
 		s_glow = new QPixmap(path);
 		if(s_glow)
-			*s_glow = s_glow->scaledToHeight(s_glow->height() * Settings::LunaSettings()->uiScale);
+			*s_glow = s_glow->scaledToHeight(s_glow->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
 			s_glowRefCount++;
 		if (!s_glow || s_glow->isNull()) {
 			g_critical("%s: Failed to load image '%s'", __PRETTY_FUNCTION__, qPrintable(path));
@@ -68,7 +68,7 @@ CardLoading::CardLoading(Window* win)
             path.append("/loading-bg.png");
             s_background = new QPixmap(path);
             if (s_background) {
-		    *s_background = s_background->scaledToHeight(s_background->height() * Settings::LunaSettings()->uiScale);
+		    *s_background = s_background->scaledToHeight(s_background->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
                     s_backgroundRefCount++;
             }
             if (!s_background || s_background->isNull()) {
