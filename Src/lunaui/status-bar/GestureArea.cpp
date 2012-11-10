@@ -82,9 +82,9 @@ void GestureArea::init()
 	std::string lightbarLImagePath = settings->lunaSystemResourcesPath + "/corenavi/light-bar-bright-left.png";
 	std::string lightbarRImagePath = settings->lunaSystemResourcesPath + "/corenavi/light-bar-bright-right.png";
 	m_lightbarLPixmap = new QPixmap(lightbarLImagePath.c_str());
-	*m_lightbarLPixmap = m_lightbarLPixmap->scaledToHeight(m_bounds.height()/1.5);
+	*m_lightbarLPixmap = m_lightbarLPixmap->scaledToHeight(m_bounds.height()/1.5, Qt::SmoothTransformation);
 	m_lightbarRPixmap = new QPixmap(lightbarRImagePath.c_str());
-	*m_lightbarRPixmap = m_lightbarRPixmap->scaledToHeight(m_bounds.height()/1.5);
+	*m_lightbarRPixmap = m_lightbarRPixmap->scaledToHeight(m_bounds.height()/1.5, Qt::SmoothTransformation);
 
 	m_radialGrad = QRadialGradient(m_bounds.center(), m_lightbarLPixmap->width() * 2);
 	m_radialGrad.setColorAt(0, QColor(0, 0, 0, 0));

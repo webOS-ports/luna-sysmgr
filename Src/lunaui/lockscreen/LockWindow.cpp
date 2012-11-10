@@ -412,11 +412,6 @@ void LockWindow::init()
 	m_statusBar->setPos(0, m_bounds.y() + m_statusBar->boundingRect().height() / 2);
 	m_statusBar->setZValue(100);
 
-	m_gestureArea = new GestureArea(m_bounds.width(), Settings::LunaSettings()->virtualCoreNaviHeight);
-	m_gestureArea->init();
-	m_gestureArea->setParentItem(this);
-	m_gestureArea->setZValue(100);
-
 	// Background (Status/Wallpaper/Dashboard/Banner/Mask)
 	m_bgNode = new LockBackground();
 	m_bgNode->setParentItem(this);
@@ -536,11 +531,6 @@ void LockWindow::resize(int width, int height)
 		m_statusBar->resize(width, Settings::LunaSettings()->positiveSpaceTopPadding);
 		m_statusBar->setPos(0, m_bounds.y() + m_statusBar->boundingRect().height() / 2);
 		m_statusBar->update();
-	}
-
-	if(m_gestureArea) {
-		m_gestureArea->resize(width, Settings::LunaSettings()->virtualCoreNaviHeight);
-		m_gestureArea->update();
 	}
 
 	if(m_clockWin) {
@@ -2509,6 +2499,13 @@ void LockBackground::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 		// draw a solid black background
 		painter->fillRect(m_bounds, QColor(0x0,0x0,0x0,0xff));
 	}
+	
+	//Draw a black box where the gesture area would be
+	painter->fillRect(
+		QRect(-m_bounds.width()/2, m_bounds.height()/2, m_bounds.width(), Settings::LunaSettings()->virtualCoreNaviHeight)
+		,QColor(0x0,0x0,0x0,0xff)
+		);
+	
 	painter->setCompositionMode(oldMode);
 }
 
