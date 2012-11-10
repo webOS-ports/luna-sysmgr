@@ -25,6 +25,7 @@
 #include "Common.h"
 
 #include "WindowManagerBase.h"
+#include "GraphicsItemContainer.h"
 #include "Timer.h"
 #include <QPropertyAnimation>
 
@@ -42,6 +43,8 @@ public:
 	virtual ~TopLevelWindowManager();
 
 	virtual void init();
+
+	void positionCornerWindows();
 
 	virtual void addWindow(Window* win);
 	virtual void removeWindow(Window* win);
@@ -83,6 +86,10 @@ private:
 	bool m_inBrickMode;
 
 	LockWindow* m_lockedWindow;
+	
+	QGraphicsPixmapItem* m_corners[4];
+	GraphicsItemContainer* m_cornerContainer;
+	QRectF m_winRect;
 };
 
 

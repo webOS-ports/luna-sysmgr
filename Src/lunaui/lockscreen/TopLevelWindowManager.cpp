@@ -30,11 +30,18 @@
 #include "TopLevelWindowManager.h"
 #include "Window.h"
 #include "LockWindow.h"
+#include "RoundedCorners.h"
 #include "WindowServer.h"
 #include "SystemService.h"
 #include "SystemUiController.h"
 #include "Logging.h"
 #include "WebAppMgrProxy.h"
+#include "Utils.h"
+
+static const int kTopLeftWindowIndex     = 0;
+static const int kTopRightWindowIndex    = 1;
+static const int kBottomLeftWindowIndex  = 2;
+static const int kBottomRightWindowIndex = 3;
 
 TopLevelWindowManager::TopLevelWindowManager(uint32_t maxWidth, uint32_t maxHeight)
 	: WindowManagerBase(maxWidth, maxHeight)
@@ -43,11 +50,17 @@ TopLevelWindowManager::TopLevelWindowManager(uint32_t maxWidth, uint32_t maxHeig
 	, m_suspendedWebkitProcess(false)
 	, m_inBrickMode(false)
 	, m_lockedWindow(0)
+	, m_cornerContainer(0)
 {
+	memset(m_corners, 0, sizeof(m_corners));
 	setObjectName("TopLevelWindowManager");
+
+	::memset(m_corners, 0, 4 * sizeof(QGraphicsPixmapItem*));
 
 	connect(SystemService::instance(), SIGNAL(signalEnterBrickMode(bool)), this, SLOT(slotEnterBrickMode(bool)));
 	connect(SystemService::instance(), SIGNAL(signalExitBrickMode()), this, SLOT(slotExitBrickMode()));
+
+	m_winRect.setRect(0, 0, maxWidth, maxHeight);
 }
 
 TopLevelWindowManager::~TopLevelWindowManager()
@@ -56,7 +69,7 @@ TopLevelWindowManager::~TopLevelWindowManager()
 }
 
 void TopLevelWindowManager::init()
-{
+{                                            
 	m_lockedWindow = new LockWindow(boundingRect().width(), boundingRect().height());
 	if (m_lockedWindow) {
 		m_lockedWindow->init();
@@ -69,6 +82,26 @@ void TopLevelWindowManager::init()
 	m_brickSurfAnimation.setDuration(AS(brickDuration)); 
 	m_brickSurfAnimation.setEasingCurve(AS_CURVE(brickCurve));
 	connect(&m_brickSurfAnimation, SIGNAL(finished()), SLOT(slotBrickSurfAnimationFinished()));
+	
+	if (!Settings::LunaSettings()->tabletUi) {
+		m_cornerContainer = new GraphicsItemContainer(SystemUiController::instance()->currentUiWidth(), SystemUiController::instance()->currentUiHeight());
+
+		QSize dims = RoundedCorners::topLeft().size();
+
+		m_corners[kTopLeftWindowIndex] = new QGraphicsPixmapItem(RoundedCorners::topLeft(), m_cornerContainer);
+		m_corners[kTopRightWindowIndex] = new QGraphicsPixmapItem(RoundedCorners::topRight(), m_cornerContainer);
+		m_corners[kBottomLeftWindowIndex] = new QGraphicsPixmapItem(RoundedCorners::bottomLeft(), m_cornerContainer);
+		m_corners[kBottomRightWindowIndex] = new QGraphicsPixmapItem(RoundedCorners::bottomRight(), m_cornerContainer);
+
+		for (int i=kTopLeftWindowIndex; i <= kBottomRightWindowIndex; i++) {
+		    m_corners[i]->setOffset(-dims.width()/2, -dims.height()/2);
+		}
+
+		m_cornerContainer->setVisible(true);
+		m_cornerContainer->setZValue(100);
+		m_cornerContainer->setParentItem(this);
+		positionCornerWindows();
+	}
 }
 
 bool TopLevelWindowManager::handleNavigationEvent(QKeyEvent* keyEvent, bool& propogate)
@@ -97,6 +130,9 @@ void TopLevelWindowManager::resize(int width, int height)
 	// accept requests for resizing to the current dimensions, in case we are doing a force resize
 
 	WindowManagerBase::resize(width, height);
+
+	if (m_cornerContainer)
+		m_cornerContainer->resize(width, height);
 
 	if(m_lockedWindow) {
 		m_lockedWindow->resize(width, height);
@@ -362,3 +398,28 @@ void TopLevelWindowManager::unlockScreen()
 	SystemUiController::instance()->setDeviceLocked(false);
 }
 
+void TopLevelWindowManager::positionCornerWindows()
+{
+    if (Settings::LunaSettings()->tabletUi)
+        return;
+
+    int i = kTopLeftWindowIndex;
+    int trueBottom = m_winRect.y() + m_winRect.height() - Settings::LunaSettings()->virtualCoreNaviHeight;
+    int trueRight = m_winRect.x() + m_winRect.width();
+    Q_ASSERT(m_corners[i]);
+    QRectF rect = m_corners[i]->boundingRect();
+
+    setPosTopLeft(m_corners[i], m_winRect.x(), m_winRect.y() + Settings::LunaSettings()->positiveSpaceTopPadding);
+
+    i = kTopRightWindowIndex;
+    Q_ASSERT(m_corners[i]);
+    setPosTopLeft(m_corners[i], trueRight - rect.width(), m_winRect.y() + Settings::LunaSettings()->positiveSpaceTopPadding);
+
+    i = kBottomLeftWindowIndex;
+    Q_ASSERT(m_corners[i]);
+    setPosTopLeft(m_corners[i], m_winRect.x(), trueBottom - rect.height());
+
+    i = kBottomRightWindowIndex;
+    Q_ASSERT(m_corners[i]);
+    setPosTopLeft(m_corners[i], trueRight - rect.width(), trueBottom - rect.height());
+}
