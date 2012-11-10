@@ -28,7 +28,6 @@
 #include "sptr.h"
 #include "Event.h"
 #include "StatusBar.h"
-#include "GestureArea.h"
 
 #include <QObject>
 #include <QPointer>
@@ -224,7 +223,6 @@ private:
 	// lock screen widgets
 	LockBackground* m_bgNode;
 	StatusBar*      m_statusBar;
-	GestureArea*      m_gestureArea;
 
 	HelpWindow* m_helpWin;
 	LockButton* m_lockButton;
