@@ -1838,13 +1838,7 @@ void WindowServer::rotateUi(OrientationEvent::Orientation newOrientation, UiRota
 	}
 
 	if(animation != Rotation_NoAnimation && !m_screenShotImagesValid) {
-		SystemUiController::instance()->enableDirectRendering(false);
-		//m_rotationImageBeforePtr = takeScreenShot();
-		QImage fbImage = getScreenShotImageFromFb();
-		m_rotationImageBeforePtr = new QPixmap(m_screenWidth, m_screenHeight);
-		QPainter painter(m_rotationImageBeforePtr);
-		painter.drawImage(0,0,fbImage);
-		painter.end();
+		m_rotationImageBeforePtr = takeScreenShot();
 	}
 
 	HostBase::instance()->setOrientation(newOrientation);
