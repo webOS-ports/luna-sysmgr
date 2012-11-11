@@ -111,8 +111,11 @@ static unsigned int kShadowWidth = 10 * Settings::LunaSettings()->uiScale;
 static unsigned int kBackgroundCornerWidth = 9 * Settings::LunaSettings()->uiScale;
 
 
-class LockButton : public QGraphicsPixmapItem
+class LockButton : public QObject, public QGraphicsPixmapItem
 {
+	Q_OBJECT
+	Q_PROPERTY(QPointF position READ pos WRITE setPos)
+	
 public:
 	LockButton();
 	virtual ~LockButton();
@@ -129,6 +132,8 @@ public:
 	void reset();
 	bool contains(int x, int y) const;
 	void setImageType(Type type);
+	void animatePosition(QPointF newPos);
+	QPropertyAnimation* posAnimation() { return m_posAnimation; }
 
 	bool m_pressed;
 
@@ -139,6 +144,7 @@ private:
 	int m_anchorX;
 	int m_anchorY;
 	QRect m_hitTarget;
+	QPropertyAnimation* m_posAnimation;
 };
 
 // ----------------------------------------------------------------------------------------------
@@ -1751,6 +1757,9 @@ void LockWindow::handlePenDownStateNormal(Event* event)
 		return;
 
 	m_lockButton->press(true);
+	
+	m_lockButton->posAnimation()->setDuration(100);
+	m_lockButton->animatePosition(QPointF(event->x, event->y));
 
 	showHelp();
 }
@@ -1782,7 +1791,8 @@ void LockWindow::handlePenMoveStateNormal(Event* event)
 		m_lockButton->press(true);
 	}
 
-	m_lockButton->setPos(event->x, event->y);
+	m_lockButton->posAnimation()->setDuration(20);
+	m_lockButton->animatePosition(QPointF(event->x, event->y));
 
 	int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
 	if ((distanceSquared > kSaucerRadiusSquared) && (event->y < m_lockButtonY))
@@ -1825,8 +1835,9 @@ void LockWindow::handlePenUpStateNormal(Event* event)
 		return;
 
 	if (m_state != StatePinEntry) {
-
-		m_lockButton->setPos(m_lockButtonX, m_lockButtonY);
+	
+		m_lockButton->posAnimation()->setDuration(100);
+		m_lockButton->animatePosition(QPointF(m_lockButtonX, m_lockButtonY));
 
 		startHideHelpTimer();
 	}
@@ -2327,11 +2338,15 @@ LockButton::LockButton()
 				            boundingRect().width() * 1.5, boundingRect().height() * 1.5);
 	}
 
-
+	m_posAnimation = new QPropertyAnimation(this, "position");
+	m_posAnimation->setDuration(20);
+	m_posAnimation->setEasingCurve(QEasingCurve::Linear);
 }
 
 LockButton::~LockButton()
 {
+	if(m_posAnimation)
+		delete m_posAnimation;
 }
 
 void LockButton::press(bool down)
@@ -2384,6 +2399,22 @@ void LockButton::setImageType(Type type)
 
 	m_imageType = type;
 	setPixmap(m_buttonImages[m_imageType + (m_pressed?1:0)]);
+}
+
+void LockButton::animatePosition(QPointF newPos)
+{
+	if(pos() == newPos)
+		return;
+	if((m_posAnimation->state() == QAbstractAnimation::Running) &&
+	   (m_posAnimation->endValue() == newPos))
+		return;
+
+	if(m_posAnimation->state() != QAbstractAnimation::Stopped)
+		m_posAnimation->stop();
+
+	m_posAnimation->setStartValue(pos());
+	m_posAnimation->setEndValue(newPos);
+	m_posAnimation->start();
 }
 
 // ------------------------------------------------------------------------------------------------
