@@ -1523,7 +1523,25 @@ void CardWindowManager::handleMouseMoveMinimized(QGraphicsSceneMouseEvent* event
 		// cards are always offset from the parents origin
 		CardWindow::Position pos = m_draggedWin->position();
 		pos.trans.setY(delta.y());
-		m_draggedWin->setPosition(pos);
+		QVariant end; end.setValue(pos);
+		
+		// using QPropertyAnimation to maintain a consistent framerate
+		QPropertyAnimation* anim = new QPropertyAnimation(m_draggedWin, "position");
+		anim->setEasingCurve(AS_CURVE(cardSlideCurve));
+		anim->setDuration(AS(cardSlideDuration));
+		
+		if(m_draggedWin->position() == pos)
+			return;
+		if((anim->state() == QAbstractAnimation::Running) &&
+		   (anim->endValue() == end))
+			return;
+
+		if(anim->state() != QAbstractAnimation::Stopped)
+			anim->stop();
+		
+		anim->setEndValue(end);
+		setAnimationForWindow(m_draggedWin, anim);
+		anim->start();
 	}
 }
 
