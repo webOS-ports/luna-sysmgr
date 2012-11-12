@@ -1527,8 +1527,8 @@ void CardWindowManager::handleMouseMoveMinimized(QGraphicsSceneMouseEvent* event
 		
 		// using QPropertyAnimation to maintain a consistent framerate
 		QPropertyAnimation* anim = new QPropertyAnimation(m_draggedWin, "position");
-		anim->setEasingCurve(AS_CURVE(cardSlideCurve));
-		anim->setDuration(AS(cardSlideDuration));
+		anim->setDuration(30);
+		anim->setEasingCurve(QEasingCurve::Linear);
 		
 		if(m_draggedWin->position() == pos)
 			return;
