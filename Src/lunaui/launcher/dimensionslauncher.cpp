@@ -1654,7 +1654,7 @@ void LauncherObject::redirectedTouchTrackedPointMoved(Thing * p_sourceThing,int 
 
 		//Animate with QPropertyAnimation for smoothness
 		QPropertyAnimation * p_moveAnim = new QPropertyAnimation(&m_horizPanAnchor,"pos");
-		p_moveAnim->setDuration(1000/30);
+		p_moveAnim->setDuration(30);
 		p_moveAnim->setEasingCurve(QEasingCurve::Linear);
 		
 		if(moveByX == 0.0)
