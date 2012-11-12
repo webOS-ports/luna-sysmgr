@@ -576,6 +576,7 @@ protected:
 	GroupAnchorItem m_horizPanAnchor;
 	bool            m_seenHorizPanFlick;
 	qint32          m_touchStartPageIndex;
+	int		m_pageOffset;
 
 	QPointer<PageTabBar> m_qp_pageTabBar;
 	QPointer<QAnimationGroup> m_qp_ensembleAnimation;
