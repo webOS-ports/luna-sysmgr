@@ -164,6 +164,7 @@ LauncherObject::LauncherObject(const QRectF& geometry,DimensionsUI * p_mainWindo
 , m_feedbackTimer(this)
 , m_p_pageMovementController(0)
 , m_blockingPageInteractions(false)
+, m_pageOffset(0)
 {
 
 	if (!s_qp_primaryInstance)
@@ -1612,6 +1613,11 @@ void LauncherObject::touchTrackedPointReleased(int id,const QPointF& scenePositi
 //virtual
 void LauncherObject::redirectedTouchTrackedPointMoved(Thing * p_sourceThing,int id,const QPointF& scenePosition,const QPointF& lastScenePosition,const QPointF& initialPosition,const RedirectContext& redirContext)
 {
+	if(m_touchStartPageIndex == -1)
+		m_pageOffset = -(qobject_cast<Page *>(p_sourceThing)->pos().x());
+	
+	qCritical() << m_touchStartPageIndex << m_pageOffset;
+		
 //	qDebug() << __PRETTY_FUNCTION__ << ": getting redirected id " << id << " from Thing: " << p_sourceThing;
 
 	if (!qobject_cast<LauncherTouchRedirectContext const *>(&redirContext))
@@ -1647,8 +1653,25 @@ void LauncherObject::redirectedTouchTrackedPointMoved(Thing * p_sourceThing,int 
 
 		if(isPageAnchorInOverscroll())
 			moveByX /= 2;
+			
+		m_pageOffset += moveByX;
 
-		m_horizPanAnchor.moveBy(moveByX,0.0);
+		//Animate with QPropertyAnimation for smoothness
+		QPropertyAnimation * p_moveAnim = new QPropertyAnimation(&m_horizPanAnchor,"pos");
+		p_moveAnim->setDuration(1000/30);
+		p_moveAnim->setEasingCurve(QEasingCurve::Linear);
+		
+		if(moveByX == 0.0)
+			return;
+
+		if(p_moveAnim->state() != QAbstractAnimation::Stopped)
+			p_moveAnim->stop();
+		
+		p_moveAnim->setStartValue(m_horizPanAnchor.pos());
+		p_moveAnim->setEndValue(QPointF(m_pageOffset, m_horizPanAnchor.pos().y()));
+		(void)m_horizPanAnchor.setAnimation(p_moveAnim);
+		p_moveAnim->start();
+		
 		return;
 	}
 	LauncherPageIconTransferRedirectContext const * pIconTxferCtx = qobject_cast<LauncherPageIconTransferRedirectContext const *>(&redirContext);
@@ -1949,6 +1972,9 @@ void LauncherObject::redirectedTTPMovedLimbo(Thing * p_sourceThing,int id,const 
 void LauncherObject::redirectedTouchTrackedPointReleased(Thing * p_sourceThing,int id,const QPointF& scenePosition,const QPointF& lastScenePosition,const QPointF& initialPosition,const RedirectContext& redirContext)
 {
 	qDebug() << __PRETTY_FUNCTION__ << ": getting redirected id " << id << " from Thing: " << p_sourceThing;
+	
+	//reset page offset
+	m_pageOffset = 0;
 
 	//unhighlight all tabs
 	if (m_qp_pageTabBar)
