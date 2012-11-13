@@ -31,8 +31,8 @@
 #include "Settings.h"
 #include "glib.h"
 
-static const int kShadowWidth = 20;
-static const int kShadowOffsetY = 5;
+static const int kShadowWidth = 20 * Settings::LunaSettings()->layoutScale;
+static const int kShadowOffsetY = 5 * Settings::LunaSettings()->layoutScale;
 
 static QPixmap* s_shadowPixmap = 0;
 
@@ -43,6 +43,7 @@ CardDropShadowEffect::CardDropShadowEffect(QGraphicsItem *item, QObject *parent)
 	if (G_UNLIKELY(!s_shadowPixmap)) {
 		std::string tileImagePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/card-shadow-tile.png";
 		s_shadowPixmap = new QPixmap(tileImagePath.c_str());
+		*s_shadowPixmap = s_shadowPixmap->scaledToHeight(s_shadowPixmap->height() * Settings::LunaSettings()->uiScale);
 	}
 
 	cacheDrawingData();
@@ -73,8 +74,15 @@ void CardDropShadowEffect::cacheDrawingData()
 	bounds.setWidth(bounds.width() + 2 * kShadowWidth);
 	bounds.moveTop(bounds.y() + kShadowOffsetY);
 
-	QMargins margins(s_shadowPixmap->width()/2, s_shadowPixmap->height()/2,
-					 s_shadowPixmap->width()/2, s_shadowPixmap->height()/2);
+	int xMargin = s_shadowPixmap->width()/2;
+	int yMargin = s_shadowPixmap->height()/2;
+	
+	if(xMargin % 2 == 0)
+		xMargin--;
+	if(yMargin % 2 == 0)
+		yMargin--;
+	
+	QMargins margins(xMargin, yMargin, xMargin, yMargin);
 
 	m_drawingData = qCalculateFrameBorderData(bounds, margins, s_shadowPixmap->rect(), margins);
 }
