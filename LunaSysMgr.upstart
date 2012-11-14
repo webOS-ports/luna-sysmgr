@@ -10,9 +10,11 @@ respawn
 pre-start script
 	echo "1" > /proc/sys/vm/overcommit_memory
 	mkdir -p /var/luna/preferences
-
+	mkdir -p /var/luna/data
 	touch /var/luna/preferences/ran-first-use
-
+	if grep -qs "qemu" /etc/hostname ; then
+		touch /var/luna/preferences/ran-first-use
+	fi
 	if [ ! -f /var/luna/preferences/ran-first-use ]
 	then
 		echo " -u minimal -a com.palm.app.firstuse" > /var/luna/preferences/sysmgr-args
