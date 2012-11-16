@@ -505,6 +505,11 @@ void LockWindow::init()
 #else
                 m_unlockPanel->setParent(this);
 #endif
+				
+				QMetaObject::invokeMethod(m_unlockPanel, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->uiScale));
+				QMetaObject::invokeMethod(m_unlockPanel, "setTextScale", Q_ARG(QVariant, Settings::LunaSettings()->textScale));
+				QMetaObject::invokeMethod(m_unlockPanel, "setLayoutScale", Q_ARG(QVariant, Settings::LunaSettings()->layoutScale));
+				
 				m_unlockPanel->setVisible(false);
 				m_unlockPanel->setOpacity(0.0);
 
