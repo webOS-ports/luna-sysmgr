@@ -1,6 +1,8 @@
 import Qt 4.7
 
 Item {
+    property real uiScale: 1.0
+    property real textScale: 1.0
     property bool isPressed: false
     property string caption: ""
     property string imgSource: ""
@@ -10,9 +12,11 @@ Item {
         id: pressedBkg
         source: "/usr/palm/sysmgr/images/pin/pin-key-highlight.png"
         visible: isPressed;
-        width: parent.width;
-        height: parent.height;
-        border { left: 10; top: 10; right: 10; bottom: 10 }
+        width: parent.width / uiScale;
+        height: parent.height / uiScale;
+        transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+        smooth: true;
+        border { left: 40; top: 40; right: 40; bottom: 40 }
     }
 
     Text {
@@ -22,7 +26,7 @@ Item {
         anchors.centerIn: parent
         color: "#FFF";
         font.bold: true;
-        font.pixelSize: 30
+        font.pixelSize: 30 * textScale
         font.family: "Prelude"
         font.capitalization: Font.AllUppercase
     }
@@ -31,6 +35,8 @@ Item {
         id: buttonImg
         source: imgSource
         visible: imgSource != "";
+        scale: uiScale;
+        smooth: true;
         anchors.centerIn: parent
     }
 
