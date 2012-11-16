@@ -23,6 +23,7 @@ Item {
         width: parent.width / uiScale;
         height: parent.height / uiScale;
         transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+        smooth: true;
         border { left: 40; top: 40; right: 40; bottom: 40 }
         opacity: active ? 1.0 : inactiveOpacity
     }

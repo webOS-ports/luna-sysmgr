@@ -474,6 +474,11 @@ void LockWindow::init()
 			if(m_unlockPanel) {
 				m_unlockPanel->setPos (-m_unlockPanel->boundingRect().width()/2, -m_unlockPanel->boundingRect().height()/2);
 				static_cast<QGraphicsObject*>(m_unlockPanel)->setParentItem(this);
+				
+				QMetaObject::invokeMethod(m_unlockPanel, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->uiScale));
+				QMetaObject::invokeMethod(m_unlockPanel, "setTextScale", Q_ARG(QVariant, Settings::LunaSettings()->textScale));
+				QMetaObject::invokeMethod(m_unlockPanel, "setLayoutScale", Q_ARG(QVariant, Settings::LunaSettings()->layoutScale));
+				
 				m_unlockPanel->setVisible(false);
 				m_unlockPanel->setOpacity(0.0);
 
