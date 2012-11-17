@@ -4,6 +4,8 @@ Item {
     id: analogclock
     width: 1024; height: 768
 
+    property real uiScale: 1.0
+    property real textScale: 1.0
     property int glass: 1
     property variant type: ["matte","glass"]
     property bool timerRunning: false
@@ -58,18 +60,18 @@ Item {
      Image {
          id: face
          source: "../../images/dockmode/time/analog/"+type[glass]+"/base.png"
+         scale: Math.min((parent.width / width), (parent.height / height))
          anchors.centerIn: parent
      }
 
      Text {
          id: dayText
          text: day
-         parent: face
          anchors.centerIn: parent
-         anchors.horizontalCenterOffset: glass ? 0 : 108
-         anchors.verticalCenterOffset: glass ? 300 : -2
+         anchors.horizontalCenterOffset: glass ? 0 : ((face.width * face.scale)/4.6)
+         anchors.verticalCenterOffset: glass ? ((face.height * face.scale)/5) : 0
          font.family: "prelude"
-         font.pointSize: glass ? 30 : 30
+         font.pointSize: glass ? (16 * textScale) : (30 * textScale)
          color: "#e1e1e1"
      }
 
@@ -77,12 +79,11 @@ Item {
          id: dayofWeekText
          text: weekday
          visible: !glass
-         parent: face
          anchors.centerIn: parent
-         anchors.horizontalCenterOffset: glass ? 0 : -108
-         anchors.verticalCenterOffset: glass ? 260 : -2
+         anchors.horizontalCenterOffset: glass ? 0 : -((face.width * face.scale)/4.8)
+         anchors.verticalCenterOffset: glass ? ((face.height * face.scale)/5) : 0
          font.family: "prelude"
-         font.pointSize: glass ? 16 : 30
+         font.pointSize: glass ? (16 * textScale) : (30 * textScale)
          color: "#e1e1e1"
      }
 
