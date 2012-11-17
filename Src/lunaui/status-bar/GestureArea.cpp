@@ -156,8 +156,11 @@ bool GestureArea::sceneEvent(QEvent* event)
 		if (t) {
 			QTapGesture* tap = static_cast<QTapGesture*>(t);
 			if (tap->state() == Qt::GestureFinished) {
-				QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Home, Qt::NoModifier));
-				animateBar(AnimDir(Up));
+				if(!WindowServer::instance()->saveScreenShot())
+				{
+					QApplication::postEvent(window, new QKeyEvent(QEvent::KeyRelease, Qt::Key_CoreNavi_Home, Qt::NoModifier));
+					animateBar(AnimDir(Up));
+				}
 			}
 		}
 		return true;
