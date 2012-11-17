@@ -366,7 +366,9 @@ WindowServer::WindowServer()
 	, m_rotationImageBeforePtr(0)
 	, m_rotationImageAfterPtr(0)
 	, m_rotationAnim(0)
-    , m_cachedFocusedItem(0)
+	, m_cachedFocusedItem(0)
+	, m_powerKeyDown(false)
+	, m_eatPowerUpKey(false)
 	, m_inRotationAnimation(Rotation_NoAnimation)
 	, m_fingerDownOnScreen(false)
 #ifdef DEBUG_RECORD_PAINT
@@ -580,10 +582,8 @@ bool WindowServer::processSystemShortcut(QEvent* event)
 
 		static bool symDown = false;
 		static bool altDown = false;
-		static bool powerKeyDown = false;
 		static bool homeKeyDown = false;
 		static bool eatHomeUpKey = false;
-		static bool eatPowerUpKey = false;
 		static unsigned int powerKeyDownTimeStamp = 0;
 		static unsigned int homeKeyDownTimeStamp = 0;
 
@@ -598,16 +598,16 @@ bool WindowServer::processSystemShortcut(QEvent* event)
 			break;
 
 		case Qt::Key_Power: {
-			powerKeyDown = keyEvent->type() == QEvent::KeyPress;
-			if (powerKeyDown) {
-				eatPowerUpKey = false;
+			m_powerKeyDown = keyEvent->type() == QEvent::KeyPress;
+			if (m_powerKeyDown) {
+				m_eatPowerUpKey = false;
 				powerKeyDownTimeStamp = Time::curTimeMs();
 			}
 			else {
-				if (eatPowerUpKey) {
+				if (m_eatPowerUpKey) {
 					QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 					keyEvent->setModifiers(keyEvent->modifiers() | Qt::GroupSwitchModifier);
-					eatPowerUpKey = false;
+					m_eatPowerUpKey = false;
 				}
 				else {
 					unsigned int curTime = Time::curTimeMs();
@@ -637,11 +637,11 @@ bool WindowServer::processSystemShortcut(QEvent* event)
 				}
 				else {
 					unsigned int curTime = Time::curTimeMs();
-					if (powerKeyDown && (curTime - homeKeyDownTimeStamp) <= 3000) {
+					if (m_powerKeyDown && (curTime - homeKeyDownTimeStamp) <= 3000) {
 						takeAndSaveScreenShot();
 						QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 						keyEvent->setModifiers(keyEvent->modifiers() | Qt::GroupSwitchModifier);
-						eatPowerUpKey = true;
+						m_eatPowerUpKey = true;
 					}
 				}
 				homeKeyDownTimeStamp = 0;
@@ -1040,6 +1040,19 @@ QPixmap* WindowServer::takeScreenShot()
 	painter.end();
 	return pix;
 }
+
+bool WindowServer::saveScreenShot()
+{
+	if(m_powerKeyDown)
+	{
+		takeAndSaveScreenShot();
+		m_eatPowerUpKey = true;
+		return true;
+	}
+	else
+		return false;
+}
+
 void WindowServer::shutdown()
 {
 	WebAppMgrProxy::instance()->postShutdownEvent();
@@ -1530,7 +1543,7 @@ void WindowServer::takeAndSaveScreenShot()
 	}
 
 	SoundPlayerPool::instance()->playFeedback(Settings::LunaSettings()->lunaSystemSoundScreenCapture);
-	QImage image(getScreenShotImageFromFb());
+	QImage image = takeScreenShot()->toImage();
 
 	Q_EMIT signalTookScreenShot();
 
