@@ -52,10 +52,9 @@
 #include <QGestureEvent>
 
 #define MAX_ITEMS_VISIBLE (5.5)
-#define ITEM_HEIGHT (70)
 
 
-static int kMenuItemHeight = 70;
+static int kMenuItemHeight = 70 * Settings::LunaSettings()->layoutScale;
 
 // ------------------------- Class Declarations -----------------------------------
 
@@ -92,7 +91,7 @@ private:
 // ------------------------- DockModeMenuItem -------------------------------------
 
 DockModeMenuItem::DockModeMenuItem (DockModeLaunchPoint* dlp, DockModeAppMenuContainer* parent)
-	: m_dockLp (dlp), m_parent (parent), m_padding (10), m_pressed (false), m_iconSize (48), m_isLast (true)
+	: m_dockLp (dlp), m_parent (parent), m_padding (10 * Settings::LunaSettings()->layoutScale), m_pressed (false), m_iconSize (48 * Settings::LunaSettings()->layoutScale), m_isLast (true)
 {
 	m_icon = QPixmap (m_dockLp->launchPoint()->iconPath().c_str());
 	if (m_icon.isNull())
@@ -100,7 +99,7 @@ DockModeMenuItem::DockModeMenuItem (DockModeLaunchPoint* dlp, DockModeAppMenuCon
 
 	m_title = fromStdUtf8(m_dockLp->launchPoint()->appDesc()->dockModeTitle());
 
-	m_bounds = QRectF (0, 0, parent->boundingRect().width(), ITEM_HEIGHT);
+	m_bounds = QRectF (0, 0, parent->boundingRect().width(), kMenuItemHeight);
 
 	kSeparatorHeight = 0;
 
@@ -179,7 +178,7 @@ void DockModeMenuItem::paint (QPainter* painter, const QStyleOptionGraphicsItem*
 	QPen oldPen = painter->pen();
 
 	QFont newFont = m_parent->font();
-	newFont.setPixelSize (18);
+	newFont.setPixelSize (18 * Settings::LunaSettings()->textScale);
 
 	painter->setFont (newFont);
 	painter->setPen (Qt::white);
@@ -218,7 +217,7 @@ DockModeAppMenuContainer::DockModeAppMenuContainer (DockModeMenuManager* parent,
 
 
 	const char* fontName = Settings::LunaSettings()->fontDockMode.c_str();
-	m_font = QFont (fontName, 21);
+	m_font = QFont (fontName, 21 * Settings::LunaSettings()->layoutScale);
 	m_font.setBold(true);
 
 	m_maxHeight = MAX_ITEMS_VISIBLE * kMenuItemHeight;

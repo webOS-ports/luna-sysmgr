@@ -166,7 +166,7 @@ DockModeClock::DockModeClock (DockModeWindowManager* dm, int zValue)
 
 	const HostInfo& hostInfo = HostBase::instance()->getInfo();
 
-	QPixmap dockPixmap (hostInfo.displayWidth, hostInfo.displayHeight); // this will be replaced with the background pixmap
+	QPixmap dockPixmap (SystemUiController::instance()->currentUiWidth(), SystemUiController::instance()->currentUiHeight()); // this will be replaced with the background pixmap
 
 	m_dockWindow = new DockModeClockWindow (dockPixmap, dm, zValue);
 }
