@@ -78,8 +78,8 @@ void CardDropShadowEffect::cacheDrawingData()
 	bounds.setWidth(bounds.width() + 2 * kShadowWidth);
 	bounds.moveTop(bounds.y() + kShadowOffsetY);
 
-	int xMargin = s_shadowPixmap->width()/2;
-	int yMargin = s_shadowPixmap->height()/2;
+	int xMargin = (s_shadowPixmap->width()/2) - 1;
+	int yMargin = (s_shadowPixmap->height()/2) - 1;
 	
 	if(xMargin % 2 == 0)
 		xMargin--;
