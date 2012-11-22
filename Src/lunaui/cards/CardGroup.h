@@ -151,6 +151,10 @@ public:
 
 	qreal y() const { return m_pos.y(); }
 	void setY(const qreal& y);
+	qreal activeScale() const { return m_curScale; }
+	qreal setActiveScale(const qreal& curScale) { m_curScale = curScale; }
+	qreal nonActiveScale() const { return m_nonCurScale; }
+	qreal setNonActiveScale(const qreal& nonCurScale) { m_nonCurScale = nonCurScale; }
 	bool shouldMaximizeOrScroll(QPointF scenePt);
 	bool testHit(QPointF scenePt);
 	void moveToActiveCard();
