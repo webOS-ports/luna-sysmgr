@@ -31,7 +31,6 @@
 const int kMaxClosedSpacedCards = 3;
 // TODO: this should really be calculated based on the current scale
 const int kMaxStationaryCards = 4;
-const int kPositionsPerWidth = 3;
 const int kVelocityPerPosition = 1000;
 const int kPositionsPerVelocity = 1;
 
@@ -584,8 +583,8 @@ void CardGroup::adjustHorizontally(qreal xDiff)
 	if (m_cards.empty() || atEdge(xDiff))
 		return;
 
-	// m_currentPosition can shift a total of 3 cards with one full drag
-	static const qreal pixelsPerPos = m_cards[0]->boundingRect().width() / kPositionsPerWidth;
+	// m_currentPosition can shift a total of m_cards.size() with one full drag
+	static const qreal pixelsPerPos = m_cards[0]->boundingRect().width() / m_cards.size();
 	m_currentPosition += (-xDiff/pixelsPerPos);
 	clampCurrentPosition();
 }
@@ -696,16 +695,10 @@ QVector<CardWindow::Position> CardGroup::calculateOpenedPositions(qreal xOffset)
 
 	clampCurrentPosition();
 
-	qreal rOff = ((m_curScale*50) + activeCardWidth);
-	qreal lOff = -(m_curScale*100);
 	qreal rot = m_curScale * m_cardGroupRotFactor;
 	for (int i=0; i<m_cards.size(); i++) {
 
 		qreal x = ((i - m_currentPosition) / 3.0) * activeCardWidth * m_cardGroupXDistanceFactor;
-		if (x > rOff)
-			x = (x + (rOff * 4)) / 5;
-		else if (x < lOff)
-			x = (x + (lOff * 4)) / 5;
 
 		positions[i].trans.setX(x);
 		positions[i].trans.setZ(m_curScale);
@@ -748,7 +741,7 @@ QVector<CardWindow::Position> CardGroup::calculateClosedPositions()
 		positions[i].trans.setZ(m_nonCurScale);
 
 		if (i >= stopSpacingIndex) {
-			xOff -= 7; // NOTE: should we scale the spacing?
+			xOff -= 7 * Settings::LunaSettings()->layoutScale;
 		}
 	}
 
@@ -765,13 +758,8 @@ void CardGroup::clampCurrentPosition()
 
 		m_currentPosition = 0.0;
 	}
-	else if (m_cards.size() == 2) {
-
-		m_currentPosition = 0.5;
-	}
-	else if (m_cards.size() > 2 && m_cards.size() <= kMaxStationaryCards) {
-
-		m_currentPosition = 1.0;
+	else if (m_cards.size() <= kMaxStationaryCards) {
+		m_currentPosition = (m_cards.size()-1)/2 + (m_cards.size() % 2 == 1 ? 0.0 : 0.5);
 	}
 	else {
 
