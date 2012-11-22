@@ -101,6 +101,7 @@ CardWindowManager::CardWindowManager(int maxWidth, int maxHeight)
 	, m_modalWindowState(NoModalWindow)
     , m_playedAngryCardStretchSound(false)
 	, m_animationsActive(false)
+	, m_miniCards(false)
 				  
 {
 	setObjectName("CardWindowManager");
@@ -558,7 +559,7 @@ void CardWindowManager::prepareAddWindowSibling(CardWindow* win)
 			}
 			else {
 				// spawn new group to the right of active group
-				CardGroup* newGroup = new CardGroup(kActiveScale, kNonActiveScale);
+				CardGroup* newGroup = new CardGroup(kActiveScale * (m_miniCards ? 0.5 : 1.0), kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
 				newGroup->setPos(QPointF(0, kWindowOrigin));
 				newGroup->addToGroup(win);
 				m_groups.insert(m_groups.indexOf(m_activeGroup)+1, newGroup);
@@ -576,7 +577,7 @@ void CardWindowManager::prepareAddWindowSibling(CardWindow* win)
 		}
 	}
 	else {
-		CardGroup* newGroup = new CardGroup(kActiveScale, kNonActiveScale);
+		CardGroup* newGroup = new CardGroup(kActiveScale * (m_miniCards ? 0.5 : 1.0), kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
 		newGroup->setPos(QPointF(0, kWindowOrigin));
 		newGroup->addToGroup(win);
 		m_groups.append(newGroup);
@@ -1222,7 +1223,7 @@ void CardWindowManager::setActiveCardOffScreen(bool fullsize)
 
 	CardWindow::Position pos;
 	qreal yOffset = boundingRect().bottom() - activeCard->y();
-	pos.trans.setZ(fullsize ? 1.0 : kActiveScale);
+	pos.trans.setZ(fullsize ? 1.0 : kActiveScale * (m_miniCards ? 0.5 : 1.0));
 	pos.trans.setY(yOffset - activeCard->boundingRect().y() * pos.trans.z());
 	activeCard->setPosition(pos);
 }
@@ -1537,7 +1538,7 @@ void CardWindowManager::handleMouseMoveReorder(QGraphicsSceneMouseEvent* event)
 	CardWindow::Position pos;
 	pos.trans = QVector3D(activeWin->position().trans.x() + delta.x(), 
 						  activeWin->position().trans.y() + delta.y(), 
-						  kActiveScale);
+						  kActiveScale * (m_miniCards ? 0.5 : 1.0));
 	activeWin->setPosition(pos);
 
 	// should we switch zones?
@@ -1656,7 +1657,7 @@ void CardWindowManager::moveReorderSlotRight()
 		else {
 			// this was an existing group.
 			// insert a new group to the right of the current active group
-			CardGroup* newGroup = new CardGroup(kActiveScale, kNonActiveScale);
+			CardGroup* newGroup = new CardGroup(kActiveScale * (m_miniCards ? 0.5 : 1.0), kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
 			newGroup->setPos(QPointF(0, kWindowOrigin));
 			m_groups.insert(activeIndex+1, newGroup);
 
@@ -1711,7 +1712,7 @@ void CardWindowManager::moveReorderSlotLeft()
 		else {
 			// this was an existing group.
 			// insert a new group to the left of the current active group
-			CardGroup* newGroup = new CardGroup(kActiveScale, kNonActiveScale);
+			CardGroup* newGroup = new CardGroup(kActiveScale * (m_miniCards ? 0.5 : 1.0), kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
 			newGroup->setPos(QPointF(0, kWindowOrigin));
 			m_groups.insert(activeIndex, newGroup);
 
@@ -1875,7 +1876,8 @@ void CardWindowManager::handleTapGestureMinimized(QTapGesture* event)
 		}
 		else {
 
-			// poke the groups to make sure they animate to their final positions
+			// toggle mini cards
+			toggleMiniCards();
 			slideAllGroups();
 		}
 	}
@@ -2163,6 +2165,16 @@ void CardWindowManager::switchToPrevAppMaximized()
 
 	// maximize the new active window
 	maximizeActiveWindow();
+}
+
+void CardWindowManager::toggleMiniCards()
+{
+	m_miniCards = !m_miniCards;
+	
+	Q_FOREACH(CardGroup* group, m_groups) {
+		group->setActiveScale(kActiveScale * (m_miniCards ? 0.5 : 1.0));
+		group->setNonActiveScale(kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
+	}
 }
 
 void CardWindowManager::slideAllGroups(bool includeActiveCard)
@@ -2467,10 +2479,10 @@ void CardWindowManager::slotPositiveSpaceChanged(const QRect& r)
 		// TODO: this is a temporary solution to fake the existence of the search pill
 		// 	which happens to be 48 pixels tall
 		kActiveScale = ((qreal) (r.height() - 48) * kActiveWindowScale) / (qreal) m_normalScreenBounds.height();
-		kActiveScale = qMax(kMinimumWindowScale, kActiveScale);
+		kActiveScale = qMax(kMinimumWindowScale, kActiveScale * (m_miniCards ? 0.5f : 1.0f));
 
 		kNonActiveScale = ((qreal) (r.height() - 48) * kNonActiveWindowScale) / (qreal) m_normalScreenBounds.height();
-		kNonActiveScale = qMax(kMinimumWindowScale, kNonActiveScale);
+		kNonActiveScale = qMax(kMinimumWindowScale, kNonActiveScale * (m_miniCards ? 0.5f : 1.0f));
 
 		// allow groups to shift up to a maximum so the tops of cards don't go off the screen
 		kWindowOriginMax = (boundingRect().y() + ((r.y() + 48) + (int) ((r.height() - 48) * kWindowOriginRatio))) -
