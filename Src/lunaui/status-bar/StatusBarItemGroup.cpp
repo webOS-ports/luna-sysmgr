@@ -320,13 +320,17 @@ void StatusBarItemGroup::mousePressEvent(QGraphicsSceneMouseEvent* event)
 	} else {
 		event->accept();
 		m_mouseDown = true;
+		m_mouseDownPos = event->pos();
 //		update();
 	}
 }
-
+#include <QDebug>
 void StatusBarItemGroup::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-
+	if(m_actionable && m_mouseDown && event->pos().y() > m_mouseDownPos.y() + Settings::LunaSettings()->tapRadius) {
+		actionTriggered();
+		m_mouseDown = false;
+	}
 }
 
 void StatusBarItemGroup::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
