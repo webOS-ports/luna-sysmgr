@@ -154,7 +154,7 @@ CardWindowManager::~CardWindowManager()
 
 void CardWindowManager::init()
 {
-	kGapBetweenGroups = Settings::LunaSettings()->gapBetweenCardGroups;
+	kGapBetweenGroups = Settings::LunaSettings()->gapBetweenCardGroups * (m_miniCards ? 1.0f : 0.5f);
 
     if (g_file_test(Settings::LunaSettings()->firstCardLaunch.c_str(), G_FILE_TEST_EXISTS)){
         m_dismissedFirstCard=true;
@@ -1424,6 +1424,10 @@ void CardWindowManager::handleFlickGestureMinimized(QGestureEvent* event)
 			slideAllGroups();
 		}
 		else {
+			// if in mini-mode, allow user to flick past multiple groups at once
+			if(m_miniCards)
+				setActiveGroup(groupClosestToCenterHorizontally());
+				
 			// advance to the next/previous group if we are Outer Locked or were still unbiased horizontally
 			if (flick->velocity().x() > 0)
 				switchToPrevGroup();
@@ -1436,8 +1440,13 @@ void CardWindowManager::handleFlickGestureMinimized(QGestureEvent* event)
 void CardWindowManager::handleMousePressMinimized(QGraphicsSceneMouseEvent* event)
 {
 	// try to capture the card the user first touched
-    if (m_activeGroup && m_activeGroup->setActiveCard(event->scenePos()))
-        m_draggedWin = m_activeGroup->activeCard();
+	Q_FOREACH(CardGroup* cg, m_groups)
+	{
+		if(cg->setActiveCard(event->scenePos()))
+		{
+			m_draggedWin = cg->activeCard();
+		}
+	}
 }
 
 void CardWindowManager::handleMouseMoveMinimized(QGraphicsSceneMouseEvent* event)
@@ -2194,6 +2203,8 @@ void CardWindowManager::toggleMiniCards()
 		group->setActiveScale(kActiveScale * (m_miniCards ? 0.5 : 1.0));
 		group->setNonActiveScale(kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
 	}
+	
+	kGapBetweenGroups = Settings::LunaSettings()->gapBetweenCardGroups * (m_miniCards ? 0.5 : 1.0);
 }
 
 void CardWindowManager::slideAllGroups(bool includeActiveCard)
