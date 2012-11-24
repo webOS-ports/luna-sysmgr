@@ -40,7 +40,7 @@ enum AnimDir {
 	Right
 };
 
-static const int GESTURE_AREA_TRIGGER_DIST = Settings::LunaSettings()->virtualCoreNaviHeight/4;
+static const int GESTURE_AREA_TRIGGER_DIST = Settings::LunaSettings()->tapRadius;
 
 GestureArea::GestureArea(int width, int height)
 {
