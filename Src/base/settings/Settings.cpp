@@ -703,10 +703,15 @@ void Settings::postLoad()
 
 	// packageInstallBase has to be == to appInstallBase for now (at least in version=blowfish timeframe)
 	packageInstallBase = appInstallBase;
-
-	// Piranha flags
 	
-	//UI Scaling for positive space padding
+	//Virtual Gesture Area
+	if(!virtualCoreNaviEnabled)
+		virtualCoreNaviHeight = 0;
+
+	//UI Scaling
+	tapRadius *= layoutScale;
+	tapRadiusMin *= layoutScale;
+	tapRadiusSquared *= layoutScale;
 	positiveSpaceTopPadding *= layoutScale;
 	positiveSpaceBottomPadding *= layoutScale;
 	statusBarTitleMaxWidth *= textScale;
