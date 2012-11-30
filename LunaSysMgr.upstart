@@ -11,7 +11,6 @@ pre-start script
 	echo "1" > /proc/sys/vm/overcommit_memory
 	mkdir -p /var/luna/preferences
 	mkdir -p /var/luna/data
-	touch /var/luna/preferences/ran-first-use
 	if grep -qs "qemu" /etc/hostname ; then
 		touch /var/luna/preferences/ran-first-use
 	fi
