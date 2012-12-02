@@ -26,7 +26,7 @@
 
 #include <Qt>
 
-#if (defined(TARGET_DESKTOP) || defined(TARGET_EMULATOR)) || defined(MACHINE_TUNA)
+#if (!defined(HAS_KEYMAPS))
 
 typedef struct {
         int devicekey;
