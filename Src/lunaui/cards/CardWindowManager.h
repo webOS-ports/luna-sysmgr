@@ -191,6 +191,8 @@ private:
 	void switchToPrevApp();
 	void switchToNextAppMaximized();
 	void switchToPrevAppMaximized();
+	
+	void toggleMiniCards();
 
 	// animate all groups to center around the active group.
 	// optionally include the active card in the active group.
@@ -274,6 +276,7 @@ private:
 	int m_dismissModalImmediately;
 	bool m_modalDimissed;
 	bool m_dismissedFirstCard;
+	bool m_miniCards;
 
 
 	enum ModalWindowState {

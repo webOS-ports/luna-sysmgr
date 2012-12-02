@@ -101,6 +101,7 @@ CardWindowManager::CardWindowManager(int maxWidth, int maxHeight)
 	, m_modalWindowState(NoModalWindow)
     , m_playedAngryCardStretchSound(false)
 	, m_animationsActive(false)
+	, m_miniCards(false)
 				  
 {
 	setObjectName("CardWindowManager");
@@ -153,7 +154,7 @@ CardWindowManager::~CardWindowManager()
 
 void CardWindowManager::init()
 {
-	kGapBetweenGroups = Settings::LunaSettings()->gapBetweenCardGroups;
+	kGapBetweenGroups = Settings::LunaSettings()->gapBetweenCardGroups * (m_miniCards ? 1.0f : 0.5f);
 
     if (g_file_test(Settings::LunaSettings()->firstCardLaunch.c_str(), G_FILE_TEST_EXISTS)){
         m_dismissedFirstCard=true;
@@ -559,7 +560,7 @@ void CardWindowManager::prepareAddWindowSibling(CardWindow* win)
 			}
 			else {
 				// spawn new group to the right of active group
-				CardGroup* newGroup = new CardGroup(kActiveScale, kNonActiveScale);
+				CardGroup* newGroup = new CardGroup(kActiveScale * (m_miniCards ? 0.5 : 1.0), kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
 				newGroup->setPos(QPointF(0, kWindowOrigin));
 				newGroup->addToGroup(win);
 				m_groups.insert(m_groups.indexOf(m_activeGroup)+1, newGroup);
@@ -577,7 +578,7 @@ void CardWindowManager::prepareAddWindowSibling(CardWindow* win)
 		}
 	}
 	else {
-		CardGroup* newGroup = new CardGroup(kActiveScale, kNonActiveScale);
+		CardGroup* newGroup = new CardGroup(kActiveScale * (m_miniCards ? 0.5 : 1.0), kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
 		newGroup->setPos(QPointF(0, kWindowOrigin));
 		newGroup->addToGroup(win);
 		m_groups.append(newGroup);
@@ -1223,7 +1224,7 @@ void CardWindowManager::setActiveCardOffScreen(bool fullsize)
 
 	CardWindow::Position pos;
 	qreal yOffset = boundingRect().bottom() - activeCard->y();
-	pos.trans.setZ(fullsize ? 1.0 : kActiveScale);
+	pos.trans.setZ(fullsize ? 1.0 : kActiveScale * (m_miniCards ? 0.5 : 1.0));
 	pos.trans.setY(yOffset - activeCard->boundingRect().y() * pos.trans.z());
 	activeCard->setPosition(pos);
 }
@@ -1423,6 +1424,10 @@ void CardWindowManager::handleFlickGestureMinimized(QGestureEvent* event)
 			slideAllGroups();
 		}
 		else {
+			// if in mini-mode, allow user to flick past multiple groups at once
+			if(m_miniCards)
+				setActiveGroup(groupClosestToCenterHorizontally());
+				
 			// advance to the next/previous group if we are Outer Locked or were still unbiased horizontally
 			if (flick->velocity().x() > 0)
 				switchToPrevGroup();
@@ -1435,8 +1440,13 @@ void CardWindowManager::handleFlickGestureMinimized(QGestureEvent* event)
 void CardWindowManager::handleMousePressMinimized(QGraphicsSceneMouseEvent* event)
 {
 	// try to capture the card the user first touched
-    if (m_activeGroup && m_activeGroup->setActiveCard(event->scenePos()))
-        m_draggedWin = m_activeGroup->activeCard();
+	Q_FOREACH(CardGroup* cg, m_groups)
+	{
+		if(cg->setActiveCard(event->scenePos()))
+		{
+			m_draggedWin = cg->activeCard();
+		}
+	}
 }
 
 void CardWindowManager::handleMouseMoveMinimized(QGraphicsSceneMouseEvent* event)
@@ -1556,7 +1566,7 @@ void CardWindowManager::handleMouseMoveReorder(QGraphicsSceneMouseEvent* event)
 	CardWindow::Position pos;
 	pos.trans = QVector3D(activeWin->position().trans.x() + delta.x(), 
 						  activeWin->position().trans.y() + delta.y(), 
-						  kActiveScale);
+						  kActiveScale * (m_miniCards ? 0.5 : 1.0));
 	activeWin->setPosition(pos);
 
 	// should we switch zones?
@@ -1675,7 +1685,7 @@ void CardWindowManager::moveReorderSlotRight()
 		else {
 			// this was an existing group.
 			// insert a new group to the right of the current active group
-			CardGroup* newGroup = new CardGroup(kActiveScale, kNonActiveScale);
+			CardGroup* newGroup = new CardGroup(kActiveScale * (m_miniCards ? 0.5 : 1.0), kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
 			newGroup->setPos(QPointF(0, kWindowOrigin));
 			m_groups.insert(activeIndex+1, newGroup);
 
@@ -1730,7 +1740,7 @@ void CardWindowManager::moveReorderSlotLeft()
 		else {
 			// this was an existing group.
 			// insert a new group to the left of the current active group
-			CardGroup* newGroup = new CardGroup(kActiveScale, kNonActiveScale);
+			CardGroup* newGroup = new CardGroup(kActiveScale * (m_miniCards ? 0.5 : 1.0), kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
 			newGroup->setPos(QPointF(0, kWindowOrigin));
 			m_groups.insert(activeIndex, newGroup);
 
@@ -1894,7 +1904,8 @@ void CardWindowManager::handleTapGestureMinimized(QTapGesture* event)
 		}
 		else {
 
-			// poke the groups to make sure they animate to their final positions
+			// toggle mini cards
+			toggleMiniCards();
 			slideAllGroups();
 		}
 	}
@@ -2182,6 +2193,18 @@ void CardWindowManager::switchToPrevAppMaximized()
 
 	// maximize the new active window
 	maximizeActiveWindow();
+}
+
+void CardWindowManager::toggleMiniCards()
+{
+	m_miniCards = !m_miniCards;
+	
+	Q_FOREACH(CardGroup* group, m_groups) {
+		group->setActiveScale(kActiveScale * (m_miniCards ? 0.5 : 1.0));
+		group->setNonActiveScale(kNonActiveScale * (m_miniCards ? 0.5 : 1.0));
+	}
+	
+	kGapBetweenGroups = Settings::LunaSettings()->gapBetweenCardGroups * (m_miniCards ? 0.5 : 1.0);
 }
 
 void CardWindowManager::slideAllGroups(bool includeActiveCard)
@@ -2497,10 +2520,10 @@ void CardWindowManager::slotPositiveSpaceChanged(const QRect& r)
 		// 	which happens to be 50 pixels tall
 		quint32 pillOffset = 50 * Settings::LunaSettings()->layoutScale;
 		kActiveScale = ((qreal) (r.height() - pillOffset) * kActiveWindowScale) / (qreal) m_normalScreenBounds.height();
-		kActiveScale = qMax(kMinimumWindowScale, kActiveScale);
+		kActiveScale = qMax(kMinimumWindowScale, kActiveScale * (m_miniCards ? 0.5f : 1.0f));
 
 		kNonActiveScale = ((qreal) (r.height() - pillOffset) * kNonActiveWindowScale) / (qreal) m_normalScreenBounds.height();
-		kNonActiveScale = qMax(kMinimumWindowScale, kNonActiveScale);
+		kNonActiveScale = qMax(kMinimumWindowScale, kNonActiveScale * (m_miniCards ? 0.5f : 1.0f));
 
 		// allow groups to shift up to a maximum so the tops of cards don't go off the screen
 		kWindowOriginMax = (boundingRect().y() + ((r.y() + pillOffset) + (int) ((r.height() - pillOffset) * kWindowOriginRatio))) -
