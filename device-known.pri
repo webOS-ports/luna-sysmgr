@@ -64,7 +64,7 @@ contains(MACHINE_NAME, "opal") {
     LIBS += -lqpalm
 }
 contains(MACHINE_NAME, "tuna") {
-    DEFINES += MACHINE_TUNA
+    DEFINES += MACHINE_TUNA HAS_DISPLAY_TIMEOUT
     TARGET_TYPE = TARGET_DEVICE
     CONFIG_BUILD += webosdevice nyx
     CONFIG_BUILD += opengl
