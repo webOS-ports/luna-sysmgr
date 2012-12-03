@@ -179,7 +179,7 @@ void HostArm::init(int w, int h)
 
 	m_fb0Buffer = ::mmap(0, fixinfo.smem_len, PROT_READ, MAP_SHARED, m_fb0Fd, 0);
 	if (m_fb0Buffer == MAP_FAILED) {
-		g_warning("Failed to map fb1 buffer: %s", strerror(errno));
+		g_warning("Failed to map fb0 buffer: %s", strerror(errno));
 		m_fb0Buffer = 0;
 		return;
 	}
@@ -193,7 +193,7 @@ void HostArm::init(int w, int h)
 	m_fb1Fd = open("/dev/fb1", O_RDWR, 0);
 	if (m_fb1Fd < 0) {
 		g_warning("Failed to open layer 1: %s", strerror(errno));
-		return;
+		goto finish;
 	}
 
 #if defined(FB1_POWER_OPTIMIZATION)
@@ -224,6 +224,7 @@ void HostArm::init(int w, int h)
 	rowBytes = varinfo.xres * (bpp >> 3);
 	m_fb1NumBuffers = fixinfo.smem_len / (rowBytes * varinfo.yres);
 
+finish:
 	printf("Linux Fb0: Num Buffers: %d, Fb1: Num Buffers: %d\n", m_fb0NumBuffers, m_fb1NumBuffers);
 #if defined(HAS_QPA) && defined(TARGET_DEVICE)
 // From the Palm QPA
