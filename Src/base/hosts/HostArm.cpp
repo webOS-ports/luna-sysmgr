@@ -102,7 +102,7 @@ HostArm::HostArm() :
 	, m_fb0Buffer(0)
 	, m_fb0NumBuffers(0)
 	, m_fb1Buffer(0)
-	, m_fb1NumBuffers(1)
+	, m_fb1NumBuffers(0)
 	, m_service(NULL)
 	, m_nyxInputControlALS(0)
 	, m_nyxInputControlBluetoothInputDetect(0)
