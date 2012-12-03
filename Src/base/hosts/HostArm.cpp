@@ -127,6 +127,12 @@ HostArm::~HostArm()
 	stopService();
 	shutdownInput();
 
+	if (m_fb0Fd > 0)
+		close(m_fb0Fd);
+
+	if (m_fb1Fd > 0)
+		close(m_fb1Fd);
+
 	nyx_deinit();
 }
 
