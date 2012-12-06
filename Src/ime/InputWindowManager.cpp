@@ -57,10 +57,12 @@ InputWindowManager::InputWindowManager(int maxWidth, int maxHeight)
                                         SLOT(slotEnterBrickMode(bool)));
     connect(SystemService::instance(), SIGNAL(signalExitBrickMode()), 
                                         SLOT(slotExitBrickMode()));
-                                        
-	DashboardWindowManager* dwm = (DashboardWindowManager*)(static_cast<WindowServerLuna*>(WindowServer::instance())->dashboardWindowManager());
-	connect(dwm, SIGNAL(signalAlertWindowActivated(AlertWindow*)), SLOT(slotAlertWindowActivated(AlertWindow*)));
-	connect(dwm, SIGNAL(signalOpen()), SLOT(signalDashboardOpen()));
+
+	if (Settings::LunaSettings()->uiType == Settings::UI_LUNA) {
+		DashboardWindowManager* dwm = (DashboardWindowManager*)(static_cast<WindowServerLuna*>(WindowServer::instance())->dashboardWindowManager());
+		connect(dwm, SIGNAL(signalAlertWindowActivated(AlertWindow*)), SLOT(slotAlertWindowActivated(AlertWindow*)));
+		connect(dwm, SIGNAL(signalOpen()), SLOT(signalDashboardOpen()));
+	}
 }
 
 void InputWindowManager::init()
