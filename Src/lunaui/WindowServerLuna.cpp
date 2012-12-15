@@ -103,8 +103,8 @@ WindowServerLuna::WindowServerLuna()
 	, m_inDockModeTransition(false)
 	, m_dockModeTransitionDirection(false)
 {
-	// Cache the wallpaper in a QPixmapCache to improve speed
-        setCacheMode(QGraphicsView::CacheBackground);
+	// Cache nothing- orientation changes display incorrectly under CacheBackground
+        setCacheMode(QGraphicsView::CacheNone);
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     m_qmlEngine = new QDeclarativeEngine;
@@ -1057,16 +1057,22 @@ void WindowServerLuna::drawBackground ( QPainter * painter, const QRectF & rect 
 		return;
 	}
 
-	QRect imgBounds = QRect(-(int)m_currWallpaperImg->width()/2, -(int)m_currWallpaperImg->height()/2, m_currWallpaperImg->width(), m_currWallpaperImg->height());
+	QRect imgBounds = QRect(-(int)m_currWallpaperImg->width()/2,
+				-(int)m_currWallpaperImg->height()/2,
+				m_currWallpaperImg->width(),
+				m_currWallpaperImg->height());
 
 	int wallpaperRotation = 0;
 	QPixmap* img;
 
-
-	if((m_inRotationAnimation != Rotation_NoAnimation) || m_dockModeAnimation.state() == QAbstractAnimation::Running) {
+	if((m_inRotationAnimation != Rotation_NoAnimation) || m_dockModeAnimation.state() == QAbstractAnimation::Running)
+	{
 		painter->fillRect(screenBounds, Qt::black);
-	} else {
-		if(!m_currWallpaperImg) {
+	}
+	else
+	{
+		if(!m_currWallpaperImg)
+		{
 			WindowServer::drawBackground(painter, screenBounds);
 			return;
 		}
@@ -1076,16 +1082,16 @@ void WindowServerLuna::drawBackground ( QPainter * painter, const QRectF & rect 
 
 		painter->translate(m_screenWidth/2, m_screenHeight/2);
 
-		if(!m_wallpaperFullScreen) {
-            if(m_currentUiOrientation == OrientationEvent::Orientation_Left) {
+		if(!m_wallpaperFullScreen)
+		{
+			if(m_currentUiOrientation == OrientationEvent::Orientation_Left)
 				wallpaperRotation = 90;
-            } else if(m_currentUiOrientation == OrientationEvent::Orientation_Down) {
+			else if(m_currentUiOrientation == OrientationEvent::Orientation_Down)
 				wallpaperRotation = 180;
-            } else if(m_currentUiOrientation == OrientationEvent::Orientation_Right) {
+			else if(m_currentUiOrientation == OrientationEvent::Orientation_Right)
 				wallpaperRotation = 270;
-			} else {
+			else
 				wallpaperRotation = 0;
-			}
 
 			if(wallpaperRotation)
 				painter->rotate(wallpaperRotation);
@@ -1094,14 +1100,15 @@ void WindowServerLuna::drawBackground ( QPainter * painter, const QRectF & rect 
 
 			if(wallpaperRotation)
 				painter->rotate(-wallpaperRotation);
-		} else {
+		}
+		else
+		{
 
-            if((m_currentUiOrientation == OrientationEvent::Orientation_Down) || (m_currentUiOrientation == OrientationEvent::Orientation_Right)) {
+            		if((m_currentUiOrientation == OrientationEvent::Orientation_Down)
+            		|| (m_currentUiOrientation == OrientationEvent::Orientation_Right))
 				wallpaperRotation = 180;
-			} else {
+			else
 				wallpaperRotation = 0;
-			}
-
 
 			if(wallpaperRotation)
 				painter->rotate(wallpaperRotation);
