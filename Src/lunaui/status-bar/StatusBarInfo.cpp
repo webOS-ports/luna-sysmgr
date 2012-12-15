@@ -83,6 +83,7 @@ StatusBarInfo::StatusBarInfo(StatusBar::StatusBarType type)
 	, m_rotationLock(0)
 	, m_mute(0)
 	, m_airplaneMode(0)
+	, m_portsLogo(0)
 {
 
 }
@@ -127,6 +128,9 @@ StatusBarInfo::~StatusBarInfo()
 
 	if (m_airplaneMode)
 		delete m_airplaneMode;
+
+	if (m_portsLogo)
+		delete m_portsLogo;
 }
 
 QRectF StatusBarInfo::boundingRect() const
@@ -275,6 +279,11 @@ void StatusBarInfo::init()
 		m_airplaneMode->loadImage(0, statusBarImagesPath + "icon-airplane.png");
 		connect(StatusBarServicesConnector::instance(), SIGNAL(signalAirplaneModeState(t_airplaneModeState)), SLOT(slotAirplaneModeState(t_airplaneModeState)));
 		setAirplaneMode(Preferences::instance()->airplaneMode());
+
+		m_portsLogo = new StatusBarInfoItem(this);
+		m_icons.append(m_portsLogo);
+		m_portsLogo->loadImage(0, statusBarImagesPath + "ports-logo-mono.png");
+		setPortsLogo(true);
 	}
 	updateBoundingRect();
 }
@@ -410,6 +419,11 @@ void StatusBarInfo::setMute(bool muteOn)
 void StatusBarInfo::setAirplaneMode(bool airplaneModeOn)
 {
 	updateItem(m_airplaneMode, airplaneModeOn, 0);
+}
+
+void StatusBarInfo::setPortsLogo(bool portsLogoVisible)
+{
+	updateItem(m_portsLogo, portsLogoVisible, 0);
 }
 
 void StatusBarInfo::slotAirplaneModeState(t_airplaneModeState state) {

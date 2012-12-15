@@ -84,6 +84,7 @@ public:
 	void setRotationLock(bool locked);
 	void setMute(bool muteOn);
 	void setAirplaneMode(bool airplaneModeOn);
+	void setPortsLogo(bool portsLogoVisible);
 
 	void updateBoundingRect(bool forceRepaint=false);
 
@@ -112,7 +113,7 @@ private:
 	StatusBarInfoItem *m_rotationLock;
 	StatusBarInfoItem *m_mute;
 	StatusBarInfoItem *m_airplaneMode;
-
+	StatusBarInfoItem *m_portsLogo;
 };
 
 
