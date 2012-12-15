@@ -419,12 +419,13 @@ private:
 	bool m_launcherShown;
 	bool m_dockShown;
 	bool m_inDockMode;
-    bool m_universalSearchShown;
+	bool m_universalSearchShown;
 
 	bool m_emergencyMode;
 
 	QGraphicsItem* m_uiRootItemPtr;
 
+	int m_coreNaviHeight;
 	QRect m_positiveSpace;
 	QRect m_negativeSpace;
 	int m_minimumPositiveSpaceHeight;
