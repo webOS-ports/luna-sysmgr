@@ -128,15 +128,16 @@ SystemUiController::SystemUiController()
 	m_dockBrightness = 100;
 
 	const HostInfo& info = HostBase::instance()->getInfo();
-    m_uiWidth  = info.displayWidth;
-    m_uiHeight = info.displayHeight - Settings::LunaSettings()->virtualCoreNaviHeight;
+	m_coreNaviHeight = Settings::LunaSettings()->uiType == Settings::UI_LUNA ? Settings::LunaSettings()->virtualCoreNaviHeight : 0;
+	m_uiWidth  = info.displayWidth;
+	m_uiHeight = info.displayHeight - m_coreNaviHeight;
 
-    m_currentlyDirectRenderingLayer  = -1;
-    m_currentlyDirectRenderingWindow = NULL;
-    for (int x=0; x < NUMBER_OF_LAYERS; x++) {
-    	m_directRenderLayers[x].requestedDirectRendring = false;
-    	m_directRenderLayers[x].activeWindow            = NULL;
-    }
+	m_currentlyDirectRenderingLayer  = -1;
+	m_currentlyDirectRenderingWindow = NULL;
+	for (int x=0; x < NUMBER_OF_LAYERS; x++) {
+		m_directRenderLayers[x].requestedDirectRendring = false;
+		m_directRenderLayers[x].activeWindow            = NULL;
+	}
 }
 
 SystemUiController::~SystemUiController()
@@ -1242,12 +1243,12 @@ void SystemUiController::resizeAndRotateUi(int width, int height, int rotationAn
 	int uiTop  = (info.displayHeight - m_uiHeight) / 2;
 	int uiLeft = (info.displayWidth - m_uiWidth) / 2;
 
-	m_requestedNegativeSpaceTop =  m_requestedNegativeSpaceTop - (m_uiHeight + Settings::LunaSettings()->virtualCoreNaviHeight) + height;
+	m_requestedNegativeSpaceTop =  m_requestedNegativeSpaceTop - (m_uiHeight + m_coreNaviHeight) + height;
 
 	m_minimumPositiveSpaceHeight = m_uiHeight - Settings::LunaSettings()->positiveSpaceTopPadding;
 
 	m_uiWidth  = width;
-	m_uiHeight = height - Settings::LunaSettings()->virtualCoreNaviHeight;
+	m_uiHeight = height - m_coreNaviHeight;
 
 	QRect targetPositiveSpace;
 	QRect targetNegativeSpace;
