@@ -1107,14 +1107,10 @@ void WindowServerLuna::drawBackground ( QPainter * painter, const QRectF & rect 
 
 	if(wallpaperRotation)
 		painter->rotate(wallpaperRotation);
-
+		
 	painter->drawPixmap(imgBounds, *m_currWallpaperImg);
-
-	if(wallpaperRotation)
-		painter->rotate(-wallpaperRotation);
 	
-	//Un-compensate for Gesture Area
-	painter->translate(-m_uiRootItem.pos().x(), -m_uiRootItem.pos().y());
+	painter->resetTransform();
 }
 
 bool WindowServerLuna::sysmgrEventFilters(QEvent* event)
