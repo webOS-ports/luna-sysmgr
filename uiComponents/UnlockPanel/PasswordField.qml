@@ -2,8 +2,6 @@ import Qt 4.7
 
 Item {
     property real uiScale: 1.0
-    property real textScale: 1.0
-    property real layoutScale: 1.0
     property bool isPIN: false;
     property int maxPINLength:  30
     property int maxPassLength: 30
@@ -11,8 +9,8 @@ Item {
 
     signal textFieldClicked();
 
-    width: 320 * layoutScale;
-    height: isPIN ? inputField.height + 12 * layoutScale: 50 * layoutScale;
+    width: 320 * uiScale;
+    height: isPIN ? inputField.height + 12 * uiScale: 50 * uiScale;
 
     function keyInput(keyText, isNumber) {
         if(inputField.text.length < (isPIN ? maxPINLength : maxPassLength)) {
@@ -47,7 +45,7 @@ Item {
 
     TextInput {
         id: inputField;
-        width: parent.width - (16 * layoutScale);
+        width: parent.width - (16 * uiScale);
         anchors.verticalCenter: parent.verticalCenter;
         anchors.horizontalCenter: parent.horizontalCenter;
         echoMode: TextInput.PasswordEchoOnEdit;
@@ -59,8 +57,8 @@ Item {
         horizontalAlignment: isPIN ? TextInput.AlignHCenter : TextInput.AlignLeft;
         color: isPIN ? "#FFF" : "#000";
         font.bold: true;
-        font.pixelSize: 18 * textScale
-        font.letterSpacing: 2 * layoutScale
+        font.pixelSize: 18 * uiScale
+        font.letterSpacing: 2 * uiScale
         font.family: "Prelude"
 
         MouseArea {
@@ -75,9 +73,9 @@ Item {
         id: hintText
         visible: inputField.text.length == 0;
         color: "#9C9C9C";
-        font.pixelSize: 17 * textScale
+        font.pixelSize: 17 * uiScale
         font.family: "Prelude"
-        width: parent.width - (20 * layoutScale);
+        width: parent.width - (20 * uiScale);
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: isPIN ? Text.AlignHCenter : Text.AlignLeft;

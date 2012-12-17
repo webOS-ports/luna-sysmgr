@@ -8,11 +8,9 @@ Item {
     property string vpnProfileInfo: ""
     
     property real uiScale: 1.0
-    property real textScale: 1.0
-    property real layoutScale: 1.0
 
-    property int iconSpacing : 16 * layoutScale
-    property int rightMarging: 12 * layoutScale
+    property int iconSpacing : 16 * uiScale
+    property int rightMarging: 12 * uiScale
 
     Item {
         anchors.fill: parent
@@ -21,11 +19,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: name;
             horizontalAlignment: Text.AlignLeft
-            width: parent.width - (check.width * uiScale) - rightMarging - iconSpacing - 5
+            width: parent.width - (check.width * (uiScale/4)) - rightMarging - iconSpacing - 5
             elide: Text.ElideRight;
             color: "#FFF";
             font.bold: false;
-            font.pixelSize: 16 * textScale
+            font.pixelSize: 16 * uiScale
             font.family: "Prelude"
         }
 
@@ -35,7 +33,7 @@ Item {
             y: mainText.y + mainText.baselineOffset + 1
             text: status;
             color: "#AAA";
-            font.pixelSize: 10 * textScale
+            font.pixelSize: 10 * uiScale
             font.family: "Prelude"
             font.capitalization: Font.AllUppercase
         }
@@ -46,7 +44,7 @@ Item {
         x: parent.width - (width / 2) - iconSpacing - rightMarging
         anchors.verticalCenter: parent.verticalCenter
         visible: connected
-        scale: uiScale
+        scale: uiScale/4
         source: "/usr/palm/sysmgr/images/statusBar/system-menu-popup-item-checkmark.png"
     }
 }

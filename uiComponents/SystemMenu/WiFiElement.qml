@@ -6,8 +6,6 @@ Drawer {
     property int ident:         0
     property int internalIdent: 0
     property real uiScale;
-    property real textScale;
-    property real layoutScale;
 
     property bool isWifiOn: false
     property bool coloseOnConnect: false
@@ -141,7 +139,7 @@ Drawer {
     drawerHeader:
     MenuListEntry {
         selectable: wifiMenu.active
-        layoutScale: wifiMenu.layoutScale;
+        uiScale: wifiMenu.uiScale;
         content: Item {
                     width: parent.width;
 
@@ -152,29 +150,29 @@ Drawer {
                         text: runtime.getLocalizedString("Wi-Fi");
                         color: wifiMenu.active ? "#FFF" : "#AAA";
                         font.bold: false;
-                        font.pixelSize: 18 * textScale;
+                        font.pixelSize: 18 * uiScale;
                         font.family: "Prelude"
                     }
 
                     AnimatedSpinner {
                     //Spinner {
                         id: wifiSpinner
-                        x: wifiTitle.width + 18 * layoutScale;
-                        y: -17 * layoutScale;
+                        x: wifiTitle.width + 18 * uiScale;
+                        y: -17 * uiScale;
                         on:false
-                        scale:uiScale
+                        scale: uiScale/4
                     }
 
                     Text {
                         id: wifiTitleState
-                        x: wifiMenu.width - width - 14 * layoutScale;
+                        x: wifiMenu.width - width - 14 * uiScale;
                         anchors.verticalCenter: parent.verticalCenter
                         text: runtime.getLocalizedString("init");
                         width: wifiMenu.width - wifiTitle.width - 60
                         horizontalAlignment: Text.AlignRight
                         elide: Text.ElideRight;
                         color: "#AAA";
-                        font.pixelSize: 13 * textScale
+                        font.pixelSize: 13 * uiScale
                         font.family: "Prelude"
                         font.capitalization: Font.AllUppercase
                     }
@@ -186,18 +184,18 @@ Drawer {
         spacing: 0
         width: parent.width
 
-        MenuDivider  { id: separator; uiScale: wifiMenu.uiScale; layoutScale: wifiMenu.layoutScale; }
+        MenuDivider  { id: separator; uiScale: wifiMenu.uiScale; }
 
         MenuListEntry {
             id: wifiOnOff
             selectable: true
-            layoutScale: wifiMenu.layoutScale;
+            uiScale: wifiMenu.uiScale;
             content: Text {  id: wifiOnOffText;
                              x: ident + internalIdent;
                              text: isWifiOn ? runtime.getLocalizedString("Turn off WiFi") : runtime.getLocalizedString("Turn on WiFi");
                              color: "#FFF";
                              font.bold: false;
-                             font.pixelSize: 18 * textScale;
+                             font.pixelSize: 18 * uiScale;
                              font.family: "Prelude"
                          }
 
@@ -212,7 +210,7 @@ Drawer {
             }
         }
 
-        MenuDivider { uiScale: wifiMenu.uiScale; layoutScale: wifiMenu.layoutScale; }
+        MenuDivider { uiScale: wifiMenu.uiScale; }
 
         ListView {
             id: wifiListView
@@ -226,8 +224,8 @@ Drawer {
 
         MenuListEntry {
             selectable: true
-            layoutScale: wifiMenu.layoutScale;
-            content: Text { x: ident + internalIdent; text: runtime.getLocalizedString("Wi-Fi Preferences"); color: "#FFF"; font.bold: false; font.pixelSize: 18 * textScale; font.family: "Prelude"}
+            uiScale: wifiMenu.uiScale;
+            content: Text { x: ident + internalIdent; text: runtime.getLocalizedString("Wi-Fi Preferences"); color: "#FFF"; font.bold: false; font.pixelSize: 18 * uiScale; font.family: "Prelude"}
             onAction: {
                 clearWifiList()
                 prefsTriggered()
@@ -246,7 +244,7 @@ Drawer {
             MenuListEntry {
                 id: entry
                 selectable: true
-       		layoutScale: wifiMenu.layoutScale;
+       		uiScale: wifiMenu.uiScale;
                 forceSelected: showSelected
 
                 content: WifiEntry {
@@ -262,8 +260,6 @@ Drawer {
                             statusInBold: boldStatus;
                             connected:    isConnected;
                             uiScale: wifiMenu.uiScale;
-                            textScale: wifiMenu.textScale;
-                            layoutScale: wifiMenu.layoutScale;
                          }
                 onAction: {
                     itemSelected(index,
@@ -285,7 +281,7 @@ Drawer {
                 }
             }
 
-            MenuDivider { uiScale: wifiMenu.uiScale; layoutScale: wifiMenu.layoutScale; }
+            MenuDivider { uiScale: wifiMenu.uiScale; }
         }
 
     }

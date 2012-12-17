@@ -6,11 +6,9 @@ import CustomComponents 1.0
 InputItem {
     id: unlockPanel
     property real uiScale: 1.0
-    property real textScale: 1.0
-    property real layoutScale: 1.0
-    property int  edgeOffset: 11 * layoutScale
-    property int  margin: 6 * layoutScale
-    property int  topOffset: 4 * layoutScale
+    property int  edgeOffset: 11 * uiScale
+    property int  margin: 6 * uiScale
+    property int  topOffset: 4 * uiScale
     property bool isPINEntry: true
     property int  minPassLength: 4
     property bool enforceMinLength: false
@@ -25,14 +23,6 @@ InputItem {
 
     function setUiScale(scale) {
         uiScale = scale;
-    }
-
-    function setTextScale(scale) {
-        textScale = scale;
-    }
-
-    function setLayoutScale(scale) {
-        layoutScale = scale;
     }
 
     function setupDialog(isPIN, title, hintMessage, enforceLength, minLen) {
@@ -59,7 +49,7 @@ InputItem {
         }
     }
 
-    width: (320 * layoutScale) + 2 * edgeOffset
+    width: (320 * uiScale) + 2 * edgeOffset
     height: buttonGrid.y + buttonGrid.height + edgeOffset + margin;
     focus: true;
 
@@ -75,7 +65,7 @@ InputItem {
     Text {
         id: titleText;
         font.family: "Prelude"
-        font.pixelSize: 18 * textScale
+        font.pixelSize: 18 * uiScale
         font.bold: true;
         color: "#FFF";
         anchors.horizontalCenter: parent.horizontalCenter
@@ -87,12 +77,12 @@ InputItem {
     PasswordField {
         id: passwordField;
         isPIN: isPINEntry;
-        width: (320 - 4) * layoutScale;
-        x: edgeOffset + (3 * layoutScale)
-        y: titleText.y + titleText.height + (isPINEntry ? 0 : 6 * layoutScale)
+        width: (320 - 4) * uiScale;
+        x: edgeOffset + (3 * uiScale)
+        y: titleText.y + titleText.height + (isPINEntry ? 0 : 6 * uiScale)
         uiScale: unlockPanel.uiScale
-        textScale: unlockPanel.textScale
-        layoutScale: unlockPanel.layoutScale
+        uiScale: unlockPanel.uiScale
+        uiScale: unlockPanel.uiScale
 
         onTextFieldClicked: {
             if(!isPINEntry) {
@@ -109,8 +99,8 @@ InputItem {
         x: edgeOffset
         anchors.top: passwordField.bottom
         uiScale: unlockPanel.uiScale
-        textScale: unlockPanel.textScale
-        layoutScale: unlockPanel.layoutScale
+        uiScale: unlockPanel.uiScale
+        uiScale: unlockPanel.uiScale
 
         onKeyAction: {
             if(keyText == "\b") {
@@ -132,7 +122,7 @@ InputItem {
 
     Grid {
         id: buttonGrid
-        width: (320 * layoutScale) - 2 * margin
+        width: (320 * uiScale) - 2 * margin
         x: edgeOffset + margin
         anchors.top: isPINEntry ? keyPad.bottom : passwordField.bottom;
 
@@ -143,10 +133,10 @@ InputItem {
         ActionButton {
             caption: runtime.getLocalizedString("Cancel");
             width: buttonGrid.width/buttonGrid.columns - margin / 2
-            height: 52 * layoutScale
+            height: 52 * uiScale
             uiScale: unlockPanel.uiScale
-            textScale: unlockPanel.textScale
-            layoutScale: unlockPanel.layoutScale
+            uiScale: unlockPanel.uiScale
+            uiScale: unlockPanel.uiScale
             onAction: entryCanceled();
         }
 
@@ -154,10 +144,10 @@ InputItem {
             caption: runtime.getLocalizedString("Done");
             affirmative: true
             width: buttonGrid.width/buttonGrid.columns - margin / 2
-            height: 52 * layoutScale
+            height: 52 * uiScale
             uiScale: unlockPanel.uiScale
-            textScale: unlockPanel.textScale
-            layoutScale: unlockPanel.layoutScale
+            uiScale: unlockPanel.uiScale
+            uiScale: unlockPanel.uiScale
             active: passwordField.enteredText.length >= (enforceMinLength ? minPassLength : 1);
             onAction: {
                 if(passwordField.enteredText.length > 0) {

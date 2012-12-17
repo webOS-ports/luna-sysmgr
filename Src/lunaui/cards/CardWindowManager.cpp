@@ -274,7 +274,7 @@ void CardWindowManager::resize(int width, int height)
 
 	m_targetPositiveSpace = SystemUiController::instance()->positiveSpaceBounds();
 
-	int offset = 48 * Settings::LunaSettings()->layoutScale;
+	int offset = 48 * Settings::LunaSettings()->uiScale;
 	kWindowOrigin = boundingRect().y() + ((m_normalScreenBounds.y() + offset) + (int) ((m_normalScreenBounds.height() - offset) * kWindowOriginRatio));
 
     updateAngryCardThreshold();
@@ -2477,7 +2477,7 @@ void CardWindowManager::slotPositiveSpaceChanged(const QRect& r)
 
 		// TODO: this is a temporary solution to fake the existence of the search pill
 		// 	which happens to be 50 pixels tall
-		quint32 pillOffset = 50 * Settings::LunaSettings()->layoutScale;
+		quint32 pillOffset = 50 * Settings::LunaSettings()->uiScale;
 		kActiveScale = ((qreal) (r.height() - pillOffset) * kActiveWindowScale) / (qreal) m_normalScreenBounds.height();
 		kActiveScale = qMax(kMinimumWindowScale, kActiveScale);
 
