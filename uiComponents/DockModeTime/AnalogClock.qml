@@ -5,7 +5,6 @@ Item {
     width: 1024; height: 768
 
     property real uiScale: 1.0
-    property real textScale: 1.0
     property int glass: 1
     property variant type: ["matte","glass"]
     property bool timerRunning: false
@@ -71,7 +70,7 @@ Item {
          anchors.horizontalCenterOffset: glass ? 0 : ((face.width * face.scale)/4.6)
          anchors.verticalCenterOffset: glass ? ((face.height * face.scale)/5) : 0
          font.family: "prelude"
-         font.pointSize: glass ? (16 * textScale) : (30 * textScale)
+         font.pointSize: glass ? (16 * uiScale) : (30 * uiScale)
          color: "#e1e1e1"
      }
 
@@ -83,7 +82,7 @@ Item {
          anchors.horizontalCenterOffset: glass ? 0 : -((face.width * face.scale)/4.8)
          anchors.verticalCenterOffset: glass ? ((face.height * face.scale)/5) : 0
          font.family: "prelude"
-         font.pointSize: glass ? (16 * textScale) : (30 * textScale)
+         font.pointSize: glass ? (16 * uiScale) : (30 * uiScale)
          color: "#e1e1e1"
      }
 

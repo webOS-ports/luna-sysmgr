@@ -2,7 +2,6 @@ import Qt 4.7
 
 Item {
     property real uiScale: 1.0
-    property real textScale: 1.0
     property bool isPressed: false
     property string caption: ""
     property string imgSource: ""
@@ -26,7 +25,7 @@ Item {
         anchors.centerIn: parent
         color: "#FFF";
         font.bold: true;
-        font.pixelSize: 30 * textScale
+        font.pixelSize: 30 * uiScale
         font.family: "Prelude"
         font.capitalization: Font.AllUppercase
     }
@@ -35,7 +34,7 @@ Item {
         id: buttonImg
         source: imgSource
         visible: imgSource != "";
-        scale: uiScale;
+        scale: uiScale/4;
         smooth: true;
         anchors.centerIn: parent
     }

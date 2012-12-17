@@ -129,13 +129,13 @@ static OverlayLayer * LoadOverlayLayer(LauncherObject * p_launcher)
 	PixmapObject * pTabBarShadowPmo =
 			PixmapObjectLoader::instance()->quickLoad(
 					GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + TAB_SHADOW_FILEPATH
-					, QSize(10 * Settings::LunaSettings()->layoutScale, 10 * Settings::LunaSettings()->layoutScale)
+					, QSize(10 * Settings::LunaSettings()->uiScale, 10 * Settings::LunaSettings()->uiScale)
 					, false
 			);
 	PixmapObject * pQuickLaunchShadowPmo =
 			PixmapObjectLoader::instance()->quickLoad(
 					GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + QUICKLAUNCH_SHADOW_FILEPATH
-					, QSize(20 * Settings::LunaSettings()->layoutScale, 20 * Settings::LunaSettings()->layoutScale)
+					, QSize(20 * Settings::LunaSettings()->uiScale, 20 * Settings::LunaSettings()->uiScale)
 					, false
 			);
 	OverlayLayer * pOverlay = new OverlayLayer(p_launcher->geometry());
@@ -1295,7 +1295,7 @@ void LauncherObject::fullSizeInit(quint32 width,quint32 height)
 	QSize derivedLauncherSize = LauncherSizeFromScreenSize(width,height);
 	m_geom = DimensionsGlobal::realRectAroundRealPoint(derivedLauncherSize);
 
-	m_qp_background = new PixmapObject(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + TAB_LAUNCHER_BACKGROUND_FILEPATH, QSize(180 * Settings::LunaSettings()->layoutScale, 180 * Settings::LunaSettings()->layoutScale), false);
+	m_qp_background = new PixmapObject(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + TAB_LAUNCHER_BACKGROUND_FILEPATH, QSize(180 * Settings::LunaSettings()->uiScale, 180 * Settings::LunaSettings()->uiScale), false);
 	if (m_qp_background)
 	{
 		m_drawBackground = true;

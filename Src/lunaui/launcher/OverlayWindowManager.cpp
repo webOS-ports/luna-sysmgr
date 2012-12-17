@@ -1045,16 +1045,16 @@ void OverlayWindowManager::setupSearchPill()
 
 	PixmapObject * pNormalBgPmo = (PixmapObject *)PixmapObjectLoader::instance()->quickLoadThreeHorizTiled(
 			90,
-			50 * Settings::LunaSettings()->layoutScale,
+			50 * Settings::LunaSettings()->uiScale,
 			QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + SEARCHPILL_BACKGROUND_FILEPATH),
-			40 * Settings::LunaSettings()->layoutScale, 40 * Settings::LunaSettings()->layoutScale
+			40 * Settings::LunaSettings()->uiScale, 40 * Settings::LunaSettings()->uiScale
 	);
 
 	if (pNormalBgPmo)
 	{
 		PixmapObject * pIconPmo = PixmapObjectLoader::instance()->quickLoad(
 				QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + SEARCHPILL_ICON_FILEPATH),
-				QSize(32 * Settings::LunaSettings()->layoutScale, 32 * Settings::LunaSettings()->layoutScale),
+				QSize(32 * Settings::LunaSettings()->uiScale, 32 * Settings::LunaSettings()->uiScale),
 				false
 		);
 		

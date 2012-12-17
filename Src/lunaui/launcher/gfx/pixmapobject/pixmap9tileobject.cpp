@@ -46,7 +46,7 @@ Pixmap9TileObject::Pixmap9TileObject(const quint32 width,const quint32 height,
 , m_sideTilingStyle(sideTilingStyle)
 , m_centerTilingStyle(centerTilingStyle)
 {
-	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
+	*pm = pm->scaledToHeight(pm->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
 
 	if (valid() == false)
 	{
@@ -80,7 +80,7 @@ Pixmap9TileObject::Pixmap9TileObject( const quint32 width, const quint32 height,
 , m_sideTilingStyle(sideTilingStyle)
 , m_centerTilingStyle(centerTilingStyle)
 {
-	*pm = pm->scaledToHeight(pm->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
+	*pm = pm->scaledToHeight(pm->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
 	
 	if (valid() == false)
 	{

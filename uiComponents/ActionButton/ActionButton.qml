@@ -8,11 +8,11 @@ Item {
     property bool   negative:    false
     property real   inactiveOpacity: 0.70
     property real uiScale : 1.0
-    property real textScale : 1.0
-    property real layoutScale : 1.0
+    property real uiScale : 1.0
+    property real uiScale : 1.0
 
-    width:  200 * layoutScale;
-    height:  40 * layoutScale;
+    width:  200 * uiScale;
+    height:  40 * uiScale;
 
     BorderImage {
         id: pressedBkg
@@ -34,7 +34,7 @@ Item {
         anchors.centerIn: parent
         color: "#FFF";
         font.bold: true;
-        font.pixelSize: 16 * textScale
+        font.pixelSize: 16 * uiScale
         font.family: "Prelude"
         opacity: active ? 1.0 : inactiveOpacity
     }

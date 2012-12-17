@@ -31,8 +31,8 @@
 #include "Settings.h"
 #include "glib.h"
 
-static const int kShadowWidth = 20 * Settings::LunaSettings()->layoutScale;
-static const int kShadowOffsetY = 5 * Settings::LunaSettings()->layoutScale;
+static const int kShadowWidth = 20 * Settings::LunaSettings()->uiScale;
+static const int kShadowOffsetY = 5 * Settings::LunaSettings()->uiScale;
 
 static QPixmap* s_shadowPixmap = 0;
 
@@ -43,7 +43,7 @@ CardDropShadowEffect::CardDropShadowEffect(QGraphicsItem *item, QObject *parent)
 	if (G_UNLIKELY(!s_shadowPixmap)) {
 		std::string tileImagePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/card-shadow-tile.png";
 		s_shadowPixmap = new QPixmap(tileImagePath.c_str());
-		*s_shadowPixmap = s_shadowPixmap->scaledToHeight(s_shadowPixmap->height() * Settings::LunaSettings()->uiScale);
+		*s_shadowPixmap = s_shadowPixmap->scaledToHeight(s_shadowPixmap->height() * (Settings::LunaSettings()->uiScale / 4));
 	}
 
 	cacheDrawingData();

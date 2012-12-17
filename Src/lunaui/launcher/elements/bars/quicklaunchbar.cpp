@@ -74,7 +74,7 @@ qint32 QuickLaunchBar::sEventCounter0 = 0;
 static PixButton2State * LoadLauncherAccessButton()
 {
 	QList<QRect> buttonStateCoords;
-	int size = LA_BUTTON_SIZE * Settings::LunaSettings()->layoutScale;
+	int size = LA_BUTTON_SIZE * Settings::LunaSettings()->uiScale;
 	buttonStateCoords << QRect(0,0,size,size) << QRect(0,size,size,size);
 	QList<PixmapObject *> buttonStatePmos =
 			PixmapObjectLoader::instance()->loadMulti(
@@ -109,14 +109,14 @@ QuickLaunchBar::QuickLaunchBar(const QRectF& geom,Quicklauncher * p_quicklaunche
 	m_qp_backgroundTranslucent =
 			PixmapObjectLoader::instance()->quickLoad(
 					QString(GraphicsSettings::settings()->graphicsAssetBaseDirectory + QUICKLAUNCH_BG_TRANSLUCENT),
-					QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->layoutScale,
+					QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->uiScale,
 					false
 					
 			);
 	m_qp_backgroundSolid =
 				PixmapObjectLoader::instance()->quickLoad(
 						QString(GraphicsSettings::settings()->graphicsAssetBaseDirectory + QUICKLAUNCH_BG_SOLID),
-						QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->layoutScale,
+						QUICKLAUNCH_BG_SIZE * Settings::LunaSettings()->uiScale,
 						false
 			);
 	m_qp_currentBg = m_qp_backgroundTranslucent;
@@ -132,7 +132,7 @@ QuickLaunchBar::QuickLaunchBar(const QRectF& geom,Quicklauncher * p_quicklaunche
 	
 	//Calculate maximum items from smallest screen dimension and icon size
 	const HostInfo& info = HostBase::instance()->getInfo();
-	int size = LA_BUTTON_SIZE * Settings::LunaSettings()->layoutScale * 1.25;
+	int size = LA_BUTTON_SIZE * Settings::LunaSettings()->uiScale * 1.25;
 	m_maxItems =  (qMin(info.displayWidth, info.displayHeight) - size) / size;
 	
 	setAcceptTouchEvents(true);
@@ -639,7 +639,7 @@ QSize QuickLaunchBar::QuickLaunchSizeFromScreenSize(int screenWidth,int screenHe
 {
 	if (LayoutSettings::settings()->quickLaunchBarUseAbsoluteSize)
 	{
-		return QSize(screenWidth,qMin(LayoutSettings::settings()->quickLaunchBarHeightAbsolute,(quint32)screenHeight) * Settings::LunaSettings()->layoutScale);
+		return QSize(screenWidth,qMin(LayoutSettings::settings()->quickLaunchBarHeightAbsolute,(quint32)screenHeight) * Settings::LunaSettings()->uiScale);
 	}
 	QSize r = QSize(
 			qBound((quint32)2,
@@ -654,9 +654,9 @@ QSize QuickLaunchBar::QuickLaunchSizeFromScreenSize(int screenWidth,int screenHe
 	r.setWidth(r.width() - (r.width() % 2));
 	r.setHeight(r.height() - (r.height() % 2));
 	
-	//obey layoutScale
-	r.setWidth(r.width() * Settings::LunaSettings()->layoutScale);
-	r.setHeight(r.height() * Settings::LunaSettings()->layoutScale);
+	//obey uiScale
+	r.setWidth(r.width() * Settings::LunaSettings()->uiScale);
+	r.setHeight(r.height() * Settings::LunaSettings()->uiScale);
 	
 	return r;
 

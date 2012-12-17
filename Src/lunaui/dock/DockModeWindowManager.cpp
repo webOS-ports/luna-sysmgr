@@ -79,16 +79,16 @@ static const char* kSysUiAppId = "com.palm.systemui";
 static int kItemsPerRow = 3;
 static int kMarginForButtons = 0;
 
-static int kPortraitTopOffeset = 30 * Settings::LunaSettings()->layoutScale;
-static int kLandscapeTopOffeset = 10 * Settings::LunaSettings()->layoutScale;
-static int kItemRowSpacing = 45 * Settings::LunaSettings()->layoutScale;
+static int kPortraitTopOffeset = 30 * Settings::LunaSettings()->uiScale;
+static int kLandscapeTopOffeset = 10 * Settings::LunaSettings()->uiScale;
+static int kItemRowSpacing = 45 * Settings::LunaSettings()->uiScale;
 
-static int kMaximWinSpacing = 50 * Settings::LunaSettings()->layoutScale;
+static int kMaximWinSpacing = 50 * Settings::LunaSettings()->uiScale;
 
 static int kAppImageWidth = 0;
 static int kAppImageHeight = 0;
 
-static int kAppMenuWidth = 320 * Settings::LunaSettings()->layoutScale;
+static int kAppMenuWidth = 320 * Settings::LunaSettings()->uiScale;
 
 #define    LAUNCHER_BUTTONS_Z    0
 #define    MINIMIZED_WINDOW_Z    1

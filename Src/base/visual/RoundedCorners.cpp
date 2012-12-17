@@ -32,7 +32,7 @@ static QPixmap loadResource(const QString& path)
 	Settings* settings = Settings::LunaSettings();
 	QString prefix = qFromUtf8Stl(settings->lunaSystemResourcesPath) + "/";
 	QPixmap pixmap = QPixmap(prefix + path);
-	pixmap = pixmap.scaledToHeight(pixmap.height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
+	pixmap = pixmap.scaledToHeight(pixmap.height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
 	return pixmap;
 }
 

@@ -11,11 +11,9 @@ Item {
     property bool   connected:      false
     
     property real uiScale: 1.0
-    property real textScale: 1.0
-    property real layoutScale: 1.0
 
-    property int iconSpacing : 16 * layoutScale
-    property int rightMarging: 12 * layoutScale
+    property int iconSpacing : 16 * uiScale
+    property int rightMarging: 12 * uiScale
 
     Item {
         anchors.fill: parent
@@ -24,10 +22,10 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: name; color: "#FFF";
             horizontalAlignment: Text.AlignLeft
-            width: parent.width - ((sigStrength.width + check.width + lock.width) * uiScale) - rightMarging - 3*iconSpacing - 5
+            width: parent.width - ((sigStrength.width + check.width + lock.width) * (uiScale/4)) - rightMarging - 3*iconSpacing - 5
             elide: Text.ElideRight;
             font.bold: false;
-            font.pixelSize: 16 * textScale
+            font.pixelSize: 16 * uiScale
             font.family: "Prelude"
         }
         Text {
@@ -37,7 +35,7 @@ Item {
             text: status;
             color: "#AAA";
             font.bold: statusInBold;
-            font.pixelSize: 10 * textScale
+            font.pixelSize: 10 * uiScale
             font.family: "Prelude"
             font.capitalization: Font.AllUppercase
         }
@@ -47,7 +45,7 @@ Item {
         id: sigStrength
         x: parent.width - (width / 2) - iconSpacing - rightMarging
         anchors.verticalCenter: parent.verticalCenter
-        scale: uiScale
+        scale: uiScale/4
 
         source: "/usr/palm/sysmgr/images/statusBar/wifi-" + signalBars + ".png"
     }
@@ -57,7 +55,7 @@ Item {
         x: sigStrength.x - (width / 2) - iconSpacing
         anchors.verticalCenter: parent.verticalCenter
         visible: securityType != ""
-        scale: uiScale
+        scale: uiScale/4
         source: "/usr/palm/sysmgr/images/statusBar/system-menu-lock.png"
     }
 
@@ -66,7 +64,7 @@ Item {
         x: lock.x - (width / 2) - iconSpacing
         anchors.verticalCenter: parent.verticalCenter
         visible: connected
-        scale: uiScale
+        scale: uiScale/4
         source: "/usr/palm/sysmgr/images/statusBar/system-menu-popup-item-checkmark.png"
     }
 }

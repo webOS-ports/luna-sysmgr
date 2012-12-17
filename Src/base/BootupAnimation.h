@@ -138,7 +138,6 @@ private:
 	int m_logoAlpha;
 	int m_uiFrame;
 	int m_uiAlpha;
-	float m_uiScale;
 	int m_activityProgress;
 	int m_activitySpinner;
 	int m_rotation;

@@ -54,7 +54,7 @@ CardLoading::CardLoading(Window* win)
 		path.append("/loading-glow.png");
 		s_glow = new QPixmap(path);
 		if(s_glow)
-			*s_glow = s_glow->scaledToHeight(s_glow->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
+			*s_glow = s_glow->scaledToHeight(s_glow->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
 			s_glowRefCount++;
 		if (!s_glow || s_glow->isNull()) {
 			g_critical("%s: Failed to load image '%s'", __PRETTY_FUNCTION__, qPrintable(path));
@@ -68,7 +68,7 @@ CardLoading::CardLoading(Window* win)
             path.append("/loading-bg.png");
             s_background = new QPixmap(path);
             if (s_background) {
-		    *s_background = s_background->scaledToHeight(s_background->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
+		    *s_background = s_background->scaledToHeight(s_background->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
                     s_backgroundRefCount++;
             }
             if (!s_background || s_background->isNull()) {
@@ -81,7 +81,7 @@ CardLoading::CardLoading(Window* win)
     // Next, allow app specific settings to override if appropriate:
 	ApplicationDescription* appDesc = m_win->appDescription();
     if (appDesc) {
-        int size = Settings::LunaSettings()->splashIconSize * Settings::LunaSettings()->layoutScale;
+        int size = Settings::LunaSettings()->splashIconSize * Settings::LunaSettings()->uiScale;
         m_icon.load(appDesc->splashIconName().c_str());
         if (!m_icon.isNull()) {
             // scale splash icon to fit the devices screen dimensions
@@ -116,7 +116,7 @@ CardLoading::CardLoading(Window* win)
 
             // Load the app / scene specific background if applicable:
             m_background.load(sceneBackgroundName.c_str());
-            m_background = m_background.scaledToHeight(m_background.height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
+            m_background = m_background.scaledToHeight(m_background.height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
         }
     }
     else {

@@ -82,7 +82,7 @@ void DockModeWindow::setPrepareAddedToWindowManager() {
 	}
 
 	ApplicationDescription* appDesc = static_cast<Window*>(this)->appDescription();
-	int size = Settings::LunaSettings()->splashIconSize * Settings::LunaSettings()->layoutScale;
+	int size = Settings::LunaSettings()->splashIconSize * Settings::LunaSettings()->uiScale;
 	m_icon.load(appDesc->splashIconName().c_str());
 	if (!m_icon.isNull()) {
 		// scale splash icon to fit the devices screen dimensions
