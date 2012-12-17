@@ -6,10 +6,9 @@ MenuListEntry {
     property alias modeText:     airplaneMode.text
     property bool  airplaneOn:   false
     property real uiScale;
-    property real layoutScale;
 
-    property int iconSpacing : 16 * layoutScale
-    property int rightMarging: 12 * layoutScale
+    property int iconSpacing : 16 * uiScale
+    property int rightMarging: 12 * uiScale
 
     content:
         Item {
@@ -22,7 +21,7 @@ MenuListEntry {
                 text: runtime.getLocalizedString("Turn on Airplane Mode");
                 color: selectable ? "#FFF" : "#AAA";
                 font.bold: false;
-                font.pixelSize: 18 * textScale;
+                font.pixelSize: 18 * uiScale;
                 font.family: "Prelude"
             }
 
@@ -32,7 +31,7 @@ MenuListEntry {
                 x: parent.width - (width/2) - iconSpacing - rightMarging
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: selectable ? 1.0 : 0.65;
-                scale: uiScale
+                scale: uiScale/4
                 smooth: true
 
                 source: "/usr/palm/sysmgr/images/statusBar/icon-airplane.png"
@@ -44,7 +43,7 @@ MenuListEntry {
                 x: parent.width - (width/2) - iconSpacing - rightMarging
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: selectable ? 1.0 : 0.65;
-                scale: uiScale
+                scale: uiScale/4
                 smooth: true
 
                 source: "/usr/palm/sysmgr/images/statusBar/icon-airplane-off.png"

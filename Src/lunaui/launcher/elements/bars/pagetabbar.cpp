@@ -74,7 +74,7 @@ QFont PageTabBar::staticLabelFontForTabs()
 	{
 		s_tabLabelFont = QFont(QString::fromStdString(Settings::LunaSettings()->fontQuicklaunch));
 		quint32 fontSize = qBound((quint32)2,LayoutSettings::settings()->tabBarTabFontSizePx,(quint32)100);
-		s_tabLabelFont.setPixelSize(fontSize * (Settings::LunaSettings()->textScale * 0.8)); //Downloads text overruns at full scale
+		s_tabLabelFont.setPixelSize(fontSize * (Settings::LunaSettings()->uiScale * 0.8)); //Downloads text overruns at full scale
 		s_tabLabelFont.setBold(LayoutSettings::settings()->tabBarTabFontEmbolden);
 	}
 	return s_tabLabelFont;
@@ -82,7 +82,7 @@ QFont PageTabBar::staticLabelFontForTabs()
 
 PageTabBar::PageTabBar(const QRectF& pageTabBarGeometry,LauncherObject * p_belongsTo)
 : ThingPaintable(pageTabBarGeometry)
-, m_maxTabWidth(150 * Settings::LunaSettings()->layoutScale)
+, m_maxTabWidth(150 * Settings::LunaSettings()->uiScale)
 , m_interactionsBlocked(false)
 , m_qp_currentUIOwner(p_belongsTo)
 , m_qp_backgroundPmo(0)
@@ -137,7 +137,7 @@ QSize PageTabBar::PageTabSizeFromLauncherSize(quint32 launcherWidth,quint32 laun
 	{
 		return QSize(
 				launcherWidth,
-				qMin(launcherHeight,(quint32)(LayoutSettings::settings()->tabBarHeightAbsolute)) * Settings::LunaSettings()->layoutScale
+				qMin(launcherHeight,(quint32)(LayoutSettings::settings()->tabBarHeightAbsolute)) * Settings::LunaSettings()->uiScale
 		);
 	}
 
@@ -173,8 +173,8 @@ void PageTabBar::slotAddTab(const QString& labelString,Page * p_refersToPage)
 
  */
 
-	int horzOffset = 20 * Settings::LunaSettings()->layoutScale;
-	int vertOffset = 4 * Settings::LunaSettings()->layoutScale;
+	int horzOffset = 20 * Settings::LunaSettings()->uiScale;
+	int vertOffset = 4 * Settings::LunaSettings()->uiScale;
 
 	//quickLoadNineTiled: specify in-coordinates in top,bottom,left,right order
 	Pixmap9TileObject * pNormalBgPmo = PixmapObjectLoader::instance()->quickLoadNineTiled(

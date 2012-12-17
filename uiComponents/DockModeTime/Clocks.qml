@@ -6,9 +6,7 @@ Rectangle {
     height: 1280
     color: "black"
 
-    property real uiScale: 0.465
-    property real textScale: 1.75
-    property real layoutScale: 1.75
+    property real uiScale: 1.0
     property bool mainTimerRunning: false
     property int isLandscape: (runtime.orientation+1)%2
 
@@ -22,9 +20,9 @@ Rectangle {
 
     VisualItemModel{
         id: clockList
-        AnalogClock{width: container.width; height: container.height; uiScale: container.uiScale; textScale: container.textScale; smooth: true; glass: 1; timerRunning: mainTimerRunning}
-        DigitalClock{width: container.width; height: container.height; uiScale: container.uiScale; textScale: container.textScale; smooth: true; timerRunning: mainTimerRunning}
-        AnalogClock{width: container.width; height: container.height; uiScale: container.uiScale; textScale: container.textScale; smooth: true; glass: 0; timerRunning: mainTimerRunning}
+        AnalogClock{width: container.width; height: container.height; uiScale: container.uiScale; uiScale: container.uiScale; smooth: true; glass: 1; timerRunning: mainTimerRunning}
+        DigitalClock{width: container.width; height: container.height; uiScale: container.uiScale; uiScale: container.uiScale; smooth: true; timerRunning: mainTimerRunning}
+        AnalogClock{width: container.width; height: container.height; uiScale: container.uiScale; uiScale: container.uiScale; smooth: true; glass: 0; timerRunning: mainTimerRunning}
     }
 
     ListView {
@@ -39,12 +37,12 @@ Rectangle {
     }
 
     Row {
-         spacing: 10 * layoutScale
+         spacing: 10 * uiScale
          anchors.centerIn: parent
          anchors.verticalCenterOffset: parent.height/2.5
-         Image { id: clockdot1; scale: uiScale; smooth: true; source: "../../images/dockmode/time/indicator/"+(flickable.currentIndex==0 ? "on" : "off") + ".png" }
-         Image { id: clockdot2; scale: uiScale; smooth: true; source: "../../images/dockmode/time/indicator/"+(flickable.currentIndex==1 ? "on" : "off") + ".png" }
-         Image { id: clockdot3; scale: uiScale; smooth: true; source: "../../images/dockmode/time/indicator/"+(flickable.currentIndex==2 ? "on" : "off") + ".png" }
+         Image { id: clockdot1; scale: uiScale/4; smooth: true; source: "../../images/dockmode/time/indicator/"+(flickable.currentIndex==0 ? "on" : "off") + ".png" }
+         Image { id: clockdot2; scale: uiScale/4; smooth: true; source: "../../images/dockmode/time/indicator/"+(flickable.currentIndex==1 ? "on" : "off") + ".png" }
+         Image { id: clockdot3; scale: uiScale/4; smooth: true; source: "../../images/dockmode/time/indicator/"+(flickable.currentIndex==2 ? "on" : "off") + ".png" }
     }
 }
 

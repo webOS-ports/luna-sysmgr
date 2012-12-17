@@ -5,11 +5,9 @@ Item {
     clip: true;
 
     property real  uiScale: 1.0
-    property real  textScale: 1.0
-    property real  layoutScale: 1.0
-    property int  maxHeight: 410 * layoutScale
-    property int  headerIdent:   14 * layoutScale
-    property int  edgeOffset: 11 * layoutScale
+    property int  maxHeight: 410 * uiScale
+    property int  headerIdent:   14 * uiScale
+    property int  edgeOffset: 11 * uiScale
     property alias mainMenuItem: mainMenu;
     property alias scrollable: flickableArea.interactive;
 
@@ -19,14 +17,6 @@ Item {
 
     function setUiScale(scale) {
         uiScale = scale;
-    }
-
-    function setTextScale(scale) {
-        textScale = scale;
-    }
-
-    function setLayoutScale(scale) {
-        layoutScale = scale;
     }
 
     function setMaximumHeight(h) {
@@ -62,10 +52,10 @@ Item {
         anchors.fill: parent
         color: "transparent"
         clip: true
-        anchors.leftMargin: 11 * layoutScale
+        anchors.leftMargin: 11 * uiScale
         anchors.topMargin: 0
-        anchors.bottomMargin:15 * layoutScale
-        anchors.rightMargin: 11 * layoutScale
+        anchors.bottomMargin:15 * uiScale
+        anchors.rightMargin: 11 * uiScale
 
         Flickable {
             id: flickableArea
@@ -79,8 +69,8 @@ Item {
 
             Item {
                 id: mainMenu
-                width: 320 * layoutScale
-                height:  700 * layoutScale
+                width: 320 * uiScale
+                height:  700 * uiScale
             }
         }
     }
@@ -88,7 +78,7 @@ Item {
     Item {
         id: maskTop
         z:10
-        width: parent.width - (22 * layoutScale)
+        width: parent.width - (22 * uiScale)
         anchors.horizontalCenter: parent.horizontalCenter
         y: 0
         opacity: !flickableArea.atYBeginning ? 1.0 : 0.0
@@ -115,9 +105,9 @@ Item {
     Item {
         id: maskBottom
         z:10
-        width: parent.width - (22 * layoutScale)
+        width: parent.width - (22 * uiScale)
         anchors.horizontalCenter: parent.horizontalCenter
-        y: flickableArea.height - (28 * layoutScale)
+        y: flickableArea.height - (28 * uiScale)
         opacity: !flickableArea.atYEnd ? 1.0 : 0.0
 
         BorderImage {
@@ -130,7 +120,7 @@ Item {
 
         Image {
             anchors.horizontalCenter: parent.horizontalCenter
-            y:10 * layoutScale
+            y:10 * uiScale
 	    transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
 	    smooth: true;
             source: "/usr/palm/sysmgr/images/menu-arrow-down.png"

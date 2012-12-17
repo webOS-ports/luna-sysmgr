@@ -4,15 +4,13 @@ import Qt 4.7
 Item {
     id: systemmenu
     property real uiScale: 1.0
-    property real textScale: 1.0
-    property real layoutScale: 1.0
-    property int  maxWidth: 300 * layoutScale
-    property int  maxHeight: 410 * layoutScale
-    property int  headerIdent:   14 * layoutScale
-    property int  subItemIdent:  16 * layoutScale
-    property int  dividerWidthOffset: 28 * layoutScale
+    property int  maxWidth: 300 * uiScale
+    property int  maxHeight: 410 * uiScale
+    property int  headerIdent:   14 * uiScale
+    property int  subItemIdent:  16 * uiScale
+    property int  dividerWidthOffset: 28 * uiScale
     property int  itemIdent:     subItemIdent + headerIdent
-    property int  edgeOffset: 11 * layoutScale
+    property int  edgeOffset: 11 * uiScale
     property bool flickableOverride: false
 
     property bool airplaneModeInProgress: false
@@ -43,14 +41,6 @@ Item {
 
     function setUiScale(scale) {
         uiScale = scale;
-    }
-
-    function setTextScale(scale) {
-        textScale = scale;
-    }
-
-    function setLayoutScale(scale) {
-        layoutScale = scale;
     }
 
     function setMaximumHeight(height) {
@@ -116,9 +106,9 @@ Item {
 
     BorderImage {
         source: "/usr/palm/sysmgr/images/menu-dropdown-bg.png"
-        width: parent.width / uiScale;
-        height: Math.min(systemmenu.height / uiScale,  (mainMenu.height + clipRect.anchors.topMargin + clipRect.anchors.bottomMargin) / uiScale);
-        transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+        width: parent.width / (uiScale/4);
+        height: Math.min(systemmenu.height / (uiScale/4),  (mainMenu.height + clipRect.anchors.topMargin + clipRect.anchors.bottomMargin) / (uiScale/4));
+        transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale/4; yScale: uiScale/4;}
         border { left: 120; top: 40; right: 120; bottom: 120 }
     }
 
@@ -127,10 +117,10 @@ Item {
         anchors.fill: parent
         color: "transparent"
         clip: true
-        anchors.leftMargin: 7 * layoutScale
-        anchors.topMargin: 0 * layoutScale
-        anchors.bottomMargin:14 * layoutScale
-        anchors.rightMargin: 7 * layoutScale
+        anchors.leftMargin: 7 * uiScale
+        anchors.topMargin: 0 * uiScale
+        anchors.bottomMargin:14 * uiScale
+        anchors.rightMargin: 7 * uiScale
 
         Flickable {
             id: flickableArea
@@ -155,27 +145,24 @@ Item {
                     id: date
                     menuPosition: 1; // top
                     ident: headerIdent;
-                    textScale: systemmenu.textScale;
-                    layoutScale: systemmenu.layoutScale;
+                    uiScale: systemmenu.uiScale;
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
+                MenuDivider {widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; smooth: true;}
 
                 BatteryElement {
                     id: battery
                     ident: headerIdent;
-                    textScale: systemmenu.textScale;
-                    layoutScale: systemmenu.layoutScale;
+                    uiScale: systemmenu.uiScale;
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
+                MenuDivider {widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; smooth: true;}
 
                 BrightnessElement {
                     id: brightness
                     visible:    true
-                    margin:      20 * layoutScale;
+                    margin:      20 * uiScale;
                     uiScale: systemmenu.uiScale;
-                    layoutScale: systemmenu.layoutScale;
 
                     onBrightnessChanged: {
                         menuBrightnessChanged(value, save);
@@ -186,7 +173,7 @@ Item {
                     }
                 }
 
-                MenuDivider {widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
+                MenuDivider {widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; smooth: true;}
 
                 WiFiElement {
                     id: wifi
@@ -197,8 +184,6 @@ Item {
                     active: !airplaneModeInProgress;
                     maxViewHeight : maxHeight - clipRect.anchors.topMargin - clipRect.anchors.bottomMargin;
                     uiScale: systemmenu.uiScale;
-                    textScale: systemmenu.textScale;
-                    layoutScale: systemmenu.layoutScale;
 
                     onMenuCloseRequest: {
                         closeMenuTimer.interval = delayMs;
@@ -212,7 +197,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: wifi.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
+                MenuDivider {visible: wifi.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; smooth: true;}
 
                 VpnElement {
                     id: vpn
@@ -223,8 +208,6 @@ Item {
                     active: !airplaneModeInProgress;
                     maxViewHeight : maxHeight - clipRect.anchors.topMargin - clipRect.anchors.bottomMargin;
                     uiScale: systemmenu.uiScale;
-                    textScale: systemmenu.textScale;
-                    layoutScale: systemmenu.layoutScale;
 
                     onMenuCloseRequest: {
                         closeMenuTimer.interval = delayMs;
@@ -238,7 +221,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: vpn.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
+                MenuDivider {visible: vpn.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; smooth: true;}
 
                 BluetoothElement {
                     id: bluetooth
@@ -249,8 +232,6 @@ Item {
                     active: !airplaneModeInProgress;
                     maxViewHeight : maxHeight - clipRect.anchors.topMargin - clipRect.anchors.bottomMargin;
                     uiScale: systemmenu.uiScale;
-                    textScale: systemmenu.textScale;
-                    layoutScale: systemmenu.layoutScale;
 
                     onMenuCloseRequest: {
                         closeMenuTimer.interval = delayMs;
@@ -264,7 +245,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: bluetooth.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
+                MenuDivider {visible: bluetooth.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; smooth: true;}
 
                 AirplaneModeElement {
                     id: airplane
@@ -273,7 +254,6 @@ Item {
                     objectName: "airplaneMode"
                     selectable: !airplaneModeInProgress;
                     uiScale: systemmenu.uiScale;
-                    layoutScale: systemmenu.layoutScale;
 
                     onAction: {
                         airplaneModeTriggered()
@@ -283,15 +263,13 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: airplane.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
+                MenuDivider {visible: airplane.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; smooth: true;}
 
                 RotationLockElement {
                     id: rotation
                     visible: true
                     ident:         headerIdent;
                     uiScale: systemmenu.uiScale;
-                    textScale: systemmenu.textScale;
-                    layoutScale: systemmenu.layoutScale;
 
                     onAction: {
                         rotation.delayUpdate = true;
@@ -302,7 +280,7 @@ Item {
                     }
                 }
 
-                MenuDivider {visible: rotation.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; layoutScale: systemmenu.layoutScale; smooth: true;}
+                MenuDivider {visible: rotation.visible; widthOffset: dividerWidthOffset; uiScale: systemmenu.uiScale; smooth: true;}
 
                 MuteElement {
                     id: muteControl
@@ -310,8 +288,6 @@ Item {
                     menuPosition: 2; // bottom
                     ident:         headerIdent;
                     uiScale: systemmenu.uiScale;
-                    textScale: systemmenu.textScale;
-                    layoutScale: systemmenu.layoutScale;
 
                     onAction: {
                         muteControl.delayUpdate = true;
@@ -329,8 +305,8 @@ Item {
     Item {
         id: maskTop
         z:10
-        width: (parent.width - (22 * layoutScale)) / uiScale
-        scale: uiScale
+        width: (parent.width - (22 * uiScale)) / (uiScale/4)
+        scale: uiScale/4
         anchors.horizontalCenter: parent.horizontalCenter
         y: 0
         opacity: !flickableArea.atYBeginning ? 1.0 : 0.0
@@ -353,10 +329,10 @@ Item {
     Item {
         id: maskBottom
         z:10
-        width: (parent.width - (22 * layoutScale)) / uiScale
-        scale: uiScale
+        width: (parent.width - (22 * uiScale)) / (uiScale/4)
+        scale: uiScale/4
         anchors.horizontalCenter: parent.horizontalCenter
-        y: flickableArea.height - (29 * layoutScale)
+        y: flickableArea.height - (29 * uiScale)
         opacity: !flickableArea.atYEnd ? 1.0 : 0.0
 
         BorderImage {

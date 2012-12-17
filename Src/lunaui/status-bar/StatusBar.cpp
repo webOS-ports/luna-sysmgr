@@ -240,7 +240,7 @@ void StatusBar::init()
 	if(Settings::LunaSettings()->tabletUi) {
 		m_bkgPixmap = new QPixmap(statusBarImagesPath.c_str());
 		if(!m_bkgPixmap->isNull()) {
-			*m_bkgPixmap = m_bkgPixmap->scaledToHeight(m_bkgPixmap->height() * Settings::LunaSettings()->uiScale, Qt::SmoothTransformation);
+			*m_bkgPixmap = m_bkgPixmap->scaledToHeight(m_bkgPixmap->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
 			
 			m_barColor = s_defaultColor;
 			m_curColor = m_barColor;

@@ -398,7 +398,7 @@ IconBase * AppMonitor::createAppIcon(const QString& mainIconFile,const QString& 
 {
 	//try and load its main icon
 	qDebug() << __FUNCTION__ << ": entry: mainIconFile = " << mainIconFile << " , iconLabel = " << iconLabel;
-	int iconSize = 64 * Settings::LunaSettings()->layoutScale;
+	int iconSize = 64 * Settings::LunaSettings()->uiScale;
 	IconBase * pMainIcon = IconHeap::makeIconConstrainedStandardFrameAndDecorators(mainIconFile,QSize(iconSize, iconSize), false);
 	if (!pMainIcon)
 	{
@@ -889,7 +889,7 @@ void AppMonitor::slotLaunchPointUpdated(const LaunchPoint* p_launchpoint,QBitArr
 
 			//TODO: PMO-MANAGE: if there was a old install status decorator pmo...
 			QString newIconFilename = StringTranslator::inputString(p_launchpoint->iconPath());
-			int iconSize = 64 * Settings::LunaSettings()->layoutScale;
+			int iconSize = 64 * Settings::LunaSettings()->uiScale;
 			pNewPmo = PixmapObjectLoader::instance()->quickLoad(newIconFilename,QSize(iconSize,iconSize),false);
 			if (pNewPmo)
 			{
@@ -952,7 +952,7 @@ void AppMonitor::slotLaunchPointUpdated(const LaunchPoint* p_launchpoint,QBitArr
 			//The install status did not update the icon so I am ok to do it here
 			//load the new pixmap
 			QString newIconFilename = StringTranslator::inputString(p_launchpoint->iconPath());
-			int iconSize = 64 * Settings::LunaSettings()->layoutScale;
+			int iconSize = 64 * Settings::LunaSettings()->uiScale;
 			PixmapObject * pNewIconPixmap = PixmapObjectLoader::instance()->quickLoad(newIconFilename, QSize(iconSize, iconSize), false);
 			if (pNewIconPixmap)
 			{
