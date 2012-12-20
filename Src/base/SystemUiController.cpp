@@ -188,7 +188,7 @@ void SystemUiController::init()
     int positiveSpaceFromTop = Settings::LunaSettings()->positiveSpaceTopPadding;
 	int positiveSpaceFromBottom = 0;
 
-	m_positiveSpace = QRect(0, positiveSpaceFromTop,
+	m_positiveSpace = QRect(0, positiveSpaceFromTop + (m_coreNaviHeight / 2),
 							m_uiWidth,
 							m_uiHeight - positiveSpaceFromTop - positiveSpaceFromBottom);
 	m_negativeSpace = QRect(0, m_uiHeight - positiveSpaceFromBottom,
