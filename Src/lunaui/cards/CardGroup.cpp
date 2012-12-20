@@ -741,7 +741,7 @@ QVector<CardWindow::Position> CardGroup::calculateClosedPositions()
 		positions[i].trans.setZ(m_nonCurScale);
 
 		if (i >= stopSpacingIndex) {
-			xOff -= 7 * Settings::LunaSettings()->layoutScale;
+			xOff -= 7;
 		}
 	}
 

@@ -27,8 +27,8 @@
 
 #define MENU_OVERLAY_OPACITY 1.0
 
-static const int kItemSpacing = 5 * Settings::LunaSettings()->layoutScale;
-static const int kGroupRightPadding = 3 * Settings::LunaSettings()->layoutScale;
+static const int kItemSpacing = 5;
+static const int kGroupRightPadding = 3;
 
 StatusBarItemGroup::StatusBarItemGroup(int height, bool hasArrow, bool showSeparator, Alignment align)
 	:  StatusBarItem(align)
