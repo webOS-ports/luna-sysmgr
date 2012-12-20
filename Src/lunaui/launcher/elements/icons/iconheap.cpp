@@ -26,6 +26,7 @@
 #include "stringtranslator.h"
 
 #include "Settings.h"
+#include "iconlayoutsettings.h"
 
 QPointer<IconHeap> IconHeap::s_qp_instance = 0;
 QString IconHeap::s_standardFrameFilePath = QString();
