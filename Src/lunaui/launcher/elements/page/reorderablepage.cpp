@@ -37,6 +37,7 @@
 #include "pixmaploader.h"
 #include "iconlayoutsettings.h"
 #include "gfxsettings.h"
+#include "Settings.h"
 
 #include <QPainter>
 #include <QEvent>

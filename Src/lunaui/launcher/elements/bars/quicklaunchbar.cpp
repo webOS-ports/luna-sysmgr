@@ -62,6 +62,7 @@
 
 #define QUICKLAUNCH_BG_SOLID	QString("/quicklaunch-bg-solid.png")
 #define QUICKLAUNCH_BG_TRANSLUCENT QString("/quicklaunch-bg.png")
+#define QUICKLAUNCH_BG_SIZE	QSize(10,105)
 
 #define LA_BUTTON_FILEPATH QString("quicklaunch-button-launcher.png")
 #define LA_BUTTON_SIZE 64 
