@@ -30,6 +30,8 @@
 #undef USE_ROUNDEDCORNER_SHADER
 #endif
 
+#undef USE_ROUNDEDCORNER_SHADER
+
 #if defined(USE_ROUNDEDCORNER_SHADER)
 
 #include <QtOpenGL/qglcustomshaderstage_p.h>
