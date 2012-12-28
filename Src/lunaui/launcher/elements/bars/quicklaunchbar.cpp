@@ -334,7 +334,7 @@ bool QuickLaunchBar::resize(const QSize& s)
 	//TODO: for now, access button is hardcoded to the right edge, so it's always (1)
 	
 	m_itemAreaXrange.first = (qint32)(geometry().left());
-	m_itemAreaXrange.second = (qint32)(m_qp_launcherAccessButton->pos().x() - m_qp_launcherAccessButton->geometry().width()*1.25 + m_geom.width()/2);
+	m_itemAreaXrange.second = (qint32)(m_qp_launcherAccessButton->pos().x() - (m_qp_launcherAccessButton->geometry().width()/2));
 
 	//the settings spec is relative to the top but m_itemsY will be used as a coordinate in ICS, so remap it so
 	// that it's center-origin based (i.e. it's in ICS)
