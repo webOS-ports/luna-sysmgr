@@ -79,7 +79,7 @@ SystemUiController* SystemUiController::instance()
 }
 
 SystemUiController::SystemUiController()
-	: m_dashboardOwnsNegativeSpace(Settings::LunaSettings()->virtualKeyboardEnabled ? false : (Settings::LunaSettings()->showNotificationsAtTop ? false : true))
+	: m_dashboardOwnsNegativeSpace(!Settings::LunaSettings()->tabletUi)
 	, m_anim(0)
 	, m_suspendBlocker(HostBase::instance()->mainLoop(),
 					   this, &SystemUiController::allowSuspend, &SystemUiController::setSuspended)
