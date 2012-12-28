@@ -296,7 +296,9 @@ IconBase * IconHeap::makeIcon(const QString& mainIconFilePath,const QString& fra
 		return 0;
 		//TODO: MEMLEAK: pMainIconPmo?????
 	}
-	PixmapObject * pLaunchFeedbackPmo = PixmapObjectLoader::instance()->quickLoad(feedbackIconFilePath);
+	
+	quint32 feedbackSize = 90 * Settings::LunaSettings()->uiScale;
+	PixmapObject * pLaunchFeedbackPmo = PixmapObjectLoader::instance()->quickLoad(feedbackIconFilePath, QSize(feedbackSize, feedbackSize), false);
 	if (!pLaunchFeedbackPmo)
 	{
 		return 0;
@@ -335,7 +337,12 @@ IconBase * IconHeap::makeIconConstrained(const QString& mainIconFilePath,const Q
 		return 0;
 		//TODO: MEMLEAK: pMainIconPmo?????
 	}
-	PixmapObject * pLaunchFeedbackPmo = PixmapObjectLoader::instance()->quickLoad(feedbackIconFilePath);
+	
+	
+	quint32 feedbackSize = qMin(IconLayoutSettings::settings()->reorderablelayout_fixedIconCellSize.width(),
+				IconLayoutSettings::settings()->reorderablelayout_fixedIconCellSize.height());
+				
+	PixmapObject * pLaunchFeedbackPmo = PixmapObjectLoader::instance()->quickLoad(feedbackIconFilePath, QSize(feedbackSize, feedbackSize), false);
 	if (!pLaunchFeedbackPmo)
 	{
 		return 0;

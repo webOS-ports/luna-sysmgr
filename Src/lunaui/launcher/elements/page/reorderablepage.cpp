@@ -107,7 +107,7 @@ void ReorderablePage::commonCtor()
 	//load the empty page icon, if there is one
 	QSize emptySize = QSize(280, 220) * Settings::LunaSettings()->uiScale;
 	PixmapObject * pEmptyPicPmo =
-			PixmapObjectLoader::instance()->quickLoad(QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + EMPTY_ICON_FILEPATH));
+			PixmapObjectLoader::instance()->quickLoad(QString(GraphicsSettings::DiUiGraphicsSettings()->graphicsAssetBaseDirectory + EMPTY_ICON_FILEPATH), emptySize, false);
 
 	if (pEmptyPicPmo)
 	{
