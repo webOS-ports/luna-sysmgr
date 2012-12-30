@@ -61,7 +61,7 @@ private Q_SLOTS:
 	void slotWifiMenuClosed();
 	void slotWifiOnOffTriggered();
 	void slotWifiPrefsTriggered();
-	void slotWifiNetworkSelected(int index, QString name, int profileId, QString securityType, QString connStatus);
+	void slotWifiNetworkSelected(int index, QString name, int profileId, bool secured, QString connStatus);
 
 	void slotBluetoothMenuOpened();
 	void slotBluetoothMenuClosed();
