@@ -20,9 +20,9 @@ Rectangle {
 
     VisualItemModel{
         id: clockList
-        AnalogClock{width: container.width; height: container.height; uiScale: container.uiScale; uiScale: container.uiScale; smooth: true; glass: 1; timerRunning: mainTimerRunning}
-        DigitalClock{width: container.width; height: container.height; uiScale: container.uiScale; uiScale: container.uiScale; smooth: true; timerRunning: mainTimerRunning}
-        AnalogClock{width: container.width; height: container.height; uiScale: container.uiScale; uiScale: container.uiScale; smooth: true; glass: 0; timerRunning: mainTimerRunning}
+        AnalogClock{width: container.width; height: container.height; uiScale: container.uiScale; smooth: true; glass: 1; timerRunning: mainTimerRunning}
+        DigitalClock{width: container.width; height: container.height; uiScale: container.uiScale; smooth: true; timerRunning: mainTimerRunning}
+        AnalogClock{width: container.width; height: container.height; uiScale: container.uiScale; smooth: true; glass: 0; timerRunning: mainTimerRunning}
     }
 
     ListView {

@@ -27,18 +27,18 @@ Item {
         spacing: 0
 
 
-        PINButton {caption: "1"; width: buttonGrid.width/buttonGrid.columns; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
-        PINButton {caption: "2"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
-        PINButton {caption: "3"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
-        PINButton {caption: "4"; width: buttonGrid.width/buttonGrid.columns; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
-        PINButton {caption: "5"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
-        PINButton {caption: "6"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
-        PINButton {caption: "7"; width: buttonGrid.width/buttonGrid.columns; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
-        PINButton {caption: "8"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
-        PINButton {caption: "9"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "1"; width: buttonGrid.width/buttonGrid.columns; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "2"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "3"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "4"; width: buttonGrid.width/buttonGrid.columns; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "5"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "6"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "7"; width: buttonGrid.width/buttonGrid.columns; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "8"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "9"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
         Rectangle {color: "transparent"; width: buttonGrid.width/buttonGrid.columns; height:buttonGrid.height/buttonGrid.rows;}
-        PINButton {caption: "0"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
-        PINButton {imgSource: "/usr/palm/sysmgr/images/pin/icon-delete.png"; caption: "\b"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {caption: "0"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
+        PINButton {imgSource: "/usr/palm/sysmgr/images/pin/icon-delete.png"; caption: "\b"; width: buttonGrid.width/buttonGrid.columns+1; height:buttonGrid.height/buttonGrid.rows; uiScale: pinPad.uiScale; onAction: keyAction(text);}
     }
 
     signal keyAction(string keyText);
