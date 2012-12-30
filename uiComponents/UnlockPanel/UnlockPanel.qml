@@ -81,8 +81,6 @@ InputItem {
         x: edgeOffset + (3 * uiScale)
         y: titleText.y + titleText.height + (isPINEntry ? 0 : 6 * uiScale)
         uiScale: unlockPanel.uiScale
-        uiScale: unlockPanel.uiScale
-        uiScale: unlockPanel.uiScale
 
         onTextFieldClicked: {
             if(!isPINEntry) {
@@ -98,8 +96,6 @@ InputItem {
         visible: isPINEntry
         x: edgeOffset
         anchors.top: passwordField.bottom
-        uiScale: unlockPanel.uiScale
-        uiScale: unlockPanel.uiScale
         uiScale: unlockPanel.uiScale
 
         onKeyAction: {
@@ -135,8 +131,6 @@ InputItem {
             width: buttonGrid.width/buttonGrid.columns - margin / 2
             height: 52 * uiScale
             uiScale: unlockPanel.uiScale
-            uiScale: unlockPanel.uiScale
-            uiScale: unlockPanel.uiScale
             onAction: entryCanceled();
         }
 
@@ -145,8 +139,6 @@ InputItem {
             affirmative: true
             width: buttonGrid.width/buttonGrid.columns - margin / 2
             height: 52 * uiScale
-            uiScale: unlockPanel.uiScale
-            uiScale: unlockPanel.uiScale
             uiScale: unlockPanel.uiScale
             active: passwordField.enteredText.length >= (enforceMinLength ? minPassLength : 1);
             onAction: {

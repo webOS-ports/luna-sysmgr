@@ -61,8 +61,6 @@ Item {
         id: okButton;
         caption: runtime.getLocalizedString("OK");
 	uiScale : dialog.uiScale
-	uiScale : dialog.uiScale
-	uiScale : dialog.uiScale
         width: dialog.width - 2 * margin - 1;
         height: visible ? 52 * uiScale : 0;
         x: margin + 1;
