@@ -8,8 +8,6 @@ Item {
     property bool   negative:    false
     property real   inactiveOpacity: 0.70
     property real uiScale : 1.0
-    property real uiScale : 1.0
-    property real uiScale : 1.0
 
     width:  200 * uiScale;
     height:  40 * uiScale;
