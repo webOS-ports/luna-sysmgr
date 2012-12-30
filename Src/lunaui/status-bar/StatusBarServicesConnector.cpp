@@ -3045,6 +3045,7 @@ bool StatusBarServicesConnector::wifiAvailableNetworksListCallback(LSHandle* han
 {
 	struct json_object* root = json_tokener_parse(LSMessageGetPayload(message));
 	struct json_object* label = 0;
+	struct json_object* list = 0;
 	const char *status = 0;
 	struct json_object* netArray = 0;
 	struct json_object* networkInfo = 0;
@@ -3068,8 +3069,8 @@ bool StatusBarServicesConnector::wifiAvailableNetworksListCallback(LSHandle* han
 			accessPoints[x].profileId = 0;
 			accessPoints[x].signalBars = 0;
 			accessPoints[x].connected = false;
+			accessPoints[x].secured = false;
 			sprintf(accessPoints[x].ssid, "%s", "");
-			sprintf(accessPoints[x].securityType, "%s", "");
 			sprintf(accessPoints[x].connectionState, "%s", "");
 			label = json_object_array_get_idx(netArray, x);
 			if (label && !is_error(label) && json_object_is_type(label, json_type_object)) {
@@ -3090,9 +3091,9 @@ bool StatusBarServicesConnector::wifiAvailableNetworksListCallback(LSHandle* han
 						accessPoints[x].signalBars = json_object_get_int(label);
 					}
 
-					label = json_object_object_get(networkInfo, "securityType");
-					if (label && !is_error(label) && json_object_is_type(label, json_type_string)) {
-						sprintf(accessPoints[x].securityType, "%s", json_object_get_string(label));
+					list = json_object_object_get(networkInfo, "availableSecurityTypes");
+					if (list && !is_error(list) && json_object_is_type(list, json_type_array)) {
+						accessPoints[x].secured = (json_object_array_length(list) > 0);
 					}
 
 					label = json_object_object_get(networkInfo, "connectState");
@@ -3115,7 +3116,7 @@ Done:
 	return true;
 }
 
-void StatusBarServicesConnector::connectToWifiNetwork(std::string ssid, int profileId, std::string security)
+void StatusBarServicesConnector::connectToWifiNetwork(std::string ssid, int profileId)
 {
 	bool result;
 	LSError lsError;
@@ -3125,10 +3126,7 @@ void StatusBarServicesConnector::connectToWifiNetwork(std::string ssid, int prof
 	if(profileId) {
 		sprintf(params, "{\"profileId\":%d}", profileId);
 	} else {
-		if(security.empty())
-			sprintf(params, "{\"ssid\":\"%s\"}", ssid.c_str());
-		else
-			sprintf(params, "{\"ssid\":\"%s\",\"securityType\":\"%s\"}", ssid.c_str(), security.c_str());
+		sprintf(params, "{\"ssid\":\"%s\"}", ssid.c_str());
 	}
 
 	result = LSCall(m_service, "palm://com.palm.wifi/connect", params,

@@ -36,7 +36,7 @@ typedef struct WifiAccessPoint {
 	char ssid[40];
 	int	 profileId;
 	int  signalBars;
-	char securityType[20];
+	bool secured;
 	bool connected;
 	char connectionState[20];
 } t_wifiAccessPoint;
@@ -88,7 +88,7 @@ public:
 
 	void requestWifiAvailableNetworksList();
 	void cancelWifiNetworksListRequest();
-	void connectToWifiNetwork(std::string ssid, int profileId, std::string security);
+	void connectToWifiNetwork(std::string ssid, int profileId);
 	void setWifiOnState(bool on);
 	void setBluetoothOnState(bool on);
 	void requestTrustedBluetoothDevicesList();

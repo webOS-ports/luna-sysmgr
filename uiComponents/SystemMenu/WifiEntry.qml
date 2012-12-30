@@ -4,7 +4,7 @@ Item {
     property string name
     property int    profileId:      0
     property int    signalBars:     0
-    property string securityType:   ""
+    property bool   secured:        false
     property string connStatus:     ""
     property string status:         ""
     property bool   statusInBold:   false
@@ -54,7 +54,7 @@ Item {
         id: lock
         x: sigStrength.x - (width / 2) - iconSpacing
         anchors.verticalCenter: parent.verticalCenter
-        visible: securityType != ""
+        visible: secured
         scale: uiScale/4
         source: "/usr/palm/sysmgr/images/statusBar/system-menu-lock.png"
     }

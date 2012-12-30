@@ -18,7 +18,7 @@ Drawer {
     signal menuClosed()
     signal onOffTriggered()
     signal prefsTriggered()
-    signal itemSelected(int index, string name, int profileId, string securityType, string connState)
+    signal itemSelected(int index, string name, int profileId, bool secured, string connState)
 
     function setWifiState(isOn, state) {
         if(!isWifiOn && isOn) {
@@ -36,11 +36,11 @@ Drawer {
         }
     }
 
-    function addWifiNetworkEntry(name, profId, sigBars, secType, connectionStatus, isConnected) {
+    function addWifiNetworkEntry(name, profId, sigBars, secured, connectionStatus, isConnected) {
         wifiList.append({"wifiName": name,
                          "profId":profId,
                          "sigBars": sigBars,
-                         "secType": secType,
+                         "secured": secured,
                          "connectionStatus": connectionStatus,
                          "isConnected": isConnected,
                          "listIndex": wifiList.count,
@@ -254,7 +254,7 @@ Drawer {
                             name:         wifiName;
                             profileId:    profId;
                             signalBars:   sigBars;
-                            securityType: secType;
+                            secured:      secured;
                             connStatus:   connectionStatus;
                             status:       itemStatus;
                             statusInBold: boldStatus;
@@ -265,7 +265,7 @@ Drawer {
                     itemSelected(index,
                                  wifiNetworkData.name,
                                  wifiNetworkData.profileId,
-                                 wifiNetworkData.securityType,
+                                 wifiNetworkData.secured,
                                  wifiNetworkData.connStatus)
 
                     if((wifiNetworkData.connStatus == "ipConfigured") ||
@@ -273,7 +273,7 @@ Drawer {
                        (wifiNetworkData.connStatus == "ipFailed") ||
                        (wifiNetworkData.connStatus == "associationFailed")  ) {
                         menuCloseRequest(300);
-                    } else if((wifiNetworkData.profileId == 0) && (wifiNetworkData.securityType != "")) {
+                    } else if((wifiNetworkData.profileId == 0) && (wifiNetworkData.secured)) {
                         menuCloseRequest(300);
                     }
 
