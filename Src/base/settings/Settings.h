@@ -168,7 +168,7 @@ public:
 	std::string         launcherScrim;
 	std::string         firstCardLaunch;
 	bool                atlasEnabled;
-	int                 dpi;
+	qreal               dpi;
 	qreal               uiScale;
 	qreal               imeScale;
 	qreal               webAppScale;
