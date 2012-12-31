@@ -165,10 +165,6 @@ Settings::Settings()
 	, launcherScrim("/usr/lib/luna/system/luna-applauncher/images/launcher_scrim.png")
         , firstCardLaunch("/var/luna/preferences/used-first-card")
 	, atlasEnabled(false)
-	, dpi(132)
-	, uiScale(1.0)
-	, imeScale(1.0)
-	, webAppScale(1.0)
 	, cardGroupingXDistanceFactor(1.0)
 	, atlasMemThreshold(0)
 	, launcherAtlasStatistics(false)
@@ -205,6 +201,10 @@ Settings::Settings()
 	, fontStatusBar("Prelude")
 	, displayUiRotates(false)
 	, tabletUi(false)
+	, dpi(316)
+	, pixmapFactor(4.0)
+	, layoutScale(1.0)
+	, pixmapScale(1.0)
 	, homeButtonOrientationAngle(0)
 	, positiveSpaceTopPadding(24)
 	, positiveSpaceBottomPadding(24)
@@ -493,6 +493,8 @@ void Settings::load(const char* settingsFile)
 
 	KEY_BOOLEAN("UI", "DisplayUiRotates", displayUiRotates);
 	KEY_BOOLEAN("UI", "TabletUi", tabletUi);
+	KEY_INTEGER("UI", "DPI", dpi); //The device's hardware DPI
+	KEY_DOUBLE("UI", "PixmapFactor", pixmapFactor); //How large UI pixmaps are relative to their original size
 	KEY_INTEGER("UI", "HomeButtonOrientationAngle", homeButtonOrientationAngle);
 	KEY_INTEGER("UI", "PositiveSpaceTopPadding", positiveSpaceTopPadding);
 	KEY_INTEGER("UI", "PositiveSpaceBottomPadding", positiveSpaceBottomPadding);
@@ -502,11 +504,9 @@ void Settings::load(const char* settingsFile)
 	KEY_DOUBLE("UI", "GhostCardFinalRatio", ghostCardFinalRatio);
 	KEY_INTEGER("UI", "CardGroupRotFactor", cardGroupRotFactor);
 	KEY_INTEGER("UI", "GapBetweenCardGroups", gapBetweenCardGroups);
-	KEY_INTEGER("UI", "OverlayNotificationsHeight", overlayNotificationsHeight);
 	KEY_INTEGER("UI", "SplashIconSize", splashIconSize);
 	KEY_BOOLEAN("UI", "EnableSplashBackgrounds", enableSplashBackgrounds);
 	KEY_BOOLEAN("UI", "AtlasEnabled", atlasEnabled);
-	KEY_DOUBLE("UI", "DPI", dpi);
 
 	KEY_INTEGER("UI", "ModalWindowWidth", modalWindowWidth);
 	KEY_INTEGER("UI", "ModalWindowHeight", modalWindowHeight);
@@ -695,18 +695,14 @@ void Settings::postLoad()
 	// packageInstallBase has to be == to appInstallBase for now (at least in version=blowfish timeframe)
 	packageInstallBase = appInstallBase;
 	
-	//Virtual Gesture Area
-	if(!virtualCoreNaviEnabled)
-		virtualCoreNaviHeight = 0;
-
-	//UI Scaling for positive space padding
-	uiScale = dpi / 132;
-	imeScale = (dpi * 0.7) / 132; //Scale slightly smaller due to limited keyboard screen space
-	webAppScale = dpi / 132;
-	positiveSpaceTopPadding *= uiScale;
-	positiveSpaceBottomPadding *= uiScale;
-	statusBarTitleMaxWidth *= uiScale;
-	gapBetweenCardGroups *= uiScale;
+	layoutScale = dpi / 132;
+	pixmapScale = layoutScale / pixmapFactor;
+	
+	positiveSpaceTopPadding *= layoutScale;
+	positiveSpaceBottomPadding *= layoutScale;
+	statusBarTitleMaxWidth *= layoutScale;
+	gapBetweenCardGroups *= layoutScale;
+	splashIconSize *= layoutScale;
 }
 
 // Expands "1MB" --> 1048576, "2k" --> 2048, etc.

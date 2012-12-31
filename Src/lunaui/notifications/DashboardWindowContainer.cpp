@@ -45,8 +45,8 @@
 #include "CardDropShadowEffect.h"
 
 static const qreal kMaxWindowsToDisplay = 5.5; // max height will be 5 1/2 windows
-const int DashboardWindowContainer::sDashboardWindowHeight = 52 * Settings::LunaSettings()->uiScale;
-const int DashboardWindowContainer::sDashboardBadgeWidth = 50 * Settings::LunaSettings()->uiScale;
+const int DashboardWindowContainer::sDashboardWindowHeight = 52 * Settings::LunaSettings()->layoutScale;
+const int DashboardWindowContainer::sDashboardBadgeWidth = 50 * Settings::LunaSettings()->layoutScale;
 
 DashboardWindowContainer::DashboardWindowContainer(DashboardWindowManager* wm, int width, int height)
 	: GraphicsItemContainer(width, height, GraphicsItemContainer::SolidRectBackground)
@@ -1181,14 +1181,14 @@ void DashboardWindowContainer::initPixmaps()
 		std::string filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/dashboard-mask-top.png";
 		if(NULL == m_tabletTopMask) {
 			m_tabletTopMask = new QPixmap(filePath.c_str(), 0, Qt::AutoColor);
-			*m_tabletTopMask = m_tabletTopMask->scaledToHeight(m_tabletTopMask->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_tabletTopMask = m_tabletTopMask->scaledToHeight(m_tabletTopMask->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 		// Create the bottom pixMap
 		filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/dashboard-mask-bottom.png";
 		if(NULL == m_tabletbottomMask) {
 			m_tabletbottomMask = new QPixmap(filePath.c_str(), NULL, Qt::AutoColor);
-			*m_tabletbottomMask = m_tabletbottomMask->scaledToHeight(m_tabletbottomMask->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_tabletbottomMask = m_tabletbottomMask->scaledToHeight(m_tabletbottomMask->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 	} else {
@@ -1198,56 +1198,56 @@ void DashboardWindowContainer::initPixmaps()
 		std::string filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-dropdown-bg.png";
 		if(NULL == m_tabletTopMask) {
 			m_tabletBackground = new QPixmap(filePath.c_str());
-			*m_tabletBackground = m_tabletBackground->scaledToHeight(m_tabletBackground->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_tabletBackground = m_tabletBackground->scaledToHeight(m_tabletBackground->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 		// Create the top pixMap
 		filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-dropdown-scrollfade-top.png";
 		if(NULL == m_tabletTopMask) {
 			m_tabletTopMask = new QPixmap(filePath.c_str(), 0, Qt::AutoColor);
-			*m_tabletTopMask = m_tabletTopMask->scaledToHeight(m_tabletTopMask->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_tabletTopMask = m_tabletTopMask->scaledToHeight(m_tabletTopMask->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 		// Create the bottom pixMap
 		filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-dropdown-scrollfade-bottom.png";
 		if(NULL == m_tabletbottomMask) {
 			m_tabletbottomMask = new QPixmap(filePath.c_str(), NULL, Qt::AutoColor);
-			*m_tabletbottomMask = m_tabletbottomMask->scaledToHeight(m_tabletbottomMask->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_tabletbottomMask = m_tabletbottomMask->scaledToHeight(m_tabletbottomMask->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 		// Create the arrowUp pixMap
 		filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-arrow-up.png";
 		if(NULL == m_tabletArrowUp) {
 			m_tabletArrowUp = new QPixmap(filePath.c_str(), NULL, Qt::AutoColor);
-			*m_tabletArrowUp = m_tabletArrowUp->scaledToHeight(m_tabletArrowUp->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_tabletArrowUp = m_tabletArrowUp->scaledToHeight(m_tabletArrowUp->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 		// Create the arrowDown pixMap
 		filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-arrow-down.png";
 		if(NULL == m_tabletArrowDown) {
 			m_tabletArrowDown = new QPixmap(filePath.c_str(), NULL, Qt::AutoColor);
-			*m_tabletArrowDown = m_tabletArrowDown->scaledToHeight(m_tabletArrowDown->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_tabletArrowDown = m_tabletArrowDown->scaledToHeight(m_tabletArrowDown->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 		// Create the arrowDown pixMap
 		filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-dropdown-swipe-bg.png";
 		if(NULL == m_menuSwipeBkg) {
 			m_menuSwipeBkg = new QPixmap(filePath.c_str(), NULL, Qt::AutoColor);
-			*m_menuSwipeBkg = m_menuSwipeBkg->scaledToHeight(m_menuSwipeBkg->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_menuSwipeBkg = m_menuSwipeBkg->scaledToHeight(m_menuSwipeBkg->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 		// Create the arrowDown pixMap
 		filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-dropdown-swipe-highlight.png";
 		if(NULL == m_menuSwipeHighlight) {
 			m_menuSwipeHighlight = new QPixmap(filePath.c_str(), NULL, Qt::AutoColor);
-			*m_menuSwipeHighlight = m_menuSwipeHighlight->scaledToHeight(m_menuSwipeHighlight->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_menuSwipeHighlight = m_menuSwipeHighlight->scaledToHeight(m_menuSwipeHighlight->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 		// Create the arrowDown pixMap
 		filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-divider.png";
 		if(NULL == m_itemSeparator) {
 			m_itemSeparator = new QPixmap(filePath.c_str(), NULL, Qt::AutoColor);
-			*m_itemSeparator = m_itemSeparator->scaledToHeight(m_itemSeparator->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_itemSeparator = m_itemSeparator->scaledToHeight(m_itemSeparator->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 		if(NULL != m_itemSeparator) {

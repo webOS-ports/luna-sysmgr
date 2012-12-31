@@ -131,7 +131,7 @@ void	TextBox::redoInnerTextLayout()
 	m_textLayoutObject.setText(m_innerText);
 	QFont f = staticLabelFontForTextBox();
 	f.setBold(IconLayoutSettings::settings()->reorderablelayout_emptyPageTextFontEmbolden);
-	f.setPixelSize(qMax((quint32)4,(quint32)(IconLayoutSettings::settings()->reorderablelayout_emptyPageTextFontSizePx * Settings::LunaSettings()->uiScale)));
+	f.setPixelSize(qMax((quint32)4,(quint32)(IconLayoutSettings::settings()->reorderablelayout_emptyPageTextFontSizePx * Settings::LunaSettings()->layoutScale)));
 	m_textLayoutObject.setFont(f);
 	QTextOption textOpts;
 	textOpts.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);

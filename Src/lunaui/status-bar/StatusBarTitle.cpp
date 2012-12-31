@@ -54,8 +54,8 @@ StatusBarTitle::StatusBarTitle(int width, int height, bool classicUi)
 	Settings* settings = Settings::LunaSettings();
 
 	const char* fontName = settings->fontStatusBar.c_str();
-	m_font = new QFont(fontName, 14 * settings->uiScale);
-	m_font->setPixelSize(14 * settings->uiScale);
+	m_font = new QFont(fontName, 14 * settings->layoutScale);
+	m_font->setPixelSize(14 * settings->layoutScale);
 
 	m_font->setLetterSpacing(QFont::PercentageSpacing, kStatusBarQtLetterSpacing);
 

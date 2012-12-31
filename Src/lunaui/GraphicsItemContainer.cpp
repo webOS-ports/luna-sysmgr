@@ -36,7 +36,7 @@
 #include "pixmap9tileobject.h"
 
 
-static const int kPopupImgMargin = 20 * Settings::LunaSettings()->uiScale;
+static const int kPopupImgMargin = 20 * Settings::LunaSettings()->layoutScale;
 
 GraphicsItemContainer::GraphicsItemContainer(int width, int height, t_backgroundType backgroundType)
 	: m_contentWidth(width)

@@ -62,7 +62,7 @@ static const int kTopRightWindowIndex    = 1;
 static const int kBottomLeftWindowIndex  = 2;
 static const int kBottomRightWindowIndex = 3;
 static int kStatusBarTapMoveTolerance    = 0;
-static int kAppMenuWidth    = 320 * Settings::LunaSettings()->uiScale;
+static int kAppMenuWidth    = 320 * Settings::LunaSettings()->layoutScale;
 
 DockModeMenuManager::DockModeMenuManager(int maxWidth, int maxHeight)
 	: WindowManagerBase(maxWidth, maxHeight)
@@ -130,7 +130,7 @@ void DockModeMenuManager::init()
 				m_menuObject->setPos (boundingRect().x() - offset, boundingRect().y() + Settings::LunaSettings()->positiveSpaceTopPadding);
 				m_menuObject->setZValue (100);
 				m_menuObject->setParentItem(this);
-				QMetaObject::invokeMethod(m_menuObject, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->uiScale));
+				QMetaObject::invokeMethod(m_menuObject, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->layoutScale));
 				QMetaObject::invokeMethod(m_menuObject, "setMaximumHeight", Q_ARG(QVariant, m_appMenuContainer->getMaximumHeightForMenu()));
 			}
 		}
