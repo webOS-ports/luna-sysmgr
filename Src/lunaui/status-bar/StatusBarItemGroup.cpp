@@ -29,8 +29,8 @@
 #define GROUP_RIGHT_PADDING    3
 #define MENU_OVERLAY_OPACITY 1.0
 
-static const int kItemSpacing = 5 * Settings::LunaSettings()->uiScale;
-static const int kGroupRightPadding = 3 * Settings::LunaSettings()->uiScale;
+static const int kItemSpacing = 5 * Settings::LunaSettings()->layoutScale;
+static const int kGroupRightPadding = 3 * Settings::LunaSettings()->layoutScale;
 
 StatusBarItemGroup::StatusBarItemGroup(int height, bool hasArrow, bool showSeparator, Alignment align)
 	:  StatusBarItem(align)
@@ -55,7 +55,7 @@ StatusBarItemGroup::StatusBarItemGroup(int height, bool hasArrow, bool showSepar
 	if(m_hasArrow) {
 		std::string filePath = statusBarImagesPath + "menu-arrow.png";
 		m_arrowPix = new QPixmap(filePath.c_str());
-		*m_arrowPix = m_arrowPix->scaledToHeight(m_arrowPix->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+		*m_arrowPix = m_arrowPix->scaledToHeight(m_arrowPix->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 	} else {
 		m_arrowAnimProg = 1.0;
 	}
@@ -63,7 +63,7 @@ StatusBarItemGroup::StatusBarItemGroup(int height, bool hasArrow, bool showSepar
 	if(showSeparator && (align != StatusBarItem::AlignCenter)) {
 		std::string filePath = statusBarImagesPath + "status-bar-separator.png";
 		m_separatorPix = new QPixmap(filePath.c_str());
-		*m_separatorPix = m_separatorPix->scaledToHeight(m_separatorPix->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+		*m_separatorPix = m_separatorPix->scaledToHeight(m_separatorPix->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 	}
 
 	layout();
@@ -123,7 +123,7 @@ void StatusBarItemGroup::setActionable(bool actionable)
 
 			std::string filePath = statusBarImagesPath + "status-bar-menu-dropdown-tab.png";
 			m_activeBkgPix = new QPixmap(filePath.c_str());
-			*m_activeBkgPix = m_activeBkgPix->scaledToHeight(m_activeBkgPix->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+			*m_activeBkgPix = m_activeBkgPix->scaledToHeight(m_activeBkgPix->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		}
 
 //		if(m_actionable && !m_pressedBkgPix) {
@@ -132,7 +132,7 @@ void StatusBarItemGroup::setActionable(bool actionable)
 //
 //			std::string filePath = statusBarImagesPath + "status-bar-menu-dropdown-tab-pressed.png";
 //			m_pressedBkgPix = new QPixmap(filePath.c_str());
-//			*m_pressedBkgPix = m_pressedBkgPix->scaledToHeight(m_pressedBkgPix->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+//			*m_pressedBkgPix = m_pressedBkgPix->scaledToHeight(m_pressedBkgPix->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 //		}
 	}
 
@@ -359,7 +359,7 @@ void StatusBarItemGroup::paint(QPainter* painter, const QStyleOptionGraphicsItem
 	qreal opacity = painter->opacity();
 	QRectF tabRect;
 
-	static const int margin = 11 * Settings::LunaSettings()->uiScale;
+	static const int margin = 11 * Settings::LunaSettings()->layoutScale;
 
 	if(m_alignment == AlignRight && m_separatorPix) {
 		tabRect = m_bounds.adjusted(m_separatorPix->width() - margin, 0, margin, 0);

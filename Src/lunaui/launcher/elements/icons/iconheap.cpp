@@ -296,7 +296,9 @@ IconBase * IconHeap::makeIcon(const QString& mainIconFilePath,const QString& fra
 		return 0;
 		//TODO: MEMLEAK: pMainIconPmo?????
 	}
-	PixmapObject * pLaunchFeedbackPmo = PixmapObjectLoader::instance()->quickLoad(feedbackIconFilePath);
+	
+	quint32 feedbackSize = 90 * Settings::LunaSettings()->layoutScale;
+	PixmapObject * pLaunchFeedbackPmo = PixmapObjectLoader::instance()->quickLoad(feedbackIconFilePath, QSize(feedbackSize, feedbackSize), false);
 	if (!pLaunchFeedbackPmo)
 	{
 		return 0;

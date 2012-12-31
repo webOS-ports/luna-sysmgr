@@ -81,12 +81,12 @@
 #define LOCK_BUTTON_OFFSET (0.1)
 
 static unsigned int kTopPadding = 0;
-static unsigned int kMaxWidth = 320 * Settings::LunaSettings()->uiScale; // From Larry
+static unsigned int kMaxWidth = 320 * Settings::LunaSettings()->layoutScale; // From Larry
 
-static const unsigned int kAlertsFromBottom = 84 * Settings::LunaSettings()->uiScale;
+static const unsigned int kAlertsFromBottom = 84 * Settings::LunaSettings()->layoutScale;
 static unsigned int kBannerWidgetHeight = 0;
 
-static const int kSaucerRadiusSquared = (146 * 146) * Settings::LunaSettings()->uiScale;
+static const int kSaucerRadiusSquared = (146 * 146) * Settings::LunaSettings()->layoutScale;
 
 static const unsigned int kHideHelpTimeoutInMS = 1000;
 static const unsigned int kPaintTick = 1000;
@@ -98,8 +98,8 @@ static const char* kAnswerPhoneLabel = "Drag up to answer";
 static DashboardWindowManager* getDashboardWindowManager();
 
 static	Pixmap9TileObject* gBackground9Tile;
-static unsigned int kShadowWidth = 10 * Settings::LunaSettings()->uiScale;
-static unsigned int kBackgroundCornerWidth = 9 * Settings::LunaSettings()->uiScale;
+static unsigned int kShadowWidth = 10 * Settings::LunaSettings()->layoutScale;
+static unsigned int kBackgroundCornerWidth = 9 * Settings::LunaSettings()->layoutScale;
 
 
 class LockButton : public QGraphicsPixmapItem
@@ -475,7 +475,7 @@ void LockWindow::init()
 				m_unlockPanel->setPos (-m_unlockPanel->boundingRect().width()/2, -m_unlockPanel->boundingRect().height()/2);
 				static_cast<QGraphicsObject*>(m_unlockPanel)->setParentItem(this);
 				
-				QMetaObject::invokeMethod(m_unlockPanel, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->uiScale));
+				QMetaObject::invokeMethod(m_unlockPanel, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->layoutScale));
 				
 				m_unlockPanel->setVisible(false);
 				m_unlockPanel->setOpacity(0.0);
@@ -2252,18 +2252,18 @@ LockButton::LockButton()
 	// padlock images
 	QString filePath = prefix + "/screen-lock-padlock-off.png";
 	m_buttonImages[ImagePadlock] = QPixmap(filePath);
-	m_buttonImages[ImagePadlock] = m_buttonImages[ImagePadlock].scaledToHeight(m_buttonImages[ImagePadlock].height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+	m_buttonImages[ImagePadlock] = m_buttonImages[ImagePadlock].scaledToHeight(m_buttonImages[ImagePadlock].height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 	filePath = prefix + "/screen-lock-padlock-on.png";
 	m_buttonImages[ImagePadlock+1] = QPixmap(filePath);
-	m_buttonImages[ImagePadlock+1] = m_buttonImages[ImagePadlock+1].scaledToHeight(m_buttonImages[ImagePadlock+1].height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+	m_buttonImages[ImagePadlock+1] = m_buttonImages[ImagePadlock+1].scaledToHeight(m_buttonImages[ImagePadlock+1].height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 
 	// incoming call images
 	filePath = prefix + "/screen-lock-incoming-call-off.png";
 	m_buttonImages[ImageIncomingCall] = QPixmap(filePath);
-	m_buttonImages[ImageIncomingCall] = m_buttonImages[ImageIncomingCall].scaledToHeight(m_buttonImages[ImageIncomingCall].height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+	m_buttonImages[ImageIncomingCall] = m_buttonImages[ImageIncomingCall].scaledToHeight(m_buttonImages[ImageIncomingCall].height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 	filePath = prefix + "/screen-lock-incoming-call-on.png";
 	m_buttonImages[ImageIncomingCall+1] = QPixmap(filePath);
-	m_buttonImages[ImageIncomingCall+1] = m_buttonImages[ImageIncomingCall+1].scaledToHeight(m_buttonImages[ImageIncomingCall+1].height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+	m_buttonImages[ImageIncomingCall+1] = m_buttonImages[ImageIncomingCall+1].scaledToHeight(m_buttonImages[ImageIncomingCall+1].height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 
 	setPixmap(m_buttonImages[m_imageType + (m_pressed?1:0)]);
 	setOffset(-boundingRect().width()/2,-boundingRect().height()/2);
@@ -2346,11 +2346,11 @@ HelpWindow::HelpWindow()
 
 	std::string filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-target-scrim.png";
 	m_surf = new QPixmap(filePath.c_str());
-	*m_surf = m_surf->scaledToHeight(m_surf->height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+	*m_surf = m_surf->scaledToHeight(m_surf->height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 
 	const char* fontName = Settings::LunaSettings()->fontLockWindow.c_str();
-	m_font = new QFont(fontName, 20 * Settings::LunaSettings()->uiScale); // $$$ font size
-	m_font->setPixelSize(20 * Settings::LunaSettings()->uiScale);
+	m_font = new QFont(fontName, 20 * Settings::LunaSettings()->layoutScale); // $$$ font size
+	m_font->setPixelSize(20 * Settings::LunaSettings()->layoutScale);
 	m_font->setBold(true);
 
 	textLayout.setFont(*m_font);
@@ -2442,11 +2442,11 @@ LockBackground::LockBackground()
 	// Load mask pixmaps
 	std::string maskFilePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-wallpaper-mask-bottom.png";
 	m_bottomMask = QPixmap(qFromUtf8Stl(maskFilePath));
-	m_bottomMask = m_bottomMask.scaledToHeight(m_bottomMask.height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+	m_bottomMask = m_bottomMask.scaledToHeight(m_bottomMask.height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 
 	maskFilePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/screen-lock-wallpaper-mask-top.png";
 	m_topMask = QPixmap(qFromUtf8Stl(maskFilePath));
-	m_topMask = m_topMask.scaledToHeight(m_topMask.height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+	m_topMask = m_topMask.scaledToHeight(m_topMask.height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 }
 
 LockBackground::~LockBackground()
@@ -2535,21 +2535,21 @@ DashboardAlerts::DashboardAlerts()
 
 	std::string filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/dashboard-scroll-fade.png";
 	m_scrollFade = QPixmap (filePath.c_str());
-	m_scrollFade = m_scrollFade.scaledToHeight(m_scrollFade.height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+	m_scrollFade = m_scrollFade.scaledToHeight(m_scrollFade.height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 	if (m_scrollFade.isNull())
 		g_warning ("scrollFade image missing");
 
 	filePath = Settings::LunaSettings()->lunaSystemResourcesPath + "/menu-divider.png";
 	m_divider = QPixmap (filePath.c_str());
-	m_divider = m_divider.scaledToHeight(m_divider.height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+	m_divider = m_divider.scaledToHeight(m_divider.height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 	if (m_divider.isNull())
 		g_warning ("divider image missing");
 
 	kMaxDashboardItems = 6;
-	kDashboardItemHeight = 52 * Settings::LunaSettings()->uiScale; // max height of the dashboard
+	kDashboardItemHeight = 52 * Settings::LunaSettings()->layoutScale; // max height of the dashboard
 	kVisibleDashboard = 5.5;
-	kBottomPadding = 3 * Settings::LunaSettings()->uiScale;
-	kTopPadding = 1 * Settings::LunaSettings()->uiScale;
+	kBottomPadding = 3 * Settings::LunaSettings()->layoutScale;
+	kTopPadding = 1 * Settings::LunaSettings()->layoutScale;
 
 	kDashboardWidgetHeight = kDashboardItemHeight * kVisibleDashboard + m_divider.height() * (kMaxDashboardItems - 1);
 	m_bounds = QRect(-(kMaxWidth/2), -(kDashboardWidgetHeight/2), kMaxWidth, kDashboardWidgetHeight);
