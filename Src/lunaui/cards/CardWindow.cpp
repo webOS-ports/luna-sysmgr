@@ -1479,9 +1479,9 @@ void CardWindow::setVisibleDimensions(int width, int height)
 	if ((m_adjustmentAngle != 90 && m_adjustmentAngle != -90) || this->type() == Window::Type_ModalChildWindowCard) {
 		//where you alter the loading rect stuff
 		if(Settings::LunaSettings()->tabletUi)
-                	m_paintPath.addRoundedRect(boundingRect(), 8 * Settings::LunaSettings()->uiScale, 6 * Settings::LunaSettings()->uiScale);
+                	m_paintPath.addRoundedRect(boundingRect(), 8 * Settings::LunaSettings()->layoutScale, 6 * Settings::LunaSettings()->layoutScale);
 		else
-                	m_paintPath.addRoundedRect(boundingRect(), 24 * Settings::LunaSettings()->uiScale, 24 * Settings::LunaSettings()->uiScale);
+                	m_paintPath.addRoundedRect(boundingRect(), 24 * Settings::LunaSettings()->layoutScale, 24 * Settings::LunaSettings()->layoutScale);
 	} else {
 		m_paintPath.addRoundedRect(QRectF(m_boundingRect.y(), m_boundingRect.x(), m_boundingRect.height(), m_boundingRect.width()), 25, 25);
 	}

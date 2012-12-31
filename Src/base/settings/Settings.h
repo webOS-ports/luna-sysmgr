@@ -96,7 +96,6 @@ public:
 	
 	int					displayWidth;
 	int					displayHeight;
-	int					gestureAreaHeight;
 	int                 displayNumBuffers;
 
 	// parameters to control led pulsing
@@ -168,10 +167,6 @@ public:
 	std::string         launcherScrim;
 	std::string         firstCardLaunch;
 	bool                atlasEnabled;
-	qreal               dpi;
-	qreal               uiScale;
-	qreal               imeScale;
-	qreal               webAppScale;
 	double					cardGroupingXDistanceFactor;
 	int                 atlasMemThreshold;
 	bool                launcherAtlasStatistics;
@@ -224,6 +219,10 @@ public:
 	
 	bool displayUiRotates;
 	bool tabletUi;
+	qreal dpi;
+	qreal pixmapFactor;
+	qreal layoutScale;
+	qreal pixmapScale;
 	int  homeButtonOrientationAngle;
 
 	int positiveSpaceTopPadding;

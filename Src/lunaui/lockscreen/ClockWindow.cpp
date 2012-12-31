@@ -94,7 +94,7 @@ void ClockWindow::loadDigits()
 	const ImagePath* cur = imagePaths;
 	while (cur->path != 0) {
 		m_digits[cur->key] = QPixmap(digitPath + cur->path);
-		m_digits[cur->key] = m_digits[cur->key].scaledToHeight(m_digits[cur->key].height() * (Settings::LunaSettings()->uiScale / 4), Qt::SmoothTransformation);
+		m_digits[cur->key] = m_digits[cur->key].scaledToHeight(m_digits[cur->key].height() * (Settings::LunaSettings()->pixmapScale), Qt::SmoothTransformation);
 		cur++;
 	}
 }

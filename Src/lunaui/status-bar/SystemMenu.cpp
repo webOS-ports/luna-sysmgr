@@ -165,7 +165,7 @@ void SystemMenu::init()
 				 m_menuObject->setParentItem(this);
 				 
 				 // scale the system menu
-				 QMetaObject::invokeMethod(m_menuObject, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->uiScale));
+				 QMetaObject::invokeMethod(m_menuObject, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->layoutScale));
 				 
 				 
 				 // setup geometry and positioning
