@@ -331,15 +331,6 @@ bool QuickLaunchBar::resize(const QSize& s)
 	// 2. Point(button.right,geom.top)     (if the access button is on the left edge)
 	//  + settings.quickLaunchItemAreaOffsetPx
 
-	//TODO: for now, access button is hardcoded to the right edge, so it's always (1)
-	
-	m_itemAreaXrange.first = (qint32)(geometry().left());
-	m_itemAreaXrange.second = (qint32)(m_qp_launcherAccessButton->pos().x() - (m_qp_launcherAccessButton->geometry().width()/2));
-
-	//the settings spec is relative to the top but m_itemsY will be used as a coordinate in ICS, so remap it so
-	// that it's center-origin based (i.e. it's in ICS)
-	m_itemsY = 26;
-
 	//reposition the launcher access button
 	//TODO: hardcoded to reference topRight of QL
 	if (m_qp_launcherAccessButton)
@@ -352,6 +343,14 @@ bool QuickLaunchBar::resize(const QSize& s)
 
 		m_qp_launcherAccessButton->setVisible(true);
 	}
+
+	//TODO: for now, access button is hardcoded to the right edge, so it's always (1)
+	m_itemAreaXrange.first = (qint32)(geometry().left());
+	m_itemAreaXrange.second = (qint32)(m_qp_launcherAccessButton->pos().x() - (m_qp_launcherAccessButton->geometry().width()/2));
+
+	//the settings spec is relative to the top but m_itemsY will be used as a coordinate in ICS, so remap it so
+	// that it's center-origin based (i.e. it's in ICS)
+	m_itemsY = 26;
 
 	//recompute the position of all the items currently here
 	rearrangeIcons(false);
