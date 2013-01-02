@@ -22,6 +22,7 @@
 
 #include "Logging.h"
 #include "SysmgrIMEDataInterface.h"
+#include "Settings.h"
 
 #include <QDebug>
 #include <QDir>
@@ -132,6 +133,8 @@ IMEDataInterface *IMEManager::createIME(const QString &key)
 
     if (factory) {
         SysmgrIMEModel *imeDataInterface = new SysmgrIMEModel();
+	imeDataInterface->m_layoutScale.set(Settings::LunaSettings()->layoutScale);
+	imeDataInterface->m_pixmapScale.set(Settings::LunaSettings()->pixmapScale);
         keyboard = factory->newVirtualKeyboard(imeDataInterface);
 
         if (keyboard) {
@@ -177,6 +180,8 @@ IMEDataInterface *IMEManager::createPreferredIME(int maxWidth,
     if (bestSupport > VirtualKeyboardFactory::eVirtualKeyboardSupport_NotSupported &&
         bestFactory) {
         SysmgrIMEModel *imeDataInterface = new SysmgrIMEModel();
+	imeDataInterface->m_layoutScale.set(Settings::LunaSettings()->layoutScale);
+	imeDataInterface->m_pixmapScale.set(Settings::LunaSettings()->pixmapScale);
         keyboard = bestFactory->newVirtualKeyboard(imeDataInterface);
 
         if (keyboard) {
