@@ -1758,7 +1758,6 @@ void LockWindow::handlePenDownStateNormal(Event* event)
 
 	m_lockButton->press(true);
 	
-	m_lockButton->posAnimation()->setDuration(100);
 	m_lockButton->animatePosition(QPointF(event->x, event->y));
 
 	showHelp();
@@ -1791,7 +1790,6 @@ void LockWindow::handlePenMoveStateNormal(Event* event)
 		m_lockButton->press(true);
 	}
 
-	m_lockButton->posAnimation()->setDuration(20);
 	m_lockButton->animatePosition(QPointF(event->x, event->y));
 
 	int distanceSquared = m_lockButton->distanceToAnchorSquared(event->x, event->y);
@@ -1836,7 +1834,6 @@ void LockWindow::handlePenUpStateNormal(Event* event)
 
 	if (m_state != StatePinEntry) {
 	
-		m_lockButton->posAnimation()->setDuration(100);
 		m_lockButton->animatePosition(QPointF(m_lockButtonX, m_lockButtonY));
 
 		startHideHelpTimer();
@@ -2339,8 +2336,8 @@ LockButton::LockButton()
 	}
 
 	m_posAnimation = new QPropertyAnimation(this, "position");
-	m_posAnimation->setDuration(20);
-	m_posAnimation->setEasingCurve(QEasingCurve::Linear);
+	m_posAnimation->setDuration(200);
+	m_posAnimation->setEasingCurve(QEasingCurve::OutQuart);
 }
 
 LockButton::~LockButton()
