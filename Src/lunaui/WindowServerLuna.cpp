@@ -113,35 +113,40 @@ WindowServerLuna::WindowServerLuna()
 #endif
 
 	m_qmlEngine->rootContext()->setContextProperty("runtime", Runtime::instance());
+	
+	uint32_t compensatedHeight = m_screenHeight - Settings::LunaSettings()->virtualCoreNaviHeight;
 
 	//the map is in the base class (WindowServerBase)
-	m_cardMgr = new CardWindowManager(m_screenWidth, m_screenHeight);
+	m_cardMgr = new CardWindowManager(m_screenWidth, compensatedHeight);
 	m_windowManagerMap.insert(QString(m_cardMgr->metaObject()->className()),m_cardMgr);
 
-	m_menuMgr = new MenuWindowManager(m_screenWidth, m_screenHeight);
+	/* FIXME: This should really be sized to the whole screen instead of minus the gesture area
+	 * However, if you use m_screenHeight, the status bar gets pushed up offscreen.
+	*/
+	m_menuMgr = new MenuWindowManager(m_screenWidth, compensatedHeight);
 	m_windowManagerMap.insert(QString(m_menuMgr->metaObject()->className()),m_menuMgr);
 
-	m_dashboardMgr = new DashboardWindowManager(m_screenWidth, m_screenHeight);
+	m_dashboardMgr = new DashboardWindowManager(m_screenWidth, compensatedHeight);
 	m_windowManagerMap.insert(QString(m_dashboardMgr->metaObject()->className()),m_dashboardMgr);
 
-	m_topLevelMgr = new TopLevelWindowManager(m_screenWidth, m_screenHeight);
+	m_topLevelMgr = new TopLevelWindowManager(m_screenWidth, compensatedHeight);
 	m_windowManagerMap.insert(QString(m_topLevelMgr->metaObject()->className()),m_topLevelMgr);
 
-	m_emergencyModeMgr = new EmergencyWindowManager(m_screenWidth, m_screenHeight);
+	m_emergencyModeMgr = new EmergencyWindowManager(m_screenWidth, compensatedHeight);
 	m_windowManagerMap.insert(QString(m_emergencyModeMgr->metaObject()->className()),m_emergencyModeMgr);
 
-	m_overlayMgr = new OverlayWindowManager(m_screenWidth, m_screenHeight);
+	m_overlayMgr = new OverlayWindowManager(m_screenWidth, compensatedHeight);
 	m_windowManagerMap.insert(QString(m_overlayMgr->metaObject()->className()),m_overlayMgr);
 
-	m_dockModeMenuMgr = new DockModeMenuManager(m_screenWidth, m_screenHeight);
+	m_dockModeMenuMgr = new DockModeMenuManager(m_screenWidth, compensatedHeight);
 	m_windowManagerMap.insert(QString(m_dockModeMenuMgr->metaObject()->className()),m_dockModeMenuMgr);
 
-	m_dockModeMgr = new DockModeWindowManager(m_screenWidth, m_screenHeight);
+	m_dockModeMgr = new DockModeWindowManager(m_screenWidth, compensatedHeight);
 	m_windowManagerMap.insert(QString(m_dockModeMgr->metaObject()->className()),m_dockModeMgr);
 
 	if (Settings::LunaSettings()->virtualKeyboardEnabled)
 	{
-		m_inputWindowMgr = new InputWindowManager(m_screenWidth, m_screenHeight);
+		m_inputWindowMgr = new InputWindowManager(m_screenWidth, compensatedHeight);
 		m_windowManagerMap.insert(QString(m_inputWindowMgr->metaObject()->className()),m_inputWindowMgr);
 	}
 
@@ -205,7 +210,7 @@ WindowServerLuna::WindowServerLuna()
 	SystemUiController::instance()->setUiRootItemPtr(&m_uiRootItem);
 
 	// always at top of screen
-	m_uiRootItem.setPos(SystemUiController::instance()->currentUiWidth()/2, (SystemUiController::instance()->currentUiHeight() - Settings::LunaSettings()->virtualCoreNaviHeight)/2);
+	m_uiRootItem.setPos(SystemUiController::instance()->currentUiWidth()/2, SystemUiController::instance()->currentUiHeight()/2);
 
 	// Trigger the initial layout for the WMs
 	SystemUiController::instance()->init();
