@@ -1710,9 +1710,6 @@ void SystemUiController::slotAnimFinished()
 
 void SystemUiController::setBootFinished()
 {
-	//Make sure the windows are positioned correctly
-	WindowServer::instance()->resizeWindowManagers(m_uiWidth, m_uiHeight);
-
 	m_bootFinished = true;
 	Q_EMIT signalBootFinished();
 }
