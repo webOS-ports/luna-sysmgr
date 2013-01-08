@@ -1332,10 +1332,10 @@ bool WindowServer::canShowReticle(const QPoint& pos)
 	&& pos.y() > SystemUiController::instance()->currentUiHeight())
 	||
 	(m_currentUiOrientation == OrientationEvent::Orientation_Down
-	&& pos.y() < Settings::LunaSettings()->virtualCoreNaviHeight)
+	&& pos.y() < Settings::LunaSettings()->positiveSpaceTopPadding)
 	||
 	(m_currentUiOrientation == OrientationEvent::Orientation_Left
-	&& pos.x() < Settings::LunaSettings()->virtualCoreNaviHeight)
+	&& pos.x() < Settings::LunaSettings()->positiveSpaceTopPadding)
 	||
 	(m_currentUiOrientation == OrientationEvent::Orientation_Right
 	&& pos.x() > SystemUiController::instance()->currentUiHeight()))

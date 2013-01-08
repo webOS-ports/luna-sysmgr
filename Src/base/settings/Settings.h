@@ -191,9 +191,7 @@ public:
 	unsigned int		dockModeMenuHeight;
 	
 	bool				virtualKeyboardEnabled;
-
 	bool				virtualCoreNaviEnabled;
-	unsigned int        virtualCoreNaviHeight;
 
 	std::set<std::string> appsToLaunchAtBoot;
 	std::set<std::string> appsToKeepAlive;

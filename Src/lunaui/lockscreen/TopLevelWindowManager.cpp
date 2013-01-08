@@ -404,7 +404,7 @@ void TopLevelWindowManager::positionCornerWindows()
         return;
 
     int i = kTopLeftWindowIndex;
-    int trueBottom = m_winRect.y() + m_winRect.height() - Settings::LunaSettings()->virtualCoreNaviHeight;
+    int trueBottom = m_winRect.y() + m_winRect.height() - Settings::LunaSettings()->positiveSpaceTopPadding;
     int trueRight = m_winRect.x() + m_winRect.width();
     Q_ASSERT(m_corners[i]);
     QRectF rect = m_corners[i]->boundingRect();

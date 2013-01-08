@@ -44,7 +44,7 @@ static const int GESTURE_AREA_TRIGGER_DIST = Settings::LunaSettings()->tapRadius
 
 GestureArea::GestureArea(int width, int height)
 {
-	m_bounds = QRect(-width/2, SystemUiController::instance()->currentUiHeight()/2, width, height);
+	m_bounds = QRect(-width/2, SystemUiController::instance()->currentUiHeight()/2, width, height + 1);
 	m_fired = false;
 	m_animDir = AnimDir(Up);
 
@@ -82,22 +82,22 @@ void GestureArea::init()
 	std::string lightbarLImagePath = settings->lunaSystemResourcesPath + "/corenavi/light-bar-bright-left.png";
 	std::string lightbarRImagePath = settings->lunaSystemResourcesPath + "/corenavi/light-bar-bright-right.png";
 	m_lightbarLPixmap = new QPixmap(lightbarLImagePath.c_str());
-	*m_lightbarLPixmap = m_lightbarLPixmap->scaledToHeight(m_bounds.height()/1.5, Qt::SmoothTransformation);
+	*m_lightbarLPixmap = m_lightbarLPixmap->scaledToHeight(m_bounds.height(), Qt::SmoothTransformation);
 	m_lightbarRPixmap = new QPixmap(lightbarRImagePath.c_str());
-	*m_lightbarRPixmap = m_lightbarRPixmap->scaledToHeight(m_bounds.height()/1.5, Qt::SmoothTransformation);
+	*m_lightbarRPixmap = m_lightbarRPixmap->scaledToHeight(m_bounds.height(), Qt::SmoothTransformation);
 
 	m_radialGrad = QRadialGradient(m_bounds.center(), m_lightbarLPixmap->width() * 2);
 	m_radialGrad.setColorAt(0, QColor(0, 0, 0, 0));
 	m_radialGrad.setColorAt(1, QColor(0, 0, 0, 255));
 
-	m_lightbarY = m_bounds.bottom() - m_lightbarLPixmap->height();
+	m_lightbarY = SystemUiController::instance()->currentUiHeight()/2;
 	m_gradientFocus = QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2));
 }
 
 void GestureArea::resize(int w, int h)
 {
-	m_bounds = QRect(-w/2, SystemUiController::instance()->currentUiHeight()/2, w, h);
-	m_lightbarY = m_bounds.bottom() - m_lightbarLPixmap->height();
+	m_bounds = QRect(-w/2, SystemUiController::instance()->currentUiHeight()/2, w, h + 1);
+	m_lightbarY = SystemUiController::instance()->currentUiHeight()/2;
 	m_gradientFocus = QPointF(0, m_lightbarY + (m_lightbarLPixmap->height()/2));
 	m_isPortrait = (h > w);
 }
@@ -129,11 +129,9 @@ void GestureArea::paint(QPainter* painter, const QStyleOptionGraphicsItem* optio
 	QPen oldPen = painter->pen();
 	painter->setBrush(QBrush(m_radialGrad));
 	painter->setPen(QPen(Qt::black));
-
 	painter->drawRect(m_bounds);
-
-	painter->setBrush(oldBrush);
 	painter->setPen(oldPen);
+	painter->setBrush(oldBrush);
 }
 
 bool GestureArea::sceneEvent(QEvent* event)

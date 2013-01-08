@@ -86,11 +86,7 @@ MenuWindowManager::MenuWindowManager(int maxWidth, int maxHeight)
 	}
 
 	if(Settings::LunaSettings()->virtualCoreNaviEnabled)
-		m_gestureArea = new GestureArea(maxWidth, Settings::LunaSettings()->virtualCoreNaviHeight);
-		
-	if(m_gestureArea) {
-		m_gestureArea->setParentItem(this);
-	}
+		m_gestureArea = new GestureArea(maxWidth, Settings::LunaSettings()->positiveSpaceTopPadding);
 }
 
 MenuWindowManager::~MenuWindowManager()
@@ -125,6 +121,7 @@ void MenuWindowManager::init()
 
 	if(m_gestureArea) {
 		m_gestureArea->init();
+		m_gestureArea->setParentItem(this);
 		m_gestureArea->setZValue(100);
 	}
 
@@ -171,7 +168,7 @@ void MenuWindowManager::resize(int width, int height)
 	}
 
 	if(m_gestureArea) {
-		m_gestureArea->resize(width, Settings::LunaSettings()->virtualCoreNaviHeight);
+		m_gestureArea->resize(width, Settings::LunaSettings()->positiveSpaceTopPadding);
 		m_gestureArea->update();
 	}
 
@@ -407,6 +404,7 @@ void MenuWindowManager::slotPositiveSpaceChanged(const QRect& r)
 	if (m_statusBar) {
 		setPosTopLeft(m_statusBar, 0, r.y() - m_statusBar->boundingRect().height());
 	}
+	
 	update();
 }
 
