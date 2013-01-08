@@ -188,7 +188,6 @@ Settings::Settings()
 	, virtualKeyboardEnabled(false)
 	, showNotificationsAtTop(false)
 	, virtualCoreNaviEnabled(false)
-	, virtualCoreNaviHeight(0)
 	, uiType(UI_LUNA)
 	, fontBanner("Prelude")
 	, fontActiveBanner("Prelude")
@@ -480,7 +479,6 @@ void Settings::load(const char* settingsFile)
 	KEY_BOOLEAN( "VirtualKeyboard", "VirtualKeyboardEnabled", virtualKeyboardEnabled);
 
 	KEY_BOOLEAN( "VirtualCoreNavi", "VirtualCoreNaviEnabled", virtualCoreNaviEnabled);
-	KEY_INTEGER( "VirtualCoreNavi", "VirtualCoreNaviHeight", virtualCoreNaviHeight);
 
 	KEY_DOUBLE("Launcher", "CardSideScrollSwipeThreshold", launcherSideSwipeThreshold);
 	KEY_BOOLEAN("Launcher", "UseOGLHardwareAntialias", launcherUsesHwAA);

@@ -128,7 +128,7 @@ SystemUiController::SystemUiController()
 	m_dockBrightness = 100;
 
 	const HostInfo& info = HostBase::instance()->getInfo();
-	m_coreNaviHeight = Settings::LunaSettings()->uiType == Settings::UI_LUNA ? Settings::LunaSettings()->virtualCoreNaviHeight : 0;
+	m_coreNaviHeight = Settings::LunaSettings()->uiType == Settings::UI_LUNA ? Settings::LunaSettings()->positiveSpaceTopPadding : 0;
 	m_uiWidth  = info.displayWidth;
 	m_uiHeight = info.displayHeight - m_coreNaviHeight;
 

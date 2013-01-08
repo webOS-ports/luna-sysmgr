@@ -362,3 +362,28 @@ void TopLevelWindowManager::unlockScreen()
 	SystemUiController::instance()->setDeviceLocked(false);
 }
 
+void TopLevelWindowManager::positionCornerWindows()
+{
+    if (Settings::LunaSettings()->tabletUi)
+        return;
+
+    int i = kTopLeftWindowIndex;
+    int trueBottom = m_winRect.y() + m_winRect.height() - Settings::LunaSettings()->positiveSpaceTopPadding;
+    int trueRight = m_winRect.x() + m_winRect.width();
+    Q_ASSERT(m_corners[i]);
+    QRectF rect = m_corners[i]->boundingRect();
+
+    setPosTopLeft(m_corners[i], m_winRect.x(), m_winRect.y() + Settings::LunaSettings()->positiveSpaceTopPadding);
+
+    i = kTopRightWindowIndex;
+    Q_ASSERT(m_corners[i]);
+    setPosTopLeft(m_corners[i], trueRight - rect.width(), m_winRect.y() + Settings::LunaSettings()->positiveSpaceTopPadding);
+
+    i = kBottomLeftWindowIndex;
+    Q_ASSERT(m_corners[i]);
+    setPosTopLeft(m_corners[i], m_winRect.x(), trueBottom - rect.height());
+
+    i = kBottomRightWindowIndex;
+    Q_ASSERT(m_corners[i]);
+    setPosTopLeft(m_corners[i], trueRight - rect.width(), trueBottom - rect.height());
+}

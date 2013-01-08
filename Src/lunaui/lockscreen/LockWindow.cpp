@@ -2494,7 +2494,7 @@ void LockBackground::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 	
 	//Draw a black box where the gesture area would be
 	painter->fillRect(
-		QRect(-m_bounds.width()/2, m_bounds.height()/2, m_bounds.width(), Settings::LunaSettings()->virtualCoreNaviHeight)
+		QRect(-m_bounds.width()/2, m_bounds.height()/2, m_bounds.width(), Settings::LunaSettings()->positiveSpaceTopPadding + 1)
 		,QColor(0x0,0x0,0x0,0xff)
 		);
 	

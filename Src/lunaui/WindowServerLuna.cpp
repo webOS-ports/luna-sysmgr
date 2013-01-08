@@ -96,7 +96,7 @@ WindowServerLuna::WindowServerLuna()
 	m_qmlEngine = new QDeclarativeEngine;
 	m_qmlEngine->rootContext()->setContextProperty("runtime", Runtime::instance());
 	
-	uint32_t compensatedHeight = m_screenHeight - Settings::LunaSettings()->virtualCoreNaviHeight;
+	uint32_t compensatedHeight = m_screenHeight - Settings::LunaSettings()->positiveSpaceTopPadding;
 
 	//the map is in the base class (WindowServerBase)
 	m_cardMgr = new CardWindowManager(m_screenWidth, compensatedHeight);
@@ -293,10 +293,10 @@ void WindowServerLuna::resizeWindowManagers(int width, int height)
 			m_uiRootItem.setPos(width/2, height/2);
 			break;
 		case OrientationEvent::Orientation_Down:
-			m_uiRootItem.setPos(width/2, (height/2) + Settings::LunaSettings()->virtualCoreNaviHeight);
+			m_uiRootItem.setPos(width/2, (height/2) + Settings::LunaSettings()->positiveSpaceTopPadding + 1);
 			break;
 		case OrientationEvent::Orientation_Left:
-			m_uiRootItem.setPos((height/2) + Settings::LunaSettings()->virtualCoreNaviHeight, width/2);
+			m_uiRootItem.setPos((height/2) + Settings::LunaSettings()->positiveSpaceTopPadding + 1, width/2);
 			break;
 		case OrientationEvent::Orientation_Right:
 			m_uiRootItem.setPos(height/2, width/2);
