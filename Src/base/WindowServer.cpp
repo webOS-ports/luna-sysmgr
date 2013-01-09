@@ -589,7 +589,9 @@ bool WindowServer::processSystemShortcut(QEvent* event)
 		static bool symDown = false;
 		static bool altDown = false;
 		static bool homeKeyDown = false;
+		static bool powerKeyDown = false;
 		static bool eatHomeUpKey = false;
+		static bool eatPowerUpKey = false;
 		static unsigned int powerKeyDownTimeStamp = 0;
 		static unsigned int homeKeyDownTimeStamp = 0;
 
