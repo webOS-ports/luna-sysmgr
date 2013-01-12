@@ -95,8 +95,9 @@ void DWMStateAlertOpen::onEntry(QEvent* e)
 	}
 	else {
 		m_wm->animateAlertWindow();
-		s_suc->setAlertVisible(true);
 	}
+	
+	s_suc->setAlertVisible(true);
 
 	m_wm->raiseAlertWindow(win);
 
@@ -111,9 +112,7 @@ void DWMStateAlertOpen::onEntry(QEvent* e)
 
 void DWMStateAlertOpen::onExit(QEvent* e)
 {
-	if(m_wm->isOverlay()) {
-		s_suc->setAlertVisible(false);
-	}
+	s_suc->setAlertVisible(false);
 
 	AlertWindow* win = m_wm->topAlertWindow();
 	if (!win)

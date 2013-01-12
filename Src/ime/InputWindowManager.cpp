@@ -109,7 +109,11 @@ void InputWindowManager::slotNegativeSpaceChanged(QRect r)
 		return;
 
 	qreal y = m_activeIME->m_keyboardHeight.get() - r.height();
-	m_imeView->setVisible(r.height() != 0);
+	if(Settings::LunaSettings()->tabletUi)
+		m_imeView->setVisible(r.height() != 0);
+	else {
+		m_imeView->setVisible(r.height() != 0 && !SystemUiController::instance()->dashboardHasContent() && !SystemUiController::instance()->alertVisible());
+	}
 	setPosTopLeft(m_imeView, 0, y);
 }
 
