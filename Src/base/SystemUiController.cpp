@@ -924,6 +924,11 @@ void SystemUiController::setAlertVisible(bool val)
 
 }
 
+bool SystemUiController::alertVisible()
+{
+    return m_alertVisible;
+}
+
 
 void SystemUiController::slotKeyEventRejected(const SysMgrKeyEvent& event)
 {
@@ -946,6 +951,11 @@ void SystemUiController::setDashboardHasContent(bool val)
 		return;
 
 	m_dashboardHasContent = val;
+}
+
+bool SystemUiController::dashboardHasContent()
+{
+	return m_dashboardHasContent;
 }
 
 void SystemUiController::setEmergencyMode(bool enable)

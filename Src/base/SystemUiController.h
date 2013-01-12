@@ -89,7 +89,11 @@ public:
 
 	void setDashboardHasContent(bool val);
 
+	bool dashboardHasContent();
+
 	void setAlertVisible(bool val);
+
+	bool alertVisible();
 
 	void setEmergencyMode(bool enable);
 
