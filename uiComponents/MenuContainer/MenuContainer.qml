@@ -4,7 +4,7 @@ Item {
     id: menuconatiner
     clip: true;
 
-    property real  uiScale: 1.0
+    property real  uiScale: 2.0
     property int  maxHeight: 410 * uiScale
     property int  headerIdent:   14 * uiScale
     property int  edgeOffset: 11 * uiScale
@@ -40,9 +40,9 @@ Item {
     BorderImage {
         id: menuBorder
         source: "/usr/palm/sysmgr/images/menu-dropdown-bg.png"
-        width: parent.width / uiScale;
-        height: Math.max(border.top + border.bottom, Math.min(menuconatiner.height,  (mainMenu.height + clipRect.anchors.topMargin + clipRect.anchors.bottomMargin))) /uiScale;
-        transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+        width: parent.width * 4;
+        height: Math.max(border.top + border.bottom, Math.min(menuconatiner.height,  (mainMenu.height + clipRect.anchors.topMargin + clipRect.anchors.bottomMargin))) * 4;
+        transform: Scale { origin.x: 0; origin.y: 0; xScale: 0.25; yScale: 0.25;}
         smooth: true;
         border { left: 120; top: 40; right: 120; bottom: 120 }
     }
@@ -84,8 +84,8 @@ Item {
         opacity: !flickableArea.atYBeginning ? 1.0 : 0.0
 
         BorderImage {
-	    width: parent.width / uiScale;
-	    transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+	    width: parent.width * 4;
+	    transform: Scale { origin.x: 0; origin.y: 0; xScale: 0.25; yScale: 0.25;}
 	    smooth: true;
             source: "/usr/palm/sysmgr/images/menu-dropdown-scrollfade-top.png"
             border { left: 80; top: 0; right: 80; bottom: 0 }
@@ -94,7 +94,7 @@ Item {
         Image {
             anchors.horizontalCenter: parent.horizontalCenter
             y:0
-	    transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+	    transform: Scale { origin.x: 0; origin.y: 0; xScale: 0.25; yScale: 0.25;}
 	    smooth: true;
             source: "/usr/palm/sysmgr/images/menu-arrow-up.png"
         }
@@ -111,8 +111,8 @@ Item {
         opacity: !flickableArea.atYEnd ? 1.0 : 0.0
 
         BorderImage {
-            width: parent.width / uiScale
-	    transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+            width: parent.width * 4
+	    transform: Scale { origin.x: 0; origin.y: 0; xScale: 0.25; yScale: 0.25;}
 	    smooth: true;
             source: "/usr/palm/sysmgr/images/menu-dropdown-scrollfade-bottom.png"
             border { left: 80; top: 0; right: 80; bottom: 0 }
@@ -121,7 +121,7 @@ Item {
         Image {
             anchors.horizontalCenter: parent.horizontalCenter
             y:10 * uiScale
-	    transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+	    transform: Scale { origin.x: 0; origin.y: 0; xScale: 0.25; yScale: 0.25;}
 	    smooth: true;
             source: "/usr/palm/sysmgr/images/menu-arrow-down.png"
         }

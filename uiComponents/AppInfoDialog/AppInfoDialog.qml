@@ -2,9 +2,11 @@ import Qt 4.7
 import "../ActionButton"
 
 Item {
-    property int  edgeOffset: 11
-    property int  margin: 6
-    property int  topOffset: 4
+    property real uiScale : 1.0
+    
+    property int  edgeOffset: 11 * uiScale
+    property int  margin: 6 * uiScale
+    property int  topOffset: 4 * uiScale
 
     property string dialogTitle: "None"
     property string dialogMessage: "None"
@@ -20,7 +22,7 @@ Item {
 	signal dialogDisappearedCompletely();
 	signal dialogAppearedCompletely();
 	
-    width: 320 + 2 * edgeOffset
+    width: (320 + 2 * edgeOffset) * uiScale
     height: titleText.height + msgText.height + ((numberOfButtons > 0) ? (removeButton.height + cancelButton.height) : edgeOffset) + 2*edgeOffset + 4*margin + topOffset;
 
     id: dialog;
@@ -80,9 +82,10 @@ Item {
 
     BorderImage {
         source: "/usr/palm/sysmgr/images/popup-bg.png"
-        width: parent.width;
-        height: parent.height;
-        border { left: 35; top: 40; right: 35; bottom: 40 }
+        width: parent.width * 4;
+        height: parent.height * 4;
+        transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale / 4; yScale: uiScale / 4;}
+        border { left: 140; top: 160; right: 140; bottom: 160 }
     }
 
     Text {
