@@ -1717,6 +1717,9 @@ void SystemUiController::slotAnimFinished()
 
 void SystemUiController::setBootFinished()
 {
+	//Make sure all the WMs are the correct size
+	WindowServer::instance()->resizeWindowManagers(m_uiWidth, m_uiHeight);	
+	
 	m_bootFinished = true;
 	Q_EMIT signalBootFinished();
 }
