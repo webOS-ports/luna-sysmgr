@@ -7,7 +7,7 @@ Item {
     property bool   affirmative: false
     property bool   negative:    false
     property real   inactiveOpacity: 0.70
-    property real uiScale : 1.0
+    property real uiScale : 2.0
 
     width:  200 * uiScale;
     height:  40 * uiScale;
@@ -18,9 +18,9 @@ Item {
                  ( negative ? ( !isPressed ? "/usr/palm/sysmgr/images/pin/button-red.png"   : "/usr/palm/sysmgr/images/pin/button-red-press.png")   :
                               ( !isPressed ? "/usr/palm/sysmgr/images/pin/button-black.png" : "/usr/palm/sysmgr/images/pin/button-black-press.png")  )
         visible: true;
-        width: parent.width / uiScale;
-        height: parent.height / uiScale;
-        transform: Scale { origin.x: 0; origin.y: 0; xScale: uiScale; yScale: uiScale;}
+        width: parent.width * 4;
+        height: parent.height * 4;
+        transform: Scale { origin.x: 0; origin.y: 0; xScale: 0.25; yScale: 0.25;}
         smooth: true;
         border { left: 40; top: 40; right: 40; bottom: 40 }
         opacity: active ? 1.0 : inactiveOpacity
