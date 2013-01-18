@@ -923,11 +923,16 @@ void StatusBarServicesConnector::handlePowerStatus(const char* radioState, bool 
 		if (m_phoneType == PHONE_TYPE_NONE) {
 			sprintf(m_carrierText, "Open webOS");
 		}
-		else if (m_phoneType == PHONE_TYPE_GSM) {
-			sprintf(m_carrierText, "%s", LOCALIZED("Network search...").c_str());
-		}
 		else {
-			sprintf(m_carrierText, "%s", LOCALIZED("Searching...").c_str());
+			if (m_simLocked) {
+				sprintf(m_carrierText, "%s", LOCALIZED("SIM lock").c_str());
+			}
+			else if (m_phoneType == PHONE_TYPE_GSM) {
+				sprintf(m_carrierText, "%s", LOCALIZED("Network search...").c_str());
+			}
+			else {
+				sprintf(m_carrierText, "%s", LOCALIZED("Searching...").c_str());
+			}
 		}
 
 		Q_EMIT signalCarrierTextChanged(m_carrierText);
