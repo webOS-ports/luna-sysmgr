@@ -68,6 +68,7 @@ contains(MACHINE_NAME, "tuna") {
     TARGET_TYPE = TARGET_DEVICE
     CONFIG_BUILD += webosdevice nyx
     CONFIG_BUILD += opengl
+    CONFIG_BUILD += haptics
     LIBS += -lqpalm
 }
 contains(MACHINE_NAME, "grouper") {
