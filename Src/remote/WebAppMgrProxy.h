@@ -129,8 +129,8 @@ private:
 
     virtual void onMessageReceived(const PIpcMessage& msg);
 
-    void onPrepareAddWindow(int key, int type, int width, int height);
-	void onPrepareAddWindowWithMetaData(int key, int metaDataKey, int type, int width, int height);
+    void onPrepareAddWindow(int type, int width, int height, int *key);
+	void onPrepareAddWindowWithMetaData(int metaDataKey, int type, int width, int height, int *key);
     void onPasteToActiveWindow();
     void onBootupFinished();
     void onNewContentEvent(const NewContentIndicatorEventWrapper &wrapper);

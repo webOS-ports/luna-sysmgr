@@ -146,7 +146,7 @@ void IpcClientHost::onDisconnected()
 	}
 }
 
-void IpcClientHost::onPrepareAddWindow(int key, int type, int width, int height)
+void IpcClientHost::onPrepareAddWindow(int type, int width, int height, int *key)
 {
     bool isNativeQtWindow = (type == (1 << 3));
 	// FIXME: Magic numbers
@@ -162,13 +162,16 @@ void IpcClientHost::onPrepareAddWindow(int key, int type, int width, int height)
 		break;
 	}
 
-	HostWindowData* data = HostWindowDataFactory::generate(key, -1, width, height, false);
+	HostWindowData* data = HostWindowDataFactory::generate(-1, width, height, false);
 	if (!data || !data->isValid()) {
-		g_critical("%s (%d): Failed to generate HostWindowData for key: %d\n",
-				   __PRETTY_FUNCTION__, __LINE__, key);
+		g_critical("%s (%d): Failed to generate HostWindowData\n",
+				   __PRETTY_FUNCTION__, __LINE__);
 		delete data;
 		return;
 	}
+
+	*key = data->key();
+	g_message("%s HostWindowData generated key %i", __PRETTY_FUNCTION__, *key);
 
 	CardHostWindow* win = 0;
     if (isNativeQtWindow)
@@ -181,11 +184,11 @@ void IpcClientHost::onPrepareAddWindow(int key, int type, int width, int height)
 		win->setAppId(m_name);
 	}
 
-	m_winMap[key] = win;
+	m_winMap[*key] = win;
 	m_winSet.insert(win);
 
 	g_message("%s (%d): Attached to key: %d, width: %d, height: %d, Window: %p",
-	          __PRETTY_FUNCTION__, __LINE__, key, width, height, win);
+	          __PRETTY_FUNCTION__, __LINE__, *key, width, height, win);
 	
 	WindowServer::instance()->prepareAddWindow(win);
 }
