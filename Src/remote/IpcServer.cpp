@@ -507,6 +507,22 @@ IpcClientHost* IpcServer::clientHostForAppId(const std::string& appId) const
 	return 0;
 }
 
+Window* IpcServer::findWindow(int key) const
+{
+	Window *window = 0;
+
+	for (ClientSet::const_iterator iter = m_clientHostSet.begin();
+		 iter != m_clientHostSet.end(); ++iter) {
+		IpcClientHost *clientHost = *iter;
+
+		window = clientHost->findWindow(key);
+		if (window)
+			break;
+	}
+
+	return window;
+}
+
 void IpcServer::childProcessDiedCallback(GPid pid, gint status, gpointer data)
 {
 	IpcServer* server = (IpcServer*) data;

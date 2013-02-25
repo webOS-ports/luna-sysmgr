@@ -360,8 +360,8 @@ void WebAppMgrProxy::onPrepareAddWindowWithMetaData(int metaDataKey, int type, i
 	m_winMap[*key] = win;
 	m_winSet.insert(win);
 
-	g_message("%s (%d): Attached to key: %d, width: %d, height: %d, window: %p",
-	          __PRETTY_FUNCTION__, __LINE__, *key, width, height, win);
+	g_message("%s (%d): Attached to key: %d, metaDataKey: %d, width: %d, height: %d, window: %p",
+	          __PRETTY_FUNCTION__, __LINE__, *key, metaDataKey, width, height, win);
 	
 	WindowServer::instance()->prepareAddWindow(win);    
 }

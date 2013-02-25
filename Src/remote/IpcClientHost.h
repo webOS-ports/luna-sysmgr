@@ -58,6 +58,8 @@ public:
 	std::string name() const { return m_name; }	
     bool hasWindows() const;
 
+	virtual Window* findWindow(int key) const;
+
 protected:
 
     virtual void onMessageReceived(const PIpcMessage& msg);
@@ -70,10 +72,6 @@ protected:
     virtual void onSetWindowProperties(int key, const std::string& winProps);
     virtual void onFocusWindow(int key);
     virtual void onUnfocusWindow(int key);
-    
-
-
-	virtual Window* findWindow(int key) const;
 
 protected Q_SLOTS:
 

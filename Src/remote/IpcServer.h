@@ -32,6 +32,7 @@
 
 #include "Timer.h"
 #include "ApplicationDescription.h"
+#include "Window.h"
 
 class IpcClientHost;
 
@@ -49,6 +50,8 @@ public:
 	void processRemoved(int pid, bool doCleanup=true);
 	void addProcessToNukeList(int pid);
 	void ipcClientHostQuit(IpcClientHost* client);
+
+	Window* findWindow(int key) const;
 
 private:
 
