@@ -34,9 +34,12 @@
 
 #include "HostWindowDataSoftware.h"
 
-HostWindowData* HostWindowDataFactory::generate(int key, int metaDataKey, int width, int height, bool hasAlpha)
+int HostWindowDataFactory::m_keySerial = 0;
+
+HostWindowData* HostWindowDataFactory::generate(int metaDataKey, int width, int height, bool hasAlpha)
 {
 	HostWindowData* data = 0;
+	uint32_t key = ++m_keySerial;
 
 	if (Settings::LunaSettings()->forceSoftwareRendering) {
 		data = new HostWindowDataSoftware(key, metaDataKey, width, height, hasAlpha);

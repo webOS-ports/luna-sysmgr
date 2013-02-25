@@ -179,10 +179,10 @@ void HostWindow::resizeEventSync(int w, int h, bool forceSync)
 		int oldKey = m_data->key();
 		int metaDataKey = m_data->metaDataBuffer()->key();
 		delete m_data;
-		m_data = HostWindowDataFactory::generate(newKey, metaDataKey, w, h, hasAlpha);
+		m_data = HostWindowDataFactory::generate(metaDataKey, w, h, hasAlpha);
 		if (!m_data || !m_data->isValid()) {
-			g_critical("%s (%d): Failed to generate HostWindowData for key: %d\n",
-					   __PRETTY_FUNCTION__, __LINE__, newKey);
+			g_critical("%s (%d): Failed to generate HostWindowData\n",
+					   __PRETTY_FUNCTION__, __LINE__);
 			delete m_data;
 			m_data = 0;
 			return;
@@ -190,7 +190,7 @@ void HostWindow::resizeEventSync(int w, int h, bool forceSync)
 
 		// calls prepareGeometryChange
 		resize(w, h);
-		m_clientHost->replaceWindowKey(this, oldKey, newKey);
+		m_clientHost->replaceWindowKey(this, oldKey, m_data->key());
 
 		m_data->initializePixmap(m_screenPixmap);
 
