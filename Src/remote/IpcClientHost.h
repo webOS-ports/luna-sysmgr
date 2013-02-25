@@ -64,7 +64,7 @@ protected:
     virtual void onDisconnected();
 
     virtual void onReturnedInputEvent(const SysMgrKeyEvent& event);
-    virtual void onPrepareAddWindow(int key, int type, int width, int height);
+    virtual void onPrepareAddWindow(int type, int width, int height, int *key);
     virtual void onAddWindow(int key);
     virtual void onRemoveWindow(int key);
     virtual void onSetWindowProperties(int key, const std::string& winProps);

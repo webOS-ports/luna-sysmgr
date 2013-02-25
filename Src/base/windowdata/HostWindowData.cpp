@@ -34,6 +34,13 @@
 
 #include "HostWindowDataSoftware.h"
 
+int HostWindowDataFactory::m_keySerial = 0;
+
+HostWindowData* HostWindowDataFactory::generate(int metaDataKey, int width, int height, bool hasAlpha)
+{
+	HostWindowDataFactory::generate(++m_keySerial, metaDataKey, width, height, hasAlpha);
+}
+
 HostWindowData* HostWindowDataFactory::generate(int key, int metaDataKey, int width, int height, bool hasAlpha)
 {
 	HostWindowData* data = 0;

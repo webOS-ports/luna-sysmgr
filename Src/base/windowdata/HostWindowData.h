@@ -56,7 +56,11 @@ class HostWindowDataFactory
 {
 public:
 
+	static HostWindowData* generate(int metaDataKey, int width, int height, bool hasAlpha);
 	static HostWindowData* generate(int key, int metaDataKey, int width, int height, bool hasAlpha);
+
+private:
+	static int m_keySerial;
 };
 
 #endif /* HOSTWINDOWDATA_H */

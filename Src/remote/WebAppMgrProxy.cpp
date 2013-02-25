@@ -298,7 +298,7 @@ void WebAppMgrProxy::onReturnedInputEvent(const SysMgrKeyEvent& event)
 	Q_EMIT signalKeyEventRejected(event);
 }
 
-void WebAppMgrProxy::onPrepareAddWindow(int key, int type, int width, int height)
+void WebAppMgrProxy::onPrepareAddWindow(int type, int width, int height, int *key)
 {
 	bool hasAlpha = false;
 	switch (static_cast<Window::Type>(type)) {
@@ -312,26 +312,27 @@ void WebAppMgrProxy::onPrepareAddWindow(int key, int type, int width, int height
 			break;
 	}
 
-	HostWindowData* data = HostWindowDataFactory::generate(key, -1, width, height, hasAlpha);
+	HostWindowData* data = HostWindowDataFactory::generate(-1, width, height, hasAlpha);
 	if (!data || !data->isValid()) {
 		g_critical("%s (%d): Failed to generate HostWindowData for key: %d\n",
-				   __PRETTY_FUNCTION__, __LINE__, key);
+				   __PRETTY_FUNCTION__, __LINE__, *key);
 		delete data;
 		return;
 	}
 
+	*key = data->key();
 	Window* win = createWindowForWebApp(static_cast<Window::Type>(type), data);
 
-	m_winMap[key] = win;
+	m_winMap[*key] = win;
 	m_winSet.insert(win);
 
 	g_message("%s (%d): Attached to key: %d, width: %d, height: %d, window: %p",
-	          __PRETTY_FUNCTION__, __LINE__, key, width, height, win);
+	          __PRETTY_FUNCTION__, __LINE__, *key, width, height, win);
 	
 	WindowServer::instance()->prepareAddWindow(win);
 }
 
-void WebAppMgrProxy::onPrepareAddWindowWithMetaData(int key, int metaDataKey, int type, int width, int height)
+void WebAppMgrProxy::onPrepareAddWindowWithMetaData(int metaDataKey, int type, int width, int height, int *key)
 {
 	bool hasAlpha = false;
 	switch (static_cast<Window::Type>(type)) {
@@ -345,21 +346,22 @@ void WebAppMgrProxy::onPrepareAddWindowWithMetaData(int key, int metaDataKey, in
 			break;
 	}
 
-	HostWindowData* data = HostWindowDataFactory::generate(key, metaDataKey, width, height, hasAlpha);
+	HostWindowData* data = HostWindowDataFactory::generate(metaDataKey, width, height, hasAlpha);
 	if (!data || !data->isValid()) {
 		g_critical("%s (%d): Failed to generate HostWindowData for key: %d\n",
-				   __PRETTY_FUNCTION__, __LINE__, key);
+				   __PRETTY_FUNCTION__, __LINE__, *key);
 		delete data;
 		return;
 	}
 
+	*key = data->key();
 	Window* win = createWindowForWebApp(static_cast<Window::Type>(type), data);
 
-	m_winMap[key] = win;
+	m_winMap[*key] = win;
 	m_winSet.insert(win);
 
 	g_message("%s (%d): Attached to key: %d, width: %d, height: %d, window: %p",
-	          __PRETTY_FUNCTION__, __LINE__, key, width, height, win);
+	          __PRETTY_FUNCTION__, __LINE__, *key, width, height, win);
 	
 	WindowServer::instance()->prepareAddWindow(win);    
 }
