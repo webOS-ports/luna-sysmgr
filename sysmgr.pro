@@ -48,7 +48,7 @@ ENV_BUILD_TYPE = $$(BUILD_TYPE)
 CONFIG += no_keywords
 
 CONFIG += link_pkgconfig
-PKGCONFIG = glib-2.0 gthread-2.0
+PKGCONFIG = glib-2.0 gthread-2.0 gio-unix-2.0
 
 QT = core gui network
 
@@ -632,13 +632,20 @@ contains(CONFIG_BUILD, opengl) {
 		HEADERS += HostWindowDataOpenGLTextureShared.h
                 #LIBS += -lnapp -lnrwindow
 	} else {
+		contains(CONFIG_BUILD, hybris) {
+			DEFINES += HAVE_HYBRIS Q_WS_QPA
+			SOURCES += HostWindowDataOpenGLHybris.cpp \
+				   HybrisCompositor.cpp
+			HEADERS += HostWindowDataOpenGLHybris.h \
+				   HybrisCompositor.h
+		}
+		else {
 		contains(CONFIG_BUILD, openglcomposited) {
 			DEFINES += OPENGLCOMPOSITED
 		}
-	
-   		SOURCES += HostWindowDataOpenGL.cpp
-
-   		HEADERS += HostWindowDataOpenGL.h
+		SOURCES += HostWindowDataOpenGL.cpp
+		HEADERS += HostWindowDataOpenGL.h
+		}
 	}
 }
 else {

@@ -30,6 +30,9 @@
 #if defined(HAVE_TEXTURESHARING)
 #include "HostWindowDataOpenGLTextureShared.h"
 #endif
+#if defined(HAVE_HYBRIS)
+#include "HostWindowDataOpenGLHybris.h"
+#endif
 #endif
 
 #include "HostWindowDataSoftware.h"
@@ -48,6 +51,8 @@ HostWindowData* HostWindowDataFactory::generate(int metaDataKey, int width, int 
 #if defined(HAVE_OPENGL)
 #if defined(HAVE_TEXTURESHARING)
 		data = new HostWindowDataOpenGLTextureShared(key, metaDataKey, width, height, hasAlpha);
+#elif defined(HAVE_HYBRIS)
+		data = new HostWindowDataOpenGLHybris(key, metaDataKey, width, height, hasAlpha);
 #else
 		data = new HostWindowDataOpenGL(key, metaDataKey, width, height, hasAlpha);
 #endif
