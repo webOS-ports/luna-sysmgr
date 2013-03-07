@@ -57,7 +57,7 @@
 #include "SystemUiController.h"
 
 #define SYS_UI_APP_ID      "com.palm.systemui"
-#define WIFI_PREFS_APP_ID  "com.palm.app.wifi"
+#define WIFI_PREFS_APP_ID  "org.webosports.app.settings"
 #define BLUETOOTH_PREFS_APP_ID  "com.palm.app.bluetooth"
 #define VPN_PREFS_APP_ID   "com.palm.app.vpn"
 
