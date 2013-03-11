@@ -54,6 +54,7 @@ public:
 	virtual void updateFromAppDirectRenderingLayer(int screenX, int screenY, int screenOrientation);
 	virtual void onAboutToSendSyncMessage() {}
 	virtual void postBuffer(OffscreenNativeWindowBuffer *buffer);
+	virtual void cancelBuffer(OffscreenNativeWindowBuffer *buffer);
 
 protected:
 	int m_key;
@@ -68,6 +69,8 @@ protected:
 	EGLImageKHR m_image;
 	EGLDisplay m_eglDisplay;
 	QPixmap m_pixmap;
+	QSystemSemaphore *m_bufferSemaphore;
+	OffscreenNativeWindowBuffer *m_currentBuffer;
 
 private:
 	HostWindowDataOpenGLHybris(const HostWindowDataOpenGLHybris&);

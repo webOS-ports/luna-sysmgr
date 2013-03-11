@@ -60,7 +60,8 @@ HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey,
 	  m_hasAlpha(hasAlpha),
 	  m_updatedAllowed(true),
 	  m_metaDataBuffer(0),
-	  m_textureId(0)
+	  m_textureId(0),
+	  m_bufferSemaphore(0)
 {
 	qDebug() << __PRETTY_FUNCTION__ << "width =" << m_width << "height =" << m_height;
 
@@ -79,6 +80,8 @@ HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey,
 		eglDestroyImageKHR = (PFNEGLDESTROYIMAGEKHRPROC) eglGetProcAddress("eglDestroyImageKHR");
 		glEGLImageTargetTexture2DOES = (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC) eglGetProcAddress("glEGLImageTargetTexture2DOES");
 	}
+
+	m_bufferSemaphore = new QSystemSemaphore(QString("EGLWindow%1").arg(key));
 }
 
 HostWindowDataOpenGLHybris::~HostWindowDataOpenGLHybris()
@@ -106,37 +109,45 @@ void HostWindowDataOpenGLHybris::initializePixmap(QPixmap &screenPixmap)
 
 QPixmap* HostWindowDataOpenGLHybris::acquirePixmap(QPixmap& screenPixmap)
 {
-	OffscreenNativeWindowBuffer *buffer = 0;
+	qDebug() << __PRETTY_FUNCTION__;
 
-	if (m_bufferQueue.size() > 0) {
-		buffer = m_bufferQueue.dequeue();
+	if (m_bufferQueue.size() == 0)
+		return &screenPixmap;
 
-		QGLContext* gc = (QGLContext*) QGLContext::currentContext();
-		if (gc) {
-			if (m_image)
-				eglDestroyImageKHR(m_eglDisplay, m_image);
 
-			if (m_textureId)
-				gc->deleteTexture(m_textureId);
+	if (m_currentBuffer != 0) {
+		qDebug() << "Releasing last used buffer (key =" << m_key << ") ...";
+		m_bufferSemaphore->release();
+	}
 
-			m_textureId = gc->bindTexture(m_pixmap, GL_TEXTURE_2D, GL_BGRA,
-										  QGLContext::PremultipliedAlphaBindOption);
+	qDebug() << "Taking next buffer for rendering (key =" << m_key << ") ...";
+	m_currentBuffer = m_bufferQueue.dequeue();
 
-			EGLClientBuffer clientBuffer = (EGLClientBuffer) buffer;
-			EGLint attrs[] = {
-				EGL_IMAGE_PRESERVED_KHR,    EGL_TRUE,
-				EGL_NONE,
-			};
+	QGLContext* gc = (QGLContext*) QGLContext::currentContext();
+	if (gc) {
+		if (m_image)
+			eglDestroyImageKHR(m_eglDisplay, m_image);
 
-			m_image = eglCreateImageKHR(m_eglDisplay, EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
-												  clientBuffer, attrs);
-			if (m_image == EGL_NO_IMAGE_KHR) {
-				EGLint error = eglGetError();
-				qWarning() << __PRETTY_FUNCTION__ << "error creating EGLImage; error =" << error;
-			}
+		if (m_textureId)
+			gc->deleteTexture(m_textureId);
 
-			glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) m_image);
+		m_textureId = gc->bindTexture(m_pixmap, GL_TEXTURE_2D, GL_BGRA,
+									  QGLContext::PremultipliedAlphaBindOption);
+
+		EGLClientBuffer clientBuffer = (EGLClientBuffer) m_currentBuffer;
+		EGLint attrs[] = {
+			EGL_IMAGE_PRESERVED_KHR,    EGL_TRUE,
+			EGL_NONE,
+		};
+
+		m_image = eglCreateImageKHR(m_eglDisplay, EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+											  clientBuffer, attrs);
+		if (m_image == EGL_NO_IMAGE_KHR) {
+			EGLint error = eglGetError();
+			qWarning() << __PRETTY_FUNCTION__ << "error creating EGLImage; error =" << error;
 		}
+
+		glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) m_image);
 	}
 
 	return &m_pixmap;
@@ -152,5 +163,11 @@ void HostWindowDataOpenGLHybris::onUpdateRegion(QPixmap& screenPixmap, int x, in
 
 void HostWindowDataOpenGLHybris::postBuffer(OffscreenNativeWindowBuffer *buffer)
 {
+	qDebug() << "Got buffer for rendering from client (key =" << m_key << ") ...";
 	m_bufferQueue.append(buffer);
+}
+
+void HostWindowDataOpenGLHybris::cancelBuffer(OffscreenNativeWindowBuffer *buffer)
+{
+	m_bufferSemaphore->release();
 }
