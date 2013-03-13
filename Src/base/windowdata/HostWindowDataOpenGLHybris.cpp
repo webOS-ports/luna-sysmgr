@@ -26,6 +26,7 @@
 #include <QGLContext>
 #include <QApplication>
 #include <QPlatformNativeInterface>
+#include <QCache>
 
 #include <PIpcBuffer.h>
 
@@ -50,6 +51,99 @@
 PFNEGLCREATEIMAGEKHRPROC eglCreateImageKHR = 0;
 PFNEGLDESTROYIMAGEKHRPROC eglDestroyImageKHR = 0;
 PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES = 0;
+
+class RemoteTextureBundle
+{
+public:
+	RemoteTextureBundle(OffscreenNativeWindowBuffer *buffer)
+		: m_index(buffer->index()),
+		  m_textureId(0),
+		  m_pixmap(0)
+	{
+		QGLContext* gc = (QGLContext*) QGLContext::currentContext();
+
+		m_pixmap = new QPixmap(buffer->width, buffer->height);
+
+		m_textureId = gc->bindTexture(*m_pixmap, GL_TEXTURE_2D, GL_BGRA,
+				QGLContext::PremultipliedAlphaBindOption);
+
+		EGLClientBuffer clientBuffer = (EGLClientBuffer) buffer;
+		EGLint attrs[] = {
+			EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
+			EGL_NONE,
+		};
+
+		EGLDisplay currentDisplay = eglGetCurrentDisplay();
+		m_image = eglCreateImageKHR(currentDisplay, EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+											  clientBuffer, attrs);
+		if (m_image == EGL_NO_IMAGE_KHR) {
+			EGLint error = eglGetError();
+			qWarning() << __PRETTY_FUNCTION__ << "error creating EGLImage; error =" << error;
+		}
+
+		glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) m_image);
+	}
+
+	~RemoteTextureBundle()
+	{
+		QGLContext* gc = (QGLContext*) QGLContext::currentContext();
+		EGLDisplay currentDisplay = eglGetCurrentDisplay();
+
+		if (m_image)
+			eglDestroyImageKHR(currentDisplay, m_image);
+
+		if (m_textureId)
+			gc->deleteTexture(m_textureId);
+
+		if (m_pixmap)
+			delete m_pixmap;
+	}
+
+	QPixmap* pixmap() { return m_pixmap; }
+
+private:
+	int m_index;
+	unsigned int m_textureId;
+	QPixmap *m_pixmap;
+	EGLImageKHR m_image;
+};
+
+class RemoteTextureCache
+{
+public:
+	RemoteTextureCache(int size)
+	{
+		m_cache.setMaxCost(size);
+	}
+
+	QPixmap* retrievePixmapForBuffer(OffscreenNativeWindowBuffer *buffer)
+	{
+		if(m_cache.contains(buffer->index())) {
+			QPixmap* bufferPixmap = m_cache[buffer->index()]->pixmap();
+			if(bufferPixmap->width() == buffer->width &&
+			   bufferPixmap->height() == buffer->height) {
+				return bufferPixmap;
+			}
+			else {
+				// sizes mismatch -> remove buffer from cache and create new cache item
+				qDebug() << __PRETTY_FUNCTION__ << "Removing buffer from cache cause of size mismatch";
+				m_cache.remove(buffer->index());
+			}
+		}
+
+		qDebug() << __PRETTY_FUNCTION__ << "Buffer" << buffer->index()
+				 << "is not yet cached; creating new cache item ...";
+		RemoteTextureBundle* item = new RemoteTextureBundle(buffer);
+		m_cache.insert(buffer->index(), item);
+
+		return item->pixmap();
+	}
+
+private:
+	QCache<unsigned int, RemoteTextureBundle> m_cache;
+	int m_maxSize;
+};
+
 
 HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey, int width,
 													   int height, bool hasAlpha)
@@ -82,6 +176,8 @@ HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey,
 	}
 
 	m_bufferSemaphore = new QSystemSemaphore(QString("EGLWindow%1").arg(key));
+
+	m_cache = new RemoteTextureCache(OffscreenNativeWindow::bufferCount());
 }
 
 HostWindowDataOpenGLHybris::~HostWindowDataOpenGLHybris()
@@ -93,64 +189,30 @@ void HostWindowDataOpenGLHybris::flip()
 	int width = m_width;
 	m_width = m_height;
 	m_height = width;
-
-	m_pixmap = QPixmap(m_width, m_height);
-	m_pixmap.fill(QColor(0, 255, 0, 255));
 }
 
 void HostWindowDataOpenGLHybris::initializePixmap(QPixmap &screenPixmap)
 {
-	screenPixmap = QPixmap(m_width, m_height);
-	screenPixmap.fill(QColor(255, 0, 0, 255));
-
-	m_pixmap = QPixmap(m_width, m_height);
-	m_pixmap.fill(QColor(0, 255, 0, 255));
+	screenPixmap = QPixmap();
 }
 
 QPixmap* HostWindowDataOpenGLHybris::acquirePixmap(QPixmap& screenPixmap)
 {
 	qDebug() << __PRETTY_FUNCTION__;
 
-	if (m_bufferQueue.size() == 0)
-		return &screenPixmap;
-
-
-	if (m_currentBuffer != 0) {
-		qDebug() << "Releasing last used buffer (key =" << m_key << ") ...";
-		m_bufferSemaphore->release();
+	if (m_bufferQueue.size() == 0) {
+		qDebug() << __PRETTY_FUNCTION__ << "No buffer available for rendering!";
+		return &screenPixmap;;
 	}
 
-	qDebug() << "Taking next buffer for rendering (key =" << m_key << ") ...";
-	m_currentBuffer = m_bufferQueue.dequeue();
+	OffscreenNativeWindowBuffer *buffer = m_bufferQueue.dequeue();
+	qDebug() << __PRETTY_FUNCTION__ << "Getting buffer from cache (index =" << buffer->index() << ") ...";
+	QPixmap *pixmap = m_cache->retrievePixmapForBuffer(buffer);
 
-	QGLContext* gc = (QGLContext*) QGLContext::currentContext();
-	if (gc) {
-		if (m_image)
-			eglDestroyImageKHR(m_eglDisplay, m_image);
+	qDebug() << __PRETTY_FUNCTION__ << "Releasing buffer semaphore ...";
+	m_bufferSemaphore->release();
 
-		if (m_textureId)
-			gc->deleteTexture(m_textureId);
-
-		m_textureId = gc->bindTexture(m_pixmap, GL_TEXTURE_2D, GL_BGRA,
-									  QGLContext::PremultipliedAlphaBindOption);
-
-		EGLClientBuffer clientBuffer = (EGLClientBuffer) m_currentBuffer;
-		EGLint attrs[] = {
-			EGL_IMAGE_PRESERVED_KHR,    EGL_TRUE,
-			EGL_NONE,
-		};
-
-		m_image = eglCreateImageKHR(m_eglDisplay, EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
-											  clientBuffer, attrs);
-		if (m_image == EGL_NO_IMAGE_KHR) {
-			EGLint error = eglGetError();
-			qWarning() << __PRETTY_FUNCTION__ << "error creating EGLImage; error =" << error;
-		}
-
-		glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) m_image);
-	}
-
-	return &m_pixmap;
+	return pixmap;
 }
 
 void HostWindowDataOpenGLHybris::updateFromAppDirectRenderingLayer(int screenX, int screenY, int screenOrientation)
@@ -163,11 +225,12 @@ void HostWindowDataOpenGLHybris::onUpdateRegion(QPixmap& screenPixmap, int x, in
 
 void HostWindowDataOpenGLHybris::postBuffer(OffscreenNativeWindowBuffer *buffer)
 {
-	qDebug() << "Got buffer for rendering from client (key =" << m_key << ") ...";
+	qDebug() << "Got buffer for rendering from client (key =" << m_key << ", index =" << buffer->index() << ") ...";
 	m_bufferQueue.append(buffer);
 }
 
 void HostWindowDataOpenGLHybris::cancelBuffer(OffscreenNativeWindowBuffer *buffer)
 {
+	qDebug() << "Canceling buffer index =" << buffer->index();
 	m_bufferSemaphore->release();
 }

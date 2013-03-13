@@ -32,6 +32,8 @@
 #include <EGL/eglext.h>
 #include <OffscreenNativeWindow.h>
 
+class RemoteTextureCache;
+
 class HostWindowDataOpenGLHybris : public HostWindowData
 {
 public:
@@ -50,8 +52,8 @@ public:
 	virtual QPixmap* acquirePixmap(QPixmap& screenPixmap);
 	virtual void allowUpdates(bool allow) {}
 	virtual void onUpdateRegion(QPixmap& screenPixmap, int x, int y, int w, int h);
-	virtual void onUpdateWindowRequest() { }
 	virtual void updateFromAppDirectRenderingLayer(int screenX, int screenY, int screenOrientation);
+	virtual void onUpdateWindowRequest() { }
 	virtual void onAboutToSendSyncMessage() {}
 	virtual void postBuffer(OffscreenNativeWindowBuffer *buffer);
 	virtual void cancelBuffer(OffscreenNativeWindowBuffer *buffer);
@@ -70,7 +72,7 @@ protected:
 	EGLDisplay m_eglDisplay;
 	QPixmap m_pixmap;
 	QSystemSemaphore *m_bufferSemaphore;
-	OffscreenNativeWindowBuffer *m_currentBuffer;
+	RemoteTextureCache *m_cache;
 
 private:
 	HostWindowDataOpenGLHybris(const HostWindowDataOpenGLHybris&);
