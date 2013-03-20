@@ -64,10 +64,12 @@ HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey,
 {
 	qDebug() << __PRETTY_FUNCTION__ << "width =" << m_width << "height =" << m_height;
 
-	m_metaDataBuffer = PIpcBuffer::attach(metaDataKey);
-	if (!m_metaDataBuffer) {
-		g_critical("%s (%d): Failed to attach to metadata shared buffer with key: %d",
-				   __PRETTY_FUNCTION__, __LINE__, metaDataKey);
+	if (metaDataKey > 0) {
+		m_metaDataBuffer = PIpcBuffer::attach(metaDataKey);
+		if (!m_metaDataBuffer) {
+			g_critical("%s (%d): Failed to attach to metadata shared buffer with key: %d",
+				__PRETTY_FUNCTION__, __LINE__, metaDataKey);
+		}
 	}
 
 	m_eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
