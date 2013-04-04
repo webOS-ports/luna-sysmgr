@@ -635,9 +635,11 @@ contains(CONFIG_BUILD, opengl) {
 		contains(CONFIG_BUILD, hybris) {
 			DEFINES += HAVE_HYBRIS Q_WS_QPA
 			SOURCES += HostWindowDataOpenGLHybris.cpp \
-				   HybrisCompositor.cpp
+				   HybrisCompositorRemoteClientLuna.cpp
 			HEADERS += HostWindowDataOpenGLHybris.h \
-				   HybrisCompositor.h
+				   HybrisCompositorRemoteClientLuna.h
+			LIBS += -lWebosHybrisCompositor
+			INCLUDEPATH += $$(STAGING_INCDIR)/WebosHybrisCompositor
 		}
 		else {
 		contains(CONFIG_BUILD, openglcomposited) {

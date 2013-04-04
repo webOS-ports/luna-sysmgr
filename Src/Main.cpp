@@ -67,7 +67,8 @@
 #include <QtGlobal> 
 
 #if defined(HAVE_HYBRIS)
-#include "HybrisCompositor.h"
+#include <HybrisCompositor.h>
+#include "HybrisCompositorRemoteClientLuna.h"
 #endif
 
 /* Convenience macro for simulating crashes for debugging purposes only:
@@ -678,7 +679,7 @@ int main( int argc, char** argv)
 
 	// Initialize Hybris Buffer Server
 #if defined(HAVE_HYBRIS)
-	(void) HybrisCompositor::instance();
+	(void) HybrisCompositor::instance()->setRemoteClientFactory(new HybrisCompositorRemoteClientLunaFactory);
 #endif
 
 	// Initialize Ipc Server
