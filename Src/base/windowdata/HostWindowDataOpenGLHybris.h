@@ -30,6 +30,7 @@
 #include <PIpcBuffer.h>
 #include <EGL/eglhybris.h>
 #include <EGL/eglext.h>
+#include <OffscreenNativeWindow.h>
 
 class HostWindowDataOpenGLHybris : public HostWindowData
 {
