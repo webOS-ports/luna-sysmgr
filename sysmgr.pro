@@ -633,13 +633,12 @@ contains(CONFIG_BUILD, opengl) {
                 #LIBS += -lnapp -lnrwindow
 	} else {
 		contains(CONFIG_BUILD, hybris) {
+			PKGCONFIG += webos-gui
 			DEFINES += HAVE_HYBRIS Q_WS_QPA
 			SOURCES += HostWindowDataOpenGLHybris.cpp \
-				   HybrisCompositorRemoteClientLuna.cpp
+				   WebosSurfaceManagerRemoteClientLuna.cpp
 			HEADERS += HostWindowDataOpenGLHybris.h \
-				   HybrisCompositorRemoteClientLuna.h
-			LIBS += -lWebosHybrisCompositor
-			INCLUDEPATH += $$(STAGING_INCDIR)/WebosHybrisCompositor
+				   WebosSurfaceManagerRemoteClientLuna.h
 		}
 		else {
 		contains(CONFIG_BUILD, openglcomposited) {

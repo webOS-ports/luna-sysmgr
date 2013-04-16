@@ -67,8 +67,8 @@
 #include <QtGlobal> 
 
 #if defined(HAVE_HYBRIS)
-#include <HybrisCompositor.h>
-#include "HybrisCompositorRemoteClientLuna.h"
+#include <WebosSurfaceManager.h>
+#include "WebosSurfaceManagerRemoteClientLuna.h"
 #endif
 
 /* Convenience macro for simulating crashes for debugging purposes only:
@@ -677,9 +677,8 @@ int main( int argc, char** argv)
 	// Safe to create logging threads now
 	logInit();
 
-	// Initialize Hybris Buffer Server
 #if defined(HAVE_HYBRIS)
-	(void) HybrisCompositor::instance()->setRemoteClientFactory(new HybrisCompositorRemoteClientLunaFactory);
+	(void) WebosSurfaceManager::instance()->setRemoteClientFactory(new WebosSurfaceManagerRemoteClientLunaFactory);
 #endif
 
 	// Initialize Ipc Server

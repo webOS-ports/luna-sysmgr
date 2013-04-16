@@ -18,24 +18,24 @@
 #ifndef HYBRISCOMPOSITORREMOTECLIENTLUNA_H
 #define HYBRISCOMPOSITORREMOTECLIENTLUNA_H
 
-#include <HybrisCompositorRemoteClient.h>
+#include <WebosSurfaceManagerRemoteClient.h>
 
-class HybrisCompositorRemoteClientLuna : public HybrisCompositorRemoteClient
+class WebosSurfaceManagerRemoteClientLuna : public WebosSurfaceManagerRemoteClient
 {
 	Q_OBJECT
 public:
-	HybrisCompositorRemoteClientLuna(HybrisCompositor *parent, int socketFd);
+	WebosSurfaceManagerRemoteClientLuna(WebosSurfaceManager *parent, int socketFd);
 
 protected:
 	virtual void handleIncomingBuffer(int windowId, OffscreenNativeWindowBuffer *buffer);
 };
 
-class HybrisCompositorRemoteClientLunaFactory : public HybrisCompositorRemoteClientFactory
+class WebosSurfaceManagerRemoteClientLunaFactory : public WebosSurfaceManagerRemoteClientFactory
 {
 public:
-	virtual HybrisCompositorRemoteClient *create(HybrisCompositor *parent, int socketFd)
+	virtual WebosSurfaceManagerRemoteClient *create(WebosSurfaceManager *parent, int socketFd)
 	{
-		return new HybrisCompositorRemoteClientLuna(parent, socketFd);
+		return new WebosSurfaceManagerRemoteClientLuna(parent, socketFd);
 	}
 };
 

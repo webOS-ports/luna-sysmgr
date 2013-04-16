@@ -18,18 +18,18 @@
 
 #include <QDebug>
 
-#include "HybrisCompositorRemoteClientLuna.h"
+#include "WebosSurfaceManagerRemoteClientLuna.h"
 
 #include "IpcServer.h"
 #include "HostWindow.h"
 #include "HostWindowDataOpenGLHybris.h"
 
-HybrisCompositorRemoteClientLuna::HybrisCompositorRemoteClientLuna(HybrisCompositor *parent, int socketFd)
-	: HybrisCompositorRemoteClient(parent, socketFd)
+WebosSurfaceManagerRemoteClientLuna::WebosSurfaceManagerRemoteClientLuna(WebosSurfaceManager *parent, int socketFd)
+	: WebosSurfaceManagerRemoteClient(parent, socketFd)
 {
 }
 
-void HybrisCompositorRemoteClientLuna::handleIncomingBuffer(int windowId, OffscreenNativeWindowBuffer *buffer)
+void WebosSurfaceManagerRemoteClientLuna::handleIncomingBuffer(int windowId, OffscreenNativeWindowBuffer *buffer)
 {
 	Window *clientWindow = IpcServer::instance()->findWindow(windowId);
 	if (!clientWindow) {
