@@ -126,13 +126,10 @@ public:
 			}
 			else {
 				// sizes mismatch -> remove buffer from cache and create new cache item
-				qDebug() << __PRETTY_FUNCTION__ << "Removing buffer from cache cause of size mismatch";
 				m_cache.remove(buffer->index());
 			}
 		}
 
-		qDebug() << __PRETTY_FUNCTION__ << "Buffer" << buffer->index()
-				 << "is not yet cached; creating new cache item ...";
 		RemoteTextureBundle* item = new RemoteTextureBundle(buffer);
 		m_cache.insert(buffer->index(), item);
 
@@ -199,23 +196,15 @@ void HostWindowDataOpenGLHybris::initializePixmap(QPixmap &screenPixmap)
 
 QPixmap* HostWindowDataOpenGLHybris::acquirePixmap(QPixmap& screenPixmap)
 {
-	qDebug() << __PRETTY_FUNCTION__;
-
-	if (m_bufferQueue.size() == 0 && m_currentBuffer == 0) {
-		qDebug() << __PRETTY_FUNCTION__ << "We don't have a buffer in queue and no current buffer for rendering!";
+	if (m_bufferQueue.size() == 0 && m_currentBuffer == 0)
 		return &screenPixmap;
-	}
 
 	if (m_bufferQueue.size() > 0) {
-		qDebug() << __PRETTY_FUNCTION__ << "Taking next buffer from queue for rendering";
 		m_currentBuffer = m_bufferQueue.dequeue();
 		m_bufferSemaphore->release();
 	}
 
-	qDebug() << __PRETTY_FUNCTION__ << "Getting buffer from cache (index =" << m_currentBuffer->index() << ") ...";
-	QPixmap *pixmap = m_cache->retrievePixmapForBuffer(m_currentBuffer);
-
-	return pixmap;
+	return m_cache->retrievePixmapForBuffer(m_currentBuffer);
 }
 
 void HostWindowDataOpenGLHybris::updateFromAppDirectRenderingLayer(int screenX, int screenY, int screenOrientation)
@@ -228,7 +217,6 @@ void HostWindowDataOpenGLHybris::onUpdateRegion(QPixmap& screenPixmap, int x, in
 
 void HostWindowDataOpenGLHybris::postBuffer(OffscreenNativeWindowBuffer *buffer)
 {
-	qDebug() << "Got buffer for rendering from client (key =" << m_key << ", index =" << buffer->index() << ") ...";
 	m_bufferQueue.append(buffer);
 }
 
@@ -242,6 +230,5 @@ void HostWindowDataOpenGLHybris::cancelBuffer(OffscreenNativeWindowBuffer *buffe
 		m_currentBuffer = 0;
 	}
 
-	qDebug() << "Canceling buffer index =" << buffer->index();
 	m_bufferSemaphore->release();
 }
