@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -29,7 +29,10 @@
 #include "SingleClickGestureRecognizer.h"
 #include "Logging.h"
 
+
+Qt::GestureType SingleClickGesture::type = Qt::CustomGesture;
 bool SingleClickGestureRecognizer::g_logSingleClick = false;
+
 
 QGesture* SingleClickGestureRecognizer::create (QObject* target)
 {
@@ -38,6 +41,7 @@ QGesture* SingleClickGestureRecognizer::create (QObject* target)
 
 QGestureRecognizer::Result SingleClickGestureRecognizer::recognize (QGesture* gesture, QObject* watched, QEvent* event)
 {
+    //g_message("%s", __PRETTY_FUNCTION__);
     QGestureRecognizer::Result result = QGestureRecognizer::Ignore;
 
     SingleClickGesture* singleClickGesture = static_cast<SingleClickGesture*>(gesture);
@@ -84,16 +88,12 @@ QGestureRecognizer::Result SingleClickGestureRecognizer::recognize (QGesture* ge
 		}
 		break;
 	    }
-
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	case QEvent::MouseButtonPress:
 	    {
 		QMouseEvent* mouseEvent = static_cast<const QMouseEvent *>(event);
 		singleClickGesture->stopSingleClickTimer();
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
         singleClickGesture->m_penDownPos = mouseEvent->posF();
-#else
-        singleClickGesture->m_penDownPos = mouseEvent->localPos();
-#endif
         singleClickGesture->setHotSpot (mouseEvent->globalPos());
 		singleClickGesture->m_mouseDown = true;
 		singleClickGesture->m_triggerSingleClickOnRelease = false;
@@ -108,11 +108,7 @@ QGestureRecognizer::Result SingleClickGestureRecognizer::recognize (QGesture* ge
 		    || singleClickGesture->state() == Qt::GestureUpdated)
 	    {
 		QMouseEvent* mouseEvent = static_cast<const QMouseEvent *>(event);
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		int moveDistance = (int) qAbs(QLineF (mouseEvent->posF(), singleClickGesture->m_penDownPos).length());
-#else
-        int moveDistance = (int) qAbs(QLineF (mouseEvent->localPos(), singleClickGesture->m_penDownPos).length());
-#endif
 		if (moveDistance > s_tapRadius)
 		{
 		    // move is outside tap radius or multiple fingers are down, so this is not a tap
@@ -148,7 +144,7 @@ QGestureRecognizer::Result SingleClickGestureRecognizer::recognize (QGesture* ge
 		result = QGestureRecognizer::CancelGesture;
 	    }
 	    break;
-
+#endif // QT_VERSION < 5.0.0
 	default:
 	    break;
     }
@@ -157,7 +153,7 @@ QGestureRecognizer::Result SingleClickGestureRecognizer::recognize (QGesture* ge
 
 void SingleClickGestureRecognizer::reset (QGesture* state)
 {
-        SingleClickGesture *gesture = static_cast<SingleClickGesture *>(state);
+    SingleClickGesture *gesture = static_cast<SingleClickGesture *>(state);
 	gesture->stopSingleClickTimer();
 	gesture->m_penDownPos = QPointF();
 	gesture->m_timerId = 0;

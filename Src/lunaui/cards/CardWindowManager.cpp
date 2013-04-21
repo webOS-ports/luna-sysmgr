@@ -1,6 +1,7 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2008-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2008-2013 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2013 LG Electronics
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -68,6 +69,8 @@ static const int kModalWindowAnimationTimeout = 45;
 static const int s_marginSlice = 5;
 
 int kAngryCardThreshold = 0;
+
+static const qreal kReorderEndWindowOpacity = 1.0f;
 
 // -------------------------------------------------------------------------------------------------------------
 
@@ -141,10 +144,18 @@ CardWindowManager::CardWindowManager(int maxWidth, int maxHeight)
 
 	connect(&m_anims, SIGNAL(finished()), SLOT(slotAnimationsFinished()));
 
-	grabGesture(Qt::TapGesture);
-	grabGesture(Qt::TapAndHoldGesture);
-	grabGesture((Qt::GestureType) SysMgrGestureFlick);
+    grabGesture(Qt::TapGesture);
+    grabGesture(Qt::TapAndHoldGesture);
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+	grabGesture((Qt::GestureType) SysMgrGestureFlick);
+#else
+    grabGesture(FlickGesture::gestureType());
+#endif
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    setAcceptTouchEvents(true);
+#endif
 }
 
 CardWindowManager::~CardWindowManager()
@@ -463,7 +474,7 @@ void CardWindowManager::prepareAddWindow(Window* win)
 		return;
 
 	if ((card->hostWindowData() != 0) &&
-	    !card->isHost() && (card->type() != Window::Type_ModalChildWindowCard) &&
+	    !card->isHost() && (card->type() != WindowType::Type_ModalChildWindowCard) &&
 	    (card->getCardFixedOrientation() == Event::Orientation_Invalid)) {
 		// safeguard code in case the data card was launched right before we changed orientation, resulting
 		// in possibly a landscape card in portrait mode or vice versa
@@ -486,7 +497,7 @@ void CardWindowManager::prepareAddWindow(Window* win)
 	}
 
 	// If we have a modal card and we cannot add it for whatever reason, just return
-	if(Window::Type_ModalChildWindowCard == win->type() && (SystemUiController::NoErr != (m_dismissModalImmediately = proceedToAddModalWindow(card)))) {
+	if(WindowType::Type_ModalChildWindowCard == win->type() && (SystemUiController::NoErr != (m_dismissModalImmediately = proceedToAddModalWindow(card)))) {
 		m_modalWindowState = ModalWindowAddInitCheckFail;
 		notifySysControllerOfModalStatus(m_dismissModalImmediately, false, ModalLaunch, win);
 		return;
@@ -496,10 +507,10 @@ void CardWindowManager::prepareAddWindow(Window* win)
 	card->enableShadow();
 
 	// Do this ONLY if we are not adding a MODAL window
-	if(Window::Type_ModalChildWindowCard != card->type()) {
+	if(WindowType::Type_ModalChildWindowCard != card->type()) {
 
 		// If the currently active card is a modal card, make sure we dismiss it as we are going to get a new active card - don't restore the state as the new card will be the active card
-		if(activeWindow() && Window::Type_ModalChildWindowCard == activeWindow()->type()) {
+		if(activeWindow() && WindowType::Type_ModalChildWindowCard == activeWindow()->type()) {
 
 			m_modalWindowState = ModalWindowDismissedParentSwitched;
 			notifySysControllerOfModalStatus(SystemUiController::ActiveCardsSwitched, true, ModalDismissNoAnimate, activeWindow());
@@ -549,7 +560,7 @@ void CardWindowManager::prepareAddWindowSibling(CardWindow* win)
 {
 	if (m_activeGroup && !win->launchInNewGroup()) {
 		CardWindow* activeWin = m_activeGroup->activeCard();
-		if(Window::Type_ModalChildWindowCard != win->type()) {
+		if(WindowType::Type_ModalChildWindowCard != win->type()) {
 			if ((activeWin->focused() &&
 				(win->launchingProcessId() == activeWin->processId() ||
 				(win->launchingAppId() == activeWin->appId())))) {
@@ -597,7 +608,7 @@ void CardWindowManager::addWindowTimedOut(Window* win)
 	if (card->isHost())
 		return;
 
-	if(Window::Type_ModalChildWindowCard == win->type() && -1 != m_dismissModalImmediately) {
+	if(WindowType::Type_ModalChildWindowCard == win->type() && -1 != m_dismissModalImmediately) {
 		m_dismissModalImmediately = -1;
 		return;
 	}
@@ -615,12 +626,12 @@ void CardWindowManager::addWindowTimedOutNormal(CardWindow* win)
 
 	Q_ASSERT(m_activeGroup && m_activeGroup->activeCard() == win);
 
-	if(Window::Type_ModalChildWindowCard != win->type()) {
+	if(WindowType::Type_ModalChildWindowCard != win->type()) {
 		setActiveCardOffScreen(false);
 		slideAllGroups();
 	}
 
-	if(Window::Type_ModalChildWindowCard == win->type() && -1 != m_dismissModalImmediately) {
+	if(WindowType::Type_ModalChildWindowCard == win->type() && -1 != m_dismissModalImmediately) {
 		m_dismissModalImmediately = -1;
 		return;
 	}
@@ -654,7 +665,7 @@ void CardWindowManager::removeWindow(Window* win)
 	Q_EMIT signalExitReorder();
 
 	// Either there are no modal window(s) OR we are not deleting the modal parent - default to the plain vanilla delete.
-	if((win->type() != Window::Type_ModalChildWindowCard && false == m_addingModalWindow) || (win->type() != Window::Type_ModalChildWindowCard && false == card->isCardModalParent())) {
+	if((win->type() != WindowType::Type_ModalChildWindowCard && false == m_addingModalWindow) || (win->type() != WindowType::Type_ModalChildWindowCard && false == card->isCardModalParent())) {
 		removeWindowNoModality(card);
 	}
 	else
@@ -703,10 +714,10 @@ void CardWindowManager::removeWindowWithModality(CardWindow* win)
 
 	card = win;
 
-	restore = (activeCard == card && Window::Type_ModalChildWindowCard == card->type()) ? true:false;
+	restore = (activeCard == card && WindowType::Type_ModalChildWindowCard == card->type()) ? true:false;
 
 	// If the modal card was deleted because it's parent was deleted externally, don't run any of these, simply remove the modal and return
-	if(Window::Type_ModalChildWindowCard == card->type() && m_modalWindowState == ModalParentDimissedWaitForChildDismissal && NULL == m_parentOfModalCard) {
+	if(WindowType::Type_ModalChildWindowCard == card->type() && m_modalWindowState == ModalParentDimissedWaitForChildDismissal && NULL == m_parentOfModalCard) {
 		handleModalRemovalForDeletedParent(card);
 		m_modalWindowState = NoModalWindow;
 		return;
@@ -728,11 +739,11 @@ void CardWindowManager::removeWindowWithModality(CardWindow* win)
 		SystemUiController::ModalWinDismissErrorReason dismiss = SystemUiController::DismissUnknown;
 
 		// We are removing a modal card externally
-		if(Window::Type_ModalChildWindowCard == card->type()) {
+		if(WindowType::Type_ModalChildWindowCard == card->type()) {
 			m_modalWindowState = ModalWindowDismissedExternally;
 		}
 		// check if w is a modal parent
-		else if(true == card->isCardModalParent() && (Window::Type_ModalChildWindowCard == activeWindow()->type())) {
+		else if(true == card->isCardModalParent() && (WindowType::Type_ModalChildWindowCard == activeWindow()->type())) {
 			m_modalWindowState = ModalParentDismissed;
 			dismiss = SystemUiController::ParentCardDismissed;
 		}
@@ -774,7 +785,7 @@ void CardWindowManager::removeWindowWithModality(CardWindow* win)
 	if(false == performCommonWindowRemovalTasks(card, (m_modalWindowState == ModalParentDismissed)?true:false))
 		return;
 
-	if(Window::Type_ModalChildWindowCard != card->type()) {
+	if(WindowType::Type_ModalChildWindowCard != card->type()) {
 		// slide card off the top of the screen
 		CardWindow::Position pos = card->position();
 		QRectF r = pos.toTransform().mapRect(card->boundingRect());
@@ -805,7 +816,7 @@ void CardWindowManager::removeWindowWithModality(CardWindow* win)
 
 void CardWindowManager::handleModalRemovalForDeletedParent(CardWindow* card)
 {
-	if(NULL == card || Window::Type_ModalChildWindowCard != card->type())
+	if(NULL == card || WindowType::Type_ModalChildWindowCard != card->type())
 		return;
 
 	// ignore the return value.
@@ -974,7 +985,7 @@ void CardWindowManager::performPostModalWindowRemovedActions(Window* win, bool r
 	}
 
 	// Finally - if the modal was dismissed externally then make it invisible here so that it doesn't linger around. ResetModal() will clear out the flags on the parent
-	if((ModalWindowDismissedExternally == m_modalWindowState || ModalWindowDismissedParentSwitched == m_modalWindowState) && (activeWin->type() == Window::Type_ModalChildWindowCard))
+	if((ModalWindowDismissedExternally == m_modalWindowState || ModalWindowDismissedParentSwitched == m_modalWindowState) && (activeWin->type() == WindowType::Type_ModalChildWindowCard))
 		activeWin->setVisible(false);
 }
 
@@ -985,7 +996,7 @@ void CardWindowManager::slotOpacityAnimationFinished()
 
 void CardWindowManager::removeCardFromGroup(CardWindow* win, bool adjustLayout)
 {
-	if(Window::Type_ModalChildWindowCard == win->type())
+	if(WindowType::Type_ModalChildWindowCard == win->type())
 		return;
 
 	CardGroup* group = win->cardGroup();
@@ -1019,7 +1030,7 @@ void CardWindowManager::removeCardFromGroupMaximized(CardWindow* win)
 {
 	IMEController::instance()->removeClient(win);
 
-	if(Window::Type_ModalChildWindowCard == win->type())
+	if(WindowType::Type_ModalChildWindowCard == win->type())
 		return;
 
 	// Switch out only if we are the active window
@@ -1077,7 +1088,7 @@ void CardWindowManager::maximizeActiveWindow(bool animate)
 	QRect r;
 
 	// If the currently active card window is a modal window, don't do any of these operations except If we are doing this as a part of rotation
-	if(activeWindow()->type() != Window::Type_ModalChildWindowCard || (activeWindow()->type() == Window::Type_ModalChildWindowCard && true == SystemUiController::instance()->isUiRotating())) {
+	if(activeWindow()->type() != WindowType::Type_ModalChildWindowCard || (activeWindow()->type() == WindowType::Type_ModalChildWindowCard && true == SystemUiController::instance()->isUiRotating())) {
 
 		m_activeGroup->raiseCards();
 
@@ -1088,7 +1099,7 @@ void CardWindowManager::maximizeActiveWindow(bool animate)
 		else
 			layoutAllGroups(false);
 
-		if(activeWindow()->type() != Window::Type_ModalChildWindowCard)
+		if(activeWindow()->type() != WindowType::Type_ModalChildWindowCard)
 			r = normalOrScreenBounds(m_activeGroup->activeCard());
 		else if(NULL != m_parentOfModalCard)
 			r = normalOrScreenBounds(m_parentOfModalCard);
@@ -1229,6 +1240,7 @@ void CardWindowManager::setActiveCardOffScreen(bool fullsize)
 	activeCard->setPosition(pos);
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 void CardWindowManager::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	// We may get a second pen down. Just ignore it.
@@ -1266,6 +1278,7 @@ void CardWindowManager::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 	resetMouseTrackState();
 }
+#endif // QT_VERSION < 5.0.0
 
 bool CardWindowManager::playAngryCardSounds() const
 {
@@ -1278,15 +1291,25 @@ bool CardWindowManager::sceneEvent(QEvent* event)
 		QGestureEvent* ge = static_cast<QGestureEvent*>(event);
 		QGesture* g = ge->gesture(Qt::TapGesture);
 		if (g) {
+
+            if (SystemUiController::instance()->isUniversalSearchShown()) {
+                event->ignore();
+                return false;
+            }
+
 			event->accept();
 			return true;
 		}
-		g = ge->gesture(Qt::TapAndHoldGesture);
+        g = ge->gesture(Qt::TapAndHoldGesture);
 		if (g) {
 			event->accept();
 			return true;
 		}
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		g = ge->gesture((Qt::GestureType) SysMgrGestureFlick);
+#else
+        g = ge->gesture(FlickGesture::gestureType());
+#endif
 		if (g) {
 			event->accept();
 			return true;
@@ -1303,7 +1326,7 @@ bool CardWindowManager::sceneEvent(QEvent* event)
 			}
 			return true;
 		}
-		g = ge->gesture(Qt::TapAndHoldGesture);
+        g = ge->gesture(Qt::TapAndHoldGesture);
 		if (g) {
 			QTapAndHoldGesture* hold = static_cast<QTapAndHoldGesture*>(g);
 			if (hold->state() == Qt::GestureFinished) {
@@ -1312,7 +1335,11 @@ bool CardWindowManager::sceneEvent(QEvent* event)
 			}
 			return true;
 		}
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		g = ge->gesture((Qt::GestureType) SysMgrGestureFlick);
+#else
+        g = ge->gesture(FlickGesture::gestureType());
+#endif
 		if (g) {
 			FlickGesture* flick = static_cast<FlickGesture*>(g);
 			if (flick->state() == Qt::GestureFinished) {
@@ -1322,8 +1349,280 @@ bool CardWindowManager::sceneEvent(QEvent* event)
 			return true;
 		}
 	}
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    else if (event->type() == QEvent::TouchBegin ||
+             event->type() == QEvent::TouchEnd ||
+             event->type() == QEvent::TouchCancel ||
+             event->type() == QEvent::TouchUpdate) {
+        QTouchEvent *e = static_cast<QTouchEvent *>(event);
+
+        if (e->touchPoints().isEmpty()) {
+            return false;
+        } else if (e->type() == QEvent::TouchBegin) {
+            return handleTouchBegin(e);
+        } else if (e->type() == QEvent::TouchEnd ||
+                   e->type() == QEvent::TouchCancel) {
+            return handleTouchEnd(e);
+        } else if (e->type() == QEvent::TouchUpdate) {
+            return handleTouchUpdate(e);
+        }
+    }
+#endif
 	return QGraphicsObject::sceneEvent(event);
 }
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+void CardWindowManager::slideAllGroupsOnTouchUpdate(int xOffset)
+{
+    if (m_groups.empty() || !m_activeGroup) {
+        return;
+    }
+
+    m_activeGroup->setCardPositions(xOffset);
+
+    int activeGrpIndex = m_groups.indexOf(m_activeGroup);
+    int centerX = -m_activeGroup->left() - kGapBetweenGroups + xOffset;
+
+    for (int i = activeGrpIndex - 1; i >= 0; --i) {
+        centerX += -m_groups[i]->right();
+        m_groups[i]->setCardPositions(centerX);
+        centerX += -kGapBetweenGroups - m_groups[i]->left();
+    }
+
+    centerX = m_activeGroup->right() + kGapBetweenGroups + xOffset;
+
+    for (int i = activeGrpIndex + 1; i < m_groups.size(); ++i) {
+        centerX += m_groups[i]->left();
+        m_groups[i]->setCardPositions(centerX);
+        centerX += kGapBetweenGroups + m_groups[i]->right();
+    }
+}
+
+bool CardWindowManager::handleTouchBegin(QTouchEvent *e)
+{
+    if (m_penDown) {
+        e->accept();
+		return true;
+    }
+
+	resetMouseTrackState();
+
+    if (m_groups.empty() || !m_activeGroup) {
+		return false;
+    }
+
+	m_penDown = true;
+	updateAllowWindowUpdates();
+
+	m_curState->handleTouchBegin(e);
+
+    return e->isAccepted();
+}
+
+bool CardWindowManager::handleTouchEnd(QTouchEvent *e)
+{
+    if (m_penDown) {
+        m_curState->handleTouchEnd(e);
+        e->accept();
+    }
+
+    resetMouseTrackState();
+    updateAllowWindowUpdates();
+
+    return e->isAccepted();
+}
+
+bool CardWindowManager::handleTouchUpdate(QTouchEvent *e)
+{
+    if (!m_penDown) {
+        return false;
+    }
+
+    m_curState->handleTouchUpdate(e);
+
+    return e->isAccepted();
+}
+
+void CardWindowManager::handleTouchBeginMinimized(QTouchEvent* e)
+{
+    // try to capture the card the user first touched
+    if (m_activeGroup &&
+        m_activeGroup->setActiveCard(e->touchPoints().first().scenePos())) {
+        m_draggedWin = m_activeGroup->activeCard();
+    }
+}
+
+void CardWindowManager::handleTouchUpdateMinimized(QTouchEvent* e)
+{
+    if (m_groups.isEmpty() || !m_activeGroup) {
+        return;
+    }
+
+    QTouchEvent::TouchPoint p = e->touchPoints().first();
+    QPointF delta = p.scenePos() - p.startScenePos();
+    QPointF diff; // distance move between last and current mouse position
+
+    // lock movement to an axis
+    if (m_movement == MovementUnlocked) {
+        if ((delta.x() * delta.x() + delta.y() * delta.y()) <
+            Settings::LunaSettings()->tapRadiusSquared) {
+            return;
+        }
+
+        if (abs(delta.x()) > 0.866 * abs(delta.y())) {
+            m_movement = MovementHLocked;
+            m_activeGroupPivot = m_activeGroup->x();
+        } else {
+			m_movement = MovementVLocked;
+        }
+
+        diff = delta;
+    } else {
+        diff = p.scenePos() - p.lastScenePos();
+    }
+
+    if (m_movement == MovementHLocked) {
+        if (m_trackWithinGroup) {
+            m_trackWithinGroup = !m_activeGroup->atEdge(diff.x());
+
+            if (m_trackWithinGroup) {
+                // shift cards within the active group
+                m_activeGroup->adjustHorizontally(diff.x());
+
+                slideAllGroups();
+            } else {
+                m_activeGroupPivot = m_activeGroup->x();
+            }
+        }
+
+        if (!m_trackWithinGroup) {
+            m_activeGroupPivot += diff.x();
+            slideAllGroupsOnTouchUpdate(m_activeGroupPivot);
+        }
+    } else if (m_movement == MovementVLocked) {
+        if (!m_draggedWin) {
+            if (m_activeGroup->setActiveCard(p.pos())) {
+                m_draggedWin = m_activeGroup->activeCard();
+            }
+
+            if (!m_draggedWin) {
+                return;
+            }
+        }
+
+        // ignore pen movements outside the vertical pillar around
+        // the active window
+        QPointF mappedPos = m_draggedWin->mapFromParent(p.pos());
+
+        if (mappedPos.x() < m_draggedWin->boundingRect().x() ||
+            mappedPos.x() >= m_draggedWin->boundingRect().right()) {
+            return;
+        }
+
+        if (delta.y() == 0) {
+            return;
+        }
+
+        if (!m_playedAngryCardStretchSound &&
+            (delta.y() > kAngryCardThreshold) && playAngryCardSounds()) {
+            SoundPlayerPool::instance()->playFeedback("carddrag");
+            m_playedAngryCardStretchSound = true;
+        }
+
+        removeAnimationForWindow(m_draggedWin);
+
+        // cards are always offset from the parents origin
+        CardWindow::Position pos = m_draggedWin->position();
+        pos.trans.setY(delta.y());
+        m_draggedWin->setPosition(pos);
+    }
+}
+
+void CardWindowManager::handleTouchUpdateReorder(QTouchEvent* e)
+{
+    CardWindow* activeWin = activeWindow();
+
+    if (!activeWin) {
+        return;
+    }
+
+    QTouchEvent::TouchPoint p = e->touchPoints().first();
+
+    // track the active window under the users finger
+    QPointF delta = p.scenePos() - p.lastScenePos();
+    CardWindow::Position pos;
+    pos.trans = QVector3D(activeWin->position().trans.x() + delta.x(),
+                          activeWin->position().trans.y() + delta.y(),
+                          kActiveScale);
+    activeWin->setPosition(pos);
+
+    // should we switch zones?
+    ReorderZone newZone = getReorderZone(p.scenePos().toPoint());
+
+    if (newZone == m_reorderZone && newZone == ReorderZone_Center) {
+        moveReorderSlotCenter(p.scenePos());
+    } else if (newZone != m_reorderZone) {
+        if (newZone == ReorderZone_Right) {
+            m_reorderZone = newZone;
+            moveReorderSlotRight();
+        } else if (newZone == ReorderZone_Left) {
+            m_reorderZone = newZone;
+            moveReorderSlotLeft();
+        } else {
+            m_reorderZone = newZone;
+        }
+    }
+}
+
+void CardWindowManager::handleTouchEndMinimized(QTouchEvent* e)
+{
+    Q_UNUSED(e);
+
+    if (m_groups.empty() || m_seenFlickOrTap) {
+        return;
+    }
+
+    if (m_movement == MovementVLocked) {
+        // Did we go too close to the top?
+        if (m_draggedWin) {
+            QRectF pr = m_draggedWin->
+                mapRectToParent(m_draggedWin->boundingRect());
+
+            if (pr.center().y() > boundingRect().bottom()) {
+                closeWindow(m_draggedWin, true);
+            } else if (pr.center().y() < boundingRect().top()) {
+                closeWindow(m_draggedWin);
+            } else {
+                // else just restore all windows back to original position
+                slideAllGroups();
+            }
+        }
+    } else if (m_movement == MovementHLocked) {
+        setActiveGroup(groupClosestToCenterHorizontally());
+        slideAllGroups();
+    }
+}
+
+void CardWindowManager::handleTouchEndReorder(QTouchEvent* e)
+{
+    Q_UNUSED(e);
+
+    Q_EMIT signalExitReorder(false);
+
+    CardWindow* activeWin = activeWindow();
+
+    if (!activeWin) {
+        return;
+    }
+
+    // TODO: fix the y for the draggedWin
+    activeWin->setOpacity(kReorderEndWindowOpacity);
+    activeWin->enableShadow();
+    activeWin->setAttachedToGroup(true);
+
+    slideAllGroups();
+}
+#endif
 
 void CardWindowManager::tapGestureEvent(QTapGesture* event)
 {
@@ -1380,7 +1679,11 @@ void CardWindowManager::flickGestureEvent(QGestureEvent* event)
 
 void CardWindowManager::handleFlickGestureMinimized(QGestureEvent* event)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	QGesture* g = event->gesture((Qt::GestureType) SysMgrGestureFlick);
+#else
+    QGesture* g = event->gesture(FlickGesture::gestureType());
+#endif
 	if (!g)
 		return;
 
@@ -1440,6 +1743,7 @@ void CardWindowManager::handleFlickGestureMinimized(QGestureEvent* event)
 	}
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 void CardWindowManager::handleMousePressMinimized(QGraphicsSceneMouseEvent* event)
 {
 	// try to capture the card the user first touched
@@ -1579,6 +1883,7 @@ void CardWindowManager::handleMouseMoveReorder(QGraphicsSceneMouseEvent* event)
 		}
 	}
 }
+#endif // QT_VERSION < 5.0.0
 
 CardWindowManager::ReorderZone CardWindowManager::getReorderZone(QPoint pt)
 {
@@ -1806,6 +2111,7 @@ void CardWindowManager::arrangeWindowsAfterReorderChange(int duration, QEasingCu
 	startAnimations();
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 void CardWindowManager::handleMouseReleaseMinimized(QGraphicsSceneMouseEvent* event)
 {
 	if (m_groups.empty() || m_seenFlickOrTap)
@@ -1816,18 +2122,10 @@ void CardWindowManager::handleMouseReleaseMinimized(QGraphicsSceneMouseEvent* ev
 		// Did we go too close to the top?
 		if (m_draggedWin) {
             QRectF pr = m_draggedWin->mapRectToParent(m_draggedWin->boundingRect());
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
             if ((!event->canceled()) && (pr.center().y() > boundingRect().bottom())) {
-#else
-            if ((event->isAccepted()) && (pr.center().y() > boundingRect().bottom())) {
-#endif
                 closeWindow(m_draggedWin, true);
             }
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
             else if ((!event->canceled()) && (pr.center().y() < boundingRect().top())) {
-#else
-            else if ((event->isAccepted()) && (pr.center().y() < boundingRect().top())) {
-#endif
 				closeWindow(m_draggedWin);
 			}
 			else {
@@ -1837,12 +2135,7 @@ void CardWindowManager::handleMouseReleaseMinimized(QGraphicsSceneMouseEvent* ev
 		}
 	}
 	else if (m_movement == MovementHLocked) {
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		if(!event->canceled())
-#else
-        if(event->isAccepted())
-#endif
 			setActiveGroup(groupClosestToCenterHorizontally());
 		slideAllGroups();
 	}
@@ -1850,7 +2143,7 @@ void CardWindowManager::handleMouseReleaseMinimized(QGraphicsSceneMouseEvent* ev
 
 void CardWindowManager::handleMouseReleaseReorder(QGraphicsSceneMouseEvent* event)
 {
-	Q_UNUSED(event)
+	Q_UNUSED(event);
 
 	Q_EMIT signalExitReorder(false);
 
@@ -1859,12 +2152,13 @@ void CardWindowManager::handleMouseReleaseReorder(QGraphicsSceneMouseEvent* even
 		return;
 
 	// TODO: fix the y for the draggedWin
-	activeWin->setOpacity(1.0);
+	activeWin->setOpacity(kReorderEndWindowOpacity);
 	activeWin->enableShadow();
 	activeWin->setAttachedToGroup(true);
 
 	slideAllGroups();
 }
+#endif // QT_VERSION < 5.0.0
 
 void CardWindowManager::handleTapGestureMinimized(QTapGesture* event)
 {
@@ -1888,7 +2182,12 @@ void CardWindowManager::handleTapGestureMinimized(QTapGesture* event)
 	}
 	else {
 		// first test to see if the tap is not above/below the active group
-		QPointF pt = mapFromScene(event->position());
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+        QPointF pt = mapFromScene(event->position());
+#else
+        QPointF pt = event->position();
+#endif // QT_VERSION_CHECK
+
 		if (!m_activeGroup->withinColumn(pt)) {
 			if (pt.x() < 0) {
 				// tapped to the left of the active group
@@ -2034,7 +2333,7 @@ void CardWindowManager::switchToNextAppMaximized()
 		return;
 
 	// Check if the currently active card is a modal card. If so dismiss it
-	if(Window::Type_ModalChildWindowCard == oldActiveCard->type()) {
+	if(WindowType::Type_ModalChildWindowCard == oldActiveCard->type()) {
 		// We don't need to run any animations
 		m_animateWindowForModalDismisal = false;
 		// Set the reason for dismissal
@@ -2117,7 +2416,7 @@ void CardWindowManager::switchToPrevAppMaximized()
 	CardWindow* oldActiveCard = activeWindow();
 
 	// Check if the currently active card is a modal card. If so dismiss it
-	if(Window::Type_ModalChildWindowCard == oldActiveCard->type()) {
+	if(WindowType::Type_ModalChildWindowCard == oldActiveCard->type()) {
 
 		// We don't need to run any animations
 		m_animateWindowForModalDismisal = false;
@@ -2434,7 +2733,7 @@ void CardWindowManager::focusWindow(Window* win)
 		return;
 
 	// If the active card is a modal window and we are focusing another window, we need to dismiss the modal first.
-	if(Window::Type_ModalChildWindowCard == activeWindow()->type() && card != activeWindow())
+	if(WindowType::Type_ModalChildWindowCard == activeWindow()->type() && card != activeWindow())
 	{
 		// Cehck if we are trying to focus the parent
 		m_modalWindowState = ModalWindowDismissedParentSwitched;
@@ -2559,7 +2858,7 @@ void CardWindowManager::restoreCardToMaximized()
 
 QRect CardWindowManager::normalOrScreenBounds(CardWindow* win) const
 {
-	if (win && win->fullScreen() && win->type() != Window::Type_ModalChildWindowCard) {
+	if (win && win->fullScreen() && win->type() != WindowType::Type_ModalChildWindowCard) {
 		return QRect(m_targetPositiveSpace.x(), m_targetPositiveSpace.y(),
 				     SystemUiController::instance()->currentUiWidth(), SystemUiController::instance()->currentUiHeight());
 	}
@@ -2568,7 +2867,11 @@ QRect CardWindowManager::normalOrScreenBounds(CardWindow* win) const
 
 void CardWindowManager::cancelReorder(bool dueToPenCancel)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	handleMouseReleaseReorder(NULL);
+#else
+    handleTouchEndReorder(NULL);
+#endif
 }
 
 void CardWindowManager::closeWindow(CardWindow* win, bool angryCard)
@@ -2578,7 +2881,7 @@ void CardWindowManager::closeWindow(CardWindow* win, bool angryCard)
 
 	QPropertyAnimation* anim = NULL;
 	/*// The only case we need to worry about here is if a modal parent called closeWindow() on itself. Then we need to close the child first and then continue
-	if(true == win->isCardModalParent() && (Window::Type_ModalChildWindowCard == activeWindow()->type())) {
+	if(true == win->isCardModalParent() && (WindowType::Type_ModalChildWindowCard == activeWindow()->type())) {
 		m_modalWindowState = ModalParentDismissed;
 		notifySysControllerOfModalStatus(SystemUiController::ParentCardDismissed, false, ModalDismissNoAnimate);
 		win->setCardIsModalParent(false);
@@ -2594,7 +2897,7 @@ void CardWindowManager::closeWindow(CardWindow* win, bool angryCard)
 	// remove the window from the current animation list
 	removeAnimationForWindow(win, true);
 
-	if(Window::Type_ModalChildWindowCard != win->type()) {
+	if(WindowType::Type_ModalChildWindowCard != win->type()) {
 		CardWindow::Position pos = win->position();
 		QRectF r = win->mapRectToParent(win->boundingRect());
 		qreal offTop = boundingRect().y() - (win->y() + (r.height()/2));
@@ -2616,7 +2919,7 @@ void CardWindowManager::closeWindow(CardWindow* win, bool angryCard)
 	anim->start();
 
 	// Modal cards are not a part of any card group.
-	if(Window::Type_ModalChildWindowCard != win->type()) {
+	if(WindowType::Type_ModalChildWindowCard != win->type()) {
 		removeCardFromGroup(win);
 	}
 
@@ -2830,7 +3133,7 @@ void CardWindowManager::slotTouchToShareAppUrlTransfered(const std::string& appI
 
 void CardWindowManager::slotDismissActiveModalWindow()
 {
-	if(Window::Type_ModalChildWindowCard == activeWindow()->type()) {
+	if(WindowType::Type_ModalChildWindowCard == activeWindow()->type()) {
 		m_modalWindowState = ModalWindowDismissedInternally;
 		notifySysControllerOfModalStatus(SystemUiController::ServiceDismissedModalCard, true, ModalDismissAnimate);
 	}
@@ -2842,7 +3145,7 @@ void CardWindowManager::slotDismissActiveModalWindow()
 void CardWindowManager::slotDismissModalTimerStopped()
 {
 	CardWindow* activeWin = activeWindow();
-	if(activeWin && (Window::Type_ModalChildWindowCard == activeWin->type()) && m_parentOfModalCard) {
+	if(activeWin && (WindowType::Type_ModalChildWindowCard == activeWin->type()) && m_parentOfModalCard) {
 		m_parentOfModalCard->setModalAcceptInputState(CardWindow::ModalLaunchedAcceptingInput);
 	}
 }

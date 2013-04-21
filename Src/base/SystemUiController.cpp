@@ -270,7 +270,11 @@ bool SystemUiController::handleGestureEvent (QGestureEvent* event)
 
 	if (!t) {
 		if (Settings::LunaSettings()->uiType != Settings::UI_MINIMAL && !m_emergencyMode) {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 			t = event->gesture((Qt::GestureType) SysMgrGestureScreenEdgeFlick);
+#else
+			t = event->gesture(ScreenEdgeFlickGesture::gestureType());
+#endif
 			if (t)
 				handleScreenEdgeFlickGesture(t);
 		}
@@ -1051,7 +1055,7 @@ void SystemUiController::setMaximizedCardWindow(Window* window)
 
 	if(Settings::LunaSettings()->displayUiRotates) {
 		if (m_maximizedCardWindow != NULL) {
-			if (m_maximizedCardWindow->type() == Window::Type_Card) {
+            if (m_maximizedCardWindow->type() == WindowType::Type_Card) {
 				CardWindow* cardWindow = static_cast<CardWindow*>(m_maximizedCardWindow);
 				setRequestedSystemOrientation(cardWindow->getCardFixedOrientation(), true);
 			}

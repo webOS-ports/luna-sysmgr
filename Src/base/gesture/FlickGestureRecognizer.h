@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -39,13 +39,7 @@ public:
 
 	virtual QGesture* create(QObject* target);
 	virtual QGestureRecognizer::Result recognize(QGesture* gesture, QObject* watched, QEvent* event);
-
-private:
-	void addSample(const QPoint& position, int timestamp);
-
-	const int m_maxSamples;
-	QQueue<QPoint> m_points;
-	QQueue<int> m_timestamps;
+    virtual void reset (QGesture* gesture);
 };
 
 #endif /* FLICKGESTURERECOGNIZER_H */

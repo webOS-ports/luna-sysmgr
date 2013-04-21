@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -23,17 +23,19 @@
 
 #include "HostWindow.h"
 
+#include <QGraphicsSceneWheelEvent>
 #include <PIpcChannel.h>
 #include "HostWindowData.h"
 #include "IpcClientHost.h"
 #include "SystemUiController.h"
 #include "WindowServer.h"
 #include "IMEController.h"
+#include "Time.h"
 
 #define MESSAGES_INTERNAL_FILE "SysMgrMessagesInternal.h"
 #include <PIpcMessageMacros.h>
 
-HostWindow::HostWindow(Type type, int width, int height, bool hasAlpha)
+HostWindow::HostWindow(WindowType::Type type, int width, int height, bool hasAlpha)
 		: Window(type, width, height, hasAlpha)
 		, m_data(0)
 		, m_isIpcWindow(false)
@@ -41,7 +43,7 @@ HostWindow::HostWindow(Type type, int width, int height, bool hasAlpha)
 {
 }
 
-HostWindow::HostWindow(Type type, HostWindowData* data, IpcClientHost* clientHost)
+HostWindow::HostWindow(WindowType::Type type, HostWindowData* data, IpcClientHost* clientHost)
 	: Window(type, data->width(), data->height(), data->hasAlpha())
 	, m_data(data)
 	, m_isIpcWindow(false)
@@ -177,7 +179,7 @@ void HostWindow::resizeEventSync(int w, int h, bool forceSync)
 	
 		bool hasAlpha = m_data->hasAlpha();
 		int oldKey = m_data->key();
-		int metaDataKey = m_data->metaDataBuffer()->key();
+        int metaDataKey = m_data->metaDataBuffer() ? m_data->metaDataBuffer()->key() : 0;
 		delete m_data;
 		m_data = HostWindowDataFactory::generate(newKey, metaDataKey, w, h, hasAlpha);
 		if (!m_data || !m_data->isValid()) {
@@ -348,3 +350,26 @@ void HostWindow::removeInputFocus()
 		m_channel->sendAsyncMessage(new View_RemoveInputFocus(routingId()));
 }
 
+void HostWindow::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+    Event ev;
+    ev.type = Event::MouseWheel;
+
+    QRectF br = boundingRect();
+
+    ev.mouseWheelX = event->pos().x() - br.x();
+    ev.mouseWheelY = event->pos().y() - br.y();
+    if (event->orientation() == Qt::Horizontal) {
+        ev.mouseWheelDeltaX = event->delta();
+        ev.mouseWheelDeltaY = 0;
+    } else {
+        ev.mouseWheelDeltaX = 0;
+        ev.mouseWheelDeltaY = event->delta();
+    }
+    ev.time = Time::curSysTimeMs();
+
+    if (m_channel) {
+        m_channel->sendAsyncMessage(new View_InputEvent(routingId(),
+                                                        SysMgrEventWrapper(&ev)));
+    }
+}

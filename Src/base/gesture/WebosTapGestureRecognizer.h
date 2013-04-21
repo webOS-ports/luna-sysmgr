@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2008-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -15,32 +15,21 @@
 * limitations under the License.
 *
 * LICENSE@@@ */
+#ifndef WEBOSTAPGESTURERECOGNIZER_H
+#define WEBOSTAPGESTURERECOGNIZER_H
 
+#include <QGestureRecognizer>
 
-
-
-#ifndef MUTEX_H
-#define MUTEX_H
-
-#include "Common.h"
-
-#include <sptr.h>
-#include <glib.h>
-
-class Mutex : public RefCounted
+class WebosTapGestureRecognizer : public QGestureRecognizer
 {
 public:
 
-	Mutex();
-	virtual ~Mutex();
+    WebosTapGestureRecognizer() { }
+    virtual ~WebosTapGestureRecognizer() { }
 
-	void lock();
-	bool tryLock();
-	void unlock();
+    virtual QGesture* create (QObject* target);
+    virtual QGestureRecognizer::Result recognize (QGesture* gesture, QObject* watched, QEvent* event);
+    virtual void reset (QGesture* gesture);
 
-private:
-
-	GStaticRecMutex* m_mutex;
 };
-
-#endif /* MUTEX_H */
+#endif // WEBOSTAPGESTURERECOGNIZER_H

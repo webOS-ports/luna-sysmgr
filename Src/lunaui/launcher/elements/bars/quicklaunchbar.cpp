@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@
 #include "reorderablepage.h"
 #include "operationalsettings.h"
 #include "icongeometrysettings.h"
-
+#include "WebosTapAndHoldGesture.h"
 #include <QPainter>
 #include <QString>
 #include <QEvent>
@@ -127,8 +127,11 @@ QuickLaunchBar::QuickLaunchBar(const QRectF& geom,Quicklauncher * p_quicklaunche
 	{
 		m_qp_launcherAccessButton->setParentItem(this);
 		m_qp_launcherAccessButton->setVisible(false);
-
-		connect(m_qp_launcherAccessButton,SIGNAL(signalContact()),this,SIGNAL(signalToggleLauncher()));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+        connect(m_qp_launcherAccessButton,SIGNAL(signalActivated()),this,SIGNAL(signalToggleLauncher()));
+#else
+        connect(m_qp_launcherAccessButton,SIGNAL(signalContact()),this,SIGNAL(signalToggleLauncher()));
+#endif
 	}
 	
 	//Calculate maximum items from smallest screen dimension and icon size
@@ -137,10 +140,16 @@ QuickLaunchBar::QuickLaunchBar(const QRectF& geom,Quicklauncher * p_quicklaunche
 	m_maxItems =  (qMin(info.displayWidth, info.displayHeight) - size) / size;
 	
 	setAcceptTouchEvents(true);
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	grabGesture((Qt::GestureType) SysMgrGestureFlick);
 	grabGesture(Qt::TapAndHoldGesture);
 	grabGesture(Qt::TapGesture);
-
+#else
+    grabGesture(FlickGesture::gestureType());
+    grabGesture(WebosTapAndHoldGesture::gestureType());
+	grabGesture(Qt::TapGesture);
+#endif
 	connect(&m_feedbackTimer, SIGNAL(timeout()), this, SLOT(slotCancelLaunchFeedback()));
 
 	setupTouchFSM();
@@ -515,14 +524,18 @@ bool QuickLaunchBar::sceneEvent(QEvent* event)
 				return tapGesture(tap,ge);
 			}
 		}
-		g = ge->gesture(Qt::TapAndHoldGesture);
+        g = ge->gesture(WebosTapAndHoldGesture::gestureType());
 		if (g) {
 			QTapAndHoldGesture* hold = static_cast<QTapAndHoldGesture*>(g);
 			if (hold->state() == Qt::GestureFinished) {
 				return tapAndHoldGesture(hold,ge);
 			};
 		}
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		g = ge->gesture((Qt::GestureType) SysMgrGestureFlick);
+#else 
+        g = ge->gesture(FlickGesture::gestureType());
+#endif
 		if (g) {
 			FlickGesture* flick = static_cast<FlickGesture*>(g);
 			if (flick->state() == Qt::GestureFinished) {

@@ -1,6 +1,7 @@
 /* @@@LICENSE
 *
 *      Copyright (c) 2011-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2013 LG Electronics
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -26,7 +27,7 @@
 #define MESSAGES_INTERNAL_FILE "SysMgrMessagesInternal.h"
 #include <PIpcMessageMacros.h>
 
-QtHostWindow::QtHostWindow(Window::Type type, HostWindowData* data, IpcClientHost* clientHost)
+QtHostWindow::QtHostWindow(WindowType::Type type, HostWindowData* data, IpcClientHost* clientHost)
 	: CardHostWindow(type, data, clientHost)
 {
 }
@@ -45,9 +46,11 @@ bool QtHostWindow::touchEvent(QTouchEvent* event)
 	if (paused())
 		return true;
 
-    if (m_channel) {
-        QRectF br = boundingRect();
-        m_channel->sendAsyncMessage(new View_TouchEvent(routingId(), SysMgrTouchEvent(event, -br.x(), -br.y())));
+    if (event->spontaneous()) { // Send system touch events only, not synthesized
+        if (m_channel) {
+            QRectF br = boundingRect();
+            m_channel->sendAsyncMessage(new View_TouchEvent(routingId(), SysMgrTouchEvent(event, -br.x(), -br.y())));
+        }
     }
 
     return true;

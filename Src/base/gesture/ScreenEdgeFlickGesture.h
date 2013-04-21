@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2011-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2011-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -27,8 +27,6 @@
 #include <QGesture>
 #include <QPoint>
 
-#include <SysMgrDefs.h>
-
 class ScreenEdgeFlickGesture : public QGesture
 {
 public:
@@ -41,29 +39,23 @@ public:
 		EdgeRight
 	};
 
-	ScreenEdgeFlickGesture(QObject* parent = 0)
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-		: QGesture(parent, (Qt::GestureType) SysMgrGestureScreenEdgeFlick)
-#else
-                : QGesture(parent)
-#endif
+    ScreenEdgeFlickGesture(QObject* parent = 0)
+        : QGesture(parent)
 		, m_edge(EdgeUnknown)
 		, m_yDistance(0){
 	}
 
 	Edge edge() const { return m_edge; }
 	int yDistance() const { return m_yDistance; }
-
+    static Qt::GestureType gestureType() {return type;}
+    static void setGestureType (Qt::GestureType t) {  type = t;}
 private:
 
 	Edge m_edge;
 	int m_yDistance;
-
+    static Qt::GestureType type;
 private:
-
-#if defined(TARGET_DEVICE) && defined(HAS_QPA)
-	friend class QPAHiddTpHandler;
-#endif
+    friend class ScreenEdgeFlickGestureRecognizer;
 };
 
 #endif /* SCREENEDGEFLICKGESTURE_H */

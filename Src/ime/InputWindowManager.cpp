@@ -64,11 +64,13 @@ void InputWindowManager::init()
 	m_imeView->setBoundingRect(QRectF(0, 0, r.width(), r.height()));
 	m_imeView->setPos(r.topLeft());
 
-	m_activeIME = m_imeMgr.createPreferredIME(
-		SystemUiController::instance()->currentUiWidth() / Settings::LunaSettings()->layoutScale,
-		SystemUiController::instance()->currentUiHeight() / Settings::LunaSettings()->layoutScale,
-		Settings::LunaSettings()->dpi,
-		Preferences::instance()->locale());
+    int dpi = (QApplication::desktop()->physicalDpiX() +
+               QApplication::desktop()->physicalDpiY()) / 2;
+
+    m_activeIME = m_imeMgr.createPreferredIME(
+                SystemUiController::instance()->currentUiWidth() / Settings::LunaSettings()->layoutScale,
+                SystemUiController::instance()->currentUiHeight() / Settings::LunaSettings()->layoutScale,
+                dpi, LocalePreferences::instance()->locale());
 
 	Q_ASSERT(m_activeIME);
 

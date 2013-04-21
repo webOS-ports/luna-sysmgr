@@ -1312,7 +1312,7 @@ void IconBase::paint(QPainter *painter, const QRectF& sourceItemRect,qint32 rend
 	{
 		if (m_qp_installStatusDecoratorPixmap)
 		{
-			QRect sourceFragmentRect = m_installStatusDecoratorPixmapGeom.translated(m_installStatusDecoratorPosICS).intersect(sourceRect);
+			QRect sourceFragmentRect = m_installStatusDecoratorPixmapGeom.translated(m_installStatusDecoratorPosICS).intersected(sourceRect);
 			if (!sourceFragmentRect.isEmpty())
 			{
 				m_qp_installStatusDecoratorPixmap->paint(painter,sourceFragmentRect,sourceFragmentRect.translated(m_installStatusDecoratorSrcPrecomputed));
@@ -1652,7 +1652,11 @@ bool IconBase::sceneEvent(QEvent * event)
 		//			}
 		//			return true;
 		//		}
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		g = ge->gesture((Qt::GestureType) SysMgrGestureFlick);
+#else
+        g = ge->gesture(FlickGesture::gestureType());
+#endif
 		if (g) {
 			FlickGesture* flick = static_cast<FlickGesture*>(g);
 			if (flick->state() == Qt::GestureFinished) {

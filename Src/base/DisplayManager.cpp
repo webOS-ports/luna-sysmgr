@@ -34,8 +34,10 @@
 #include "Time.h"
 #include "WindowServer.h"
 
+#ifdef HAS_NYX
 #include <nyx/nyx_client.h>
 #include "NyxSensorConnector.h"
+#endif
 
 #include <QApplication>
 
@@ -2898,14 +2900,14 @@ void DisplayManager::requestCurrentLocation()
 bool DisplayManager::updateNyxWithLocation(double latitude, double longitude)
 {
 	bool result = false;
-
+#ifdef HAS_NYX
     NYXBearingSensorConnector* pBearingSensor = static_cast<NYXBearingSensorConnector *> (NYXConnectorBase::getSensor(NYXConnectorBase::SensorBearing));
     if (pBearingSensor)
     {
         result = pBearingSensor->setLocation(latitude, longitude);
         delete pBearingSensor;
     }
-
+#endif
 	return result;
 }
 
@@ -3109,7 +3111,9 @@ bool DisplayManager::handleEvent(QEvent *event)
 		keyEvent = static_cast<QKeyEvent*>(event);
 	} else if (QEvent::MouseButtonPress == event->type() || QEvent::MouseButtonRelease == event->type()
 			|| QEvent::MouseMove == event->type()) {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		mouseEvent = static_cast<QMouseEvent*>(event);
+#endif // QT_VERSION < 5.0.0
 	}
 
     if (m_slidingNow == SLIDING_WAIT && m_slidingStart + SLIDER_MINTIME < Time::curTimeMs()) {
@@ -3483,8 +3487,11 @@ void DisplayManager::updateLockState (DisplayLockState lockState, DisplayState d
         switch (lockState) {
             case DisplayLockLocked:
                 {
-                    g_debug ("%s: firing DISPLAY_LOCK_SCREEN", __PRETTY_FUNCTION__);
-                    Q_EMIT signalLockStateChange (DISPLAY_LOCK_SCREEN, displayEvent);
+                    if(!Settings::LunaSettings()->disableLocking)
+                    {
+                        g_debug ("%s: firing DISPLAY_LOCK_SCREEN", __PRETTY_FUNCTION__);
+                        Q_EMIT signalLockStateChange (DISPLAY_LOCK_SCREEN, displayEvent);
+                    }
                 }
                 break;
             case DisplayLockUnlocked:

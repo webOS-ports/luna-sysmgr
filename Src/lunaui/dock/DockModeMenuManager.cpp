@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2011-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2011-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -24,15 +24,9 @@
 #include <QGesture>
 #include <QCoreApplication>
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QDeclarativeComponent>
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
-#else
-#include <QQmlComponent>
-#include <QQmlContext>
-#include <QQmlEngine>
-#endif
 
 #include <SysMgrDefs.h>
 
@@ -56,6 +50,7 @@
 #include "DockModeWindowManager.h"
 #include "DockModeLaunchPoint.h"
 #include "StatusBar.h"
+#include "WebosTapAndHoldGesture.h"
 
 static const int kTopLeftWindowIndex     = 0;
 static const int kTopRightWindowIndex    = 1;
@@ -81,12 +76,19 @@ DockModeMenuManager::DockModeMenuManager(int maxWidth, int maxHeight)
 	connect(SystemUiController::instance(), SIGNAL(signalHideMenu()), this, SLOT(closeAllMenus()));
 
 	kStatusBarTapMoveTolerance = HostBase::instance()->getInfo().displayHeight;
-
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	grabGesture(Qt::TapGesture);
 	grabGesture((Qt::GestureType) SysMgrGestureFlick);
 	grabGesture((Qt::GestureType) SysMgrGestureSingleClick);
 	grabGesture((Qt::GestureType) Qt::PinchGesture);
 	grabGesture(Qt::TapAndHoldGesture);
+#else
+	grabGesture(Qt::TapGesture);
+    grabGesture(FlickGesture::gestureType());
+    grabGesture(SingleClickGesture::gestureType());
+	grabGesture((Qt::GestureType) Qt::PinchGesture);
+	grabGesture(WebosTapAndHoldGesture::gestureType());
+#endif
 }
 
 DockModeMenuManager::~DockModeMenuManager()
@@ -100,15 +102,9 @@ DockModeMenuManager::~DockModeMenuManager()
 
 void DockModeMenuManager::init()
 {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     QDeclarativeEngine* qmlEngine = WindowServer::instance()->declarativeEngine();
 	if(qmlEngine) {
 		QDeclarativeContext* context =	qmlEngine->rootContext();
-#else
-    QQmlEngine* qmlEngine = WindowServer::instance()->qmlEngine();
-    if(qmlEngine) {
-        QQmlContext* context =	qmlEngine->rootContext();
-#endif
         (void)dockAppContainer();
 
 		if(context) {
@@ -118,11 +114,7 @@ void DockModeMenuManager::init()
 		Settings* settings = Settings::LunaSettings();
 		std::string systemMenuQmlPath = settings->lunaQmlUiComponentsPath + "DockModeAppMenu/DockModeAppMenu.qml";
 		QUrl url = QUrl::fromLocalFile(systemMenuQmlPath.c_str());
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		m_qmlNotifMenu = new QDeclarativeComponent(qmlEngine, url, this);
-#else
-        m_qmlNotifMenu = new QQmlComponent(qmlEngine, url, this);
-#endif
 		if(m_qmlNotifMenu) {
 			m_menuObject = qobject_cast<QGraphicsObject *>(m_qmlNotifMenu->create());
 			if(m_menuObject) {
@@ -329,7 +321,12 @@ bool DockModeMenuManager::sceneEvent(QEvent* event)
 	case QEvent::Gesture: {
 
 		QGestureEvent* ge = static_cast<QGestureEvent*>(event);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		QGesture* g = ge->gesture((Qt::GestureType) SysMgrGestureFlick);
+#else
+        QGesture* g = ge->gesture(FlickGesture::gestureType());
+#endif
+
 		if (g && g->state() == Qt::GestureFinished) {
 			flickGestureEvent(ge);
 			return true;

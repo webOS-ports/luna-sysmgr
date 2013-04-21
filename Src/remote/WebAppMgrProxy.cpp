@@ -1,6 +1,7 @@
 /* @@@LICENSE
 *
 *      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2013 LG Electronics
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -45,7 +46,6 @@
 #include "IpcServer.h"
 #include "SystemUiController.h"
 #include "WindowServer.h"
-//#include "WebAppManager.h"
 #include "Settings.h"
 #include "ApplicationDescription.h"
 #include "ApplicationManager.h"
@@ -56,6 +56,7 @@
 #include "MemoryMonitor.h"
 #include "CustomEvents.h"
 #include "HostWindowData.h"
+#include "Time.h"
 
 static WebAppMgrProxy* s_instance = NULL;
 static gchar* s_appToLaunchWhenConnectedStr = NULL;
@@ -93,7 +94,7 @@ WebAppMgrProxy* WebAppMgrProxy::connectWebAppMgr(int pid, PIpcChannel* channel)
 		std::string backgroundPath = "file://" + Settings::LunaSettings()->lunaSystemPath + "/index.html";
 		std::string sysUiDescString;
 		sysUiAppDesc->getAppDescriptionString(sysUiDescString);
-		pThis->launchUrl(backgroundPath.c_str(), Window::Type_StatusBar,
+        pThis->launchUrl(backgroundPath.c_str(), WindowType::Type_StatusBar,
 		                 sysUiDescString.c_str(), "", "{\"launchedAtBoot\":true}");
 	}
 	else {
@@ -106,7 +107,7 @@ WebAppMgrProxy* WebAppMgrProxy::connectWebAppMgr(int pid, PIpcChannel* channel)
 		if (appDesc) {
 			std::string appDescString;
 			appDesc->getAppDescriptionString(appDescString);
-			pThis->launchUrl(appDesc->entryPoint().c_str(), Window::Type_Launcher,
+            pThis->launchUrl(appDesc->entryPoint().c_str(), WindowType::Type_Launcher,
 			                 appDescString.c_str(), "", "{\"launchedAtBoot\":true}");
 		}
 		else {
@@ -301,10 +302,10 @@ void WebAppMgrProxy::onReturnedInputEvent(const SysMgrKeyEvent& event)
 void WebAppMgrProxy::onPrepareAddWindow(int type, int width, int height, int *key)
 {
 	bool hasAlpha = false;
-	switch (static_cast<Window::Type>(type)) {
-		case (Window::Type_Launcher):
-		case (Window::Type_Menu):
-		case (Window::Type_Dashboard):
+    switch (static_cast<WindowType::Type>(type)) {
+        case (WindowType::Type_Launcher):
+        case (WindowType::Type_Menu):
+        case (WindowType::Type_Dashboard):
 			hasAlpha = true;
 			break;
 
@@ -321,7 +322,7 @@ void WebAppMgrProxy::onPrepareAddWindow(int type, int width, int height, int *ke
 	}
 
 	*key = data->key();
-	Window* win = createWindowForWebApp(static_cast<Window::Type>(type), data);
+    Window* win = createWindowForWebApp(static_cast<WindowType::Type>(type), data);
 
 	m_winMap[*key] = win;
 	m_winSet.insert(win);
@@ -335,10 +336,10 @@ void WebAppMgrProxy::onPrepareAddWindow(int type, int width, int height, int *ke
 void WebAppMgrProxy::onPrepareAddWindowWithMetaData(int metaDataKey, int type, int width, int height, int *key)
 {
 	bool hasAlpha = false;
-	switch (static_cast<Window::Type>(type)) {
-		case (Window::Type_Launcher):
-		case (Window::Type_Menu):
-		case (Window::Type_Dashboard):
+    switch (static_cast<WindowType::Type>(type)) {
+        case (WindowType::Type_Launcher):
+        case (WindowType::Type_Menu):
+        case (WindowType::Type_Dashboard):
 			hasAlpha = true;
 			break;
 
@@ -355,7 +356,7 @@ void WebAppMgrProxy::onPrepareAddWindowWithMetaData(int metaDataKey, int type, i
 	}
 
 	*key = data->key();
-	Window* win = createWindowForWebApp(static_cast<Window::Type>(type), data);
+    Window* win = createWindowForWebApp(static_cast<WindowType::Type>(type), data);
 
 	m_winMap[*key] = win;
 	m_winSet.insert(win);
@@ -448,37 +449,37 @@ void WebAppMgrProxy::onLowMemoryActionsRequested(bool allowExpensive)
 	Q_EMIT signalLowMemoryActionsRequested(allowExpensive);
 }
 
-Window* WebAppMgrProxy::createWindowForWebApp(Window::Type winType, HostWindowData* data)
+Window* WebAppMgrProxy::createWindowForWebApp(WindowType::Type winType, HostWindowData* data)
 {
 	Window* win = 0;
 
 	switch (winType) {
-		case (Window::Type_Launcher): {
+        case (WindowType::Type_Launcher): {
 			win = new HostWindow(winType, data, this);
 			break;
 		}
-		case (Window::Type_Menu): {
+        case (WindowType::Type_Menu): {
 			win = new MenuWindow(data, this);
 			break;
 		}
-		case (Window::Type_ModalChildWindowCard):
-		case (Window::Type_Card):
-		case (Window::Type_PIN):
-		case (Window::Type_Emergency):
-		case (Window::Type_ChildCard): {
+        case (WindowType::Type_ModalChildWindowCard):
+        case (WindowType::Type_Card):
+        case (WindowType::Type_PIN):
+        case (WindowType::Type_Emergency):
+        case (WindowType::Type_ChildCard): {
 		 	win = new CardWindow(winType, data, this);
 		 	break;
 		}
-		case (Window::Type_DockModeWindow): {
+        case (WindowType::Type_DockModeWindow): {
 		 	win = new DockModeWindow(winType, data, this);
 		 	break;
 		}
-		case (Window::Type_PopupAlert):
-		case (Window::Type_BannerAlert): {
+        case (WindowType::Type_PopupAlert):
+        case (WindowType::Type_BannerAlert): {
 			win = new AlertWindow(winType, data, this);
 			break;
 		}
-		case (Window::Type_Dashboard): {
+        case (WindowType::Type_Dashboard): {
 			win = new DashboardWindow(data, this);
 			break;
 		}
@@ -501,7 +502,7 @@ void WebAppMgrProxy::closeWindow(Window* w)
 	}
 }
 
-void WebAppMgrProxy::launchUrl(const char* url, Window::Type winType,
+void WebAppMgrProxy::launchUrl(const char* url, WindowType::Type winType,
                                const char* appDesc, const char* procId,
                                const char* params, const char* launchingAppId,
                                const char* launchingProcId)
@@ -560,6 +561,10 @@ std::string WebAppMgrProxy::appLaunch(const std::string& appId,
 			return "";
 		}
 	}
+
+    if (G_UNLIKELY(Settings::LunaSettings()->perfTesting)) {
+        g_message("SYSMGR PERF: APP LAUNCHED app id: %s, start time: %d", appId.c_str(), Time::curTimeMs());
+    }
 
 	if (desc->type() == ApplicationDescription::Type_Web) {
         // Verify that the app doesn't have a security issue

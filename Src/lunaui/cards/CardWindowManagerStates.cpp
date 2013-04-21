@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -40,10 +40,12 @@ CardWindowManagerState::CardWindowManagerState(CardWindowManager* wm)
 {
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 void CardWindowManagerState::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	event->accept();
 }
+#endif // QT_VERSION < 5.0.0
 
 void CardWindowManagerState::windowAdded(CardWindow* win)
 {
@@ -52,7 +54,7 @@ void CardWindowManagerState::windowAdded(CardWindow* win)
 
 void CardWindowManagerState::windowRemoved(CardWindow* win)
 {
-	if(Window::Type_ModalChildWindowCard == win->type())
+	if(WindowType::Type_ModalChildWindowCard == win->type())
 		return;
 
 	m_wm->removeCardFromGroup(win);
@@ -83,7 +85,7 @@ bool CardWindowManagerState::lastWindowAddedType() const
 void CardWindowManagerState::resizeWindow(CardWindow* w, int width, int height)
 {
 	if (w->allowResizeOnPositiveSpaceChange()) {
-		if(w->type() == Window::Type_ModalChildWindowCard) {
+		if(w->type() == WindowType::Type_ModalChildWindowCard) {
 			w->resizeEvent(Settings::LunaSettings()->modalWindowWidth, Settings::LunaSettings()->modalWindowHeight);
 		}
 		else {
@@ -95,8 +97,25 @@ void CardWindowManagerState::resizeWindow(CardWindow* w, int width, int height)
 	}
 }
 
-// --------------------------------------------------------------------------------------------------
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+void CardWindowManagerState::handleTouchBegin(QTouchEvent *e)
+{
+    e->ignore();
+}
 
+void CardWindowManagerState::handleTouchEnd(QTouchEvent *e)
+{
+    e->ignore();
+}
+
+void CardWindowManagerState::handleTouchUpdate(QTouchEvent *e)
+{
+    e->ignore();
+}
+#endif
+
+// --------------------------------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 void MinimizeState::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     CardWindowManagerState::mousePressEvent(event);
@@ -113,6 +132,7 @@ void MinimizeState::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
 	m_wm->handleMouseReleaseMinimized(event);
 }
+#endif // QT_VERSION < 5.0.0
 
 void MinimizeState::flickGestureEvent(QGestureEvent* event)
 {
@@ -173,6 +193,26 @@ void MinimizeState::onEntry(QEvent* event)
 	SystemUiController::instance()->setMaximizedCardWindow(0);
 }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+void MinimizeState::handleTouchBegin(QTouchEvent *e)
+{
+    e->accept();
+    m_wm->handleTouchBeginMinimized(e);
+}
+
+void MinimizeState::handleTouchEnd(QTouchEvent *e)
+{
+    e->accept();
+	m_wm->handleTouchEndMinimized(e);
+}
+
+void MinimizeState::handleTouchUpdate(QTouchEvent *e)
+{
+    e->accept();
+	m_wm->handleTouchUpdateMinimized(e);
+}
+#endif
+
 // --------------------------------------------------------------------------------------------------
 
 MaximizeState::MaximizeState(CardWindowManager* wm)
@@ -189,23 +229,25 @@ MaximizeState::MaximizeState(CardWindowManager* wm)
 	connect(trans, SIGNAL(triggered()), SLOT(slotIncomingPhoneCall()));
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 void MaximizeState::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	// CardWindow should always accept but just in case
 	event->ignore();
 }
+#endif // QT_VERSION < 5.0.0
 
 void MaximizeState::windowAdded(CardWindow* win)
 {
 	CardWindowManagerState::windowAdded(win);
 	// if the active window is already sitting/maximized, complete maximization setup
-	if (win == m_wm->activeWindow() && Window::Type_ModalChildWindowCard != win->type() && !m_wm->windowHasAnimation(win))
+	if (win == m_wm->activeWindow() && WindowType::Type_ModalChildWindowCard != win->type() && !m_wm->windowHasAnimation(win))
 		finishMaximizingActiveWindow();
 }
 
 void MaximizeState::windowRemoved(CardWindow* win)
 {
-	if(Window::Type_ModalChildWindowCard == win->type())
+	if(WindowType::Type_ModalChildWindowCard == win->type())
 		return;
 
 	m_wm->removeCardFromGroupMaximized(win);
@@ -219,7 +261,7 @@ void MaximizeState::positiveSpaceAboutToChange(const QRect& r, bool fullScreen)
 		const QRect& positiveSpace = SystemUiController::instance()->positiveSpaceBounds();
 		bool expanding = positiveSpace.height() < r.height();
 
-		if(Window::Type_ModalChildWindowCard == activeWin->type()) {
+		if(WindowType::Type_ModalChildWindowCard == activeWin->type()) {
 			// Pass on the info to the parent as well.
 			parent = m_wm->modalParent();
 			if(parent) {
@@ -237,7 +279,7 @@ void MaximizeState::positiveSpaceAboutToChange(const QRect& r, bool fullScreen)
 
         	// Send this out ONLY to the parent, but not the modal card.
     		if (expanding) {
-    			if(Window::Type_ModalChildWindowCard == activeWin->type() && NULL != parent) {
+    			if(WindowType::Type_ModalChildWindowCard == activeWin->type() && NULL != parent) {
     				parent->resizeEventSync(r.width(), r.height());
     			}
     			else {
@@ -258,7 +300,7 @@ void MaximizeState::positiveSpaceChangeFinished(const QRect& r)
 {
 	CardWindow* activeWin = m_wm->activeWindow();
 	if (activeWin) {
-		if(Window::Type_ModalChildWindowCard == activeWin->type()) {
+		if(WindowType::Type_ModalChildWindowCard == activeWin->type()) {
 			// Pass on the info to the parent as well.
 			CardWindow* parent = m_wm->modalParent();
 			if(parent) {
@@ -280,7 +322,7 @@ void MaximizeState::positiveSpaceChanged(const QRect& r)
 {
 	CardWindow* activeWin = m_wm->activeWindow();
 	if (activeWin) {
-		if(Window::Type_ModalChildWindowCard == activeWin->type()) {
+		if(WindowType::Type_ModalChildWindowCard == activeWin->type()) {
 
 			// Pass on the info to the parent as well.
 			CardWindow* parent = m_wm->modalParent();
@@ -304,7 +346,7 @@ void MaximizeState::animationsFinished()
 
 	CardWindow* activeWin = m_wm->activeWindow();
 	if (activeWin) {
-		if(Window::Type_ModalChildWindowCard != activeWin->type()) {
+		if(WindowType::Type_ModalChildWindowCard != activeWin->type()) {
 			boundingRect = m_wm->normalOrScreenBounds(activeWin);
 			activeWin->setBoundingRect(boundingRect.width(), boundingRect.height());
 		}
@@ -332,7 +374,7 @@ void MaximizeState::finishMaximizingActiveWindow()
         }
 	if (activeWin && activeWin->addedToWindowManager()) {
                 // allow direct rendering if no one has requested it to be disabled - Do this only if the window is NOT a modal window
-		if(Window::Type_ModalChildWindowCard != activeWin->type()) {
+		if(WindowType::Type_ModalChildWindowCard != activeWin->type()) {
 			const QRect& r = m_wm->targetPositiveSpace();
             resizeWindow(activeWin, r.width(), r.height());
 
@@ -367,7 +409,7 @@ void MaximizeState::focusMaximizedCardWindow(bool focus)
     if (!focus && m_disableDirectRendering == 1) {
 
         // disable direct rendering so the emergency windows can render. [This is applicable ONLY if the active window is not a modal window]
-    	if(activeWin->type() != Window::Type_ModalChildWindowCard) {
+    	if(activeWin->type() != WindowType::Type_ModalChildWindowCard) {
     		SystemUiController::instance()->setDirectRenderingForWindow(SystemUiController::CARD_WINDOW_MANAGER, activeWin, false);
     	}
 
@@ -383,7 +425,7 @@ void MaximizeState::focusMaximizedCardWindow(bool focus)
        if (!m_wm->windowHasAnimation(activeWin)) {
 
             // re-enable direct rendering or just wait for any animations to finish [This is applicable ONLY if the active window is not a modal window]
-        	if(activeWin->type() != Window::Type_ModalChildWindowCard) {
+        	if(activeWin->type() != WindowType::Type_ModalChildWindowCard) {
         		SystemUiController::instance()->setDirectRenderingForWindow(SystemUiController::CARD_WINDOW_MANAGER, activeWin, true);
         	}
 
@@ -414,7 +456,7 @@ void MaximizeState::relayout(const QRectF& r, bool animate)
 
 	CardWindow* activeWin = m_wm->activeWindow();
 	if(activeWin) {
-		if(Window::Type_ModalChildWindowCard != activeWin->type()) {
+		if(WindowType::Type_ModalChildWindowCard != activeWin->type()) {
 			boundingRect = m_wm->normalOrScreenBounds(activeWin);
 			activeWin->setBoundingRect(boundingRect.width(), boundingRect.height());
 		}
@@ -462,7 +504,7 @@ void MaximizeState::onEntry(QEvent* event)
 	m_wm->queueFocusAction(activeWin, true);
 	activeWin->setAttachedToGroup(false);
 
-	if(Window::Type_ModalChildWindowCard != activeWin->type()) {
+	if(WindowType::Type_ModalChildWindowCard != activeWin->type()) {
 		QRectF boundingRect = m_wm->normalOrScreenBounds(activeWin);
 		activeWin->setBoundingRect(boundingRect.width(), boundingRect.height());
 	}
@@ -569,7 +611,7 @@ void PreparingState::onEntry(QEvent* event)
 
 		if (win) {
 			QRectF boundingRect = m_wm->normalOrScreenBounds(0);
-			if(Window::Type_ModalChildWindowCard != win->type())
+			if(WindowType::Type_ModalChildWindowCard != win->type())
 				win->setBoundingRect(boundingRect.width(), boundingRect.height());
 			else {
 				win->setBoundingRect(Settings::LunaSettings()->modalWindowWidth, Settings::LunaSettings()->modalWindowHeight);
@@ -580,12 +622,14 @@ void PreparingState::onEntry(QEvent* event)
 	m_wm->prepareAddWindowSibling(win);
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 void PreparingState::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	event->accept();
 
 	m_wm->minimizeActiveWindow();
 }
+#endif // QT_VERSION < 5.0.0
 
 void PreparingState::windowAdded(CardWindow* win)
 {
@@ -615,14 +659,24 @@ bool PreparingState::supportLauncherOverlay() const
 	return false;
 }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+void PreparingState::handleTouchBegin(QTouchEvent *e)
+{
+    e->accept();
+    m_wm->minimizeActiveWindow();
+}
+#endif
+
 // --------------------------------------------------------------------------------------------------
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 void LoadingState::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	event->accept();
 
 	m_wm->minimizeActiveWindow();
 }
+#endif // QT_VERSION < 5.0.0
 
 void LoadingState::windowAdded(CardWindow* win)
 {
@@ -668,6 +722,14 @@ void LoadingState::onExit(QEvent* event)
 	}
 }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+void LoadingState::handleTouchBegin(QTouchEvent *e)
+{
+    e->accept();
+    m_wm->minimizeActiveWindow();
+}
+#endif
+
 // --------------------------------------------------------------------------------------------------
 
 ReorderGrid::ReorderGrid(QGraphicsItem* parent, int slice)
@@ -694,6 +756,7 @@ void ReorderGrid::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWid
 	painter->setPen(oldPen);
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 void ReorderState::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
 	m_wm->handleMouseMoveReorder(event);
@@ -703,6 +766,7 @@ void ReorderState::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
 	m_wm->handleMouseReleaseReorder(event);
 }
+#endif // QT_VERSION < 5.0.0
 
 void ReorderState::animationsFinished()
 {
@@ -739,3 +803,17 @@ void ReorderState::onEntry(QEvent* event)
 
 	SystemUiController::instance()->enterOrExitCardReorder(true);
 }
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+void ReorderState::handleTouchEnd(QTouchEvent *e)
+{
+    e->accept();
+    m_wm->handleTouchEndReorder(e);
+}
+
+void ReorderState::handleTouchUpdate(QTouchEvent *e)
+{
+    e->accept();
+    m_wm->handleTouchUpdateReorder(e);
+}
+#endif

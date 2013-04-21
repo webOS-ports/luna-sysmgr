@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -26,36 +26,30 @@
 
 #include <QGesture>
 #include <QPoint>
-
 #include <SysMgrDefs.h>
+
 
 class FlickGesture : public QGesture
 {
 public:
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-	FlickGesture(QObject* parent = 0) : QGesture(parent, (Qt::GestureType) SysMgrGestureFlick) {}
-#else
+//#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+//    FlickGesture(QObject* parent = 0) : QGesture(parent, (Qt::GestureType) SysMgrGestureFlick) {}
+//#else
 	FlickGesture(QObject* parent = 0) : QGesture(parent) {}
-#endif
+//#endif
 	QPoint velocity() const { return m_velocity; }
 	QPoint startPos() const { return m_startPos; }
 	QPoint endPos() const { return m_endPos; }
-
+    static Qt::GestureType gestureType() { return type;}
+    static void setGestureType (Qt::GestureType t) {  type = t;}
 private:
 
 	QPoint m_velocity;
 	QPoint m_endPos;
 	QPoint m_startPos;
 
-private:
-
+    static Qt::GestureType type;
 	friend class FlickGestureRecognizer;
-
-#if defined(HAS_QPA)
-	friend class QPAHiddTpHandler;
-#else
-	friend class QWSHiddTpHandlerPrivate;
-#endif
 };
 
 #endif /* FLICKGESTURE_H */

@@ -1,6 +1,7 @@
 /* @@@LICENSE
 *
 *      Copyright (c) 2009-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2013 LG Electronics
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -48,7 +49,7 @@ static QPixmap* s_scrimPixmap = 0;
 static const int kSyncCallTimeOutMs = 500;
 
 
-CardHostWindow::CardHostWindow(Window::Type type, HostWindowData* data, IpcClientHost* clientHost)
+CardHostWindow::CardHostWindow(WindowType::Type type, HostWindowData* data, IpcClientHost* clientHost)
 	: CardWindow(type, data, clientHost)
 	, m_paused(false)
 	, m_pausedDueToDisplayOff(false)
@@ -68,6 +69,7 @@ CardHostWindow::CardHostWindow(Window::Type type, HostWindowData* data, IpcClien
 	m_prepareAddedToWm = true; // host windows don't get prepared
 	m_touchEventsEnabled = true;
 	setAcceptTouchEvents(true);
+	setAcceptHoverEvents(true);
 
 	int animationStrength = AS(cardTransitionCurve);
 	m_rotateEquation =  AS_EASEOUT(animationStrength);
@@ -109,7 +111,7 @@ CardHostWindow::~CardHostWindow()
 
 void CardHostWindow::resizeEvent(int w, int h)
 {
-    if (type() == Window::Type_Emergency) {
+    if (type() == WindowType::Type_Emergency) {
         if (m_adjustmentAngle == 90 || m_adjustmentAngle == -90){
             setBoundingRect(h,w);
         } else {
@@ -131,7 +133,7 @@ void CardHostWindow::resizeEvent(int w, int h)
 
 void CardHostWindow::resizeEventSync(int w, int h)
 {
-    if (type() == Window::Type_Emergency) {
+    if (type() == WindowType::Type_Emergency) {
         if (m_adjustmentAngle == 90 || m_adjustmentAngle == -90){
             setBoundingRect(h,w);
         } else {
@@ -501,128 +503,130 @@ bool CardHostWindow::rotateTimerTicked()
 	return true;
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 bool CardHostWindow::touchEvent(QTouchEvent* event)
 {
-	if (!m_focused || m_pendingFocus == PendingFocusFalse) {
-		return false;
-	}
+    if (!m_focused || m_pendingFocus == PendingFocusFalse) {
+        return false;
+    }
 
-	if (m_paused)
-		return true;
+    if (m_paused)
+        return true;
 
     if (m_channel) {
 
-		typedef QList<QTouchEvent::TouchPoint> TouchPoints;
-		TouchPoints touchPoints = event->touchPoints();
+        typedef QList<QTouchEvent::TouchPoint> TouchPoints;
+        TouchPoints touchPoints = event->touchPoints();
 
-		QPointF topLeft = boundingRect().topLeft();
+        QPointF topLeft = boundingRect().topLeft();
 
-		for (TouchPoints::const_iterator it = touchPoints.begin();
-			 it != touchPoints.end(); ++it) {
+        for (TouchPoints::const_iterator it = touchPoints.begin();
+             it != touchPoints.end(); ++it) {
 
 //			printf("TouchPoint Id: %d, State: %d, pos: %g, %g\n",
 //				   (*it).id(), (*it).state(), (*it).pos().x(), (*it).pos().y());
 
-			qreal adjustmentAngle = m_adjustmentAngle;
+            qreal adjustmentAngle = m_adjustmentAngle;
 
 
-			int displayWidth = Settings::LunaSettings()->displayWidth;
-			int displayHeight = Settings::LunaSettings()->displayHeight;
-			QPointF pt = (*it).pos();
-			pt -= topLeft;
-			int x = pt.x();
-			int y = pt.y();
+            int displayWidth = Settings::LunaSettings()->displayWidth;
+            int displayHeight = Settings::LunaSettings()->displayHeight;
+            QPointF pt = (*it).pos();
+            pt -= topLeft;
+            int x = pt.x();
+            int y = pt.y();
 
-			//		adjustmentAngle, x, y, displayWidth, displayHeight);
-			if (adjustmentAngle == 90) { //0,0 in upper right
-				int tmp = y;
-				y = x;
-				x = tmp;
+            //		adjustmentAngle, x, y, displayWidth, displayHeight);
+            if (adjustmentAngle == 90) { //0,0 in upper right
+                int tmp = y;
+                y = x;
+                x = tmp;
 
-				y = displayHeight-y;
-			}
-			else if (adjustmentAngle == -90) { //0,0 in lower left
+                y = displayHeight-y;
+            }
+            else if (adjustmentAngle == -90) { //0,0 in lower left
 
-				int tmp = y;
-				y = x;
-				x = tmp;
+                int tmp = y;
+                y = x;
+                x = tmp;
 
-				x = displayWidth-x;
-			} else if (adjustmentAngle == 0) { //0,0 in upper left
-				//Do nothing
-			}
-			else if (adjustmentAngle == 180) { //0,0 in lower right / screen dimensions flip
-				x = displayWidth-x;
-				y = displayHeight-y;
-			}
+                x = displayWidth-x;
+            } else if (adjustmentAngle == 0) { //0,0 in upper left
+                //Do nothing
+            }
+            else if (adjustmentAngle == 180) { //0,0 in lower right / screen dimensions flip
+                x = displayWidth-x;
+                y = displayHeight-y;
+            }
 
 
-			switch ((*it).state()) {
-			case Qt::TouchPointPressed: {
+            switch ((*it).state()) {
+            case Qt::TouchPointPressed: {
 
-				Event evt;
-				evt.type = Event::PenDown;
-				evt.id = (*it).id();
-				evt.x = x;
-				evt.y = y;
-				evt.z = 0;
-				evt.key = Event::Key_Null;
-				evt.button = Event::Left;
-				evt.modifiers = Event::modifiersFromQt(event->modifiers());
-				evt.time = Time::curTimeMs();
-				evt.clickCount = 1;
+                Event evt;
+                evt.type = Event::PenDown;
+                evt.id = (*it).id();
+                evt.x = x;
+                evt.y = y;
+                evt.z = 0;
+                evt.key = Event::Key_Null;
+                evt.button = Event::Left;
+                evt.modifiers = Event::modifiersFromQt(event->modifiers());
+                evt.time = Time::curTimeMs();
+                evt.clickCount = 1;
 
-				m_channel->sendAsyncMessage (new View_InputEvent(routingId(),
-																 SysMgrEventWrapper(&evt)));
+                m_channel->sendAsyncMessage (new View_InputEvent(routingId(),
+                                                                 SysMgrEventWrapper(&evt)));
 
-				break;				
-			}
-			case Qt::TouchPointMoved: {
+                break;
+            }
+            case Qt::TouchPointMoved: {
 
-				Event evt;
-				evt.type = Event::PenMove;
-				evt.id = (*it).id();
-				evt.x = x;
-				evt.y = y;
-				evt.z = 0;
-				evt.key = Event::Key_Null;
-				evt.button = Event::Left;
-				evt.modifiers = Event::modifiersFromQt(event->modifiers());
-				evt.time = Time::curTimeMs();
-				evt.clickCount = 0;
+                Event evt;
+                evt.type = Event::PenMove;
+                evt.id = (*it).id();
+                evt.x = x;
+                evt.y = y;
+                evt.z = 0;
+                evt.key = Event::Key_Null;
+                evt.button = Event::Left;
+                evt.modifiers = Event::modifiersFromQt(event->modifiers());
+                evt.time = Time::curTimeMs();
+                evt.clickCount = 0;
 
-				m_channel->sendAsyncMessage (new View_InputEvent(routingId(),
-																 SysMgrEventWrapper(&evt)));
+                m_channel->sendAsyncMessage (new View_InputEvent(routingId(),
+                                                                 SysMgrEventWrapper(&evt)));
 
-				break;
-			}
-			case Qt::TouchPointReleased: {
+                break;
+            }
+            case Qt::TouchPointReleased: {
 
-				Event evt;
-				evt.type = Event::PenUp;
-				evt.id = (*it).id();
-				evt.x = x;
-				evt.y = y;
-				evt.z = 0;
-				evt.key = Event::Key_Null;
-				evt.button = Event::Left;
-				evt.modifiers = Event::modifiersFromQt(event->modifiers());
-				evt.time = Time::curTimeMs();
-				evt.clickCount = 0;
+                Event evt;
+                evt.type = Event::PenUp;
+                evt.id = (*it).id();
+                evt.x = x;
+                evt.y = y;
+                evt.z = 0;
+                evt.key = Event::Key_Null;
+                evt.button = Event::Left;
+                evt.modifiers = Event::modifiersFromQt(event->modifiers());
+                evt.time = Time::curTimeMs();
+                evt.clickCount = 0;
 
-				m_channel->sendAsyncMessage (new View_InputEvent(routingId(),
-																 SysMgrEventWrapper(&evt)));
+                m_channel->sendAsyncMessage (new View_InputEvent(routingId(),
+                                                                 SysMgrEventWrapper(&evt)));
 
-				break;
-			}
-			default:
-				continue;
-			}								
-		}
+                break;
+            }
+            default:
+                continue;
+            }
+        }
     }
 
-	return true;
+    return true;
 }
+#endif
 
 void CardHostWindow::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
@@ -630,6 +634,13 @@ void CardHostWindow::mousePressEvent(QGraphicsSceneMouseEvent* event)
 		event->ignore();
 		return;
 	}
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+        if (!m_paused) {
+                CardWindow::mousePressEvent(event);
+                return;
+        }
+#endif
 
 	event->accept();
 
@@ -652,11 +663,52 @@ void CardHostWindow::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void CardHostWindow::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+        if (!m_focused || m_pendingFocus == PendingFocusFalse) {
+                event->ignore();
+                return;
+        }
+
+        if (!m_paused) {
+                CardWindow::mouseDoubleClickEvent(event);
+                return;
+        }
+#endif
+
 	event->accept();
+}
+
+void CardHostWindow::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
+{
+	event->accept();
+
+	Event evt;
+	evt.type = Event::MouseHover;
+	QRectF br = boundingRect();
+	evt.mouseHoverOldX = event->lastPos().x() - br.x();
+	evt.mouseHoverOldY = event->lastPos().y() - br.y();
+	evt.mouseHoverX = event->pos().x() - br.x();
+	evt.mouseHoverY = event->pos().y() - br.y();
+	evt.time = Time::curSysTimeMs();
+	if (m_channel)
+		m_channel->sendAsyncMessage(new View_InputEvent(routingId(),
+								SysMgrEventWrapper(&evt)));
 }
 
 void CardHostWindow::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+        if (!m_focused || m_pendingFocus == PendingFocusFalse) {
+                event->ignore();
+                return;
+        }
+
+        if (!m_paused) {
+                CardWindow::mouseMoveEvent(event);
+                return;
+        }
+#endif
+
 	event->accept();
 
 	if (!m_penInPlayButton)
@@ -684,6 +736,18 @@ void CardHostWindow::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void CardHostWindow::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+        if (!m_focused || m_pendingFocus == PendingFocusFalse) {
+                event->ignore();
+                return;
+        }
+
+        if (!m_paused) {
+                CardWindow::mouseReleaseEvent(event);
+                return;
+        }
+#endif
+
 	event->accept();
 
 	if (!m_penInPlayButton)

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2008-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2008-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -55,11 +55,7 @@
 #include "QtUtils.h"
 #include "ClockWindow.h"
 #include "IMEController.h"
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include "QmlInputItem.h"
-#else
-#include "QmlInputItemQt5.h"
-#endif
 
 #include <QPropertyAnimation>
 #include <QTextLayout>
@@ -67,13 +63,8 @@
 #include <QHash>
 #include <QGraphicsPixmapItem>
 #include <QPainterPath>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
-#else
-#include <QQmlContext>
-#include <QQmlEngine>
-#endif
 
 
 // includes for the 9tile
@@ -384,6 +375,9 @@ LockWindow::LockWindow(uint32_t maxWidth, uint32_t maxHeight)
 	connect(this, SIGNAL(visibleChanged()), SLOT(slotVisibilityChanged()));
 
 	setLockTimeout(Preferences::instance()->lockTimeout());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    setAcceptTouchEvents(true);
+#endif
 }
 
 LockWindow::~LockWindow()
@@ -476,41 +470,21 @@ void LockWindow::init()
 			(quint32)(kShadowWidth + kBackgroundCornerWidth));
 
 	// Unlock Dialog
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     QDeclarativeEngine* qmlEngine = WindowServer::instance()->declarativeEngine();
-#else
-    QQmlEngine* qmlEngine = WindowServer::instance()->qmlEngine();
-#endif
     if(qmlEngine) {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
         QDeclarativeContext* context =	qmlEngine->rootContext();
-#else
-        QQmlContext* context = qmlEngine->rootContext();
-#endif
 
 		std::string qmlPath = settings->lunaQmlUiComponentsPath + "UnlockPanel/UnlockPanel.qml";
 		QUrl url = QUrl::fromLocalFile(qmlPath.c_str());
         qmlRegisterType<InputItem>("CustomComponents", 1, 0, "InputItem");
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		m_qmlUnlockPanel = new QDeclarativeComponent(qmlEngine, url, this);
-#else
-        m_qmlUnlockPanel = new QQmlComponent(qmlEngine, url, this);
-#endif
         if(m_qmlUnlockPanel) {
 			m_unlockPanel = qobject_cast<InputItem *>(m_qmlUnlockPanel->create());
 			if(m_unlockPanel) {
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
                 m_unlockPanel->setPos (-m_unlockPanel->boundingRect().width()/2, -m_unlockPanel->boundingRect().height()/2);
-#else
-                m_unlockPanel->setPos (QPointF(-m_unlockPanel->boundingRect().width()/2, -m_unlockPanel->boundingRect().height()/2));
-#endif
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 				static_cast<QGraphicsObject*>(m_unlockPanel)->setParentItem(this);
-#else
-                m_unlockPanel->setParent(this);
-#endif
 				
 				QMetaObject::invokeMethod(m_unlockPanel, "setUiScale", Q_ARG(QVariant, Settings::LunaSettings()->layoutScale));
 				
@@ -525,11 +499,7 @@ void LockWindow::init()
 
 		qmlPath = settings->lunaQmlUiComponentsPath + "MessageDialog/MessageDialog.qml";
 		url = QUrl::fromLocalFile(qmlPath.c_str());
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		m_qmlUnlockDialog = new QDeclarativeComponent(qmlEngine, url, this);
-#else
-        m_qmlUnlockDialog = new QQmlComponent(qmlEngine, url, this);
-#endif
 		if(m_qmlUnlockDialog) {
 			m_unlockDialog = qobject_cast<QGraphicsObject *>(m_qmlUnlockDialog->create());
 			if(m_unlockPanel) {
@@ -626,11 +596,7 @@ void LockWindow::resize(int width, int height)
 void LockWindow::slotUiRotationCompleted()
 {
 	if(m_state == StatePinEntry) {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		static_cast<QGraphicsObject*>(m_unlockPanel)->setFocus(); // make sure the PIN [anel has focus when in PIN entry mode
-#else
-        m_unlockPanel->setFocus(true);
-#endif
 	}
 }
 
@@ -718,8 +684,8 @@ void LockWindow::slotWindowUpdated(Window* win)
 		return;
 
 	switch (win->type()) {
-	case Window::Type_PopupAlert:
-	case Window::Type_BannerAlert:
+	case WindowType::Type_PopupAlert:
+	case WindowType::Type_BannerAlert:
 		{
 			AlertWindow* alert = (AlertWindow*)win;
 			if(!alert->isTransientAlert()) {
@@ -1583,22 +1549,14 @@ void LockWindow::slotPasswordSubmitted(QString password, bool isPIN)
 void LockWindow::slotPinPanelFocusRequest(bool focusRequest)
 {
 	if(focusRequest) {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		static_cast<QGraphicsObject*>(m_unlockPanel)->setFocus();
-#else
-        m_unlockPanel->setFocus(true);
-#endif
 
 		IMEController::instance()->setClient(m_unlockPanel);
 		IMEController::instance()->notifyInputFocusChange(m_unlockPanel, true);
 		IMEController::instance()->notifyAutoCapChanged(m_unlockPanel, false);
 
 	} else {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		m_unlockPanel->clearFocus();
-#else
-        m_unlockPanel->setFocus(false);
-#endif
 
 		IMEController::instance()->removeClient(m_unlockPanel);
 	}
@@ -1654,12 +1612,115 @@ void LockWindow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option
 }
 
 static const int kSlopFactorForClicks = 5;
+static QPointF mouseDownPos;
+static bool mouseDown = false;
+
+bool LockWindow::handleMouseEvent(QMouseEvent *event)
+{
+    bool ret = true;
+    Event ev;
+	ev.setMainFinger(true);
+
+	ev.x = mapFromScene(event->pos()).x();
+	ev.y = mapFromScene(event->pos()).y();
+	ev.modifiers = Event::modifiersFromQt(event->modifiers());
+
+	switch (event->type()) {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+        case QEvent::MouseButtonPress:
+            mouseDown = true;
+            mouseDownPos = event->pos();
+
+            ev.type = Event::PenDown;
+            handlePenDownEvent(&ev);
+            break;
+
+        case QEvent::MouseButtonRelease:
+            if (mouseDown) {
+                mouseDown = false;
+                QPointF diff = event->pos() - mouseDownPos;
+                ev.setClicked(diff.manhattanLength() <= kSlopFactorForClicks);
+            }
+
+            ev.type = Event::PenUp;
+            handlePenUpEvent(&ev);
+            break;
+
+        case QEvent::MouseMove:
+            if (!mouseDown) {
+                mouseDown = true; // fake the mouse down
+                mouseDownPos = event->pos();
+            }
+
+            ev.type = Event::PenMove;
+            handlePenMoveEvent(&ev);
+            break;
+#endif // QT_VERSION < 5.0.0
+        default:
+            ret = false;
+            break;
+	}
+
+    return ret;
+}
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+bool LockWindow::handleTouchEvent(QTouchEvent *event)
+{
+    if (event->touchPoints().isEmpty()) {
+        return false;
+    }
+
+    QPointF point = event->touchPoints().first().pos();
+    bool ret = true;
+    Event ev;
+	ev.setMainFinger(true);
+
+	ev.x = mapFromScene(point).x();
+	ev.y = mapFromScene(point).y();
+	ev.modifiers = Event::modifiersFromQt(event->modifiers());
+
+	switch (event->type()) {
+        case QEvent::TouchBegin:
+            mouseDown = true;
+            mouseDownPos = point;
+
+            ev.type = Event::PenDown;
+            handlePenDownEvent(&ev);
+            break;
+
+        case QEvent::TouchEnd:
+            if (mouseDown) {
+                mouseDown = false;
+                QPointF diff = point - mouseDownPos;
+                ev.setClicked(diff.manhattanLength() <= kSlopFactorForClicks);
+            }
+
+            ev.type = Event::PenUp;
+            handlePenUpEvent(&ev);
+            break;
+
+        case QEvent::TouchUpdate:
+            if (!mouseDown) {
+                mouseDown = true; // fake the mouse down
+                mouseDownPos = point;
+            }
+
+            ev.type = Event::PenMove;
+            handlePenMoveEvent(&ev);
+            break;
+
+        default:
+            ret = false;
+            break;
+	}
+
+    return ret;
+}
+#endif
 
 bool LockWindow::handleFilteredSceneEvent(QEvent* event)
 {
-	static QPointF mouseDownPos;
-	static bool mouseDown = false;
-
 	if ((event->type() == QEvent::KeyPress) || (event->type() == QEvent::KeyRelease)) { // filter the key events
 		if((m_state == StateNormal) || (m_state == StateDockMode) || ((m_state == StateUnlocked) && (isVisible())))
 			return true; // eat away all keys is the screen is locked
@@ -1684,52 +1745,21 @@ bool LockWindow::handleFilteredSceneEvent(QEvent* event)
 		return true;
 	}
 
-	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-	Event ev;
-	ev.setMainFinger(true);
-
-	ev.x = mapFromScene(mouseEvent->pos()).x();
-	ev.y = mapFromScene(mouseEvent->pos()).y();
-	ev.modifiers = Event::modifiersFromQt(mouseEvent->modifiers());
-
-	switch (mouseEvent->type()) {
-	case QEvent::MouseButtonPress: {
-		mouseDown = true;
-		mouseDownPos = mouseEvent->pos();
-
-		ev.type = Event::PenDown;
-		handlePenDownEvent(&ev);
-	}
-	break;
-
-	case QEvent::MouseButtonRelease:{
-		if (mouseDown) {
-			mouseDown = false;
-			QPointF diff = mouseEvent->pos() - mouseDownPos;
-			ev.setClicked(diff.manhattanLength() <= kSlopFactorForClicks);
-		}
-		ev.type = Event::PenUp;
-		handlePenUpEvent(&ev);
-	}
-	break;
-
-	case QEvent::MouseMove:{
-		if(!mouseDown)
-		{
-			mouseDown = true; // fake the mouse down
-			mouseDownPos = mouseEvent->pos();
-		}
-
-		ev.type = Event::PenMove;
-		handlePenMoveEvent(&ev);
-	}
-	break;
-
-	default:
-		break;
-	}
-
-	return true;
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+    if (event->type() == QEvent::MouseButtonPress ||
+        event->type() == QEvent::MouseButtonRelease ||
+        event->type() == QEvent::MouseMove) {
+        return handleMouseEvent(static_cast<QMouseEvent *>(event));
+    }
+    return true;
+#else
+    else if (event->type() == QEvent::TouchBegin ||
+               event->type() == QEvent::TouchEnd ||
+               event->type() == QEvent::TouchUpdate) {
+        return handleTouchEvent(static_cast<QTouchEvent *>(event));
+    }
+	return false;
+#endif // QT_VERSION < 5.0.0
 }
 
 
@@ -2075,17 +2105,11 @@ void LockWindow::showPinPanel()
 									  Q_ARG(QVariant, fromStdUtf8(hintStr)), Q_ARG(QVariant, minLen>0), Q_ARG(QVariant, (int)minLen));
 		}
 	}
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+
  	if(isPin)
  		m_unlockPanel->setPos (-m_unlockPanel->boundingRect().width()/2, -m_unlockPanel->boundingRect().height()/2);
  	else
  		m_unlockPanel->setPos (-m_unlockPanel->boundingRect().width()/2, -m_unlockPanel->boundingRect().height());
-#else
-    if(isPin)
-        m_unlockPanel->setPos (QPointF(-m_unlockPanel->boundingRect().width()/2, -m_unlockPanel->boundingRect().height()/2));
-    else
-        m_unlockPanel->setPos (QPointF(-m_unlockPanel->boundingRect().width()/2, -m_unlockPanel->boundingRect().height()));
-#endif
 
 	QMetaObject::invokeMethod(m_unlockPanel, "fade", Q_ARG(QVariant, true), Q_ARG(QVariant, AS(lockFadeDuration)));
 }

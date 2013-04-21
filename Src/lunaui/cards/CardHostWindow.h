@@ -1,6 +1,7 @@
 /* @@@LICENSE
 *
 *      Copyright (c) 2009-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2013 LG Electronics
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -39,7 +40,7 @@ Q_OBJECT
 
 public:
 
-	CardHostWindow(Window::Type type, HostWindowData* data, IpcClientHost* clientHost);
+    CardHostWindow(WindowType::Type type, HostWindowData* data, IpcClientHost* clientHost);
 	virtual ~CardHostWindow();
 
 	virtual void resizeEvent(int w, int h);
@@ -61,10 +62,13 @@ protected:
 
 	virtual void fullScreenEnabled(bool enabled);
 
-	virtual bool touchEvent(QTouchEvent* event);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+    virtual bool touchEvent(QTouchEvent* event);
+#endif
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
 	virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event);
 	virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+	virtual void hoverMoveEvent(QGraphicsSceneHoverEvent* event);
 	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 	virtual void refreshAdjustmentAngle();
 	virtual void onSetAppFixedOrientation(int orientation, bool isPortrait);

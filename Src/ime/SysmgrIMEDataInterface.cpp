@@ -20,6 +20,7 @@
 
 
 #include "SysmgrIMEDataInterface.h"
+#include <glib.h>
 #include "HostBase.h"
 #include "IMEController.h"
 #include "Settings.h"
@@ -33,10 +34,11 @@
 #include "BannerMessageEventFactory.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QWidget>
 #include <ime/IMEData.h>
 
-SysmgrIMEModel::SysmgrIMEModel() : m_inputMethod(NULL)
+SysmgrIMEModel::SysmgrIMEModel() : m_inputMethod(NULL),m_serviceHandle(NULL)
 {
 	const HostInfo& info = HostBase::instance()->getInfo();
 	m_availableSpace.set(QRect(0, 0, info.displayWidth, info.displayHeight));
@@ -55,7 +57,7 @@ QString SysmgrIMEModel::getLocalizedString(const std::string &str)
 
 std::string SysmgrIMEModel::getLocale()
 {
-    return Preferences::instance()->locale();
+    return LocalePreferences::instance()->locale();
 }
 
 QVariant SysmgrIMEModel::getLunaSystemSetting(const QString &key)
@@ -93,9 +95,21 @@ VirtualKeyboardPreferences &SysmgrIMEModel::virtualKeyboardPreferences()
     return VirtualKeyboardPreferences::instance();
 }
 
-GMainLoop *SysmgrIMEModel::getMainLoop()
+// If service handle exists, return it, otherwise create it then return it
+// In an error situation, this could return NULL
+LSHandle *SysmgrIMEModel::getLunaServiceHandle()
 {
-    return HostBase::instance()->mainLoop();
+    if (!m_serviceHandle) {
+        LSError lserror;
+        LSErrorInit(&lserror);
+        if (LSRegister(NULL, &m_serviceHandle, &lserror))
+            LSGmainAttach(m_serviceHandle, HostBase::instance()->mainLoop(), &lserror);
+        if (LSErrorIsSet(&lserror)) {
+            qCritical() << lserror.message << lserror.file << lserror.line << lserror.func;
+            LSErrorFree(&lserror);
+        }
+    }
+    return m_serviceHandle;
 }
 
 void SysmgrIMEModel::touchEvent(const QTouchEvent& te)
@@ -146,7 +160,21 @@ void SysmgrIMEModel::sendKeyEvent(QEvent::Type type, Qt::Key key, Qt::KeyboardMo
 {
     QWidget* focusedWidget = QApplication::focusWidget();
     if (focusedWidget && (type == QEvent::KeyPress || type == QEvent::KeyRelease)) {
-		QChar qchar(key);
+		QChar qchar;
+		switch(key) {
+		case Qt::Key_Return:
+		case Qt::Key_Enter:
+			qchar = '\r';
+			break;
+		case Qt::Key_Tab:
+			qchar = '\t';
+			break;
+		case Qt::Key_Backspace:
+			qchar = '\b';
+			break;
+		default:
+			qchar = QChar(key);
+		}
 
 		// only lower case A to Z. Other keys are unicode characters with proper casing already...
 		if (key >= Qt::Key_A && key <= Qt::Key_Z && !(modifiers & Qt::ShiftModifier))

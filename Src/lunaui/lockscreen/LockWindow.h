@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2008-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2008-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -33,11 +33,7 @@
 #include <QPointer>
 #include <QGraphicsObject>
 #include <QPropertyAnimation>
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QDeclarativeComponent>
-#else
-#include <QQmlComponent>
-#endif
 
 
 class Window;
@@ -55,7 +51,7 @@ class QMouseEvent;
 class QGraphicsPixmapItem;
 class GraphicsItemContainer;
 class InputItem;
-
+class QTouchEvent;
 
 class LockWindow : public QGraphicsObject
 {
@@ -156,6 +152,10 @@ private:
 
 	void changeState(State newState);
 
+    bool handleMouseEvent(QMouseEvent *event);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    bool handleTouchEvent(QTouchEvent *event);
+#endif
 	void handlePenDownEvent(Event* event);
 	void handlePenMoveEvent(Event* event);
 	void handlePenUpEvent(Event* event);
@@ -241,13 +241,8 @@ private:
 	bool bannerViewRegistered;
 
 //	CardWindow* m_phoneAppWin;
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	QDeclarativeComponent* m_qmlUnlockPanel;
 	QDeclarativeComponent* m_qmlUnlockDialog;
-#else
-    QQmlComponent* m_qmlUnlockPanel;
-    QQmlComponent* m_qmlUnlockDialog;
-#endif
 	InputItem* m_unlockPanel;
 	QGraphicsObject* m_unlockDialog;
 

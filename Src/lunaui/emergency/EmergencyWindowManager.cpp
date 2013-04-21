@@ -35,6 +35,8 @@
 #include "HostBase.h"
 #include "FlickGesture.h"
 #include "IMEController.h"
+#include "WebosTapAndHoldGesture.h"
+#include "SingleClickGesture.h"
 
 
 static const char* s_logChannel = "EmergencyWindowManager";
@@ -69,13 +71,19 @@ EmergencyWindowManager::EmergencyWindowManager(int maxWidth, int maxHeight)
 			this, SLOT(slotUiRotationCompleted()));
 
 	m_winRect.setRect(0, 0, maxWidth, maxHeight);
-
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	grabGesture(Qt::TapGesture);
 	grabGesture(Qt::TapAndHoldGesture);
 	grabGesture(Qt::PinchGesture);
 	grabGesture((Qt::GestureType) SysMgrGestureFlick);
 	grabGesture((Qt::GestureType) SysMgrGestureSingleClick);
-
+#else
+	grabGesture(Qt::TapGesture);
+	grabGesture(WebosTapAndHoldGesture::gestureType());
+	grabGesture(Qt::PinchGesture);
+    grabGesture(FlickGesture::gestureType());
+    grabGesture(SingleClickGesture::gestureType());
+#endif
 	setVisible(false);
 }
 
@@ -167,7 +175,7 @@ bool EmergencyWindowManager::sceneEvent(QEvent* event)
 
 void EmergencyWindowManager::addWindow(Window* win)
 {
-	if (win->type() != Window::Type_Emergency)
+	if (win->type() != WindowType::Type_Emergency)
 		return;
 
 	if (m_emergencyWindow) {

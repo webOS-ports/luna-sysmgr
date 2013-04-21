@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2008-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2008-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -28,6 +28,9 @@
 #include "HostWindow.h"
 #include "AppLaunchOptionsEvent.h"
 #include "SystemUiController.h"
+
+#include <WindowProperties.h>
+
 #include <QGraphicsSceneMouseEvent>
 #include <QTouchEvent>
 #include <QPainterPath>
@@ -60,7 +63,7 @@ class CardWindow : public HostWindow
 
 public:
 
-	CardWindow(Window::Type type, HostWindowData* data, IpcClientHost* clientHost=0);
+    CardWindow(WindowType::Type type, HostWindowData* data, IpcClientHost* clientHost=0);
 	virtual ~CardWindow();
 	
 	virtual QRectF boundingRect() const { return m_boundingRect; }
@@ -197,7 +200,7 @@ public:
 		int visibleWidth = width;
 		int visibleHeight = height;
 
-		if(type() != Window::Type_ModalChildWindowCard) {
+        if(type() != WindowType::Type_ModalChildWindowCard) {
 			m_boundingRect.setRect(-width/2, -height/2, width, height);
 		}
 		else {
@@ -237,7 +240,7 @@ protected Q_SLOTS:
 
 protected:
 
-	CardWindow(Window::Type type, const QPixmap& pixmap);
+    CardWindow(WindowType::Type type, const QPixmap& pixmap);
     void init();
 	
 	virtual void setVisibleDimensions(int width, int height);
@@ -469,6 +472,12 @@ private:
 	bool canPositionModalAtY(int yLoc, bool increasePositiveSpace, int& correctYLoc);
 
 	int forwardToModal();
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    void handleTouchBegin(QTouchEvent *te);
+    void handleTouchEnd(QTouchEvent *te);
+    void handleTouchUpdate(QTouchEvent *te);
+#endif
 };
 
 QDebug operator<<(QDebug, const CardWindow::Position &);

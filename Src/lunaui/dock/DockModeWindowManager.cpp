@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -60,13 +60,8 @@
 #include <QTextLayout>
 #include <QCoreApplication>
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
-#else
-#include <QQmlContext>
-#include <QQmlEngine>
-#endif
 
 #include "cjson/json.h"
 
@@ -301,7 +296,7 @@ int DockModeWindowManager::appIndexForId(const std::string appId)
 
 void DockModeWindowManager::prepareAddWindow(Window* win)
 {
-	if (win->type() != Window::Type_DockModeWindow)
+	if (win->type() != WindowType::Type_DockModeWindow)
 	    return;
 	
 	DockModeWindow* dockWin = static_cast<DockModeWindow*>(win);
@@ -370,7 +365,7 @@ void DockModeWindowManager::prepareAddWindow(Window* win)
 void DockModeWindowManager::addWindow(Window* win)
 {
 	// Dock Mode windows are the only type accepted
-	if (win->type() != Window::Type_DockModeWindow)
+	if (win->type() != WindowType::Type_DockModeWindow)
 	    return;
 	
 	DockModeWindow* dockWin = static_cast<DockModeWindow*>(win);
@@ -812,7 +807,7 @@ void DockModeWindowManager::closeWindow(Window* win)
 	if(m_sysUiLpInUse == dlp)
 		m_sysUiLpInUse = 0;
 
-	if(closingWindow->type() == Window::Type_DockModeLoadingWindow) {
+	if(closingWindow->type() == WindowType::Type_DockModeLoadingWindow) {
 		closingWindow->setVisible(false);
 		closingWindow->setRemoved();
 	
@@ -838,7 +833,7 @@ void DockModeWindowManager::closeWindow(Window* win)
 	if(!closingWindow) 
 		return;
 	
-	if(closingWindow->type() == Window::Type_DockModeWindow) {
+	if(closingWindow->type() == WindowType::Type_DockModeWindow) {
 		closingWindow->setVisible(false);
 		SystemUiController::instance()->setDirectRenderingForWindow(SystemUiController::DOCK_MODE_WINDOW_MANAGER, (DockModeWindow*)closingWindow, false);
 		closingWindow->setRemoved();

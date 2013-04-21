@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2008-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2008-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -56,13 +56,8 @@
 #include <QEvent>
 #include <QGraphicsPixmapItem>
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QDeclarativeEngine>
 #include <QDeclarativeContext>
-#else
-#include <QQmlEngine>
-#include <QQmlContext>
-#endif
 
 #if defined(HAVE_OPENGL) && defined(TARGET_DEVICE)
 #include <QGLContext>
@@ -106,11 +101,7 @@ WindowServerLuna::WindowServerLuna()
 	// Cache nothing- orientation changes display incorrectly under CacheBackground
         setCacheMode(QGraphicsView::CacheNone);
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     m_qmlEngine = new QDeclarativeEngine;
-#else
-    m_qmlEngine = new QQmlEngine;
-#endif
 
 	m_qmlEngine->rootContext()->setContextProperty("runtime", Runtime::instance());
 	
@@ -420,25 +411,25 @@ WindowManagerBase* WindowServerLuna::windowManagerForWindowType(int type) const
 	WindowManagerBase* wm = 0;
 
 	switch (type) {
-	case (Window::Type_ModalChildWindowCard):
-	case (Window::Type_Card):
+    case (WindowType::Type_ModalChildWindowCard):
+    case (WindowType::Type_Card):
 		wm = m_cardMgr; break;
-	case (Window::Type_DockModeWindow):
+    case (WindowType::Type_DockModeWindow):
 		wm = m_dockModeMgr; break;
-	case (Window::Type_Overlay):
-	case (Window::Type_Launcher):
-	case (Window::Type_QtNativePaintWindow):
+    case (WindowType::Type_Overlay):
+    case (WindowType::Type_Launcher):
+    case (WindowType::Type_QtNativePaintWindow):
 		wm = m_overlayMgr; break;
-	case (Window::Type_Dashboard):
-	case (Window::Type_PopupAlert):
-	case (Window::Type_BannerAlert):
+    case (WindowType::Type_Dashboard):
+    case (WindowType::Type_PopupAlert):
+    case (WindowType::Type_BannerAlert):
 		wm = m_dashboardMgr; break;
-	case (Window::Type_StatusBar):
-	case (Window::Type_Menu):
+    case (WindowType::Type_StatusBar):
+    case (WindowType::Type_Menu):
 		wm = m_menuMgr; break;
-	case (Window::Type_PIN):
+    case (WindowType::Type_PIN):
 		wm = m_topLevelMgr; break;
-	case (Window::Type_Emergency):
+    case (WindowType::Type_Emergency):
 		wm = m_emergencyModeMgr; break;
 	default:
 		g_critical("Unknown window type (%d) specified\n", type);
@@ -1184,9 +1175,20 @@ bool WindowServerLuna::sysmgrEventFilters(QEvent* event)
 		return true;
 	}
 
-	if((type == QEvent::MouseButtonPress) || (type == QEvent::MouseButtonRelease) || (type == QEvent::MouseMove) ||
-		(type == QEvent::KeyPress) || (type == QEvent::KeyRelease) || (type == QEvent::GestureOverride))
-	{
+	if (
+        type == QEvent::KeyPress ||
+        type == QEvent::KeyRelease ||
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+        type == QEvent::MouseButtonPress ||
+        type == QEvent::MouseButtonRelease ||
+        type == QEvent::MouseMove ||
+#else
+        type == QEvent::TouchBegin ||
+        type == QEvent::TouchEnd ||
+        type == QEvent::TouchUpdate ||
+#endif // QT_VERSION < 5.0.0
+        type == QEvent::GestureOverride)
+    {
 		if(!SystemUiController::instance()->isInDockMode()) {
 			if (m_topLevelMgr && ((TopLevelWindowManager*)m_topLevelMgr)->handleEvent(event)) {
 				luna_log(kWindowSrvChnl, "event consumed by TopLevelWindowManager: %d", type);
@@ -1224,6 +1226,28 @@ bool WindowServerLuna::sysmgrEventFilters(QEvent* event)
 			}
 		}
 	}
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    if (m_overlayMgr && (type == QEvent::TouchBegin ||
+                         type == QEvent::TouchEnd ||
+                         type == QEvent::TouchCancel ||
+                         type == QEvent::TouchUpdate)) {
+        QTouchEvent *te = static_cast<QTouchEvent *>(event);
+        OverlayWindowManager *owm =
+            static_cast<OverlayWindowManager *>(m_overlayMgr);
+
+        if (!te->touchPoints().isEmpty() && owm->universalSearchState() ==
+            OverlayWindowManager::StateUSearchVisible) {
+            if (type == QEvent::TouchBegin) {
+                return owm->handleTouchBegin(te);
+            } else if (type == QEvent::TouchEnd || type == QEvent::TouchCancel) {
+                return owm->handleTouchEnd(te);
+            } else if (type == QEvent::TouchUpdate) {
+                return owm->handleTouchUpdate(te);
+            }
+        }
+    }
+#endif
 
 	return false;
 }

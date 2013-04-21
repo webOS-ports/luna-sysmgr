@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -27,14 +27,25 @@
 #include <QTouchEvent>
 #include <QTransform>
 #include <QDebug>
+#include <QTime>
 
 #include "FlickGesture.h"
 
 #include "Time.h"
 #include "HostBase.h"
+#include "FlickEvent.h"
+
+Qt::GestureType FlickGesture::type = Qt::CustomGesture;
+
+static QTime timer;
+
+// These are used by touch event based flicks and can be tuned if it is
+// too hard/easy to trigger a flick
+static const qreal kFlickTriggerThresholdMin = 2.5f;
+static const qreal kFlickTriggerThresholdMax = 11.0f;
+static const int kFlickVelocityMultiplier = 100;
 
 FlickGestureRecognizer::FlickGestureRecognizer()
-	: m_maxSamples(3)
 {
 }
 
@@ -47,87 +58,73 @@ QGesture* FlickGestureRecognizer::create(QObject* target)
 	return new FlickGesture;
 }
 
-void FlickGestureRecognizer::addSample(const QPoint& position, int timestamp)
-{
-	if (m_points.size() >= m_maxSamples) {
-		m_points.dequeue();
-		m_timestamps.dequeue();
-	}
-
-	m_points.enqueue(position);
-	m_timestamps.enqueue(timestamp);
-}
-
 QGestureRecognizer::Result FlickGestureRecognizer::recognize(QGesture* gesture, QObject* watched, QEvent* event)
 {
-	FlickGesture* g = static_cast<FlickGesture*>(gesture);
-	QGestureRecognizer::Result result = QGestureRecognizer::Ignore;
+    FlickGesture* g = static_cast<FlickGesture*>(gesture);
+    QGestureRecognizer::Result result = QGestureRecognizer::Ignore;
+    QTouchEvent *te = static_cast<QTouchEvent *>(event);
 
     switch (event->type()) {
-	case QEvent::TouchBegin: {
-		QTouchEvent::TouchPoint tp = static_cast<QTouchEvent*>(event)->touchPoints().at(0);
-		g->setHotSpot(tp.screenPos().toPoint());
-		m_points.clear();
-		m_timestamps.clear();
+        case SysMgrGestureFlick: {
+            FlickEvent* ev = static_cast<FlickEvent*>(event);
+            if (ev->state() == Qt::GestureStarted) {
+                g->m_velocity = ev->velocity();
+                g->m_endPos = ev->velocity();
+                g->m_startPos = ev->startPos();
+                result = QGestureRecognizer::TriggerGesture;
+            } else if (ev->state() == Qt::GestureFinished) {
+                g->m_velocity = ev->velocity();
+                g->m_endPos = ev->velocity();
+                g->m_startPos = ev->startPos();
+                result = QGestureRecognizer::FinishGesture;
+            }
 
-		break;
-		// Fall through intentional here
-	}
-	case QEvent::TouchUpdate: {
-        result = QGestureRecognizer::MayBeGesture;
-		QTouchEvent::TouchPoint tp = static_cast<QTouchEvent*>(event)->touchPoints().at(0);
-		addSample(tp.screenPos().toPoint(), Time::curTimeMs());
+            break;
+        }
 
-		break;
-	}
-	case QEvent::TouchEnd: {
-		QTouchEvent::TouchPoint tp = static_cast<QTouchEvent*>(event)->touchPoints().at(0);
-//		addSample(tp.screenPos().toPoint(), Time::curTimeMs());
+        case QEvent::TouchBegin:
+            if (te->touchPoints().size() == 1) {
+                g->m_startPos = te->touchPoints().first().scenePos().toPoint();
+                g->setHotSpot(g->m_startPos);
+                timer.start();
+                result = QGestureRecognizer::TriggerGesture;
+            }
 
-		if (m_points.size() < 2) {
-			result = QGestureRecognizer::CancelGesture;
-		}
-		else {
-			qreal xVel = m_points.last().x() - m_points.first().x();
-			qreal yVel = m_points.last().y() - m_points.first().y();
+            break;
 
-			QPointF moved = QPointF(xVel, yVel);
+        case QEvent::TouchEnd:
+            result = QGestureRecognizer::CancelGesture;
 
-			qreal elapsed = (m_timestamps.last() - m_timestamps.first()) / 1000.0;
+            if (te->touchPoints().size() == 1 && timer.elapsed() > 0) {
+                QTouchEvent::TouchPoint tp = te->touchPoints().first();
 
-			int movedBy = moved.manhattanLength();
-			qreal swipeSpeed = movedBy / elapsed; // pixels / second
-			if (swipeSpeed > 500) {
+                if (tp.startScenePos() != tp.scenePos()) {
+                    QPointF vel = (tp.scenePos() - tp.startScenePos()) / (qreal)timer.elapsed();
+                    qreal delta = vel.manhattanLength();
 
-				elapsed *= m_points.size();
-				if (qFuzzyIsNull(elapsed)) {
-					xVel = 500;
-					yVel = 500;
-				}
-				else {
-					xVel = (xVel) / elapsed;
-					yVel = (yVel) / elapsed;
-				}
+                    if (delta >= kFlickTriggerThresholdMin &&
+                        delta <= kFlickTriggerThresholdMax) {
+                        g->m_endPos = tp.scenePos().toPoint();
+                        g->m_velocity = vel.toPoint() * kFlickVelocityMultiplier;
+                        result = QGestureRecognizer::FinishGesture;
+                    }
+                }
+            }
 
-				g->m_velocity = HostBase::instance()->map(QPoint(xVel, yVel));
-				g->m_endPos = tp.screenPos().toPoint();
+            break;
 
-				result = QGestureRecognizer::FinishGesture;
-			}
-			else {
-				result = QGestureRecognizer::CancelGesture;
-			}
-		}
+        default:
+            break;
+    }
 
-		m_points.clear();
-		m_timestamps.clear();
+    return result;
+}
 
-		break;
-	}
-	default:
-		result = QGestureRecognizer::Ignore;
-		break;
-	}
-
-	return result;
+void FlickGestureRecognizer::reset (QGesture* state)
+{
+    FlickGesture *gesture = static_cast<FlickGesture *>(state);
+    gesture->m_velocity = QPoint(0,0);
+    gesture->m_endPos = QPoint(0,0);
+    gesture->m_startPos = QPoint(0,0);
+    QGestureRecognizer::reset(state);
 }

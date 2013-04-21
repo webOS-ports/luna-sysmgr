@@ -42,7 +42,7 @@
 #include "HostWindow.h"
 #include "MenuWindow.h"
 #include "StatusBar.h"
-
+#include "WebosTapAndHoldGesture.h"
 static const int kTopLeftWindowIndex     = 0;
 static const int kTopRightWindowIndex    = 1;
 static const int kBottomLeftWindowIndex  = 2;
@@ -67,11 +67,19 @@ MenuWindowManager::MenuWindowManager(int maxWidth, int maxHeight)
 
 	kStatusBarTapMoveTolerance = HostBase::instance()->getInfo().displayHeight;
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	grabGesture(Qt::TapGesture);
+	grabGesture(Qt::TapAndHoldGesture);
+	grabGesture(Qt::PinchGesture);
 	grabGesture((Qt::GestureType) SysMgrGestureFlick);
 	grabGesture((Qt::GestureType) SysMgrGestureSingleClick);
-	grabGesture((Qt::GestureType) Qt::PinchGesture);
-	grabGesture(Qt::TapAndHoldGesture);
+#else
+	grabGesture(Qt::TapGesture);
+	grabGesture(WebosTapAndHoldGesture::gestureType());
+	grabGesture(Qt::PinchGesture);
+    grabGesture(FlickGesture::gestureType());
+    grabGesture(SingleClickGesture::gestureType());
+#endif
 
 	m_statusBar = new StatusBar(StatusBar::TypeNormal, maxWidth, Settings::LunaSettings()->positiveSpaceTopPadding);
 	if(m_statusBar) {
@@ -87,6 +95,10 @@ MenuWindowManager::MenuWindowManager(int maxWidth, int maxHeight)
 
 	if(Settings::LunaSettings()->virtualCoreNaviEnabled)
 		m_gestureArea = new GestureArea(maxWidth, Settings::LunaSettings()->positiveSpaceTopPadding);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    setAcceptTouchEvents(true);
+#endif
 }
 
 MenuWindowManager::~MenuWindowManager()
@@ -188,7 +200,7 @@ void MenuWindowManager::resize(int width, int height)
 
 		for ( it=cachedWindows->begin() ; it != cachedWindows->end(); it++ ) {
 			Window* w = *it;
-			if(w->type() == Window::Type_Menu) {
+			if(w->type() == WindowType::Type_Menu) {
 				((MenuWindow*)w)->resizeEventSync(width, height - Settings::LunaSettings()->positiveSpaceTopPadding);
 			}
 		}
@@ -200,7 +212,7 @@ void MenuWindowManager::addWindow(Window* win)
 	if (m_winArray.contains(win))
 		return;
 
-	if (win->type() == Window::Type_StatusBar)
+	if (win->type() == WindowType::Type_StatusBar)
 		return;
 
 	win->setParentItem(this);
@@ -308,7 +320,11 @@ void MenuWindowManager::flickGestureEvent(QGestureEvent* event)
 	}
 
 	if (!m_winArray.empty()) {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		QGesture* g = event->gesture((Qt::GestureType) SysMgrGestureFlick);
+#else
+        QGesture* g = event->gesture(FlickGesture::gestureType());
+#endif
 		Q_ASSERT(g != 0);
 		FlickGesture* flick = static_cast<FlickGesture*>(g);
 
@@ -368,6 +384,129 @@ void MenuWindowManager::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 		WebAppMgrProxy::instance()->inputEvent(targetWin, &ev);
 	}
 }
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+void MenuWindowManager::handleTouchBegin(QTouchEvent *te)
+{
+    te->ignore();
+
+    if (te->touchPoints().isEmpty()) {
+        return;
+    }
+
+    if (m_systemMenuOpened) {
+        te->accept();
+        return;
+    }
+
+    QTouchEvent::TouchPoint p = te->touchPoints().first();
+
+    m_penDownState = PenDownInvalid;
+
+    Window* targetWin = 0;
+    QPointF pos = p.scenePos();
+
+    if (!m_winArray.empty() &&
+        m_positiveSpace.contains(p.pos().x() - boundingRect().x(),
+                                 p.pos().y() - boundingRect().y())) {
+        m_penDownState = PenDownInMenu;
+        targetWin = m_winArray.first();
+    }
+
+    if (targetWin) {
+        Event ev;
+        ev.type = Event::PenDown;
+        ev.setMainFinger(true);
+        ev.x = pos.x();
+        ev.y = pos.y();
+        ev.clickCount = 1;
+        ev.modifiers = Event::modifiersFromQt(te->modifiers());
+        ev.time = Time::curSysTimeMs();
+        mapCoordToWindow(targetWin, ev.x, ev.y);
+        WebAppMgrProxy::instance()->inputEvent(targetWin, &ev);
+
+        te->accept();
+    }
+}
+
+void MenuWindowManager::handleTouchEnd(QTouchEvent *te)
+{
+    te->ignore();
+
+    if (te->touchPoints().isEmpty()) {
+        return;
+    }
+
+    if (m_systemMenuOpened) {
+        closeMenu();
+        te->accept();
+        return;
+    }
+
+    QTouchEvent::TouchPoint p = te->touchPoints().first();
+
+    Window* targetWin = 0;
+    QPointF pos = p.scenePos();
+    Event ev;
+
+    if (te->type() == QEvent::TouchEnd) {
+        ev.type = Event::PenUp;
+    } else {
+        ev.type = Event::PenCancel;
+    }
+
+    ev.x = pos.x();
+    ev.y = pos.y();
+    ev.modifiers = Event::modifiersFromQt(te->modifiers());
+    ev.setMainFinger(true);
+    ev.clickCount = 0;
+    ev.time = Time::curSysTimeMs();
+
+    if (m_penDownState == PenDownInMenu && !m_winArray.empty()) {
+        targetWin = m_winArray.first();
+    }
+
+    m_penDownState = PenDownInvalid;
+
+    if (targetWin) {
+        mapCoordToWindow(targetWin, ev.x, ev.y);
+        WebAppMgrProxy::instance()->inputEvent(targetWin, &ev);
+        te->accept();
+    }
+}
+
+void MenuWindowManager::handleTouchUpdate(QTouchEvent *te)
+{
+    te->ignore();
+
+    if (te->touchPoints().isEmpty()) {
+        return;
+    }
+
+    if (m_systemMenuOpened) {
+        te->accept();
+        return;
+    }
+
+    QTouchEvent::TouchPoint p = te->touchPoints().first();
+
+    if (!m_winArray.empty()) {
+        Window* targetWin = m_winArray.first();
+        QPointF pos = p.scenePos();
+
+        Event ev;
+        ev.type = Event::PenMove;
+        ev.setMainFinger(true);
+        ev.x = pos.x();
+        ev.y = pos.y();
+        ev.time = Time::curSysTimeMs();
+        ev.modifiers = Event::modifiersFromQt(te->modifiers());
+        mapCoordToWindow(targetWin, ev.x, ev.y);
+        WebAppMgrProxy::instance()->inputEvent(targetWin, &ev);
+        te->accept();
+    }
+}
+#endif
 
 void MenuWindowManager::positionCornerWindows(const QRect& r)
 {
@@ -535,12 +674,31 @@ bool MenuWindowManager::sceneEvent(QEvent* event)
 	case QEvent::Gesture: {
 
 		QGestureEvent* ge = static_cast<QGestureEvent*>(event);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		QGesture* g = ge->gesture((Qt::GestureType) SysMgrGestureFlick);
+#else
+        QGesture* g = ge->gesture(FlickGesture::gestureType());
+#endif
 		if (g && g->state() == Qt::GestureFinished) {
 			flickGestureEvent(ge);
 			return true;
 		}
+		break;
 	}
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+        case QEvent::TouchBegin:
+            handleTouchBegin(static_cast<QTouchEvent *>(event));
+            return event->isAccepted();
+
+        case QEvent::TouchEnd:
+        case QEvent::TouchCancel:
+            handleTouchEnd(static_cast<QTouchEvent *>(event));
+            return event->isAccepted();
+
+        case QEvent::TouchUpdate:
+            handleTouchUpdate(static_cast<QTouchEvent *>(event));
+            return event->isAccepted();
+#endif
 	default:
 		break;
 	}

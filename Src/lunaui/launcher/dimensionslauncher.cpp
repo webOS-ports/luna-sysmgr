@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2010-2012 Hewlett-Packard Development Company, L.P.
+*      Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -61,15 +61,9 @@
 #include <QSequentialAnimationGroup>
 #include <QEvent>
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
 #include <QDeclarativeComponent>
-#else
-#include <QQmlContext>
-#include <QQmlEngine>
-#include <QQmlComponent>
-#endif
 
 #include <QProcess>
 #include <QDir>
@@ -188,9 +182,11 @@ LauncherObject::LauncherObject(const QRectF& geometry,DimensionsUI * p_mainWindo
 	}
 	initObjects();
 	initSignalSlotConnections();
-
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	grabGesture((Qt::GestureType) SysMgrGestureFlick);
-
+#else
+    grabGesture(FlickGesture::gestureType());
+#endif
 	setObjectName("launcher_object");
 
 	connect(&m_feedbackTimer, SIGNAL(timeout()), this, SLOT(slotCancelLaunchFeedback()));
@@ -1347,22 +1343,12 @@ void LauncherObject::fullSizeInit(quint32 width,quint32 height)
 //	m_qp_testButton->setPos(m_qp_pageTabBar->geometry().right()-m_qp_testButton->geometry().width()-100.0,0.0);
 
 	// AppInfo Dialog
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 	QDeclarativeEngine* qmlEngine = WindowServer::instance()->declarativeEngine();
 	if(qmlEngine) {
 		QDeclarativeContext* context =	qmlEngine->rootContext();
-#else
-    QQmlEngine* qmlEngine = WindowServer::instance()->qmlEngine();
-    if(qmlEngine) {
-        QQmlContext* context = qmlEngine->rootContext();
-#endif
 		QString qmlPath = StringTranslator::inputString(Settings::LunaSettings()->lunaQmlUiComponentsPath + "AppInfoDialog/AppInfoDialog.qml");
 		QUrl url = QUrl::fromLocalFile(qmlPath);
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		m_qmlAppInfoDialog = new QDeclarativeComponent(qmlEngine, url, this);
-#else
-        m_qmlAppInfoDialog = new QQmlComponent(qmlEngine, url, this);
-#endif
 		if(m_qmlAppInfoDialog) {
 			m_appInfoDialog = qobject_cast<QGraphicsObject *>(m_qmlAppInfoDialog->create());
 			if(m_appInfoDialog) {
@@ -2168,7 +2154,11 @@ bool LauncherObject::sceneEvent(QEvent* event)
 //				return tapAndHoldGesture(hold,ge);
 //			}
 //		}
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 		g = ge->gesture((Qt::GestureType) SysMgrGestureFlick);
+#else
+        g = ge->gesture(FlickGesture::gestureType());
+#endif
 		if (g) {
 			FlickGesture* flick = static_cast<FlickGesture*>(g);
 			if (flick->state() == Qt::GestureFinished) {

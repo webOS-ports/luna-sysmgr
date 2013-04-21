@@ -24,14 +24,6 @@
 
 #include "Common.h"
 
-#if defined(HAVE_OPENGL) && defined(TARGET_DEVICE)
-#define USE_ROUNDEDCORNER_SHADER 1
-#else
-#undef USE_ROUNDEDCORNER_SHADER
-#endif
-
-#undef USE_ROUNDEDCORNER_SHADER
-
 #if defined(USE_ROUNDEDCORNER_SHADER)
 
 #include <QtOpenGL/qglcustomshaderstage_p.h>
