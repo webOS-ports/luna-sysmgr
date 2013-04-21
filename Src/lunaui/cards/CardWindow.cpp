@@ -1554,7 +1554,7 @@ void CardWindow::setVisibleDimensions(int width, int height)
 
 	m_paintPath = QPainterPath();
 
-	if ((m_adjustmentAngle != 90 && m_adjustmentAngle != -90) || this->type() == Window::Type_ModalChildWindowCard) {
+	if ((m_adjustmentAngle != 90 && m_adjustmentAngle != -90) || this->type() == WindowType::Type_ModalChildWindowCard) {
 		//where you alter the loading rect stuff
 		if(Settings::LunaSettings()->tabletUi)
                 	m_paintPath.addRoundedRect(boundingRect(), 8 * Settings::LunaSettings()->layoutScale, 6 * Settings::LunaSettings()->layoutScale);
