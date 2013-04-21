@@ -155,7 +155,8 @@ HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey,
 	  m_updatedAllowed(true),
 	  m_metaDataBuffer(0),
 	  m_textureId(0),
-	  m_bufferSemaphore(0)
+	  m_bufferSemaphore(0),
+	  m_currentBuffer(0)
 {
 	qDebug() << __PRETTY_FUNCTION__ << "width =" << m_width << "height =" << m_height;
 
@@ -200,17 +201,19 @@ QPixmap* HostWindowDataOpenGLHybris::acquirePixmap(QPixmap& screenPixmap)
 {
 	qDebug() << __PRETTY_FUNCTION__;
 
-	if (m_bufferQueue.size() == 0) {
-		qDebug() << __PRETTY_FUNCTION__ << "No buffer available for rendering!";
-		return &screenPixmap;;
+	if (m_bufferQueue.size() == 0 && m_currentBuffer == 0) {
+		qDebug() << __PRETTY_FUNCTION__ << "We don't have a buffer in queue and no current buffer for rendering!";
+		return &screenPixmap;
 	}
 
-	OffscreenNativeWindowBuffer *buffer = m_bufferQueue.dequeue();
-	qDebug() << __PRETTY_FUNCTION__ << "Getting buffer from cache (index =" << buffer->index() << ") ...";
-	QPixmap *pixmap = m_cache->retrievePixmapForBuffer(buffer);
+	if (m_bufferQueue.size() > 0) {
+		qDebug() << __PRETTY_FUNCTION__ << "Taking next buffer from queue for rendering";
+		m_currentBuffer = m_bufferQueue.dequeue();
+		m_bufferSemaphore->release();
+	}
 
-	qDebug() << __PRETTY_FUNCTION__ << "Releasing buffer semaphore ...";
-	m_bufferSemaphore->release();
+	qDebug() << __PRETTY_FUNCTION__ << "Getting buffer from cache (index =" << m_currentBuffer->index() << ") ...";
+	QPixmap *pixmap = m_cache->retrievePixmapForBuffer(m_currentBuffer);
 
 	return pixmap;
 }
@@ -231,6 +234,14 @@ void HostWindowDataOpenGLHybris::postBuffer(OffscreenNativeWindowBuffer *buffer)
 
 void HostWindowDataOpenGLHybris::cancelBuffer(OffscreenNativeWindowBuffer *buffer)
 {
+	// If we have buffers queued we have to care that we release all of them before to
+	// enable the client to acquire the buffers in the correct order.
+	if (m_bufferQueue.size() > 0) {
+		m_bufferSemaphore->release(m_bufferQueue.size());
+		m_bufferQueue.clear();
+		m_currentBuffer = 0;
+	}
+
 	qDebug() << "Canceling buffer index =" << buffer->index();
 	m_bufferSemaphore->release();
 }

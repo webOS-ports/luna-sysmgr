@@ -73,6 +73,7 @@ protected:
 	QPixmap m_pixmap;
 	QSystemSemaphore *m_bufferSemaphore;
 	RemoteTextureCache *m_cache;
+	OffscreenNativeWindowBuffer *m_currentBuffer;
 
 private:
 	HostWindowDataOpenGLHybris(const HostWindowDataOpenGLHybris&);
