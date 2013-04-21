@@ -24,6 +24,8 @@
 #include "HostWindow.h"
 #include "HostWindowDataOpenGLHybris.h"
 
+#include "SystemUiController.h"
+
 WebosSurfaceManagerRemoteClientLuna::WebosSurfaceManagerRemoteClientLuna(WebosSurfaceManager *parent, int socketFd)
 	: WebosSurfaceManagerRemoteClient(parent, socketFd)
 {
@@ -50,10 +52,10 @@ void WebosSurfaceManagerRemoteClientLuna::handleIncomingBuffer(int windowId, Off
 		return;
 	}
 
-	qDebug() << __PRETTY_FUNCTION__ << "Window with id" << windowId << "is" << (clientHostWindow->isVisible() ? "visible" : "not visible");
-	qDebug() << __PRETTY_FUNCTION__ << "Window has type" << clientHostWindow->type();
-
-	if (!clientHostWindow->isVisible()) {
+	if (!SystemUiController::instance()->bootFinished() ||
+		!clientHostWindow->isVisible() ||
+		clientHostWindow->parentItem() == 0 ||
+		!clientHostWindow->parentItem()->isVisible()) {
 		windowData->cancelBuffer(buffer);
 		return;
 	}
