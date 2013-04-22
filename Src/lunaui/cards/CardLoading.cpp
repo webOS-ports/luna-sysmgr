@@ -260,6 +260,7 @@ void CardLoading::paint(QPainter* painter, bool maximized)
                 }
                 else if (s_background != 0 && !s_background->isNull()) {
 
+                    initializeRoundedCornerStage();
 #if defined(USE_ROUNDEDCORNER_SHADER)
                     m_shader->setOnPainter(painter);
                     painter->drawPixmap(r, *s_background, s_background->rect());
