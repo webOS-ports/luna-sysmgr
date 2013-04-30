@@ -311,7 +311,7 @@ int IpcServer::launchNativeProcess(const std::string& appId, const char* path, c
         setenv("LD_PRELOAD", "libpvrtc.so", 1);
     }
     else {
-        setenv("QT_QPA_PLATFORM", "webos-offscreen", 1);
+        setenv("QT_QPA_PLATFORM", "webos", 1);
         setenv("QML_IMPORT_PATH", "/usr/plugins/imports", 1);
     }
 
