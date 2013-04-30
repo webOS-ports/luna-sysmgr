@@ -254,7 +254,8 @@ int IpcServer::launchNativeProcess(const std::string& appId, const char* path, c
 	char* const* args = argv;
 	if (!args)
 		args = minArgs;
-	
+
+#if defined(HAS_JAILER)
 	// build new arg list with stuff for jailer
 	// first count existing args
 	int i,e_argc;
@@ -289,6 +290,21 @@ int IpcServer::launchNativeProcess(const std::string& appId, const char* path, c
 	
 	// set the lib path value
     setenv("LD_LIBRARY_PATH", workingPath, 1); 
+#else
+	// build new arg list with stuff for jailer
+	// first count existing args
+	int i,e_argc;
+	i = 0;
+	for (e_argc = 0; args[e_argc]; e_argc++ );
+	const char *newargs[e_argc + 14];
+
+	newargs[i++] = path;
+	for (e_argc = 0; args[e_argc]; e_argc++)
+		newargs[i++] = args[e_argc];
+	newargs[i] = NULL;
+
+	g_message("%s: Process %s launching", __PRETTY_FUNCTION__, appId.c_str());
+#endif
 
     // for PVR texture decompression
     if ( appType != ApplicationDescription::Type_Qt ) {
@@ -302,8 +318,10 @@ int IpcServer::launchNativeProcess(const std::string& appId, const char* path, c
     // fire off the process (jailer will preserve the lib path value in the new environment)
 	pid_t pid = PrvLaunchProcess((char **)newargs);
 
+#if defined(HAS_JAILER)
 	// clear the lib path value
     unsetenv("LD_LIBRARY_PATH"); 
+#endif
 	
 	if (pid < 0) {
 		g_critical("%s:%d failed to fork: %s", __PRETTY_FUNCTION__, __LINE__,
@@ -548,6 +566,7 @@ static int PrvForkFunction(void* data)
 	snprintf(buf, maxSize - 1, "%d", pid);
 	buf[maxSize - 1] = 0;
 
+#if defined(HAS_JAILER)
 	int fd = ::open("/dev/cgroup/tasks", O_WRONLY);
 	if (fd >= 0) {
 		ssize_t result = ::write(fd, buf, ::strlen(buf) + 1);
@@ -561,6 +580,7 @@ static int PrvForkFunction(void* data)
 	// Reset cpu affinity before entering the jail because the jail 
 	// prevents pdk apps from accessing libaffinity system files.
 	resetCpuAffinity(0);
+#endif
 
 	// Now exec the process
 	

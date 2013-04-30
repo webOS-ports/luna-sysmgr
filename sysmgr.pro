@@ -675,6 +675,10 @@ contains(CONFIG_BUILD, napp) {
     DEFINES += HAS_NAPP
 }
 
+contains(CONFIG_BUILD, jailer) {
+    DEFINES += HAS_JAILER
+}
+
 DESTDIR = ./$${BUILD_TYPE}-$${MACHINE_NAME}
 
 OBJECTS_DIR = $$DESTDIR/.obj

@@ -22,18 +22,21 @@ contains(MACHINE_NAME, "broadway") {
 	DEFINES += MACHINE_BROADWAY HAS_KEYMAPS PALM_DEVICE HAS_DISPLAY_TIMEOUT HAS_PALM_QPA USE_ROUNDEDCORNER_SHADER
 	CONFIG_BUILD += opengl texturesharing directrendering
 	CONFIG_BUILD += haptics napp nyx hidlib webosdevice
+	CONFIG_BUILD += jailer
     LIBS += -lqpalm
 }
 contains(MACHINE_NAME, "mantaray") {
 	DEFINES += MACHINE_MANTARAY HAS_KEYMAPS PALM_DEVICE HAS_DISPLAY_TIMEOUT HAS_PALM_QPA USE_ROUNDEDCORNER_SHADER
 	CONFIG_BUILD += opengl openglcomposited directrendering
 	CONFIG_BUILD += haptics napp nyx hidlib webosdevice
+	CONFIG_BUILD += jailer
     LIBS += -lqpalm
 }
 contains(MACHINE_NAME, "windsornot") {
 	DEFINES += MACHINE_WINDSORNOT PALM_DEVICE HAS_DISPLAY_TIMEOUT HAS_PALM_QPA USE_ROUNDEDCORNER_SHADER
 	CONFIG_BUILD += opengl openglcomposited directrendering 
 	CONFIG_BUILD +=  nyx napp hidlib webosdevice
+	CONFIG_BUILD += jailer
     LIBS += -lqpalm
 }
 contains(MACHINE_NAME, "topaz") {
@@ -55,12 +58,14 @@ contains(MACHINE_NAME, "topaz") {
 
 	CONFIG_BUILD += opengl directrendering # texturesharing fb1poweroptimization
 	CONFIG_BUILD += affinity haptics napp nyx hidlib webosdevice
+	CONFIG_BUILD += jailer
     LIBS += -lqpalm
 }
 contains(MACHINE_NAME, "opal") {
 	DEFINES += MACHINE_OPAL PALM_DEVICE HAS_DISPLAY_TIMEOUT HAS_PALM_QPA USE_ROUNDEDCORNER_SHADER
 	CONFIG_BUILD += opengl texturesharing directrendering
 	CONFIG_BUILD += affinity haptics napp nyx hidlib webosdevice
+	CONFIG_BUILD += jailer
     LIBS += -lqpalm
 }
 contains(MACHINE_NAME, "tuna") | contains(MACHINE_NAME, "maguro") | contains(MACHINE_NAME, "toro") | contains(MACHINE_NAME, "toroplus") {
