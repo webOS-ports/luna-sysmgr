@@ -28,6 +28,7 @@
 #include <QPixmap>
 #include <QQueue>
 #include <PIpcBuffer.h>
+#include <EGL/egl.h>
 #include <EGL/eglhybris.h>
 #include <EGL/eglext.h>
 #include <OffscreenNativeWindow.h>
