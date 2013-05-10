@@ -1704,6 +1704,7 @@ void CardWindow::paintBase(QPainter* painter, bool maximized)
 #if defined(USE_ROUNDEDCORNER_SHADER)
             }
 #endif
+			releaseScreenPixmap();
         }
     }
 }

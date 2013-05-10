@@ -45,6 +45,7 @@ public:
 	virtual PIpcBuffer* metaDataBuffer() const = 0;
 	virtual void initializePixmap(QPixmap& screenPixmap) = 0;
 	virtual QPixmap* acquirePixmap(QPixmap& screenPixmap) = 0;
+	virtual void releaseScreenPixmap() {}
 	virtual void allowUpdates(bool allow) = 0;
 	virtual void onUpdateRegion(QPixmap& screenPixmap, int x, int y, int w, int h) = 0;
 	virtual void onUpdateWindowRequest() = 0;
