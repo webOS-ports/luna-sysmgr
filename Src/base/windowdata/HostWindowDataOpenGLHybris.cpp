@@ -74,26 +74,25 @@ public:
 		};
 
 		EGLDisplay currentDisplay = eglGetCurrentDisplay();
-		m_image = eglCreateImageKHR(currentDisplay, EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+		EGLImageKHR eglImage = eglCreateImageKHR(currentDisplay, EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
 											  clientBuffer, attrs);
-		if (m_image == EGL_NO_IMAGE_KHR) {
+		if (eglImage == EGL_NO_IMAGE_KHR) {
 			EGLint error = eglGetError();
 			qWarning() << __PRETTY_FUNCTION__ << "error creating EGLImage; error =" << error;
 		}
 
-		glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) m_image);
+		glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) eglImage);
+
+		eglDestroyImageKHR(currentDisplay, eglImage); eglImage = 0;
 	}
 
 	~RemoteTextureBundle()
 	{
-		QGLContext* gc = (QGLContext*) QGLContext::currentContext();
-		EGLDisplay currentDisplay = eglGetCurrentDisplay();
-
-		if (m_image)
-			eglDestroyImageKHR(currentDisplay, m_image);
-
 		if (m_textureId)
+		{
+			QGLContext* gc = (QGLContext*) QGLContext::currentContext();
 			gc->deleteTexture(m_textureId);
+		}
 
 		if (m_pixmap)
 			delete m_pixmap;
@@ -103,9 +102,8 @@ public:
 
 private:
 	int m_index;
-	unsigned int m_textureId;
+	GLuint m_textureId;
 	QPixmap *m_pixmap;
-	EGLImageKHR m_image;
 };
 
 class RemoteTextureCache
@@ -134,6 +132,14 @@ public:
 		m_cache.insert(buffer->index(), item);
 
 		return item->pixmap();
+	}
+
+	void releaseBufferFromCache(OffscreenNativeWindowBuffer *buffer)
+	{
+		if(m_cache.contains(buffer->index())) {
+			 // there is a match --> remove this item from the cache
+			 m_cache.remove(buffer->index());
+		 }
 	}
 
 private:
@@ -175,7 +181,7 @@ HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey,
 
 	m_bufferSemaphore = new QSystemSemaphore(QString("EGLWindow%1").arg(key));
 
-	m_cache = new RemoteTextureCache(OffscreenNativeWindow::bufferCount());
+	m_cache = new RemoteTextureCache(5);
 }
 
 HostWindowDataOpenGLHybris::~HostWindowDataOpenGLHybris()
@@ -213,6 +219,14 @@ void HostWindowDataOpenGLHybris::updateFromAppDirectRenderingLayer(int screenX, 
 
 void HostWindowDataOpenGLHybris::onUpdateRegion(QPixmap& screenPixmap, int x, int y, int w, int h)
 {
+}
+
+void HostWindowDataOpenGLHybris::releaseScreenPixmap()
+{
+	if( m_currentBuffer )
+	{
+		m_cache->releaseBufferFromCache(m_currentBuffer);
+	}
 }
 
 void HostWindowDataOpenGLHybris::postBuffer(OffscreenNativeWindowBuffer *buffer)

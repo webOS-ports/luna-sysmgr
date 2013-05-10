@@ -112,6 +112,7 @@ public:
 	virtual void resize(int w, int h);			//has-base-impl
 
 	virtual const QPixmap* acquireScreenPixmap() { return &m_screenPixmap; }
+	virtual const void releaseScreenPixmap() { }
 
 	inline int initialWidth() const { return m_initialWidth; }
 	inline int initialHeight() const { return m_initialHeight; }
