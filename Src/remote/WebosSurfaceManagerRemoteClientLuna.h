@@ -22,7 +22,6 @@
 
 class WebosSurfaceManagerRemoteClientLuna : public WebosSurfaceManagerRemoteClient
 {
-	Q_OBJECT
 public:
 	WebosSurfaceManagerRemoteClientLuna(WebosSurfaceManager *parent, int socketFd);
 
