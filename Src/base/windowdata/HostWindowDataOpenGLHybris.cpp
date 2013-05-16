@@ -56,8 +56,7 @@ class RemoteTextureBundle
 {
 public:
 	RemoteTextureBundle(OffscreenNativeWindowBuffer *buffer)
-		: m_index(buffer->index()),
-		  m_textureId(0),
+		: m_textureId(0),
 		  m_pixmap(0)
 	{
 		QGLContext* gc = (QGLContext*) QGLContext::currentContext();
@@ -101,52 +100,9 @@ public:
 	QPixmap* pixmap() { return m_pixmap; }
 
 private:
-	int m_index;
 	GLuint m_textureId;
 	QPixmap *m_pixmap;
 };
-
-class RemoteTextureCache
-{
-public:
-	RemoteTextureCache(int size)
-	{
-		m_cache.setMaxCost(size);
-	}
-
-	QPixmap* retrievePixmapForBuffer(OffscreenNativeWindowBuffer *buffer)
-	{
-		if(m_cache.contains(buffer->index())) {
-			QPixmap* bufferPixmap = m_cache[buffer->index()]->pixmap();
-			if(bufferPixmap->width() == buffer->width &&
-			   bufferPixmap->height() == buffer->height) {
-				return bufferPixmap;
-			}
-			else {
-				// sizes mismatch -> remove buffer from cache and create new cache item
-				m_cache.remove(buffer->index());
-			}
-		}
-
-		RemoteTextureBundle* item = new RemoteTextureBundle(buffer);
-		m_cache.insert(buffer->index(), item);
-
-		return item->pixmap();
-	}
-
-	void releaseBufferFromCache(OffscreenNativeWindowBuffer *buffer)
-	{
-		if(m_cache.contains(buffer->index())) {
-			 // there is a match --> remove this item from the cache
-			 m_cache.remove(buffer->index());
-		 }
-	}
-
-private:
-	QCache<unsigned int, RemoteTextureBundle> m_cache;
-	int m_maxSize;
-};
-
 
 HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey, int width,
 													   int height, bool hasAlpha)
@@ -157,9 +113,8 @@ HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey,
 	  m_hasAlpha(hasAlpha),
 	  m_updatedAllowed(true),
 	  m_metaDataBuffer(0),
-	  m_textureId(0),
 	  m_bufferSemaphore(0),
-	  m_currentBuffer(0)
+	  m_currentBufferTexture(0)
 {
 	qDebug() << __PRETTY_FUNCTION__ << "width =" << m_width << "height =" << m_height;
 
@@ -171,8 +126,6 @@ HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey,
 		}
 	}
 
-	m_eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-
 	if (eglCreateImageKHR == 0) {
 		eglCreateImageKHR = (PFNEGLCREATEIMAGEKHRPROC) eglGetProcAddress("eglCreateImageKHR");
 		eglDestroyImageKHR = (PFNEGLDESTROYIMAGEKHRPROC) eglGetProcAddress("eglDestroyImageKHR");
@@ -180,8 +133,6 @@ HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey,
 	}
 
 	m_bufferSemaphore = new QSystemSemaphore(QString("EGLWindow%1").arg(key));
-
-	m_cache = new RemoteTextureCache(5);
 }
 
 HostWindowDataOpenGLHybris::~HostWindowDataOpenGLHybris()
@@ -202,15 +153,21 @@ void HostWindowDataOpenGLHybris::initializePixmap(QPixmap &screenPixmap)
 
 QPixmap* HostWindowDataOpenGLHybris::acquirePixmap(QPixmap& screenPixmap)
 {
-	if (m_bufferQueue.size() == 0 && m_currentBuffer == 0)
+	if (m_bufferQueue.size() == 0 && m_currentBufferTexture == 0)
 		return &screenPixmap;
 
-	if (m_bufferQueue.size() > 0) {
-		m_currentBuffer = m_bufferQueue.dequeue();
+	if (NULL == m_currentBufferTexture && m_bufferQueue.size() > 0)
+	{
+		OffscreenNativeWindowBuffer *pNextBuffer = m_bufferQueue.dequeue();
 		m_bufferSemaphore->release();
+		if( pNextBuffer )
+		{
+			m_currentBufferTexture = new RemoteTextureBundle(pNextBuffer);
+			pNextBuffer->decStrong(NULL);
+		}
 	}
 
-	return m_cache->retrievePixmapForBuffer(m_currentBuffer);
+	return m_currentBufferTexture ? m_currentBufferTexture->pixmap() : &screenPixmap;
 }
 
 void HostWindowDataOpenGLHybris::updateFromAppDirectRenderingLayer(int screenX, int screenY, int screenOrientation)
@@ -223,15 +180,18 @@ void HostWindowDataOpenGLHybris::onUpdateRegion(QPixmap& screenPixmap, int x, in
 
 void HostWindowDataOpenGLHybris::releaseScreenPixmap()
 {
-	if( m_currentBuffer )
+	// If there is a next buffer in queue, discard the current texture cache so that the next
+	// draw will pick that next buffer
+	if( m_currentBufferTexture && m_bufferQueue.size() > 0 )
 	{
-		m_cache->releaseBufferFromCache(m_currentBuffer);
+		delete m_currentBufferTexture; m_currentBufferTexture = NULL;
 	}
 }
 
 void HostWindowDataOpenGLHybris::postBuffer(OffscreenNativeWindowBuffer *buffer)
 {
 	m_bufferQueue.append(buffer);
+	buffer->incStrong(NULL);
 }
 
 void HostWindowDataOpenGLHybris::cancelBuffer(OffscreenNativeWindowBuffer *buffer)
@@ -241,7 +201,11 @@ void HostWindowDataOpenGLHybris::cancelBuffer(OffscreenNativeWindowBuffer *buffe
 	if (m_bufferQueue.size() > 0) {
 		m_bufferSemaphore->release(m_bufferQueue.size());
 		m_bufferQueue.clear();
-		m_currentBuffer = 0;
+	}
+
+	if( m_currentBufferTexture )
+	{
+		delete m_currentBufferTexture; m_currentBufferTexture = NULL;
 	}
 
 	m_bufferSemaphore->release();

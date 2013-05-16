@@ -33,7 +33,7 @@
 #include <EGL/eglext.h>
 #include <OffscreenNativeWindow.h>
 
-class RemoteTextureCache;
+class RemoteTextureBundle;
 
 class HostWindowDataOpenGLHybris : public HostWindowData
 {
@@ -69,13 +69,8 @@ protected:
 	bool m_updatedAllowed;
 	PIpcBuffer *m_metaDataBuffer;
 	QQueue<OffscreenNativeWindowBuffer*> m_bufferQueue;
-	unsigned int m_textureId;
-	EGLImageKHR m_image;
-	EGLDisplay m_eglDisplay;
-	QPixmap m_pixmap;
 	QSystemSemaphore *m_bufferSemaphore;
-	RemoteTextureCache *m_cache;
-	OffscreenNativeWindowBuffer *m_currentBuffer;
+	RemoteTextureBundle *m_currentBufferTexture;
 
 private:
 	HostWindowDataOpenGLHybris(const HostWindowDataOpenGLHybris&);
