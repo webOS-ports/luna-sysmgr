@@ -17,6 +17,9 @@ pre-start script
 	if [ ! -f /var/luna/preferences/ran-first-use ]
 	then
 		echo " -u minimal -a org.webosports.app.firstuse" > /var/luna/preferences/sysmgr-args
+	elif [ -f /var/luna/preferences/update-needed ]
+	then
+		echo " -u minimal -a org.webosports.app.update" > /var/luna/preferences/sysmgr-args
 	else
 		echo "" > /var/luna/preferences/sysmgr-args
 	fi
