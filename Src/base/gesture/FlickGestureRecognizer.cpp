@@ -41,9 +41,9 @@ static QTime timer;
 
 // These are used by touch event based flicks and can be tuned if it is
 // too hard/easy to trigger a flick
-static const qreal kFlickTriggerThresholdMin = 2.5f;
+static const qreal kFlickTriggerThresholdMin = 5.0f;
 static const qreal kFlickTriggerThresholdMax = 11.0f;
-static const int kFlickVelocityMultiplier = 100;
+static const int kFlickVelocityMultiplier = 130;
 
 FlickGestureRecognizer::FlickGestureRecognizer()
 {
