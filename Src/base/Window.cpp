@@ -97,6 +97,8 @@ void Window::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
 	painter->drawPixmap(m_visibleBounds.x(), m_visibleBounds.y(), *pix,
 						0, 0, m_visibleBounds.width(), m_visibleBounds.height());
 
+	releaseScreenPixmap();
+
 	//unlock();
 }
 

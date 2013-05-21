@@ -71,6 +71,7 @@ public:
 	void onAsynchFlipCompleted(int newWidth, int newHeight, int newScreenWidth, int newScreenHeight);
 
 	virtual const QPixmap* acquireScreenPixmap();
+	virtual const void releaseScreenPixmap();
 
 	virtual void setComposingText(const std::string& text);
 	virtual void commitComposingText();

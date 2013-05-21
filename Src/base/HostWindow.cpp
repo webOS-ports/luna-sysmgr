@@ -277,6 +277,16 @@ const QPixmap* HostWindow::acquireScreenPixmap()
 	return m_data ? m_data->acquirePixmap(m_screenPixmap) : Window::acquireScreenPixmap();
 }
 
+const void HostWindow::releaseScreenPixmap()
+{
+	if( m_data ) {
+		m_data->releaseScreenPixmap();
+	}
+	else {
+		Window::acquireScreenPixmap();
+	}
+}
+
 void HostWindow::slotAboutToSendSyncMessage()
 {
 	if (m_data)

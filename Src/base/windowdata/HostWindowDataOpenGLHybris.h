@@ -51,6 +51,7 @@ public:
 	virtual PIpcBuffer* metaDataBuffer() const { return m_metaDataBuffer; }
 	virtual void initializePixmap(QPixmap& screenPixmap);
 	virtual QPixmap* acquirePixmap(QPixmap& screenPixmap);
+	virtual void releaseScreenPixmap();
 	virtual void allowUpdates(bool allow) {}
 	virtual void onUpdateRegion(QPixmap& screenPixmap, int x, int y, int w, int h);
 	virtual void updateFromAppDirectRenderingLayer(int screenX, int screenY, int screenOrientation);
