@@ -28,8 +28,6 @@ CONFIG += release
 
 LIBS += -lluna-prefs -lPmLogLib -lrolegen
 
-HEADERS += HostArm.h
-
 TARGET_TYPE = TARGET_DEVICE
 
 MACHINE_NAME = $$(MACHINE)
