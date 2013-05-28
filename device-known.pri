@@ -63,7 +63,7 @@ contains(MACHINE_NAME, "opal") {
 	CONFIG_BUILD += affinity haptics napp nyx hidlib webosdevice
     LIBS += -lqpalm
 }
-contains(MACHINE_NAME, "tuna") {
+contains(MACHINE_NAME, "tuna") | contains(MACHINE_NAME, "maguro") | contains(MACHINE_NAME, "toro") | contains(MACHINE_NAME, "toroplus") {
     DEFINES += MACHINE_TUNA HAS_DISPLAY_TIMEOUT HAS_PALM_QPA USE_ROUNDEDCORNER_SHADER
     TARGET_TYPE = TARGET_DEVICE
     CONFIG_BUILD += webosdevice nyx
@@ -71,7 +71,7 @@ contains(MACHINE_NAME, "tuna") {
     CONFIG_BUILD += haptics
     LIBS += -lqpalm
 }
-contains(MACHINE_NAME, "grouper") {
+contains(MACHINE_NAME, "grouper") | contains(MACHINE_NAME, "tilapia") {
     DEFINES += MACHINE_GROUPER HAS_DISPLAY_TIMEOUT HAS_PALM_QPA USE_ROUNDEDCORNER_SHADER
     TARGET_TYPE = TARGET_DEVICE
     CONFIG_BUILD += webosdevice nyx
