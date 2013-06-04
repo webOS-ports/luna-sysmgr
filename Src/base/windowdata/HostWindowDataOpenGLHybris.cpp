@@ -66,7 +66,7 @@ public:
 		m_textureId = gc->bindTexture(*m_pixmap, GL_TEXTURE_2D, GL_BGRA,
 				QGLContext::PremultipliedAlphaBindOption);
 
-		EGLClientBuffer clientBuffer = (EGLClientBuffer) buffer;
+		EGLClientBuffer clientBuffer = (EGLClientBuffer) buffer->getNativeBuffer();
 		EGLint attrs[] = {
 			EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
 			EGL_NONE,

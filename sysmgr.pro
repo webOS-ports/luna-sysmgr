@@ -609,6 +609,7 @@ contains(CONFIG_BUILD, opengl) {
 	} else {
 		contains(CONFIG_BUILD, hybris) {
 			PKGCONFIG += webos-gui
+			LIBS += -lhybris-eglplatformcommon
 			DEFINES += HAVE_HYBRIS Q_WS_QPA
 			SOURCES += HostWindowDataOpenGLHybris.cpp \
 				   WebosSurfaceManagerRemoteClientLuna.cpp
