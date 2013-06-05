@@ -57,7 +57,8 @@ class RemoteTextureBundle
 public:
 	RemoteTextureBundle(OffscreenNativeWindowBuffer *buffer)
 		: m_textureId(0),
-		  m_pixmap(0)
+		  m_pixmap(0),
+		  m_buffer(buffer)
 	{
 		QGLContext* gc = (QGLContext*) QGLContext::currentContext();
 
@@ -98,10 +99,12 @@ public:
 	}
 
 	QPixmap* pixmap() { return m_pixmap; }
+	OffscreenNativeWindowBuffer* buffer() { return m_buffer; }
 
 private:
 	GLuint m_textureId;
 	QPixmap *m_pixmap;
+	OffscreenNativeWindowBuffer *m_buffer;
 };
 
 HostWindowDataOpenGLHybris::HostWindowDataOpenGLHybris(int key, int metaDataKey, int width,
@@ -159,7 +162,6 @@ QPixmap* HostWindowDataOpenGLHybris::acquirePixmap(QPixmap& screenPixmap)
 	if (NULL == m_currentBufferTexture && m_bufferQueue.size() > 0)
 	{
 		OffscreenNativeWindowBuffer *pNextBuffer = m_bufferQueue.dequeue();
-		m_bufferSemaphore->release();
 		if( pNextBuffer )
 		{
 			m_currentBufferTexture = new RemoteTextureBundle(pNextBuffer);
@@ -182,9 +184,11 @@ void HostWindowDataOpenGLHybris::releaseScreenPixmap()
 {
 	// If there is a next buffer in queue, discard the current texture cache so that the next
 	// draw will pick that next buffer
-	if( m_currentBufferTexture && m_bufferQueue.size() > 0 )
+	if (m_currentBufferTexture && m_bufferQueue.size() > 0)
 	{
-		delete m_currentBufferTexture; m_currentBufferTexture = NULL;
+		m_surfaceClient->releaseBuffer(m_currentBufferTexture->buffer());
+		delete m_currentBufferTexture;
+		m_currentBufferTexture = NULL;
 	}
 }
 
@@ -196,17 +200,5 @@ void HostWindowDataOpenGLHybris::postBuffer(OffscreenNativeWindowBuffer *buffer)
 
 void HostWindowDataOpenGLHybris::cancelBuffer(OffscreenNativeWindowBuffer *buffer)
 {
-	// If we have buffers queued we have to care that we release all of them before to
-	// enable the client to acquire the buffers in the correct order.
-	if (m_bufferQueue.size() > 0) {
-		m_bufferSemaphore->release(m_bufferQueue.size());
-		m_bufferQueue.clear();
-	}
-
-	if( m_currentBufferTexture )
-	{
-		delete m_currentBufferTexture; m_currentBufferTexture = NULL;
-	}
-
-	m_bufferSemaphore->release();
+	m_surfaceClient->releaseBuffer(buffer);
 }

@@ -27,11 +27,13 @@
 #include "SystemUiController.h"
 
 WebosSurfaceManagerRemoteClientLuna::WebosSurfaceManagerRemoteClientLuna(WebosSurfaceManager *parent, int socketFd)
-	: WebosSurfaceManagerRemoteClient(parent, socketFd)
+	: WebosSurfaceManagerRemoteClient(parent, socketFd),
+	  m_clientHostWindow(0),
+	  m_windowData(0)
 {
 }
 
-void WebosSurfaceManagerRemoteClientLuna::handleIncomingBuffer(int windowId, OffscreenNativeWindowBuffer *buffer)
+void WebosSurfaceManagerRemoteClientLuna::handleIdentify(unsigned int windowId)
 {
 	Window *clientWindow = IpcServer::instance()->findWindow(windowId);
 	if (!clientWindow) {
@@ -39,27 +41,38 @@ void WebosSurfaceManagerRemoteClientLuna::handleIncomingBuffer(int windowId, Off
 		return;
 	}
 
-	HostWindow *clientHostWindow = static_cast<HostWindow*>(clientWindow);
-	if (!clientHostWindow) {
+	m_clientHostWindow = static_cast<HostWindow*>(clientWindow);
+	if (!m_clientHostWindow) {
 		qWarning() << __PRETTY_FUNCTION__ << "Window with id" << windowId << "is not a host window!";
 		return;
 	}
 
-	const HostWindowDataOpenGLHybris *windowData =
-		static_cast<const HostWindowDataOpenGLHybris*>(clientHostWindow->hostWindowData());
-	if (!windowData) {
+	const HostWindowDataOpenGLHybris *windowData;
+	windowData = static_cast<const HostWindowDataOpenGLHybris*>(m_clientHostWindow->hostWindowData());
+	m_windowData = const_cast<HostWindowDataOpenGLHybris*>(windowData);
+	if (!m_windowData) {
 		qWarning() << __PRETTY_FUNCTION__ << "Window with id" << windowId << "is not a hybris based window!";
 		return;
 	}
 
-	if (!SystemUiController::instance()->bootFinished() ||
-		!clientHostWindow->isVisible() ||
-		clientHostWindow->parentItem() == 0 ||
-		!clientHostWindow->parentItem()->isVisible()) {
-		windowData->cancelBuffer(buffer);
+	m_windowData->setSurfaceClient(this);
+}
+
+void WebosSurfaceManagerRemoteClientLuna::handleIncomingBuffer(OffscreenNativeWindowBuffer *buffer)
+{
+	if (!m_windowData || !m_clientHostWindow) {
+		qWarning() << __PRETTY_FUNCTION__ << "Buffer was posted before the client identified itself";
 		return;
 	}
 
-	windowData->postBuffer(buffer);
-	clientHostWindow->onUpdateFullWindow();
+	if (!SystemUiController::instance()->bootFinished() ||
+		!m_clientHostWindow->isVisible() ||
+		m_clientHostWindow->parentItem() == 0 ||
+		!m_clientHostWindow->parentItem()->isVisible()) {
+		m_windowData->cancelBuffer(buffer);
+		return;
+	}
+
+	m_windowData->postBuffer(buffer);
+	m_clientHostWindow->onUpdateFullWindow();
 }

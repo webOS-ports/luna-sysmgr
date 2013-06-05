@@ -20,13 +20,21 @@
 
 #include <WebosSurfaceManagerRemoteClient.h>
 
+class HostWindow;
+class HostWindowDataOpenGLHybris;
+
 class WebosSurfaceManagerRemoteClientLuna : public WebosSurfaceManagerRemoteClient
 {
 public:
 	WebosSurfaceManagerRemoteClientLuna(WebosSurfaceManager *parent, int socketFd);
 
 protected:
-	virtual void handleIncomingBuffer(int windowId, OffscreenNativeWindowBuffer *buffer);
+	virtual void handleIdentify(unsigned int windowId);
+	virtual void handleIncomingBuffer(OffscreenNativeWindowBuffer *buffer);
+
+private:
+	HostWindow *m_clientHostWindow;
+	HostWindowDataOpenGLHybris *m_windowData;
 };
 
 class WebosSurfaceManagerRemoteClientLunaFactory : public WebosSurfaceManagerRemoteClientFactory

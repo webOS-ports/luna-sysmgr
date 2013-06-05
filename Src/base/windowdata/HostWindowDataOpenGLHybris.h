@@ -32,6 +32,7 @@
 #include <EGL/eglhybris.h>
 #include <EGL/eglext.h>
 #include <OffscreenNativeWindow.h>
+#include <WebosSurfaceManagerRemoteClient.h>
 
 class RemoteTextureBundle;
 
@@ -60,6 +61,8 @@ public:
 	virtual void postBuffer(OffscreenNativeWindowBuffer *buffer);
 	virtual void cancelBuffer(OffscreenNativeWindowBuffer *buffer);
 
+	void setSurfaceClient(WebosSurfaceManagerRemoteClient *client) { m_surfaceClient = client; }
+
 protected:
 	int m_key;
 	int m_metaDataKey;
@@ -71,6 +74,7 @@ protected:
 	QQueue<OffscreenNativeWindowBuffer*> m_bufferQueue;
 	QSystemSemaphore *m_bufferSemaphore;
 	RemoteTextureBundle *m_currentBufferTexture;
+	WebosSurfaceManagerRemoteClient *m_surfaceClient;
 
 private:
 	HostWindowDataOpenGLHybris(const HostWindowDataOpenGLHybris&);
