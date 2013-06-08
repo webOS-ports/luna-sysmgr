@@ -315,6 +315,9 @@ int IpcServer::launchNativeProcess(const std::string& appId, const char* path, c
         setenv("QML_IMPORT_PATH", "/usr/plugins/imports", 1);
     }
 
+    // we have fbdev as EGL_PLATFORM set so our client cannot
+    setenv("EGL_PLATFORM", "null", 1);
+
     // fire off the process (jailer will preserve the lib path value in the new environment)
 	pid_t pid = PrvLaunchProcess((char **)newargs);
 
