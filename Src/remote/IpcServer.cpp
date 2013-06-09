@@ -289,20 +289,9 @@ int IpcServer::launchNativeProcess(const std::string& appId, const char* path, c
 	
 	
 	// set the lib path value
-    setenv("LD_LIBRARY_PATH", workingPath, 1); 
+    setenv("LD_LIBRARY_PATH", workingPath, 1);
 #else
-	// build new arg list with stuff for jailer
-	// first count existing args
-	int i,e_argc;
-	i = 0;
-	for (e_argc = 0; args[e_argc]; e_argc++ );
-	const char *newargs[e_argc + 14];
-
-	newargs[i++] = path;
-	for (e_argc = 0; args[e_argc]; e_argc++)
-		newargs[i++] = args[e_argc];
-	newargs[i] = NULL;
-
+	char **newargs = argv;
 	g_message("%s: Process %s launching", __PRETTY_FUNCTION__, appId.c_str());
 #endif
 
