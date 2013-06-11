@@ -41,6 +41,8 @@
 #include "WindowServer.h"
 #include "WebAppMgrProxy.h"
 
+#include <WebosSurfaceManager.h>
+
 static const int kPriorityActive = -1;
 static const int kPriorityInactive = 1;
 
@@ -210,7 +212,11 @@ void IpcClientHost::onRemoveWindow(int key)
 
 	g_message("%s (%d): Remove Window with key:%d, window: %p",
 	          __PRETTY_FUNCTION__, __LINE__, key, win);
-	
+
+	WebosSurfaceManagerRemoteClient *client = WebosSurfaceManager::instance()->findClient(key);
+	if (client)
+		WebosSurfaceManager::instance()->onClientDisconnected(client);
+
 	m_winMap.erase(key);
 	m_winSet.erase(win);
 	m_closedWinSet.erase(win);
