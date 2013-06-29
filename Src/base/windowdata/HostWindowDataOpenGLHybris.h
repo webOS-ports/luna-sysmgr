@@ -31,7 +31,7 @@
 #include <EGL/egl.h>
 #include <EGL/eglhybris.h>
 #include <EGL/eglext.h>
-#include <OffscreenNativeWindow.h>
+#include <OffscreenNativeWindowBuffer.h>
 #include <WebosSurfaceManagerRemoteClient.h>
 
 class RemoteTextureBundle;
