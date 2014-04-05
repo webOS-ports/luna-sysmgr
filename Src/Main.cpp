@@ -27,8 +27,6 @@
 #include "Common.h"
 
 #include "HostBase.h"
-#include "ApplicationDescription.h"
-#include "ApplicationManager.h"
 #include "CpuAffinity.h"
 #include "HapticsController.h"
 #include "Localization.h"
@@ -37,7 +35,6 @@
 #include "MemoryMonitor.h"
 #include "Settings.h"
 #include "SystemService.h"
-#include "ApplicationInstaller.h"
 #include "Preferences.h"
 #include "DeviceInfo.h"
 #include "Security.h"
@@ -45,11 +42,7 @@
 #include "Logging.h"
 #include "BackupManager.h"
 #include "DisplayManager.h"
-#include "EventReporter.h"
 #include "InputEventMonitor.h"
-#include "BootManager.h"
-
-#include "ApplicationProcessManager.h"
 
 #include <ProcessKiller.h>
 
@@ -773,20 +766,6 @@ int main( int argc, char** argv)
 
 	// Initialize the System Service
 	SystemService::instance()->init();
-
-	// Initialize the Boot Manager
-	BootManager::instance();
-
-	// Initialize the application mgr
-	ApplicationManager::instance()->init();
-
-	// Initialize the Application Installer
-	ApplicationInstaller::instance();
-
-	ApplicationProcessManager::instance();
-
-	// Initialize the Event Reporter
-	EventReporter::init(host->mainLoop());
 
 	// Initialize the SysMgr MemoryMonitor
 	MemoryMonitor::instance();

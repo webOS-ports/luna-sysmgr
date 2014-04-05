@@ -75,7 +75,6 @@ include_directories(
 
 set(HEADERS
     Src/base/AmbientLightSensor.h
-    Src/base/LsmUtils.h
     Src/base/settings/AnimationSettings.h
     Src/base/settings/DeviceInfo.h
     Src/base/DisplayStates.h
@@ -89,26 +88,12 @@ set(HEADERS
     Src/base/SharedGlobalProperties.h
     Src/base/Security.h
     Src/base/SystemService.h
-    Src/base/BootManager.h
     Src/base/DisplayManager.h
-    Src/base/EventReporter.h
     Src/base/BackupManager.h
     Src/base/InputEventMonitor.h
-    Src/base/application/ServiceDescription.h
-    Src/base/application/ApplicationStatus.h
-    Src/base/application/ApplicationInstaller.h
-    Src/base/application/PackageDescription.h
-    Src/base/application/CmdResourceHandlers.h
-    Src/base/application/ApplicationManager.h
-    Src/base/application/MimeSystem.h
-    Src/base/application/LaunchPoint.h
-    Src/base/application/ApplicationDescription.h
-    Src/base/application/ApplicationInstallerErrors.h
-    Src/base/application/LaunchPoint.cpp
     Src/core/PtrArray.h
     Src/core/AnimationEquations.h
-    Src/core/GraphicsDefs.h
-    Src/remote/ApplicationProcessManager.h)
+    Src/core/GraphicsDefs.h)
 
 set(SOURCES
     Src/base/Security.cpp
@@ -117,33 +102,19 @@ set(SOURCES
     Src/base/settings/Settings.cpp
     Src/base/settings/DeviceInfo.cpp
     Src/base/settings/AnimationSettings.cpp
-    Src/base/EventReporter.cpp
     Src/base/MemoryMonitor.cpp
     Src/base/DisplayManager.cpp
     Src/base/CpuAffinity.cpp
-    Src/base/LsmUtils.cpp
     Src/base/JSONUtils.cpp
     Src/base/AmbientLightSensor.cpp
     Src/base/BackupManager.cpp
     Src/base/EASPolicyManager.cpp
     Src/base/SuspendBlocker.cpp
     Src/base/SystemService.cpp
-    Src/base/BootManager.cpp
     Src/base/Logging.cpp
     Src/base/InputEventMonitor.cpp
-    Src/base/application/ApplicationDescription.cpp
-    Src/base/application/MimeSystem.cpp
-    Src/base/application/PackageDescription.cpp
-    Src/base/application/ApplicationInstaller.cpp
-    Src/base/application/CmdResourceHandlers.cpp
-    Src/base/application/ServiceDescription.cpp
-    Src/base/application/ApplicationManager.cpp
-    Src/base/application/ApplicationStatus.cpp
-    Src/base/application/LaunchPoint.cpp
-    Src/base/application/ApplicationManagerService.cpp
     Src/core/MallocHooks.cpp
     Src/core/KeywordMap.cpp
-    Src/remote/ApplicationProcessManager.cpp
     Src/Main.cpp)
 
 add_executable(LunaSysMgr ${SOURCES})
@@ -169,14 +140,3 @@ qt5_use_modules(LunaSysMgr Core Gui Widgets)
 webos_build_daemon()
 webos_build_system_bus_files()
 webos_config_build_doxygen(doc Doxyfile)
-
-set(HELPER_SCRIPTS
-    scripts/app-install
-    scripts/ApplicationInstallerUtility
-    scripts/pmServicePostInstall.sh
-    scripts/pmServicePostRemove.sh)
-
-install(FILES ${HELPER_SCRIPTS}
-     DESTINATION ${WEBOS_INSTALL_BINDIR}
-     PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
-                 GROUP_READ WORLD_READ)

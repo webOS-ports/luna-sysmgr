@@ -30,9 +30,11 @@
 #include <map>
 #include <set>
 
+#if 0
 #include "ApplicationDescription.h"
 #include "ApplicationManager.h"
 #include "ApplicationDescription.h"
+#endif
 #include "AnimationSettings.h"
 #include "HostBase.h"
 #include "Logging.h"
@@ -53,7 +55,9 @@
 #endif
 
 static SystemService* s_instance = 0;
+#if 0
 static ApplicationManager* s_AppManInstance = 0;
+#endif
 static const int sModalTimerInterval = 5000;
 static const int sModalResetCounterLimit = 100;
 
@@ -257,7 +261,9 @@ SystemService::SystemService()
 	m_cardLoadingAnimation = true;
 	s_instance->resetModalDialogInfo();
 	s_instance->initModalTimerInfo();
+#if 0
 	s_AppManInstance = ApplicationManager::instance();
+#endif
 }
 
 SystemService::~SystemService()
@@ -4277,6 +4283,7 @@ Example response for a failed call:
 */
 bool cbLaunchModalApp(LSHandle *lsHandle, LSMessage *message, void *user_data)
 {
+#if 0
 	bool subscribed = true;
 	bool returnError = true;
 	std::string errMsg, modalId, launchId, callerId, params, parentAppId;
@@ -4477,6 +4484,7 @@ done:
 
 	if(launchParams)
 		json_object_put(launchParams);
+#endif
 
 	return true;
 }
