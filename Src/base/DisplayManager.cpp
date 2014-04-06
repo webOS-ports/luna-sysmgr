@@ -29,7 +29,6 @@
 #include "Settings.h"
 #include "SystemService.h"
 #include "Time.h"
-#include "BootManager.h"
 
 #ifdef HAS_NYX
 #include <nyx/nyx_client.h>
@@ -217,7 +216,6 @@ DisplayManager::DisplayManager()
     initStates();
 
     // connect(SystemUiController::instance(), SIGNAL(signalEmergencyMode(bool)), this, SLOT(slotEmergencyMode(bool)));
-    connect(BootManager::instance(), SIGNAL(bootFinished()), this, SLOT(slotBootFinished()));
     connect(Preferences::instance(), SIGNAL(signalAlsEnabled(bool)), this, SLOT(slotAlsEnabled(bool)));
     // connect(IMEController::instance(), SIGNAL(signalShowIME()), this, SLOT(slotShowIME()));
     // connect(IMEController::instance(), SIGNAL(signalHideIME()), this, SLOT(slotHideIME()));
@@ -323,6 +321,13 @@ DisplayManager::DisplayManager()
     {
         LSErrorPrint (&lserror, stderr);
         LSErrorFree (&lserror);
+    }
+
+    result = LSRegisterServerStatus(m_service, "org.webosports.bootmgr", DisplayManager::bootMgrServiceNotification, this, &lserror);
+    if (!result)
+    {
+        LSErrorPrint(&lserror, stderr);
+        LSErrorFree(&lserror);
     }
 
     result = LSRegisterServerStatus(m_service, "com.palm.keys", DisplayManager::keysServiceNotification, this, &lserror);
@@ -723,6 +728,26 @@ bool DisplayManager::audiodServiceNotification(LSHandle *sh, const char *service
     return true;
 }
 
+bool DisplayManager::bootMgrServiceNotification(LSHandle *handle, const char *serviceName, bool connected, void *ctx)
+{
+    LSError lserror;
+    LSErrorInit(&lserror);
+    bool result = true;
+    DisplayManager *dm = (DisplayManager*) ctx;
+
+    if (connected)
+    {
+        result = LSCall(dm->m_service, "luna://org.webosports.bootmgr/getStatus", "{\"subscribe\":true}", DisplayManager::bootStatusCallback, dm, NULL, &lserror);
+        if (!result)
+        {
+            LSErrorPrint (&lserror, stderr);
+            LSErrorFree (&lserror);
+        }
+    }
+
+    return true;
+}
+
 bool DisplayManager::proximityOn ()
 {
     if (!m_proximityEnabled)
@@ -915,6 +940,37 @@ bool DisplayManager::batteryCallback(LSHandle *sh, LSMessage *message, void *ctx
 	}
 
 	json_object_put(root);
+    }
+
+    return true;
+}
+
+bool DisplayManager::bootStatusCallback(LSHandle *sh, LSMessage *message, void *ctx)
+{
+    LSError lserror;
+    LSErrorInit(&lserror);
+    bool result = false;
+
+    DisplayManager *dm = (DisplayManager*) ctx;
+    json_object* root = 0, *label = 0;
+    const char *state;
+
+    const char* str = LSMessageGetPayload(message);
+    if (str) {
+        root = json_tokener_parse(str);
+        result = (root && !is_error(root));
+    }
+
+    if (result)
+    {
+        label = json_object_object_get(root, "status");
+        if (label && !is_error (label)) {
+            state = json_object_get_string(label);
+            if (!strcmp(state, "normal"))
+                dm->markBootFinished(true);
+            else
+                dm->markBootFinished(false);
+        }
     }
 
     return true;
@@ -2356,18 +2412,20 @@ void DisplayManager::slotAlsEnabled (bool enable)
 	}
 }
 
-void DisplayManager::slotBootFinished()
+void DisplayManager::markBootFinished(bool finished)
 {
-	m_bootFinished = true;
-	if (currentState() == DisplayStateOn
-			|| currentState() == DisplayStateOnLocked
-			|| currentState() == DisplayStateOnPuck
-			|| currentState() == DisplayStateDockMode
-			|| (currentState() == DisplayStateDim && !Settings::LunaSettings()->turnOffAccelWhenDimmed))
-        orientationSensorOn();
+	if (finished) {
+		m_bootFinished = true;
+		if (currentState() == DisplayStateOn
+				|| currentState() == DisplayStateOnLocked
+				|| currentState() == DisplayStateOnPuck
+				|| currentState() == DisplayStateDockMode
+				|| (currentState() == DisplayStateDim && !Settings::LunaSettings()->turnOffAccelWhenDimmed))
+		orientationSensorOn();
 
-    // Update compass with correct lat/long
-    requestCurrentLocation();
+		// Update compass with correct lat/long
+		requestCurrentLocation();
+	}
 }
 
 void DisplayManager::slotShowIME()
@@ -2773,7 +2831,7 @@ bool DisplayManager::orientationSensorOn ()
 	if (!m_bootFinished)
 		return true;
 
-    HostBase::instance()->OrientationSensorOn(true);
+	HostBase::instance()->OrientationSensorOn(true);
 
 	return true;
 }
@@ -3333,4 +3391,9 @@ void DisplayManager::handlePowerKey(bool pressed)
         updateState(DISPLAY_EVENT_POWER_BUTTON_DOWN);
     else if (!m_dropPowerKey)
         updateState(DISPLAY_EVENT_POWER_BUTTON_UP);
+}
+
+bool DisplayManager::isBootFinished() const
+{
+    return m_bootFinished;
 }

@@ -27,7 +27,6 @@
 #include "SystemService.h"
 #include "Preferences.h"
 #include "Time.h"
-#include "BootManager.h"
 
 #define DOCK_MODE_EXIT_TIMER 1000
 
@@ -882,7 +881,7 @@ bool DisplayOn::timeoutUser()
     uint32_t now = Time::curTimeMs();
     g_debug ("%s: now=%i last=%i diff=%i", __PRETTY_FUNCTION__, now, lastEvent(), now - lastEvent());
 
-    if (!BootManager::instance()->isBootFinished())
+    if (!DisplayManager::instance()->isBootFinished())
         return false;
 
 #if 0
@@ -924,7 +923,7 @@ bool DisplayOn::timeoutInternal()
     uint32_t now = Time::curTimeMs();
     g_debug ("%s: now=%i last=%i diff=%i", __PRETTY_FUNCTION__, now, lastEvent(), now - lastEvent());
 
-    if (!BootManager::instance()->isBootFinished())
+    if (!DisplayManager::instance()->isBootFinished())
         return false;
 
 #if 0
@@ -1136,7 +1135,7 @@ bool DisplayOnLocked::timeout()
     uint32_t now = Time::curTimeMs();
     g_debug ("%s: now=%i last=%i diff=%i", __FUNCTION__, now, lastEvent(), now - lastEvent());
 
-    if (!BootManager::instance()->isBootFinished())
+    if (!DisplayManager::instance()->isBootFinished())
         return false;
 
 #if 0
@@ -1346,7 +1345,7 @@ bool DisplayDim::timeout()
     uint32_t now = Time::curTimeMs();
     g_debug ("%s: now=%i last=%i diff=%i", __FUNCTION__, now, lastEvent(), now - lastEvent());
 
-    if (!BootManager::instance()->isBootFinished())
+    if (!DisplayManager::instance()->isBootFinished())
         return false;
 
 #if 0
@@ -1610,7 +1609,7 @@ bool DisplayOnPuck::timeout()
     uint32_t now = Time::curTimeMs();
     g_debug ("%s: now=%i last=%i diff=%i", __FUNCTION__, now, lastEvent(), now - lastEvent());
 
-    if (!BootManager::instance()->isBootFinished())
+    if (!DisplayManager::instance()->isBootFinished())
         return false;
 
 #if 0

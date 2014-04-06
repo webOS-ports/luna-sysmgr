@@ -121,6 +121,7 @@ public:
     static bool audiodServiceNotification(LSHandle *sh, const char *serviceName, bool connected, void *ctx);
     static bool keysServiceNotification(LSHandle *sh, const char *serviceName, bool connected, void *ctx);
     static bool hiddServiceNotification(LSHandle *sh, const char *serviceName, bool connected, void *ctx);
+    static bool bootMgrServiceNotification(LSHandle *sh, const char *serviceName, bool connected, void *ctx);
 
     // luna-service methods
     static bool controlSetState(LSHandle *sh, LSMessage *message, void *ctx);
@@ -139,6 +140,7 @@ public:
     static bool sliderCallback(LSHandle *sh, LSMessage *message, void *ctx);
     static bool audiodCallback(LSHandle *sh, LSMessage *message, void *ctx);
     static void powerdCallback (void);
+    static bool bootStatusCallback(LSHandle *sh, LSMessage *message, void *ctx);
 
     static void getBearingInfo(double& latitude, double& longitude);
     static void setBearingInfo(double latitude, double longitude);
@@ -168,6 +170,7 @@ public:
     bool isDisplayOn() const;
     bool isTouchpanelOn() const;
     bool isDemo() const;
+    bool isBootFinished() const;
 
     std::string puckId() const;
 
@@ -327,11 +330,12 @@ private:
 
 	static void changeVsyncControl(bool enable);
 
+	void markBootFinished(bool finished);
+
 private Q_SLOTS:
 
     void slotEmergencyMode (bool enable);
     void slotAlsEnabled (bool enable);
-    void slotBootFinished();
     void slotShowIME();
     void slotHideIME();
     void slotBluetoothKeyboardActive(bool active);
