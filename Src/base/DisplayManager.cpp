@@ -936,7 +936,7 @@ bool DisplayManager::batteryCallback(LSHandle *sh, LSMessage *message, void *ctx
 
 	    // if the brightness is changed because of the
 	    // battery level changing, update it.
-	    dm->updateBrightness();
+        dm->updateBrightness();
 	}
 
 	json_object_put(root);
@@ -963,7 +963,7 @@ bool DisplayManager::bootStatusCallback(LSHandle *sh, LSMessage *message, void *
 
     if (result)
     {
-        label = json_object_object_get(root, "status");
+        label = json_object_object_get(root, "state");
         if (label && !is_error (label)) {
             state = json_object_get_string(label);
             if (!strcmp(state, "normal"))
