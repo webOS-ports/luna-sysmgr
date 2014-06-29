@@ -1,9 +1,0 @@
-{
-	"title": "Voice Dial",
-	"type": "sysmgrbuiltin",
-	"category":"Applications",
-	"entrypoint":"slotBuiltInAppEntryPoint_VoiceDial",
-	"id": "com.palm.sysapp.voicedial",
-	"icon": "icon-64x64.png",
-	"removable":false
-}
