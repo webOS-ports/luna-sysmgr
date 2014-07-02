@@ -2447,12 +2447,22 @@ void DisplayManager::slotBluetoothKeyboardActive(bool active)
         unlock();
 }
 
+#define POWERKEY_PRESS_DELAY		100
+
 gboolean DisplayManager::sendPowerKeyPressedEventCallback(gpointer context)
 {
     DisplayManager *dm = (DisplayManager*) context;
+
+    // if we're still not running again reschedule power key pressed event again
+    if (dm->currentState() == DisplayStateOffSuspended) {
+        g_message("%s: rescheduling power key pressed event", __PRETTY_FUNCTION__);
+        g_timeout_add(POWERKEY_PRESS_DELAY, DisplayManager::sendPowerKeyPressedEventCallback, context);
+        return FALSE;
+    }
+
     g_message("%s: sending power key press event to current state", __PRETTY_FUNCTION__);
-    dm->m_currentState->handleEvent (DisplayEventPowerKeyPress);
-    dm->m_powerKeyPressEventScheduled =  false;
+    dm->m_currentState->handleEvent(DisplayEventPowerKeyPress);
+    dm->m_powerKeyPressEventScheduled = false;
     return FALSE;
 }
 
@@ -2506,7 +2516,7 @@ bool DisplayManager::updateState (int eventType)
                         if (!m_powerKeyPressEventScheduled)
                         {
                             g_message("%s: rescheduling power key pressed event", __PRETTY_FUNCTION__);
-                            g_timeout_add(300, sendPowerKeyPressedEventCallback, this);
+                            g_timeout_add(POWERKEY_PRESS_DELAY, sendPowerKeyPressedEventCallback, this);
                         }
                     }
                     else if (!(m_onCall && currentState() == DisplayStateOnPuck))
