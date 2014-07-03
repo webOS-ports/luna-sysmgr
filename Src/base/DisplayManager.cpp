@@ -300,14 +300,12 @@ DisplayManager::DisplayManager()
         LSErrorFree (&lserror);
     }
 
-    /*
     result = LSCall(m_service, URI_SIGNAL_ADDMATCH, JSON_CHARGER_SIGNAL_ADDMATCH, DisplayManager::chargerCallback, this, NULL, &lserror);
     if (!result)
     {
         LSErrorPrint (&lserror, stderr);
         LSErrorFree (&lserror);
     }
-    */
 
     result = LSCall(m_service, URI_SIGNAL_ADDMATCH, JSON_USBDOCK_SIGNAL_ADDMATCH, DisplayManager::usbDockCallback, this, NULL, &lserror);
     if (!result)
@@ -2173,7 +2171,7 @@ bool DisplayManager::setMaximumBrightness (int maxBrightness, bool save)
 		// set the new max brightness
 		m_maxBrightness = maxBrightness;
 		// update the brightness directly
-		backlightOn (getDisplayBrightness(), getKeypadBrightness(), false);
+        backlightOn (getDisplayBrightness(), getKeypadBrightness());
 		// update navi brightness
 		// // CoreNaviManager::instance()->updateBrightness (getCoreNaviBrightness());
 
@@ -2447,25 +2445,6 @@ void DisplayManager::slotBluetoothKeyboardActive(bool active)
         unlock();
 }
 
-#define POWERKEY_PRESS_DELAY		100
-
-gboolean DisplayManager::sendPowerKeyPressedEventCallback(gpointer context)
-{
-    DisplayManager *dm = (DisplayManager*) context;
-
-    // if we're still not running again reschedule power key pressed event again
-    if (dm->currentState() == DisplayStateOffSuspended) {
-        g_message("%s: rescheduling power key pressed event", __PRETTY_FUNCTION__);
-        g_timeout_add(POWERKEY_PRESS_DELAY, DisplayManager::sendPowerKeyPressedEventCallback, context);
-        return FALSE;
-    }
-
-    g_message("%s: sending power key press event to current state", __PRETTY_FUNCTION__);
-    dm->m_currentState->handleEvent(DisplayEventPowerKeyPress);
-    dm->m_powerKeyPressEventScheduled = false;
-    return FALSE;
-}
-
 bool DisplayManager::updateState (int eventType)
 {
     switch (eventType)
@@ -2509,17 +2488,7 @@ bool DisplayManager::updateState (int eventType)
                 }
                 else
                 {
-                    // disable power key if the user is on a call on the puck
-                    // this is so that the user never sees a lock screen when on a call
-                    if (currentState() == DisplayStateOffSuspended)
-                    {
-                        if (!m_powerKeyPressEventScheduled)
-                        {
-                            g_message("%s: rescheduling power key pressed event", __PRETTY_FUNCTION__);
-                            g_timeout_add(POWERKEY_PRESS_DELAY, sendPowerKeyPressedEventCallback, this);
-                        }
-                    }
-                    else if (!(m_onCall && currentState() == DisplayStateOnPuck))
+                   if (!(m_onCall && currentState() == DisplayStateOnPuck))
                     {
                         g_message ("%s: power key press", __PRETTY_FUNCTION__);
                         m_currentState->handleEvent (DisplayEventPowerKeyPress);
@@ -2670,61 +2639,42 @@ bool DisplayManager::slider()
     return false;
 }
 
-void DisplayManager::backlightOn (int displayBrightness, int keyBrightness, bool als)
+void DisplayManager::backlightOn (int displayBrightness, int keyBrightness)
 {
-    LSError lserror;
-
-    m_pendingDisplayBrightness = displayBrightness;
-    m_pendingKeyBrightness = keyBrightness;
-
-    LSErrorInit(&lserror);
-    if (!LSCall(m_service, "luna://org.webosports.luna/setDisplayState", "{\"state\":\"on\"}",
-                &DisplayManager::displayBlankedCallback, this, NULL, &lserror)) {
-        LSErrorPrint(&lserror, stdout);
-        LSErrorFree(&lserror);
-    }
-}
-
-bool DisplayManager::displayBlankedCallback(LSHandle *service, LSMessage *message, void *user_data)
-{
-    DisplayManager *dm = (DisplayManager*) user_data;
+    g_debug("%s: displayBrightness %d keyBrightness %d", __PRETTY_FUNCTION__);
 
     // Ignore als for now (led-controller module needs t
     LedControl* lcKeypadAndDisplay = HostBase::instance()->getLedControlKeypadAndDisplay();
-    if (NULL == lcKeypadAndDisplay) g_message("%s: LedControlKeypad returns NULL", __PRETTY_FUNCTION__);
+    if (NULL == lcKeypadAndDisplay)
+        g_message("%s: LedControlKeypad returns NULL", __PRETTY_FUNCTION__);
 
-    if (!dm->m_touchpanelIsOn)
-    {
-        if (lcKeypadAndDisplay) lcKeypadAndDisplay->setBrightness(dm->m_pendingKeyBrightness,
-                dm->m_pendingDisplayBrightness, &DisplayManager::backlightOnCallback, dm);
-    }
-    else
-    {
-        if (lcKeypadAndDisplay) lcKeypadAndDisplay->setBrightness(dm->m_pendingKeyBrightness,
-                dm->m_pendingDisplayBrightness, NULL, NULL);
-    }
-
-    return true;
+    if (lcKeypadAndDisplay)
+        lcKeypadAndDisplay->setBrightness(keyBrightness,
+            displayBrightness, &DisplayManager::backlightOnCallback, this);
 }
 
 void DisplayManager::backlightOnCallback(void *ctx)
 {
-	DisplayManager *dm = (DisplayManager *)ctx;
-	dm->m_backlightIsOn = true;
-	g_message("%s: setting m_backlightIsOn to true", __PRETTY_FUNCTION__);
+    DisplayManager *dm = (DisplayManager *)ctx;
 
-	if (dm->m_displayOn)
-		dm->touchPanelOn();
-	else
-		g_warning("%s: display is supposed to be off, not turning on touchpanel", __PRETTY_FUNCTION__);
+    dm->m_backlightIsOn = true;
+    g_message("%s: setting m_backlightIsOn to true", __PRETTY_FUNCTION__);
+
+    if (!dm->m_touchpanelIsOn)
+    {
+        if (dm->m_displayOn)
+            dm->touchPanelOn();
+        else
+            g_warning("%s: display is supposed to be off, not turning on touchpanel", __PRETTY_FUNCTION__);
 
         if (dm->m_displayOn)
                 dm->touchPanelOn();
         else
                 g_warning("%s: display is supposed to be off, not turning on touchpanel", __PRETTY_FUNCTION__);
+    }
 
-        // turn vsync on as soon as the display is on to avoid tearing
-        changeVsyncControl(true);
+    // turn vsync on as soon as the display is on to avoid tearing
+    changeVsyncControl(true);
 }
 
 void DisplayManager::setActiveTouchpanel (bool enable)
@@ -2732,7 +2682,6 @@ void DisplayManager::setActiveTouchpanel (bool enable)
 	m_activeTouchpanel = enable;
 	setTouchpanelMode (enable);
 }
-
 
 void DisplayManager::setTouchpanelMode (bool active)
 {
@@ -2811,14 +2760,15 @@ bool DisplayManager::touchPanelOffCallback (LSHandle *sh, LSMessage *message, vo
 
 void DisplayManager::backlightOff()
 {
-        // turn vsync off before turning the display off to avoid having the driver hang at swapBuffers
+    // turn vsync off before turning the display off to avoid having the driver hang at swapBuffers
     changeVsyncControl(false);
 
     LedControl* lcKeypadAndDisplay = HostBase::instance()->getLedControlKeypadAndDisplay();
-    if (NULL == lcKeypadAndDisplay) g_message("%s: LedControlKeypadAndDisplay returns NULL", __PRETTY_FUNCTION__);
+    if (NULL == lcKeypadAndDisplay)
+        g_message("%s: LedControlKeypadAndDisplay returns NULL", __PRETTY_FUNCTION__);
 
-    if (lcKeypadAndDisplay) lcKeypadAndDisplay->setBrightness(0, -1, &DisplayManager::backlightOffCallback, this);
-
+    if (lcKeypadAndDisplay)
+        lcKeypadAndDisplay->setBrightness(0, -1, &DisplayManager::backlightOffCallback, this);
 }
 
 void DisplayManager::backlightOffCallback (void *ctx)
@@ -2826,11 +2776,17 @@ void DisplayManager::backlightOffCallback (void *ctx)
     g_message("%s setting m_backlightIsOn to false", __PRETTY_FUNCTION__);
     DisplayManager *dm = (DisplayManager *)ctx;
     dm->m_backlightIsOn = false;
+}
+
+void DisplayManager::updateCompositorDisplayState(bool on, LSMethodFunction cb , void *context)
+{
+    g_debug("%s: on %d", __PRETTY_FUNCTION__, on);
 
     LSError lserror;
     LSErrorInit(&lserror);
-    if (!LSCall(dm->m_service, "luna://org.webosports.luna/setDisplayState", "{\"state\":\"off\"}",
-                NULL, NULL, NULL, &lserror)) {
+    if (!LSCall(m_service, "luna://org.webosports.luna/setDisplayState",
+                on ? "{\"state\":\"on\"}" : "{\"state\":\"off\"}",
+                cb, context, NULL, &lserror)) {
         LSErrorPrint(&lserror, stdout);
         LSErrorFree(&lserror);
     }
@@ -3264,7 +3220,11 @@ void DisplayManager::updateLockState (DisplayLockState lockState, DisplayState d
 
 void DisplayManager::displayOn(bool als)
 {
+    bool wasDisplayOnBefore = m_displayOn;
+
     m_displayOn = true;
+
+    g_message("%s", __PRETTY_FUNCTION__);
 
 	if (!als) {
 		// If display is "turned on" due to ALS/brightness
@@ -3275,14 +3235,29 @@ void DisplayManager::displayOn(bool als)
 			notifySubscribers (DISPLAY_EVENT_ON);
 	}
 
+    if (wasDisplayOnBefore)
+        updateCompositorDisplayState(true, &DisplayManager::displayOnCallback, this);
+    else
+        displayOnCallback(NULL, NULL, this);
+}
+
+bool DisplayManager::displayOnCallback(LSHandle *handle, LSMessage *message, gpointer context)
+{
+    Q_UNUSED(handle);
+    Q_UNUSED(message);
+
+    DisplayManager *dm = static_cast<DisplayManager*>(context);
+
     // backlight has to be turned on first, On completion,
     // the callback will turn on the touchpanel
-    backlightOn (getDisplayBrightness(), getKeypadBrightness(), als);
-    // update navi brightness
-    // CoreNaviManager::instance()->updateBrightness (getCoreNaviBrightness());
+    dm->backlightOn (dm->getDisplayBrightness(), dm->getKeypadBrightness());
 
-    if (Preferences::instance()->isAlsEnabled() && !m_alsDisabled && Settings::LunaSettings()->uiType != Settings::UI_MINIMAL)
-	    m_als->start();
+    if (Preferences::instance()->isAlsEnabled() &&
+        !dm->m_alsDisabled &&
+            Settings::LunaSettings()->uiType != Settings::UI_MINIMAL)
+        dm->m_als->start();
+
+    return true;
 }
 
 void DisplayManager::displayDim()
@@ -3290,13 +3265,15 @@ void DisplayManager::displayDim()
     m_displayOn = true;
     int b = getDisplayBrightness();
 
+    g_message("%s", __PRETTY_FUNCTION__);
+
     b /= 10;
     if (b < MINIMUM_DIMMED_BRIGHTNESS)
 	b = MINIMUM_DIMMED_BRIGHTNESS;
 
     // backlight has to be turned on first, On completion,
     // the callback will turn on the touchpanel
-    backlightOn (b, 0, false);
+    backlightOn (b, 0);
 
     // update navi brightness
     // CoreNaviManager::instance()->updateBrightness (0);
@@ -3309,21 +3286,37 @@ void DisplayManager::displayDim()
 
 void DisplayManager::displayOff()
 {
+    bool wasDisplayOffBefore = !m_displayOn;
+    g_message("%s", __PRETTY_FUNCTION__);
 
     m_displayOn = false;
-    // touch panel has to be turned off first. On completion, the
-    // callback will turn off the backlight
+
     notifySubscribers (DISPLAY_EVENT_OFF);
 
     if (m_penDown) {
 	    m_drop_pen = true;
     }
 
-    touchPanelOff();
-    // CoreNaviManager::instance()->updateBrightness (0);
+    if (wasDisplayOffBefore)
+        updateCompositorDisplayState(false, &DisplayManager::displayOffCallback, this);
+    else
+        displayOffCallback(NULL, NULL, this);
+}
 
-    m_als->stop();
+bool DisplayManager::displayOffCallback(LSHandle *handle, LSMessage *message, gpointer context)
+{
+    Q_UNUSED(handle);
+    Q_UNUSED(message);
 
+    DisplayManager *dm = static_cast<DisplayManager*>(context);
+
+    // touch panel has to be turned off first. On completion, the
+    // callback will turn off the backlight
+    dm->touchPanelOff();
+
+    dm->m_als->stop();
+
+    return true;
 }
 
 void DisplayManager::handleTouchEvent()
@@ -3397,6 +3390,7 @@ void DisplayManager::changeVsyncControl(bool enable)
 
 void DisplayManager::handlePowerKey(bool pressed)
 {
+    g_message("%s: got power key event (pressed %d, state %d)", __PRETTY_FUNCTION__, pressed, currentState());
     if (pressed)
         updateState(DISPLAY_EVENT_POWER_BUTTON_DOWN);
     else if (!m_dropPowerKey)

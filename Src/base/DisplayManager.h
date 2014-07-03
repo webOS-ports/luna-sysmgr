@@ -271,9 +271,6 @@ private:
 
     SuspendBlocker<DisplayManager> m_suspendBlocker;
 
-    int m_pendingDisplayBrightness;
-    int m_pendingKeyBrightness;
-
     bool m_powerKeyPressEventScheduled;
 
     bool off (sptr<Event> event = 0);
@@ -312,12 +309,10 @@ private:
     void requestCurrentLocation();
 
     // internal methods
-    void backlightOn (int displayBrightness, int keyBrightness, bool als);
+    void backlightOn (int displayBrightness, int keyBrightness);
     static void backlightOnCallback (void* ctx);
     void backlightOff();
     static void backlightOffCallback (void* ctx);
-
-    static gboolean sendPowerKeyPressedEventCallback(gpointer context);
 
     bool touchPanelOn();
     bool touchPanelOff();
@@ -331,6 +326,11 @@ private:
 	static void changeVsyncControl(bool enable);
 
 	void markBootFinished(bool finished);
+
+    void updateCompositorDisplayState(bool on, LSMethodFunction cb , void *context);
+
+    static bool displayOnCallback(LSHandle *handle, LSMessage *message, gpointer context);
+    static bool displayOffCallback(LSHandle *handle, LSMessage *message, gpointer context);
 
 private Q_SLOTS:
 

@@ -1932,43 +1932,42 @@ void DisplayOffSuspended::enter (DisplayState state, DisplayEvent displayEvent, 
 void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> event) 
 {
     switch (displayEvent) {
-#if 0
 	case DisplayEventPowerKeyPress:
 	    if (isOnPuck()) {
-		if (isDisplayUnlocked() || isOnCall()) {
-		    g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
-			    (isDisplayUnlocked()) ? "unlocked" : "locked", 
-			    (isUSBCharging()) ? "connected" : "disconnected",
-			    (isSliderOpen()) ? "open" : "closed",
-			    (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
-			    (isOnCall()) ? "on" : "off");
-		    m_restoreState = DisplayStateOnPuck;
-		    m_restoreDisplayEvent = displayEvent;
-		    m_restoreEvent = event;
-		}
-		else {
-		    g_debug ("%s: power key press when on puck, move to dock mode", __PRETTY_FUNCTION__);
-		    m_restoreState = DisplayStateDockMode;
-		    m_restoreDisplayEvent = displayEvent;
-		    m_restoreEvent = event;
-		}
+            if (isDisplayUnlocked() || isOnCall()) {
+                g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
+                    (isDisplayUnlocked()) ? "unlocked" : "locked",
+                    (isUSBCharging()) ? "connected" : "disconnected",
+                    (isSliderOpen()) ? "open" : "closed",
+                    (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
+                    (isOnCall()) ? "on" : "off");
+                m_restoreState = DisplayStateOnPuck;
+                m_restoreDisplayEvent = displayEvent;
+                m_restoreEvent = event;
+            }
+            else {
+                g_debug ("%s: power key press when on puck, move to dock mode", __PRETTY_FUNCTION__);
+                m_restoreState = DisplayStateDockMode;
+                m_restoreDisplayEvent = displayEvent;
+                m_restoreEvent = event;
+            }
 	    }
 	    else if (isDisplayUnlocked() || isOnCall()) {
-		g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
-			(isDisplayUnlocked()) ? "unlocked" : "locked", 
-			(isUSBCharging()) ? "connected" : "disconnected",
-			(isSliderOpen()) ? "open" : "closed",
-			(Settings::LunaSettings()->disableLocking) ? "set" : "unset",
-			(isOnCall()) ? "on" : "off");
-		m_restoreState = DisplayStateOn;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else  {
-		g_debug ("%s: power key press, moving to OnLocked", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnLocked;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
+            g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
+                (isDisplayUnlocked()) ? "unlocked" : "locked",
+                (isUSBCharging()) ? "connected" : "disconnected",
+                (isSliderOpen()) ? "open" : "closed",
+                (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
+                (isOnCall()) ? "on" : "off");
+            m_restoreState = DisplayStateOn;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
+        }
+        else  {
+            g_debug ("%s: power key press, moving to OnLocked", __PRETTY_FUNCTION__);
+            m_restoreState = DisplayStateOnLocked;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
 	    }
 	    break;
 
@@ -1992,7 +1991,6 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
 		m_restoreEvent = event;
 	    }
 	    break;
-#endif
 	case DisplayEventOnPuck:
 	    if (isOnCall() || isDisplayUnlocked()) {
 		g_debug ("%s: on puck on a call, moving to onpuck", __PRETTY_FUNCTION__);
@@ -2219,21 +2217,21 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
 		}
 	    }
 	    else if (isDisplayUnlocked() || isOnCall()) {
-		g_message ("%s: home key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
-			(isDisplayUnlocked()) ? "unlocked" : "locked", 
-			(isUSBCharging()) ? "connected" : "disconnected",
-			(isSliderOpen()) ? "open" : "closed",
-			(Settings::LunaSettings()->disableLocking) ? "set" : "unset",
-			(isOnCall()) ? "on" : "off");
-		m_restoreState = DisplayStateOn;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
+            g_message ("%s: home key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
+                (isDisplayUnlocked()) ? "unlocked" : "locked",
+                (isUSBCharging()) ? "connected" : "disconnected",
+                (isSliderOpen()) ? "open" : "closed",
+                (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
+                (isOnCall()) ? "on" : "off");
+            m_restoreState = DisplayStateOn;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
 	    }
 	    else  {
-		g_debug ("%s: home key press, moving to OnLocked", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnLocked;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
+            g_debug ("%s: home key press, moving to OnLocked", __PRETTY_FUNCTION__);
+            m_restoreState = DisplayStateOnLocked;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
 	    }
 	    break;
 
