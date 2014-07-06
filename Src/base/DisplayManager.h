@@ -112,6 +112,8 @@ public:
     void handleDisplayEvent(DisplayEvent event);
     void handleTouchEvent();
 
+    void wakeupDevice(const char *reason);
+
     bool alert (int state);
     uint32_t getCoreNaviBrightness();
 

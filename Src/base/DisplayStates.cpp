@@ -1969,6 +1969,9 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
             m_restoreDisplayEvent = displayEvent;
             m_restoreEvent = event;
 	    }
+
+        dm->wakeupDevice("powerkey");
+
 	    break;
 
 	case DisplayEventPowerKeyHold:
@@ -1976,7 +1979,7 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
 		g_debug ("%s: power key hold on puck, moving to on", __PRETTY_FUNCTION__);
 		m_restoreState = DisplayStateOnPuck;
 		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
+        m_restoreEvent = event;
 	    }
 	    else if (isDisplayUnlocked()) {
 		g_debug ("%s: power key hold, moving to on", __PRETTY_FUNCTION__);
@@ -1985,7 +1988,7 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
 		m_restoreEvent = event;
 	    }
 	    else  {
-		g_debug ("%s: power key hold, moving to OnLocked", __PRETTY_FUNCTION__);
+        g_debug ("%s: power key hold, moving to OnLocked", __PRETTY_FUNCTION__);
 		m_restoreState = DisplayStateOnLocked;
 		m_restoreDisplayEvent = displayEvent;
 		m_restoreEvent = event;
@@ -2011,7 +2014,6 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
 	    break;
 
 	case DisplayEventUsbIn:
-        /*
         if (isOnPuck()) {
         g_debug ("%s: usb in when on puck, move to on puck", __PRETTY_FUNCTION__);
         m_restoreState = DisplayStateOnPuck;
@@ -2019,11 +2021,14 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
         m_restoreEvent = event;
         }
         else {
-        g_debug ("%s: usb in, moving to on", __PRETTY_FUNCTION__);
-        m_restoreState = DisplayStateOn;
-        m_restoreDisplayEvent = displayEvent;
-        m_restoreEvent = event;
-        }*/
+            g_debug ("%s: usb in, moving to on", __PRETTY_FUNCTION__);
+            m_restoreState = DisplayStateOn;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
+        }
+
+        dm->wakeupDevice("usb");
+
 	    break;
 
 	case DisplayEventUsbOut:
@@ -2049,6 +2054,8 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
 		    m_restoreEvent = event;
 		}
 	    }
+
+        dm->wakeupDevice("incoming-call");
 
 	    break;
 

@@ -927,17 +927,19 @@ bool DisplayManager::batteryCallback(LSHandle *sh, LSMessage *message, void *ctx
 
     if (result)
     {
-	json_object* label = json_object_object_get(root, "percent");
-	if (label) {
+        json_object* label = json_object_object_get(root, "percent");
+        if (label) {
+            int level = json_object_get_int(label);
 
-	    dm->m_batteryL = json_object_get_int(label);
+            if (level != dm->m_batteryL) {
+                dm->m_batteryL = level;
+                // if the brightness is changed because of the
+                // battery level changing, update it.
+                dm->updateBrightness();
+            }
+        }
 
-	    // if the brightness is changed because of the
-	    // battery level changing, update it.
-        dm->updateBrightness();
-	}
-
-	json_object_put(root);
+        json_object_put(root);
     }
 
     return true;
@@ -3220,25 +3222,27 @@ void DisplayManager::updateLockState (DisplayLockState lockState, DisplayState d
 
 void DisplayManager::displayOn(bool als)
 {
-    bool wasDisplayOnBefore = m_displayOn;
+    bool wasDisplayOffBefore = !m_displayOn;
 
     m_displayOn = true;
 
     g_message("%s", __PRETTY_FUNCTION__);
 
-	if (!als) {
-		// If display is "turned on" due to ALS/brightness
-		// change, we shouldn't notify the subscribers
-		if (currentState() == DisplayStateDockMode)
-			notifySubscribers (DISPLAY_EVENT_DOCKMODE);
-		else
-			notifySubscribers (DISPLAY_EVENT_ON);
-	}
+    if (wasDisplayOffBefore) {
+        if (!als) {
+            // If display is "turned on" due to ALS/brightness
+            // change, we shouldn't notify the subscribers
+            if (currentState() == DisplayStateDockMode)
+                notifySubscribers (DISPLAY_EVENT_DOCKMODE);
+            else
+                notifySubscribers (DISPLAY_EVENT_ON);
+        }
 
-    if (wasDisplayOnBefore)
         updateCompositorDisplayState(true, &DisplayManager::displayOnCallback, this);
-    else
+    }
+    else {
         displayOnCallback(NULL, NULL, this);
+    }
 }
 
 bool DisplayManager::displayOnCallback(LSHandle *handle, LSMessage *message, gpointer context)
@@ -3286,18 +3290,19 @@ void DisplayManager::displayDim()
 
 void DisplayManager::displayOff()
 {
-    bool wasDisplayOffBefore = !m_displayOn;
+    bool wasDisplayOnBefore = m_displayOn;
     g_message("%s", __PRETTY_FUNCTION__);
 
     m_displayOn = false;
 
-    notifySubscribers (DISPLAY_EVENT_OFF);
+    if (wasDisplayOnBefore)
+        notifySubscribers (DISPLAY_EVENT_OFF);
 
     if (m_penDown) {
 	    m_drop_pen = true;
     }
 
-    if (wasDisplayOffBefore)
+    if (wasDisplayOnBefore)
         updateCompositorDisplayState(false, &DisplayManager::displayOffCallback, this);
     else
         displayOffCallback(NULL, NULL, this);
@@ -3400,4 +3405,19 @@ void DisplayManager::handlePowerKey(bool pressed)
 bool DisplayManager::isBootFinished() const
 {
     return m_bootFinished;
+}
+
+void DisplayManager::wakeupDevice(const char *reason)
+{
+    LSError lserror;
+    gchar* payload;
+
+    LSErrorInit(&lserror);
+    payload = g_strdup_printf("{\"reason\":\"%s\"}", reason);
+    if (!LSCallOneReply (m_service, "luna://com.palm.sleep/com/palm/power/resume", payload, NULL, NULL, NULL, &lserror)) {
+        LSErrorPrint(&lserror, stderr);
+        LSErrorFree(&lserror);
+    }
+
+    g_free(payload);
 }
