@@ -2558,8 +2558,9 @@ static bool cbGetBootStatus(LSHandle* lsHandle, LSMessage *message, void *user_d
 		}
 	}
 
-//	json_object_object_add(json, (char*) "finished",
-//						   json_object_new_boolean(SystemUiController::instance()->bootFinished()));
+	// for now we report always we're done with booting when asked. activitymanager
+	// depends on this to get the basic requirement for a number of activities.
+	json_object_object_add(json, (char*) "finished", json_object_new_boolean(true));
 
 	if (g_file_test(firstUseFile.c_str(), G_FILE_TEST_EXISTS) == FALSE)
 		firstUse = true;
