@@ -142,6 +142,8 @@ static LSMethod privateDisplayMethods[] = {
     {"getProperty", DisplayManager::controlGetProperty},
     {"status", DisplayManager::controlStatus},
 //    {"setCallStatus", DisplayManager::controlCallStatus},
+	{"lockStatus", DisplayManager::controlLockStatus},
+	{"setLockStatus", DisplayManager::controlSetLockStatus},
     {},
 };
 
@@ -2367,6 +2369,123 @@ bool DisplayManager::controlStatus(LSHandle *sh, LSMessage *message, void *ctx)
     return true;
 }
 
+bool DisplayManager::controlLockStatus(LSHandle *sh, LSMessage *message, void *ctx)
+{
+	SUBSCRIBE_SCHEMA_RETURN(sh, message);
+
+	LSError lserror;
+	LSErrorInit(&lserror);
+	bool result = true;
+
+	DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
+
+	bool subscribed = false;
+	const char *state = "undefined";
+
+	result = LSSubscriptionProcess (sh, message, &subscribed, &lserror);
+	if(!result)
+	{
+		LSErrorFree (&lserror);
+		result = true;
+		subscribed = false;
+	}
+
+	switch (dm->m_lockState) {
+	case DisplayLockDockMode:
+		state = "dockmode";
+		break;
+	case DisplayLockLocked:
+		state = "locked";
+		break;
+	case DisplayLockUnlocked:
+		state = "unlocked";
+		break;
+	default:
+		break;
+	}
+
+	gchar *payload = g_strdup_printf("{\"returnValue\":true,\"subscribed\":%s,\"lockState\":\"%s\"}",
+									 subscribed ? "true" : "false", state);
+
+	if (NULL != payload)
+		result = LSMessageReply(sh, message, payload, &lserror);
+
+	if (!result)
+	{
+		LSErrorPrint (&lserror, stderr);
+		LSErrorFree (&lserror);
+	}
+
+	if (NULL != payload)
+		g_free(payload);
+
+	return true;
+}
+
+bool DisplayManager::controlSetLockStatus(LSHandle *sh, LSMessage *message, void *ctx)
+{
+	LSError lserror;
+	LSErrorInit(&lserror);
+
+	// {"status": string}
+	VALIDATE_SCHEMA_AND_RETURN(sh, message, SCHEMA_1(REQUIRED(status, string)));
+
+	bool result = false;
+	const char* str = LSMessageGetPayload(message);
+	json_object* root = 0;
+	json_object* label = 0;
+	DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
+	const char *errorText = NULL;
+	int errorCode = 0;
+
+	if (!str)
+		 goto done;
+
+	root = json_tokener_parse(str);
+	if (!root || is_error(root))
+		 goto done;
+
+	label = json_object_object_get(root, "status");
+	if (json_object_get_boolean(label))
+	{
+		const char *status = json_object_get_string(json_object_object_get(root, "status"));
+
+		if (g_strcmp0(status, "lock") == 0) {
+			dm->lock();
+			result = true;
+		}
+		else if (g_strcmp0(status, "unlock") == 0) {
+			dm->unlock();
+			result = true;
+		}
+		else {
+			errorText = "Unknown status";
+			errorCode = 1;
+		}
+	}
+
+done:
+	if (result)
+		result = LSMessageReply(sh, message, "{\"returnValue\":true}", &lserror);
+	else
+	{
+		gchar *r = g_strdup_printf ("{\"returnValue\":false,\"errorCode\":%i,\"errorText\":\"%s\"}", errorCode, errorText);
+		result = LSMessageReply(sh, message, r, &lserror);
+		g_free (r);
+	}
+
+	if(!result)
+	{
+		LSErrorPrint (&lserror, stderr);
+		LSErrorFree (&lserror);
+	}
+
+	if (root && !is_error(root))
+		json_object_put(root);
+
+	return true;
+}
+
 DisplayManager::~DisplayManager()
 {
     LSError lserror;
@@ -3189,35 +3308,167 @@ void DisplayManager::emitDisplayStateChange (int displaySignal)
 
 void DisplayManager::updateLockState (DisplayLockState lockState, DisplayState displayState, DisplayEvent displayEvent)
 {
-    if (lockState != m_lockState) {
-	m_lockState = lockState;
-        switch (lockState) {
-            case DisplayLockLocked:
-                {
-                    if(!Settings::LunaSettings()->disableLocking)
-                    {
-                        g_debug ("%s: firing DISPLAY_LOCK_SCREEN", __PRETTY_FUNCTION__);
-                        Q_EMIT signalLockStateChange (DISPLAY_LOCK_SCREEN, displayEvent);
-                    }
-                }
-                break;
-            case DisplayLockUnlocked:
-                {
-                    g_debug ("%s: firing DISPLAY_UNLOCK_SCREEN", __PRETTY_FUNCTION__);
-                    Q_EMIT signalLockStateChange (DISPLAY_UNLOCK_SCREEN, displayEvent);
-                }
-                break;
-            case DisplayLockDockMode:
-		{
-			g_debug ("%s: firing DISPLAY_DOCK_SCREEN", __PRETTY_FUNCTION__);
-			Q_EMIT signalLockStateChange (DISPLAY_DOCK_SCREEN, displayEvent);
-                }
-        		break;
-            default:
-                g_warning("%s: Unknown lock state %d", __PRETTY_FUNCTION__, lockState);
-                break;
-        }
-    }
+	if (lockState != m_lockState) {
+		m_lockState = lockState;
+		switch (lockState) {
+			case DisplayLockLocked:
+				{
+					if(!Settings::LunaSettings()->disableLocking)
+					{
+						g_debug ("%s: firing DISPLAY_LOCK_SCREEN", __PRETTY_FUNCTION__);
+						handleLockStateChange(DISPLAY_LOCK_SCREEN, displayEvent);
+					}
+				}
+				break;
+			case DisplayLockUnlocked:
+				{
+					g_debug ("%s: firing DISPLAY_UNLOCK_SCREEN", __PRETTY_FUNCTION__);
+					handleLockStateChange(DISPLAY_UNLOCK_SCREEN, displayEvent);
+				}
+				break;
+			case DisplayLockDockMode:
+				{
+					g_debug ("%s: firing DISPLAY_DOCK_SCREEN", __PRETTY_FUNCTION__);
+					handleLockStateChange(DISPLAY_DOCK_SCREEN, displayEvent);
+				}
+				break;
+			default:
+				g_warning("%s: Unknown lock state %d", __PRETTY_FUNCTION__, lockState);
+				break;
+		}
+	}
+}
+
+void DisplayManager::handleLockStateChange(int state, int displayEvent)
+{
+	bool result;
+	gchar *payload;
+	gchar *stateStr = "undefined";
+	gchar *event = "undefined";
+	LSError lserror;
+
+	LSErrorInit(&lserror);
+
+	g_debug("%s: state %d displayEvent %d", __PRETTY_FUNCTION__, state, displayEvent);
+
+	switch (state) {
+	case DISPLAY_LOCK_SCREEN:
+		stateStr = "locked";
+		break;
+	case DISPLAY_UNLOCK_SCREEN:
+		stateStr = "unlocked";
+		break;
+	case DISPLAY_DOCK_SCREEN:
+		stateStr = "dockmode";
+		break;
+	default:
+		break;
+	}
+
+	switch (displayEvent) {
+	case DisplayEventPowerKeyPress:
+		event = "powerkey-pressed";
+		break;
+	case DisplayEventPowerKeyHold:
+		event = "powerkey-hold";
+		break;
+	case DisplayEventOnPuck:
+		event = "on-puck";
+		break;
+	case DisplayEventOffPuck:
+		event = "off-puck";
+		break;
+	case DisplayEventUsbIn:
+		event = "usb-in";
+		break;
+	case DisplayEventUsbOut:
+		event = "usb-out";
+		break;
+	case DisplayEventIncomingCall:
+		event = "incoming-call";
+		break;
+	case DisplayEventIncomingCallDone:
+		event = "incoming-call-done";
+		break;
+	case DisplayEventOnCall:
+		event = "on-call";
+		break;
+	case DisplayEventOffCall:
+		event = "off-call";
+		break;
+	case DisplayEventSliderOpen:
+		event = "slider-open";
+		break;
+	case DisplayEventSliderClose:
+		event = "slider-close";
+		break;
+	case DisplayEventAlsChange:
+		event = "als-change";
+		break;
+	case DisplayEventProximityOn:
+		event = "proximity-on";
+		break;
+	case DisplayEventProximityOff:
+		event = "proxyimity-off";
+		break;
+	case DisplayEventApiOn:
+		event = "api-on";
+		break;
+	case DisplayEventApiDim:
+		event = "api-dim";
+		break;
+	case DisplayEventApiOff:
+		event = "api-off";
+		break;
+	case DisplayEventUserActivity:
+		event = "user-activity";
+		break;
+	case DisplayEventUpdateBrightness:
+		event = "update-brightness";
+		break;
+	case DisplayEventLockScreen:
+		event = "lock-screen";
+		break;
+	case DisplayEventUnlockScreen:
+		event = "unlock-screen";
+		break;
+	case DisplayEventTimeout:
+		event = "timeout";
+		break;
+	case DisplayEventApiDock:
+		event = "api-dock";
+		break;
+	case DisplayEventApiUndock:
+		event = "api-undock";
+		break;
+	case DisplayEventPowerdSuspend:
+		event = "powerd-suspend";
+		break;
+	case DisplayEventPowerdResume:
+		event = "powerd-resume";
+		break;
+	case DisplayEventUserActivityExternalInput:
+		event = "activity-external-input";
+		break;
+	case DisplayEventHomeKeyPress:
+		event = "homekey-pressed";
+		break;
+	default:
+		break;
+	}
+
+	payload = g_strdup_printf("{\"returnValue\":true,\"lockState\":\"%s\",\"event\":\"%s\"}",
+							  stateStr, event);
+
+	// Post all events to private bus
+	result = LSSubscriptionPost (m_service, "/control", "lockStatus", payload, &lserror);
+	if (!result)
+	{
+		LSErrorPrint (&lserror, stderr);
+		LSErrorFree (&lserror);
+	}
+
+	g_free(payload);
 }
 
 void DisplayManager::displayOn(bool als)

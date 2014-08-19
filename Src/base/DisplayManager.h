@@ -132,6 +132,8 @@ public:
     static bool controlGetProperty(LSHandle *sh, LSMessage *message, void *ctx);
     static bool controlSetProperty(LSHandle *sh, LSMessage *message, void *ctx);
     static bool controlCallStatus(LSHandle *sh, LSMessage *message, void *ctx);
+	static bool controlLockStatus(LSHandle *sh, LSMessage *message, void *ctx);
+	static bool controlSetLockStatus(LSHandle *sh, LSMessage *message, void *ctx);
 
     // service callbacks
     static bool timeoutCallback(LSHandle *sh, LSMessage *message, void *ctx);
@@ -297,7 +299,9 @@ private:
 
     void	changeDisplayState (DisplayState newDisplayState, DisplayState oldDisplayState, DisplayEvent displayEvent, sptr<Event> event);
     void	updateLockState (DisplayLockState lockState, DisplayState state, DisplayEvent displayEvent);
-    // used by DisplayStateBase class to change current state
+	// used by DisplayStateBase class to change current state
+
+	void handleLockStateChange(int state, int displayEvent);
 
     void displayOn(bool als);
     void displayAdjust();
@@ -346,8 +350,7 @@ private Q_SLOTS:
 Q_SIGNALS:
 
     void signalDisplayStateChange(int state);
-    void signalPuckConnected(bool connected);
-    void signalLockStateChange(int state, int displayEvent);
+	void signalPuckConnected(bool connected);
     void signalDisplayMaxBrightnessChanged(int brightness);
 };
 
