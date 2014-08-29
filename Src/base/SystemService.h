@@ -73,7 +73,6 @@ public:
 	LSHandle* serviceHandle() const { return m_service; }
 
 	void postForegroundApplicationChange(const std::string& name,const std::string& menuname, const std::string& id);
-	void postApplicationHasBeenTerminated(const std::string& title, const std::string& menuname, const std::string& id);
 	
 	void postLockStatus(bool locked);
 	void postDeviceLockMode();
