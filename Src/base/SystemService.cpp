@@ -86,8 +86,6 @@ static bool cbGetAppRestoreNeeded(LSHandle* lshandle, LSMessage *message,
 								  void *user_data);
 static bool cbGetForegroundApplication(LSHandle* lsHandle, LSMessage *message,
 									   void *user_data);
-static bool cbApplicationHasBeenTerminated(LSHandle* lsHandle, LSMessage *message,
-									       void *user_data);
 static bool cbGetLockStatus(LSHandle* lsHandle, LSMessage *message,
 							void *user_data);
 static bool cbGetDockModeStatus(LSHandle* lsHandle, LSMessage *message,
@@ -169,7 +167,6 @@ static bool cbSubscriptionCancel(LSHandle *lshandle, LSMessage *message, void *u
 
 /*! \page com_palm_systemmanager Service API com.palm.systemmanager
  *  Public methods:
- *  - \ref com_palm_systemmanager_application_has_been_terminated
  *  - \ref com_palm_systemmanager_clear_cache
  *  - \ref com_palm_systemmanager_dismiss_modal_app
  *  - \ref com_palm_systemmanager_get_animation_values
@@ -204,7 +201,6 @@ static LSMethod s_methods[]  = {
 	{ "clearCache", 	   cbClearCache },
 	{ "systemUi",          cbSystemUi },
 	{ "getAppRestoreNeeded", cbGetAppRestoreNeeded },
-	{ "applicationHasBeenTerminated", cbApplicationHasBeenTerminated},
 	{ "getForegroundApplication", cbGetForegroundApplication },
 	{ "getLockStatus", cbGetLockStatus },
 	{ "getDockModeStatus", cbGetDockModeStatus },
@@ -413,36 +409,6 @@ void SystemService::postForegroundApplicationChange(const std::string& title,
 							   json_object_new_string((char*) id.c_str()));
 
 	retVal = LSSubscriptionPost(m_service, "/", "getForegroundApplication",
-								json_object_to_json_string(json), &lsError);
-	if (!retVal)
-		LSErrorFree (&lsError);
-
-	json_object_put(json);
-}
-
-void SystemService::postApplicationHasBeenTerminated(const std::string& title,
-													 const std::string& menuname,
-													 const std::string& id)
-{
-    bool    retVal;
-	LSError lsError;
-	json_object* json = 0;
-
-	LSErrorInit(&lsError);
-
-	json = json_object_new_object();
-	if (!title.empty())
-		json_object_object_add(json, (char*) "title",
-							   json_object_new_string((char*) title.c_str()));
-	if (!menuname.empty())
-			json_object_object_add(json, (char*) "appmenu",
-								   json_object_new_string((char*) menuname.c_str()));
-
-	if (!id.empty())
-		json_object_object_add(json, (char*) "id",
-							   json_object_new_string((char*) id.c_str()));
-
-	retVal = LSSubscriptionPost(m_service, "/", "applicationHasBeenTerminated",
 								json_object_to_json_string(json), &lsError);
 	if (!retVal)
 		LSErrorFree (&lsError);
@@ -1632,80 +1598,6 @@ Done:
 	json_object_put(json);
 
 	return true;
-}
-
-/*!
-\page com_palm_systemmanager
-\n
-\section com_palm_systemmanager_application_has_been_terminated applicationHasBeenTerminated
-
-\e Public.
-
-com.palm.systemmanager/applicationHasBeenTerminated
-
-Subscribe to events indicating application has been terminated
-
-\subsection com_palm_systemmanager_application_has_been_terminated_syntax Syntax:
-\code
-{
-    "subscribe": boolean
-}
-\endcode
-
-\param subscribe Set to true to subscribe to events.
-
-\subsection com_palm_systemmanager_application_has_been_terminated_returns Returns:
-\code
-{
-    "returnValue": boolean,
-    "subscribed": boolean
-}
-\endcode
-
-\param returnValue Indicates if the call was succesful.
-\param subscribed True if subscribed to events.
-
-\subsection com_palm_systemmanager_application_has_been_terminated_examples Examples:
-\code
-luna-send -n 10 -f luna://com.palm.systemmanager/applicationHasBeenTerminated '{ "subscribe": true }'
-\endcode
-
-Example response for a succesful call:
-\code
-{
-    "returnValue": true,
-    "subscribed": true
-}
-\endcode
-*/
-static bool cbApplicationHasBeenTerminated(LSHandle* lsHandle, LSMessage *message,
-									       void *user_data)
-{
-    SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
-
-	bool success = true;
-	bool subscribed = false;
-	LSError lsError;
-	json_object* json = json_object_new_object();
-
-	LSErrorInit(&lsError);
-
-	if (LSMessageIsSubscription(message)) {
-		success = LSSubscriptionProcess(lsHandle, message, &subscribed, &lsError);
-		if (!success) {
-			LSErrorFree(&lsError);
-		}
-	}
-
-	json_object_object_add(json, "returnValue", json_object_new_boolean(success));
-	json_object_object_add(json, "subscribed", json_object_new_boolean(subscribed));
-
-	if (!LSMessageReply(lsHandle, message, json_object_to_json_string(json), &lsError))
-		LSErrorFree(&lsError);
-
-	json_object_put(json);
-    
-    return true;
 }
 
 /*!
