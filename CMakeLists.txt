@@ -17,6 +17,10 @@ webos_add_compiler_flags(ALL -DQT_NO_KEYWORDS)
 webos_add_compiler_flags(ALL -DHAS_LUNA_PREF)
 webos_add_compiler_flags(ALL -DHAS_DISPLAY_TIMEOUT)
 
+if ("$ENV{TARGET_TYPE}" MATCHES "^qemu")
+    webos_add_compiler_flags(ALL -DTARGET_EMULATOR)
+endif()
+
 find_package(Qt5Core REQUIRED)
 if(NOT Qt5Core_FOUND)
     message(FATAL_ERROR "Qt5Core module is required!")

@@ -905,6 +905,7 @@ bool DisplayOn::timeoutUser()
     }
     else
     {
+#if defined(HAS_DISPLAY_TIMEOUT) && !(defined(TARGET_DESKTOP) || defined(TARGET_EMULATOR))
 	g_message ("%s: change to dim in on", __PRETTY_FUNCTION__);
 	if (isDemo()) {
 	    if (isOnCall())
@@ -914,6 +915,9 @@ bool DisplayOn::timeoutUser()
 	}
 	else 
 	    changeDisplayState (DisplayStateDim, DisplayEventTimeout, NULL);
+#else
+        g_warning("%s: not turning off display, display timeouts disabled", __PRETTY_FUNCTION__);
+#endif
     }
     return false;
 }
