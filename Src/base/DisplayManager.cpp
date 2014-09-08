@@ -2534,6 +2534,11 @@ void DisplayManager::slotAlsEnabled (bool enable)
 void DisplayManager::markBootFinished(bool finished)
 {
 	if (finished) {
+		// If boot was already finished before we have to deal with a restart of the
+		// whole UI hére and therefore turning on the display
+		if (m_bootFinished)
+			on();
+
 		m_bootFinished = true;
 		if (currentState() == DisplayStateOn
 				|| currentState() == DisplayStateOnLocked
