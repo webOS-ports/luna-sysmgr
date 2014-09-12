@@ -75,46 +75,33 @@ include_directories(
 
 set(HEADERS
     Src/base/AmbientLightSensor.h
-    Src/base/settings/AnimationSettings.h
-    Src/base/settings/DeviceInfo.h
     Src/base/DisplayStates.h
     Src/base/HapticsController.h
     Src/base/CpuAffinity.h
-    Src/base/AmbientLightSensor.cpp
     Src/base/SuspendBlocker.h
-    Src/base/CircularBuffer.h
     Src/base/MemoryMonitor.h
     Src/base/EASPolicyManager.h
-    Src/base/SharedGlobalProperties.h
     Src/base/Security.h
     Src/base/SystemService.h
     Src/base/DisplayManager.h
     Src/base/BackupManager.h
     Src/base/InputEventMonitor.h
     Src/core/PtrArray.h
-    Src/core/AnimationEquations.h
     Src/core/GraphicsDefs.h)
 
 set(SOURCES
     Src/base/Security.cpp
     Src/base/DisplayStates.cpp
     Src/base/HapticsController.cpp
-    Src/base/settings/Settings.cpp
-    Src/base/settings/DeviceInfo.cpp
-    Src/base/settings/AnimationSettings.cpp
     Src/base/MemoryMonitor.cpp
     Src/base/DisplayManager.cpp
     Src/base/CpuAffinity.cpp
-    Src/base/JSONUtils.cpp
     Src/base/AmbientLightSensor.cpp
     Src/base/BackupManager.cpp
     Src/base/EASPolicyManager.cpp
     Src/base/SuspendBlocker.cpp
     Src/base/SystemService.cpp
-    Src/base/Logging.cpp
     Src/base/InputEventMonitor.cpp
-    Src/core/MallocHooks.cpp
-    Src/core/KeywordMap.cpp
     Src/Main.cpp)
 
 add_executable(LunaSysMgr ${SOURCES})
