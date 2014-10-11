@@ -1,7 +1,0 @@
-# -*- mode: shell-script; -*-
-
-start on LunaSysMgr-ready
-
-script
-         setcpushares-task -p $(pidof WebAppMgr) -t WebAppMgr || true
-end script
