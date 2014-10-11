@@ -39,7 +39,6 @@
 #include "Security.h"
 #include "EASPolicyManager.h"
 #include "Logging.h"
-#include "BackupManager.h"
 #include "DisplayManager.h"
 #include "InputEventMonitor.h"
 
@@ -758,10 +757,7 @@ int main( int argc, char** argv)
 	(void) DeviceInfo::instance();
 
 	// Initialize Security handler
-	(void) Security::instance();
-
-	// Initialize BackupManager
-	BackupManager::instance()->init(HostBase::instance()->mainLoop());
+    (void) Security::instance();
 
 	// Initialize the System Service
 	SystemService::instance()->init();

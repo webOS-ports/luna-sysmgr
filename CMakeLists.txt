@@ -79,12 +79,10 @@ set(HEADERS
     Src/base/HapticsController.h
     Src/base/CpuAffinity.h
     Src/base/SuspendBlocker.h
-    Src/base/MemoryMonitor.h
     Src/base/EASPolicyManager.h
     Src/base/Security.h
     Src/base/SystemService.h
     Src/base/DisplayManager.h
-    Src/base/BackupManager.h
     Src/base/InputEventMonitor.h
     Src/core/PtrArray.h
     Src/core/GraphicsDefs.h)
@@ -93,11 +91,9 @@ set(SOURCES
     Src/base/Security.cpp
     Src/base/DisplayStates.cpp
     Src/base/HapticsController.cpp
-    Src/base/MemoryMonitor.cpp
     Src/base/DisplayManager.cpp
     Src/base/CpuAffinity.cpp
     Src/base/AmbientLightSensor.cpp
-    Src/base/BackupManager.cpp
     Src/base/EASPolicyManager.cpp
     Src/base/SuspendBlocker.cpp
     Src/base/SystemService.cpp
