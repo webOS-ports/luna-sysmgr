@@ -42,7 +42,6 @@
 #include "SystemService.h"
 #include "Utils.h"
 
-#include "MemoryMonitor.h"
 #include "Security.h"
 #include "EASPolicyManager.h"
 
@@ -3423,7 +3422,7 @@ bool cbMonitorProcessMemory(LSHandle* lsHandle, LSMessage *message, void *user_d
 	// the memory monitor. It's ok to send an unheard-of pid to the memory monitor.
 	// if it's not there, it just doesn't do anythign about it and falls in to
 	// creating the new one.
-	MemoryMonitor::instance()->monitorNativeProcessMemory(pid, memMax, pid);
+	// MemoryMonitor::instance()->monitorNativeProcessMemory(pid, memMax, pid);
 
 	// response and cleanup.
 Done:

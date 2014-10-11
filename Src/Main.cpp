@@ -32,7 +32,6 @@
 #include "Localization.h"
 
 
-#include "MemoryMonitor.h"
 #include "Settings.h"
 #include "SystemService.h"
 #include "Preferences.h"
@@ -766,9 +765,6 @@ int main( int argc, char** argv)
 
 	// Initialize the System Service
 	SystemService::instance()->init();
-
-	// Initialize the SysMgr MemoryMonitor
-	MemoryMonitor::instance();
 
 	// load all set policies
 	EASPolicyManager::instance()->load();
