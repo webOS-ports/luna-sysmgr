@@ -338,6 +338,8 @@ private:
     static bool displayOnCallback(LSHandle *handle, LSMessage *message, gpointer context);
     static bool displayOffCallback(LSHandle *handle, LSMessage *message, gpointer context);
 
+	bool unlockRequiresPasscode() const;
+
 private Q_SLOTS:
 
     void slotEmergencyMode (bool enable);

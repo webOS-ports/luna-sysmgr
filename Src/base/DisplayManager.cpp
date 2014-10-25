@@ -29,6 +29,8 @@
 #include "Settings.h"
 #include "SystemService.h"
 #include "Time.h"
+#include "EASPolicyManager.h"
+#include "Security.h"
 
 #ifdef HAS_NYX
 #include <nyx/nyx_client.h>
@@ -3312,6 +3314,15 @@ void DisplayManager::emitDisplayStateChange (int displaySignal)
     }
 }
 
+bool DisplayManager::unlockRequiresPasscode() const
+{
+	if (EASPolicyManager::instance()->policyPending() &&
+		EASPolicyManager::instance()->getPolicy()->passwordRequired())
+		return true;
+
+	return Security::instance()->passcodeSet();
+}
+
 void DisplayManager::updateLockState (DisplayLockState lockState, DisplayState displayState, DisplayEvent displayEvent)
 {
 	if (lockState != m_lockState) {
@@ -3328,6 +3339,14 @@ void DisplayManager::updateLockState (DisplayLockState lockState, DisplayState d
 				break;
 			case DisplayLockUnlocked:
 				{
+					// If we're going to unlock check first if that requires a passcode or not
+					if (unlockRequiresPasscode() && displayEvent == DisplayEventApiOn)
+					{
+						g_warning("%s: Can't unlock as we have a passcode set", __PRETTY_FUNCTION__);
+						lock();
+						break;
+					}
+
 					g_debug ("%s: firing DISPLAY_UNLOCK_SCREEN", __PRETTY_FUNCTION__);
 					handleLockStateChange(DISPLAY_UNLOCK_SCREEN, displayEvent);
 				}
