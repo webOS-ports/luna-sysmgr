@@ -1529,72 +1529,37 @@ Example response for a failed call:
 }
 \endcode
 */
-static bool cbTakeScreenShot(LSHandle* lshandle, LSMessage *message,
-							 void *user_data)
+static LSHandle* screenShotHandle = NULL;
+static LSMessage* screenShotMessage = NULL;
+bool screenShotReplyCallback(LSHandle* handle, LSMessage* message, void* ctxt);
+static bool cbTakeScreenShot(LSHandle* lshandle, LSMessage *message, void *user_data)
 {
-    LSError lserror;
-    LSErrorInit(&lserror);
-
-    VALIDATE_SCHEMA_AND_RETURN(lshandle,
-                               message,
-                               SCHEMA_1(REQUIRED(file, string)));
-
-    const char* str = LSMessageGetPayload(message);
-
-    if( !str )
-		return false;
-
-	bool success = false;
-
-	struct json_object* root = json_tokener_parse(str);
-	struct json_object* label = 0;
-	std::string filePath;
-
-	if (is_error(root)) {
-		root = 0;
-		success = false;
-		goto Done;
+	LSError lserror;
+	LSErrorInit(&lserror);
+	const char* str = LSMessageGetPayload(message);
+	screenShotHandle = lshandle;
+	LSMessageRef(message);
+	screenShotMessage = message;
+	bool result = LSCallOneReply( lshandle, "luna://org.webosports.luna/takeScreenShot", str, screenShotReplyCallback, NULL, NULL, &lserror);
+	if (!result) {
+		g_warning("%s: Failed in takeScreenShot: %s", __PRETTY_FUNCTION__, lserror.message);
+		LSErrorFree(&lserror);
 	}
 
-	label = json_object_object_get(root, "file");
-	if (!label) {
-		g_warning("%s: Failed to find param file in message", __PRETTY_FUNCTION__);
-		goto Done;
-	}
-	filePath = json_object_get_string(label);
+	return true;
+}
 
-	if (filePath.empty())
-		goto Done;
+bool screenShotReplyCallback(LSHandle* handle, LSMessage* message, void* ctxt)
+{
+	LSError lserror;
+	LSErrorInit(&lserror);
 
-	if (filePath[0] == '/') {
-		// absolute path.
-	}
-	else {
-		// relative path. Dump to home folder
-
-		const char* homeFolder = getenv("HOME");
-		if (!homeFolder) {
-			homeFolder = "/home/root";
-		}
-
-		filePath = std::string(homeFolder) + "/" + filePath;
-	}
-
-    //success = WindowServer::instance()->takeScreenShot(filePath.c_str());
-
-Done:
-
-	if (root)
-		json_object_put(root);
-
-	json_object* json = json_object_new_object();
-	json_object_object_add(json, "returnValue", json_object_new_boolean(success));
-
-	if (!LSMessageReply( lshandle, message, json_object_to_json_string(json), &lserror )) {
-		LSErrorFree (&lserror);
-	}
-
-	json_object_put(json);
+	const char* str = LSMessageGetPayload(message);
+	if (!LSMessageReply( screenShotHandle, screenShotMessage, str, &lserror))
+		LSErrorFree(&lserror);
+	LSMessageUnref(screenShotMessage);
+	screenShotHandle = NULL;
+	screenShotMessage = NULL;
 
 	return true;
 }
