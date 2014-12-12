@@ -746,7 +746,6 @@ int main( int argc, char** argv)
 	(void) Preferences::instance();
 
 	LocalePreferences* lp = LocalePreferences::instance();
-	QObject::connect(lp, SIGNAL(prefsLocaleChanged()), new ProcessKiller(), SLOT(localeChanged()));
 
 	// Initialize Localization handler
 	(void) Localization::instance();
