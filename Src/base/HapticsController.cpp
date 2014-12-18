@@ -24,7 +24,7 @@
 #include "HostBase.h"
 #include "JSONUtils.h"
 #include "Time.h"
-#include "cjson/json.h"
+#include <json.h>
 
 #include <glib.h>
 #include <lunaservice.h>

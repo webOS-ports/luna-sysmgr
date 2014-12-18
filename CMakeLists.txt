@@ -44,7 +44,7 @@ pkg_check_modules(LUNA_PREFS luna-prefs REQUIRED)
 pkg_check_modules(NYX nyx REQUIRED)
 pkg_check_modules(PBNJSON_CPP pbnjson_cpp REQUIRED)
 pkg_check_modules(PBNJSON_C pbnjson_c REQUIRED)
-pkg_check_modules(CJSON cjson REQUIRED)
+pkg_check_modules(JSON json-c REQUIRED)
 pkg_check_modules(SQLITE3 sqlite3 REQUIRED)
 pkg_check_modules(OPENSSL openssl REQUIRED)
 pkg_check_modules(SERVICEINSTALLER serviceinstaller REQUIRED)
@@ -62,7 +62,7 @@ include_directories(
     ${NYX_INCLUDE_DIRS}
     ${PBNJSON_CPP_INCLUDE_DIRS}
     ${SQLITE3_INCLUDE_DIRS}
-    ${CJSON_INCLUDE_DIRS}
+    ${JSON_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIRS}
     ${SERVICEINSTALLER_INCLUDE_DIRS}
     ${PMLOGLIB_INCLUDE_DIRS}
@@ -112,7 +112,7 @@ target_link_libraries(LunaSysMgr
     ${PBNJSON_C_LIBRARIES}
     ${PBNJSON_CPP_LIBRARIES}
     ${SQLITE3_LIBRARIES}
-    ${CJSON_LIBRARIES}
+    ${JSON_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     ${SERVICEINSTALLER_LIBRARIES}
     ${PMLOGLIB_LIBRARIES}

@@ -42,7 +42,7 @@
 
 #include <SysMgrDeviceKeydefs.h>
 
-#include <cjson/json.h>
+#include <json.h>
 
 #include <glib.h>
 #include <lunaservice.h>

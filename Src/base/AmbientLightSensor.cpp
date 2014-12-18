@@ -28,7 +28,7 @@
 #include "SystemService.h"
 #include "Time.h"
 
-#include <cjson/json.h>
+#include <json.h>
 #include <glib.h>
 #if defined(HAS_LUNA_PREF)
 #include <lunaprefs.h>
