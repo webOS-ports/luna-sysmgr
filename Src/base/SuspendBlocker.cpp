@@ -26,7 +26,7 @@
 #include <pthread.h>
 #include <string.h>
 #include <stdlib.h>
-#include <cjson/json.h>
+#include <json.h>
 
 static int s_counter = 0;
 static pthread_mutex_t s_mutex = PTHREAD_MUTEX_INITIALIZER;

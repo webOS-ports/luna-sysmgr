@@ -45,7 +45,7 @@
 #include "Security.h"
 #include "EASPolicyManager.h"
 
-#include "cjson/json.h"
+#include <json.h>
 #include <pbnjson.hpp>
 #include "JSONUtils.h"
 
@@ -3348,30 +3348,32 @@ bool cbMonitorProcessMemory(LSHandle* lsHandle, LSMessage *message, void *user_d
 
 	// iterate through the elements and find the pid and the
 	// memory maximum
-	json_object_object_foreach(root, key, val)
 	{
-		if (strcmp(key, "pid") == 0)
+		json_object_object_foreach(root, key, val)
 		{
-			if (json_object_is_type(val, json_type_int))
+			if (strcmp(key, "pid") == 0)
 			{
-				pid = json_object_get_int(val);
+				if (json_object_is_type(val, json_type_int))
+				{
+					pid = json_object_get_int(val);
+				}
+				else
+				{
+					success = false;
+					goto Done;
+				}
 			}
-			else
+			if (strcmp(key, "maxMemory") == 0)
 			{
-				success = false;
-				goto Done;
-			}
-		}
-		if (strcmp(key, "maxMemory") == 0)
-		{
-			if (json_object_is_type(val, json_type_int))
-			{
-				memMax = json_object_get_int(val);
-			}
-			else
-			{
-				success = false;
-				goto Done;
+				if (json_object_is_type(val, json_type_int))
+				{
+					memMax = json_object_get_int(val);
+				}
+				else
+				{
+					success = false;
+					goto Done;
+				}
 			}
 		}
 	}
@@ -3478,31 +3480,33 @@ bool cbEnableFpsCounter(LSHandle* lsHandle, LSMessage *message, void *user_data)
 
 
 	// iterate through the elements
-	json_object_object_foreach(root, key, val)
 	{
-		if (strcmp(key, "enable") == 0)
+		json_object_object_foreach(root, key, val)
 		{
-			label = json_object_object_get(root, "enable");
+			if (strcmp(key, "enable") == 0)
+			{
+				label = json_object_object_get(root, "enable");
 
-			if (label && json_object_is_type(label, json_type_boolean))
+				if (label && json_object_is_type(label, json_type_boolean))
+				{
+					//WindowServer::enableFpsCounter(json_object_get_boolean(label));
+					failed = false;
+				}
+			}
+			if (strcmp(key, "reset") == 0)
 			{
-                // WindowServer::enableFpsCounter(json_object_get_boolean(label));
+				if (json_object_is_type(val, json_type_int))
+				{
+					reset = json_object_get_int(val);
+					// WindowServer::resetFpsBuffer(reset);
+					failed = false;
+				}
+			}
+			if (strcmp(key, "dump") == 0)
+			{
+				// WindowServer::dumpFpsHistory();
 				failed = false;
 			}
-		}
-		if (strcmp(key, "reset") == 0)
-		{
-			if (json_object_is_type(val, json_type_int))
-			{
-				reset = json_object_get_int(val);
-                // WindowServer::resetFpsBuffer(reset);
-				failed = false;
-			}
-		}
-		if (strcmp(key, "dump") == 0)
-		{
-            // WindowServer::dumpFpsHistory();
-			failed = false;
 		}
 	}
 	
@@ -3553,17 +3557,19 @@ bool cbEnableTouchPlot(LSHandle* lsHandle, LSMessage *message, void *user_data)
 		goto Done;
 
 //	// iterate through the elements
-//	json_object_object_foreach(root, key, val)
 //	{
-//		for(uint i = 0; i < sizeof(touchPlotOptions)/sizeof(touchPlotOptions[0]); i++) {
-//			if (strcmp(key, touchPlotOptions[i].name) == 0)
-//			{
-//				label = json_object_object_get(root, touchPlotOptions[i].name);
-
-//				if (label && json_object_is_type(label, json_type_boolean))
+//		json_object_object_foreach(root, key, val)
+//		{
+//			for(uint i = 0; i < sizeof(touchPlotOptions)/sizeof(touchPlotOptions[0]); i++) {
+//				if (strcmp(key, touchPlotOptions[i].name) == 0)
 //				{
-//                    // WindowServer::enableTouchPlotOption(touchPlotOptions[i].type, json_object_get_boolean(label));
-//					failed = false;
+//					label = json_object_object_get(root, touchPlotOptions[i].name);
+
+//					if (label && json_object_is_type(label, json_type_boolean))
+//					{
+//						// WindowServer::enableTouchPlotOption(touchPlotOptions[i].type, json_object_get_boolean(label));
+//						failed = false;
+//					}
 //				}
 //			}
 //		}

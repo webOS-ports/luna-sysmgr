@@ -28,7 +28,7 @@
 
 #include <lunaservice.h>
 
-#include "cjson/json.h"
+#include <json.h>
 
 #include <QObject>
 #include <QString>
