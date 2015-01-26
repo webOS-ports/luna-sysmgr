@@ -504,7 +504,7 @@ bool DisplayManager::isDNAST() const
 
 bool DisplayManager::isOnPuck() const
 {
-    return (m_chargerConnected & CHARGER_INDUCTIVE) ? true : false;
+    return (m_chargerConnected != CHARGER_NONE);
 }
 
 bool DisplayManager::isDisplayOn() const
