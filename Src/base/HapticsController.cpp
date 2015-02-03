@@ -33,6 +33,7 @@
 #include <string>
 #include <sys/prctl.h>
 
+#define HAPTICS
 
 #if defined(HAPTICS)
 #include <HapticsControllerCastle.cpp>
