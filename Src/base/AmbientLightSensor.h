@@ -26,6 +26,7 @@
 
 #include "lunaservice.h"
 #include <list>
+#include <QLightSensor>
 
 #define ALS_INIT_SAMPLE_SIZE   10
 #define ALS_SAMPLE_SIZE 	   10
@@ -38,8 +39,9 @@
 #define ALS_REGION_OUTDOOR    4
 
 
-class AmbientLightSensor
+class AmbientLightSensor : public QObject
 {
+	Q_OBJECT
 
 public:
 	AmbientLightSensor();
@@ -62,10 +64,8 @@ private:
     LSHandle*              m_service;
     bool                   m_alsEnabled;
     bool                   m_alsIsOn;
-    int32_t                m_alsValue[ALS_SAMPLE_SIZE];
     int32_t                m_alsBorder[ALS_REGION_COUNT];
     int32_t                m_alsMargin[ALS_REGION_COUNT];
-    int32_t                m_alsPointer;
     int32_t                m_alsRegion;
     int32_t                m_alsSum;
     uint32_t               m_alsLastOff;
@@ -77,8 +77,8 @@ private:
     int32_t                m_alsSampleCount;
     int32_t                m_alsCountInRegion;
     int32_t                m_alsSamplesNeeded;
-    uint32_t               m_alsLastSampleTs;
     std::list<int32_t>	   m_alsSampleList;
+    QLightSensor*          m_als;
 
     static AmbientLightSensor * m_instance;
 
@@ -86,6 +86,9 @@ private:
     bool off ();
 
     bool updateAls (int intensity);
+
+private Q_SLOTS:
+    void slotReadingChanged ();
 };
 
 #endif /* AMBIENTLIGHTSENSOR_H */

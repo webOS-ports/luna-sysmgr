@@ -32,6 +32,11 @@ if(NOT Qt5Widgets_FOUND)
     message(FATAL_ERROR "Qt5Widgets module is required!")
 endif()
 
+find_package(Qt5Sensors REQUIRED)
+if(NOT Qt5Sensors_FOUND)
+    message(FATAL_ERROR "Qt5Sensors module is required!")
+endif()
+
 find_package(PkgConfig "0.22" REQUIRED)
 
 pkg_check_modules(GLIB2 glib-2.0 REQUIRED)
@@ -118,7 +123,7 @@ target_link_libraries(LunaSysMgr
     ${PMLOGLIB_LIBRARIES}
     ${ROLEGEN_LIBRARIES}
     pthread)
-qt5_use_modules(LunaSysMgr Core Gui Widgets)
+qt5_use_modules(LunaSysMgr Core Gui Widgets Sensors)
 
 webos_build_daemon()
 webos_build_system_bus_files()
