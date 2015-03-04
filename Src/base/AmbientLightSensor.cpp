@@ -58,7 +58,6 @@ AmbientLightSensor::AmbientLightSensor ()
     : m_service(NULL)
     , m_alsEnabled(false)
     , m_alsIsOn(false)
-    , m_alsPointer(0)
     , m_alsRegion(ALS_REGION_UNDEFINED)
     , m_alsSum(0)
     , m_alsLastOff(0)
@@ -70,7 +69,7 @@ AmbientLightSensor::AmbientLightSensor ()
     , m_alsSampleCount(0)
     , m_alsCountInRegion(0)
     , m_alsSamplesNeeded (ALS_INIT_SAMPLE_SIZE)
-    , m_alsLastSampleTs (0)
+    , m_als (0)
 {
     LSError lserror;
     LSErrorInit(&lserror);
@@ -139,6 +138,8 @@ AmbientLightSensor::AmbientLightSensor ()
 	m_alsMargin[ALS_REGION_INDOOR] = 100;
 	m_alsMargin[ALS_REGION_OUTDOOR] = 0;
 
+	m_als = new QLightSensor();
+	connect(m_als, SIGNAL(readingChanged()), this, SLOT(slotReadingChanged()));
     }
     else {
         g_warning ("%s: ALS is not enabled", __PRETTY_FUNCTION__); 
@@ -167,6 +168,15 @@ AmbientLightSensor::~AmbientLightSensor()
         g_message ("%s: failed at %s with message %s", __PRETTY_FUNCTION__, lserror.func, lserror.message);
         LSErrorFree(&lserror);
     }
+    if (m_als)
+        m_als->deleteLater();
+}
+
+void AmbientLightSensor::slotReadingChanged ()
+{
+	QLightReading *reading = m_als->reading();
+	update(static_cast<int>(reading->lux()));
+	return;
 }
 
 int AmbientLightSensor::getCurrentRegion ()
@@ -188,7 +198,9 @@ bool AmbientLightSensor::stop ()
 
 bool AmbientLightSensor::on ()
 {
-#if defined(TARGET_DEVICE)
+    if (Settings::LunaSettings()->hardwareType != Settings::HardwareTypeDevice)
+        return true;
+
     LSError lserror;
     LSErrorInit(&lserror);
     bool result;
@@ -217,17 +229,12 @@ bool AmbientLightSensor::on ()
     m_alsSampleList.clear();
     m_alsRegion = ALS_REGION_INDOOR;
 
-    /* fine-tuning support for NYX */
-    InputControl* ic = HostBase::instance()->getInputControlALS();
-    if (NULL != ic)
+    if (NULL != m_als)
     {
         g_debug ("%s: ALS on!", __PRETTY_FUNCTION__);
-        if (!ic->setRate(NYX_REPORT_RATE_HIGH))
-            return false;
         m_alsFastRate = true;
-        return ic->on();
+        return m_als->start();
     }
-#endif
     return true;
 }
 
@@ -255,12 +262,10 @@ bool AmbientLightSensor::off ()
 
     m_alsLastOff = Time::curTimeMs();
 
-    /* fine-tuning support for NYX */
-    InputControl* ic = HostBase::instance()->getInputControlALS();
-    if (NULL != ic)
+    if (NULL != m_als)
     {
         g_debug ("%s: ALS off!", __PRETTY_FUNCTION__);
-        return ic->off();
+        m_als->stop();
     }
     return true;
 }
@@ -288,7 +293,9 @@ bool sortIncr (int32_t alsVal1, int32_t alsVal2)
 
 bool AmbientLightSensor::updateAls(int intensity)
 {
-#if defined(TARGET_DEVICE)
+    if (Settings::LunaSettings()->hardwareType != Settings::HardwareTypeDevice)
+        return false;
+
     LSError lserror;
     LSErrorInit(&lserror);
     bool result = true;
@@ -350,13 +357,7 @@ bool AmbientLightSensor::updateAls(int intensity)
         {
             m_alsCountInRegion = 0;
             g_debug ("resetting ALS to sample at fast rate");
-            // switch to the slow mode
-            InputControl* ic = HostBase::instance()->getInputControlALS();
-            if (NULL != ic)
-            {
-                if (!ic->setRate(NYX_REPORT_RATE_HIGH))
-                    return false;
-            }
+            // switch to the fast mode
             m_alsFastRate = true;
         }
     } else {
@@ -365,12 +366,6 @@ bool AmbientLightSensor::updateAls(int intensity)
             if (m_alsFastRate) {
                 g_debug ("resetting ALS to sample at slow rate");
                 // switch to the slow mode
-                InputControl* ic = HostBase::instance()->getInputControlALS();
-                if (NULL != ic)
-                {
-                    if (!ic->setRate(NYX_REPORT_RATE_LOW))
-                        return false;
-                }
                 m_alsFastRate = false;
             }
         }
@@ -410,9 +405,6 @@ end:
 
     // if there was no change return false, no need to update anything
     return (m_alsRegion != current);
-#else
-    return false;
-#endif
 }
 
 /*!
@@ -514,7 +506,9 @@ Example status updates:
 */
 bool AmbientLightSensor::controlStatus(LSHandle *sh, LSMessage *message, void *ctx)
 {
-#if defined(TARGET_DEVICE)
+    if (Settings::LunaSettings()->hardwareType != Settings::HardwareTypeDevice)
+        return true;
+
     LSError lserror;
     LSErrorInit(&lserror);
     bool result = true;
@@ -558,9 +552,8 @@ bool AmbientLightSensor::controlStatus(LSHandle *sh, LSMessage *message, void *c
             als->m_alsDisabled++;
     }
 
-    int ptr = (als->m_alsPointer + als->m_alsSamplesNeeded - 1) % als->m_alsSamplesNeeded;
     gchar *status = g_strdup_printf ("{\"returnValue\":true,\"current\":%i,\"average\":%i,\"disabled\":%s,\"subscribed\":%s}",
-            als->m_alsValue[ptr], als->m_alsSum / als->m_alsSamplesNeeded, als->m_alsDisabled > 0 ? "true" : "false", 
+            als->m_alsSampleList.empty() ? 0: als->m_alsSampleList.back(), als->m_alsSum / als->m_alsSamplesNeeded, als->m_alsDisabled > 0 ? "true" : "false",
             subscribed ? "true" : "false");
 
     if (NULL != status)
@@ -572,7 +565,6 @@ bool AmbientLightSensor::controlStatus(LSHandle *sh, LSMessage *message, void *c
     }
 
     g_free(status);
-#endif
     return true;
 }
 
