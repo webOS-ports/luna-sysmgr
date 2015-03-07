@@ -146,6 +146,7 @@ static LSMethod privateDisplayMethods[] = {
 //    {"setCallStatus", DisplayManager::controlCallStatus},
 	{"lockStatus", DisplayManager::controlLockStatus},
 	{"setLockStatus", DisplayManager::controlSetLockStatus},
+    {"alert", DisplayManager::controlAlert},
     {},
 };
 
@@ -2423,6 +2424,80 @@ bool DisplayManager::controlLockStatus(LSHandle *sh, LSMessage *message, void *c
 		g_free(payload);
 
 	return true;
+}
+
+bool DisplayManager::controlAlert(LSHandle *sh, LSMessage *message, void *ctx)
+{
+    LSError lserror;
+    LSErrorInit(&lserror);
+
+    // {"status": string}
+    VALIDATE_SCHEMA_AND_RETURN(sh, message, SCHEMA_1(REQUIRED(status, string)));
+
+    bool result = false;
+    const char* str = LSMessageGetPayload(message);
+    json_object* root = 0;
+    json_object* label = 0;
+    DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
+    const char *errorText = NULL;
+    int errorCode = 0;
+
+    if (!str)
+         goto done;
+
+    root = json_tokener_parse(str);
+    if (!root || is_error(root))
+         goto done;
+
+    label = json_object_object_get(root, "status");
+    if (json_object_get_boolean(label))
+    {
+        const char *status = json_object_get_string(json_object_object_get(root, "status"));
+        int state = 0;
+
+        if (g_strcmp0(status, "generic-activated") == 0)
+            state = DISPLAY_ALERT_GENERIC_ACTIVATED;
+        else if (g_strcmp0(status, "phonecall-activated") == 0)
+            state = DISPLAY_ALERT_PHONECALL_ACTIVATED;
+        else if (g_strcmp0(status, "generic-deactivated") == 0)
+            state = DISPLAY_ALERT_GENERIC_DEACTIVATED;
+        else if (g_strcmp0(status, "phonecall-deactivated") == 0)
+            state = DISPLAY_ALERT_PHONECALL_DEACTIVATED;
+        else if (g_strcmp0(status, "banner-activated") == 0)
+            state = DISPLAY_BANNER_ACTIVATED;
+        else if (g_strcmp0(status, "banner-deactivated") == 0)
+            state = DISPLAY_BANNER_DEACTIVATED;
+        else if (g_strcmp0(status, "cancel") == 0)
+            state = DISPLAY_ALERT_CANCEL;
+        else {
+            errorText = "Unknown status";
+            errorCode = 1;
+            goto done;
+        }
+
+        result = dm->alert(state);
+    }
+
+done:
+    if (result)
+        result = LSMessageReply(sh, message, "{\"returnValue\":true}", &lserror);
+    else
+    {
+        gchar *r = g_strdup_printf ("{\"returnValue\":false,\"errorCode\":%i,\"errorText\":\"%s\"}", errorCode, errorText);
+        result = LSMessageReply(sh, message, r, &lserror);
+        g_free (r);
+    }
+
+    if(!result)
+    {
+        LSErrorPrint (&lserror, stderr);
+        LSErrorFree (&lserror);
+    }
+
+    if (root && !is_error(root))
+        json_object_put(root);
+
+    return true;
 }
 
 bool DisplayManager::controlSetLockStatus(LSHandle *sh, LSMessage *message, void *ctx)
