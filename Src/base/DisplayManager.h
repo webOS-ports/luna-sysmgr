@@ -134,6 +134,7 @@ public:
     static bool controlCallStatus(LSHandle *sh, LSMessage *message, void *ctx);
 	static bool controlLockStatus(LSHandle *sh, LSMessage *message, void *ctx);
 	static bool controlSetLockStatus(LSHandle *sh, LSMessage *message, void *ctx);
+    static bool controlAlert(LSHandle *sh, LSMessage *message, void *ctx);
 
     // service callbacks
     static bool timeoutCallback(LSHandle *sh, LSMessage *message, void *ctx);
