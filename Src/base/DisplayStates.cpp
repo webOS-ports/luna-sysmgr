@@ -806,7 +806,7 @@ DisplayOn::DisplayOn()
 
 void DisplayOn::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
 {
-    g_message ("%s: entering state", __PRETTY_FUNCTION__);
+    g_message ("%s: entering state (displayEvent %d)", __PRETTY_FUNCTION__, displayEvent);
     enablePainting();
     updateLockState (DisplayLockUnlocked, displayEvent);
     g_debug ("Emitting DISPLAY_SIGNAL_ON");
@@ -815,9 +815,9 @@ void DisplayOn::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event
     displayOn(false);
 
     if (displayEvent != DisplayEventApiOn)
-	startUserInactivityTimer();
+        startUserInactivityTimer();
     else 
-	startInternalInactivityTimer();
+        startInternalInactivityTimer();
 }
 
 void DisplayOn::startInactivityTimer()
@@ -924,7 +924,10 @@ bool DisplayOn::timeoutInternal()
     g_debug ("%s: now=%i last=%i diff=%i", __PRETTY_FUNCTION__, now, lastEvent(), now - lastEvent());
 
     if (!DisplayManager::instance()->isBootFinished())
-        return false;
+    {
+        g_warning("%s: System boot is not done yet", __PRETTY_FUNCTION__);
+        return true;
+    }
 
 #if 0
     // check for brick mode
@@ -935,12 +938,15 @@ bool DisplayOn::timeoutInternal()
 #endif
 
     if (isDNAST())
-	return false;
+    {
+        g_warning("%s: DNAST is pending", __PRETTY_FUNCTION__);
+        return true;
+    }
 
     if (now <  (unsigned int) lockedOffTimeout() + lastEvent())
     {
-	g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
-	m_timerInternal->start (lockedOffTimeout() + lastEvent() - now);
+        g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
+        m_timerInternal->start (lockedOffTimeout() + lastEvent() - now);
     }
     else
     {
@@ -956,18 +962,19 @@ bool DisplayOn::timeoutInternal()
         //changeDisplayState (DisplayStateOnLocked, DisplayEventTimeout, NULL);
 #endif
     }
+
     return false;
 }
 
 void DisplayOn::handleEvent (DisplayEvent displayEvent, sptr<Event> event) 
 {
     if (displayEvent != DisplayEventAlsChange && displayEvent != DisplayEventUpdateBrightness)
-	startUserInactivityTimer();
+        startUserInactivityTimer();
 
     switch (displayEvent) {
 	case DisplayEventPowerKeyPress:
 	    if (!isBacklightOn()) {
-		g_warning ("backlight not on yet, debouncing power key");
+		g_warning ("%s: backlight not on yet, debouncing power key", __PRETTY_FUNCTION__);
 		break;
 	    }
 	    g_debug ("%s: power key down", __PRETTY_FUNCTION__);
@@ -1179,7 +1186,7 @@ void DisplayOnLocked::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
     switch (displayEvent) {
 	case DisplayEventPowerKeyPress:
 	    if (!isBacklightOn()) {
-		g_warning ("backlight not on yet, debouncing power key");
+		g_warning ("%s: backlight not on yet, debouncing power key", __PRETTY_FUNCTION__);
 		break;
 	    }
 
@@ -1264,6 +1271,7 @@ void DisplayOnLocked::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
 		break;
 
         case DisplayEventUpdateBrightness:
+            g_debug("%s: updating display brightness", __PRETTY_FUNCTION__);
             displayOn(true);
             break;
 

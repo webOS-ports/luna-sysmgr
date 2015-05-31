@@ -1079,6 +1079,7 @@ error:
 
     return true;
 }
+
 bool DisplayManager::chargerCallback(LSHandle *sh, LSMessage *message, void *ctx)
 {
     LSError lserror;
@@ -2595,6 +2596,10 @@ void DisplayManager::slotEmergencyMode (bool enable)
 
 void DisplayManager::slotAlsEnabled (bool enable)
 {
+    // Settings has a higher priority than user preferences
+    if (!Settings::LunaSettings()->enableAls)
+        return;
+
 	g_message ("%s: ALS being %s", __PRETTY_FUNCTION__, enable ? "enabled" : "disabled");
 	if (enable) {
 		if (currentState() == DisplayStateOn
@@ -3001,14 +3006,14 @@ bool DisplayManager::orientationSensorOn ()
 	if (!m_bootFinished)
 		return true;
 
-	HostBase::instance()->OrientationSensorOn(true);
+    // HostBase::instance()->OrientationSensorOn(true);
 
 	return true;
 }
 
 bool DisplayManager::orientationSensorOff ()
 {
-    HostBase::instance()->OrientationSensorOn(false);
+    // HostBase::instance()->OrientationSensorOn(false);
     return true;
 }
 
