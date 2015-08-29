@@ -2184,7 +2184,7 @@ bool DisplayManager::setMaximumBrightness (int maxBrightness, bool save)
 		// // CoreNaviManager::instance()->updateBrightness (getCoreNaviBrightness());
 
 		Q_EMIT signalDisplayMaxBrightnessChanged(maxBrightness);
-	} 
+	}
 	else {
             updateBrightness ();
         }
@@ -2704,7 +2704,7 @@ bool DisplayManager::updateState (int eventType)
             {
                 m_dropPowerKey = false;
                 // start the timer
-		if ((currentState() == DisplayStateOn 
+		if ((currentState() == DisplayStateOn
 					|| currentState() == DisplayStateOnPuck
 					|| currentState() == DisplayStateDockMode
 					|| currentState() == DisplayStateDim)
@@ -3159,13 +3159,13 @@ bool DisplayManager::alert (int state)
     {
         case DISPLAY_BANNER_ACTIVATED:
         case DISPLAY_ALERT_GENERIC_ACTIVATED:
+            m_alertState = currentState();
             if (currentState() != DisplayStateOn
                     && currentState() != DisplayStateOnLocked
                     && currentState() != DisplayStateOnPuck
 		    && currentState() != DisplayStateDockMode)
             {
                 m_alertTimer->start (ALERT_TIMEOUT);
-                m_alertState = currentState();
                 g_message ("%s: calling on due to alert %d", __PRETTY_FUNCTION__, state);
                 return on ();
             }
