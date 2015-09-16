@@ -3398,8 +3398,10 @@ bool DisplayManager::unlockRequiresPasscode() const
 	return Security::instance()->passcodeSet();
 }
 
-void DisplayManager::updateLockState (DisplayLockState lockState, DisplayState displayState, DisplayEvent displayEvent)
+bool DisplayManager::updateLockState (DisplayLockState lockState, DisplayState displayState, DisplayEvent displayEvent)
 {
+	bool success = true;
+
 	if (lockState != m_lockState) {
 		m_lockState = lockState;
 		switch (lockState) {
@@ -3415,9 +3417,12 @@ void DisplayManager::updateLockState (DisplayLockState lockState, DisplayState d
 			case DisplayLockUnlocked:
 				{
 					// If we're going to unlock check first if that requires a passcode or not
-					if (unlockRequiresPasscode() && displayEvent == DisplayEventApiOn)
+					if (unlockRequiresPasscode() &&
+						displayEvent != DisplayEventUnlockScreen &&
+						!isOnCall())
 					{
 						g_warning("%s: Can't unlock as we have a passcode set", __PRETTY_FUNCTION__);
+						success = false;
 						lock();
 						break;
 					}
@@ -3437,6 +3442,8 @@ void DisplayManager::updateLockState (DisplayLockState lockState, DisplayState d
 				break;
 		}
 	}
+
+	return success;
 }
 
 void DisplayManager::handleLockStateChange(int state, int displayEvent)
