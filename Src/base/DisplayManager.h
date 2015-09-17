@@ -299,10 +299,10 @@ private:
     friend class DisplayStateBase;
 
     void	changeDisplayState (DisplayState newDisplayState, DisplayState oldDisplayState, DisplayEvent displayEvent, sptr<Event> event);
-    void	updateLockState (DisplayLockState lockState, DisplayState state, DisplayEvent displayEvent);
-	// used by DisplayStateBase class to change current state
+    bool	updateLockState (DisplayLockState lockState, DisplayState state, DisplayEvent displayEvent);
+    // used by DisplayStateBase class to change current state. Returns false is target lockState couldn't be reached
 
-	void handleLockStateChange(int state, int displayEvent);
+    void handleLockStateChange(int state, int displayEvent);
 
     void displayOn(bool als);
     void displayAdjust();

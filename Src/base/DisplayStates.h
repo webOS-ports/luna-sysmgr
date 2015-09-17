@@ -104,7 +104,7 @@ class DisplayStateBase {
 	virtual bool updateBrightness (int alsRegion);
 
 	void changeDisplayState (DisplayState state, DisplayEvent displayEvent, sptr<Event> event = NULL);
-	void updateLockState (DisplayLockState, DisplayEvent displayEvent);
+	bool updateLockState (DisplayLockState, DisplayEvent displayEvent);
 
         bool isDisplayUnlocked();
         bool isUSBCharging();
