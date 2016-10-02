@@ -21,7 +21,7 @@
     {
         "title" : "downloads",
         "items" : [
-            "com.palm.app.enyo-findapps_default"
+            "org.webosinternals.preware_default"
         ] 
     },
     {
@@ -41,6 +41,10 @@
             "com.palm.app.screenlock_default",
             "org.webosports.app.settings_default",
             "org.webosinternals.tweaks_default",
+            "org.webosports.cdav.app_default",
+            "org.webosports.app.testr_default",
+            "sdl2_opengles1_test_default",
+            "sdl2_opengles2_test_default",
             "com.palm.app.swmanager_default",
             "com.palm.app.soundsandalerts_default",
             "com.palm.app.updates_default",
