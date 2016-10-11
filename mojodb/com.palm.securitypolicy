@@ -1,8 +1,0 @@
-{
-    	"id":"com.palm.securitypolicy:1",
-	"owner":"com.palm.systemmanager", 
-	"indexes": [
-		{ "name": "watches", "props": [{ "name": "_rev" }], "incDel" : true},
-		{ "name": "isTemp", "props": [{ "name": "isTemp" }]}
-	]
-}

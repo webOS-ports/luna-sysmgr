@@ -1,0 +1,22 @@
+{
+    "id": "com.palm.contextupload:1",
+    "owner": "com.palm.contextupload",
+    "indexes": [
+        {
+            "name": "timestamp",
+            "props": [
+                {
+                    "name": "timestamp" 
+                } 
+            ] 
+        },
+        {
+            "name": "_rev",
+            "props": [
+                {
+                    "name": "_rev" 
+                } 
+            ] 
+        } 
+    ] 
+}
