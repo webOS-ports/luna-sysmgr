@@ -41,7 +41,7 @@
 		"keyboard": {
 				"enabledLanguages": ["en","de","es","fi","fr","ru","sv"],
 				"autoCapitalization": false,
-				"autoCompletion": false,
+				"autoCorrection": false,
 				"predictiveText": false,
 				"spellChecking": false,
 				"keyPressFeedback": false
