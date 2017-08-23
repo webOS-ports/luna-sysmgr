@@ -3660,10 +3660,12 @@ void DisplayManager::displayOff()
 	    m_drop_pen = true;
     }
 
-    if (wasDisplayOnBefore)
-        updateCompositorDisplayState(false, &DisplayManager::displayOffCallback, this);
-    else
-        displayOffCallback(NULL, NULL, this);
+    // whatever the state was, the backlight has to be turned off before we blank the hwcomposer
+    displayOffCallback(NULL, NULL, this);
+
+    if (wasDisplayOnBefore) {
+        updateCompositorDisplayState(false, NULL, NULL);
+    }
 }
 
 bool DisplayManager::displayOffCallback(LSHandle *handle, LSMessage *message, gpointer context)
