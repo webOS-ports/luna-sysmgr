@@ -185,7 +185,7 @@ DisplayManager::DisplayManager()
     , m_totalTimeout (DEFAULT_TIMEOUT * 1000)
     , m_lockedOffTimeout (Settings::LunaSettings()->lockScreenTimeout)
     , m_activityTimeout(DEFAULT_TIMEOUT *1000)
-    , m_powerKeyTimeout(3000)
+    , m_powerKeyTimeout(1500)
     , m_onCall(false)
     , m_demo(false)
     , m_bootFinished(false)
@@ -3660,10 +3660,12 @@ void DisplayManager::displayOff()
 	    m_drop_pen = true;
     }
 
-    if (wasDisplayOnBefore)
-        updateCompositorDisplayState(false, &DisplayManager::displayOffCallback, this);
-    else
-        displayOffCallback(NULL, NULL, this);
+    // whatever the state was, the backlight has to be turned off before we blank the hwcomposer
+    displayOffCallback(NULL, NULL, this);
+
+    if (wasDisplayOnBefore) {
+        updateCompositorDisplayState(false, NULL, NULL);
+    }
 }
 
 bool DisplayManager::displayOffCallback(LSHandle *handle, LSMessage *message, gpointer context)
