@@ -237,7 +237,21 @@ void logCrashRegisterContext(int sig, siginfo_t *info, void *data) {
     crash_flush();
 }
 
-#endif // __arm__
+#elif defined (__aarch64__)
+
+// Register context dumper for __aarch64__:
+/**
+ * Log register values
+ *
+ * @param       sig             The signal which triggered this handler
+ * @param       info            Pointer to information about the signal
+ * @param       data            Pointer to a ucontext_t with info on the crashing process
+ */
+void logCrashRegisterContext(int sig, siginfo_t *info, void *data) {
+    crash_printf("TODO: print relevant registers for __aarch64__\n");
+    crash_flush();
+}
+#endif
 
 /**
  * Whether or not innerCrashHandler() has handled a signal
