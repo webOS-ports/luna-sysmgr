@@ -1,0 +1,36 @@
+[
+    {
+        "type": "db.kind",
+        "object": "com.palm.contextupload:1",
+        "caller": "com.palm.eventreporter.LunaSysMgr",
+        "operations": {
+            "read": "allow",
+            "create": "allow",
+            "delete": "allow",
+            "update": "allow"
+        }
+    },
+    {
+        "type": "db.kind",
+        "object": "com.palm.contextupload:1",
+        "caller": "com.palm.eventreporter.LunaAppManager",
+        "operations": {
+                "read": "allow",
+                "create": "allow",
+                "delete": "allow",
+                "update": "allow"
+        }
+    },
+    {
+        "type": "db.kind",
+        "object": "com.palm.contextupload:1",
+        "caller": "com.palm.eventreporter.WebAppMgr",
+        "operations": {
+                "read": "allow",
+                "create": "allow",
+                "delete": "allow",
+                "update": "allow"
+        }
+    }
+]
+

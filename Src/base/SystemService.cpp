@@ -359,7 +359,8 @@ void SystemService::startService()
 	if (!result)
 		goto Done;
 
-	postNovacomStatus();
+	//We don't have com.palm.accountservices available, so it doesn't make much sense to do the call to postNovacomStatus either
+	//postNovacomStatus();
 
 Done:
 
