@@ -192,7 +192,7 @@ void SuspendBlockerBase::callService(LSHandle* service, LSFilterFunc callback, c
 bool SuspendBlockerBase::cbPowerdUp(LSHandle* sh, LSMessage* msg, void* ctx)
 {
 	struct json_object* json = json_tokener_parse(LSMessageGetPayload(msg));
-	if (json && !is_error(json))  {
+	if (json)  {
 
 		json_object* label = json_object_object_get(json, "connected");
 		if (label && json_object_is_type(label, json_type_boolean)) {
@@ -228,7 +228,7 @@ bool SuspendBlockerBase::cbPowerdUp(LSHandle* sh, LSMessage* msg, void* ctx)
 bool SuspendBlockerBase::cbIdentify(LSHandle* sh, LSMessage* msg, void* ctx)
 {
 	struct json_object* json = json_tokener_parse(LSMessageGetPayload(msg));
-	if (!json || is_error(json))
+	if (!json)
 		return true;
 
 	json_object* label = 0;

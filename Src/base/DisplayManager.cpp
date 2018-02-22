@@ -810,7 +810,7 @@ bool DisplayManager::audiodCallback(LSHandle *sh, LSMessage *message, void *ctx)
     if (!str)
         return true;
     json_object* root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root)
         return true;
 
     action = json_object_object_get(root, "action");
@@ -874,7 +874,7 @@ bool DisplayManager::sliderCallback(LSHandle *sh, LSMessage *message, void *ctx)
 	if (!str)
 		goto error;
 	root = json_tokener_parse(str);
-	if (!root || is_error(root))
+	if (!root)
 		goto error;
 
 	label = json_object_object_get(root, "key");
@@ -906,7 +906,7 @@ error:
         LSErrorFree (&lserror);
     }
 
-    if (root && !is_error(root))
+    if (root)
         json_object_put(root);
 
     return true;
@@ -928,7 +928,7 @@ bool DisplayManager::batteryCallback(LSHandle *sh, LSMessage *message, void *ctx
     const char* str = LSMessageGetPayload(message);
     if (str) {
 	root = json_tokener_parse(str);
-	result = (root && !is_error(root));
+	result = (root);
     }
 
     if (result)
@@ -964,13 +964,13 @@ bool DisplayManager::bootStatusCallback(LSHandle *sh, LSMessage *message, void *
     const char* str = LSMessageGetPayload(message);
     if (str) {
         root = json_tokener_parse(str);
-        result = (root && !is_error(root));
+        result = (root);
     }
 
     if (result)
     {
         label = json_object_object_get(root, "state");
-        if (label && !is_error (label)) {
+        if (label) {
             state = json_object_get_string(label);
             if (!strcmp(state, "normal"))
                 dm->markBootFinished(true);
@@ -1007,22 +1007,22 @@ bool DisplayManager::usbDockCallback(LSHandle *sh, LSMessage *message, void *ctx
             goto error;
 
     root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root)
             goto error;
 
     label = json_object_object_get(root, "Charging");
-    if (label && !is_error (label)) {
+    if (label) {
 	    charging = json_object_get_boolean (label);
     }
 
     label = json_object_object_get(root, "DockConnected");
-    if (label && !is_error (label)) {
+    if (label) {
 	    bool dockConnected = json_object_get_boolean (label);
 	    if (dockConnected && charging) {
 		    newState |= CHARGER_INDUCTIVE;
 
 		    label = json_object_object_get(root, "DockSerialNo");
-		    if (label && !is_error (label)) {
+		    if (label) {
 			    dm->m_puckId = json_object_get_string (label);
 			    if (dm->m_puckId == "NULL")
 				    dm->m_puckId.clear();
@@ -1047,7 +1047,7 @@ bool DisplayManager::usbDockCallback(LSHandle *sh, LSMessage *message, void *ctx
     }
 
     label = json_object_object_get(root, "USBConnected");
-    if (label && !is_error (label)) {
+    if (label) {
 	    bool usbConnected = json_object_get_boolean (label);
 	    if (usbConnected) {
 		    newState |= CHARGER_USB;
@@ -1074,7 +1074,7 @@ bool DisplayManager::usbDockCallback(LSHandle *sh, LSMessage *message, void *ctx
 
 error:
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 
     return true;
@@ -1102,7 +1102,7 @@ bool DisplayManager::chargerCallback(LSHandle *sh, LSMessage *message, void *ctx
             goto error;
 
     root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root)
             goto error;
 
     label = json_object_object_get(root, "type");
@@ -1178,7 +1178,7 @@ bool DisplayManager::chargerCallback(LSHandle *sh, LSMessage *message, void *ctx
 
 error:
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 
     return true;
@@ -1258,11 +1258,11 @@ bool DisplayManager::controlSetState(LSHandle *sh, LSMessage *message, void *ctx
 	if (!str)
 		goto send;
 	root = json_tokener_parse(str);
-	if (!root || is_error(root))
+	if (!root)
 		goto send;
 
 	value = json_object_get_string(json_object_object_get(root, "state"));
-	if (!value || is_error (value))
+	if (!value)
 		goto send;
 
 
@@ -1319,7 +1319,7 @@ send:
         LSErrorFree (&lserror);
     }
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 
     return true;
@@ -1339,7 +1339,7 @@ bool DisplayManager::controlCallStatus(LSHandle *sh, LSMessage *message, void *c
 	if (!str)
 		goto send;
 	root = json_tokener_parse(str);
-	if (!root || is_error(root))
+	if (!root)
 		goto send;
 
 	value = json_object_get_string(json_object_object_get(root, "state"));
@@ -1382,7 +1382,7 @@ send:
         LSErrorFree (&lserror);
     }
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 
     return true;
@@ -1408,7 +1408,7 @@ bool DisplayManager::cancelSubscription(LSHandle *sh, LSMessage *message, void *
 		if (!str)
 			return true;
 		json_object* root = json_tokener_parse(str);
-		if (!root || is_error(root))
+		if (!root)
 			return true;
 
 		bool value = json_object_get_boolean(json_object_object_get(root, "requestBlock"));
@@ -1673,7 +1673,7 @@ bool DisplayManager::controlGetProperty(LSHandle *sh, LSMessage *message, void *
         goto done;
     }
 	root = json_tokener_parse(str);
-	if (!root || is_error(root)) {
+	if (!root) {
 		result = false;
 		goto done;
 	}
@@ -1836,7 +1836,7 @@ bool DisplayManager::controlSetProperty(LSHandle *sh, LSMessage *message, void *
 	if (!str)
         goto done;
 	root = json_tokener_parse(str);
-	if (!root || is_error(root))
+	if (!root)
 		goto done;
 
 	label = json_object_object_get(root, "requestBlock");
@@ -2011,7 +2011,7 @@ done:
         LSErrorFree (&lserror);
     }
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 
     return true;
@@ -2446,7 +2446,7 @@ bool DisplayManager::controlAlert(LSHandle *sh, LSMessage *message, void *ctx)
          goto done;
 
     root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root)
          goto done;
 
     label = json_object_object_get(root, "status");
@@ -2494,7 +2494,7 @@ done:
         LSErrorFree (&lserror);
     }
 
-    if (root && !is_error(root))
+    if (root)
         json_object_put(root);
 
     return true;
@@ -2520,7 +2520,7 @@ bool DisplayManager::controlSetLockStatus(LSHandle *sh, LSMessage *message, void
 		 goto done;
 
 	root = json_tokener_parse(str);
-	if (!root || is_error(root))
+	if (!root)
 		 goto done;
 
 	label = json_object_object_get(root, "status");
@@ -2558,7 +2558,7 @@ done:
 		LSErrorFree (&lserror);
 	}
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 
 	return true;
@@ -3051,7 +3051,7 @@ bool DisplayManager::updateCompassBearingInfo(LSHandle* sh, LSMessage* message, 
 		goto error;
 
 	root = json_tokener_parse(str);
-	if (!root || is_error(root)) {
+	if (!root) {
 		goto error;
 	}
 
@@ -3059,7 +3059,7 @@ bool DisplayManager::updateCompassBearingInfo(LSHandle* sh, LSMessage* message, 
 
 	// get the errorCode
 	label = json_object_object_get(root, "errorCode");
-	if (label && !is_error (label)) {
+	if (label) {
 		errCode = json_object_get_int (label);
 		if(0 != errCode) {
 			goto error;
@@ -3068,7 +3068,7 @@ bool DisplayManager::updateCompassBearingInfo(LSHandle* sh, LSMessage* message, 
 
 	// get latitude
 	label = json_object_object_get(root, "latitude");
-	if (label && !is_error (label)) {
+	if (label) {
 		latitude = json_object_get_double (label);
 	}
 	else {
@@ -3077,7 +3077,7 @@ bool DisplayManager::updateCompassBearingInfo(LSHandle* sh, LSMessage* message, 
 
 	// get longitude
 	label = json_object_object_get(root, "longitude");
-	if (label && !is_error (label)) {
+	if (label) {
 		longitude = json_object_get_double (label);
 	}
 	else {

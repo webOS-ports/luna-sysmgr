@@ -137,7 +137,7 @@ static bool cbVibrate(LSHandle *lh, LSMessage *m,void *ctx)
 	LSError lsError;
 	LSErrorInit(&lsError);
 
-	if(is_error(root)) {
+	if(!root) {
 		root = NULL;
 		goto error;
 	}
@@ -250,7 +250,7 @@ static bool cbVibrateNamedEffect(LSHandle *lh, LSMessage *m, void *ctx)
 	LSError lsError;
 	LSErrorInit(&lsError);
 
-	if(is_error(root)) {
+	if(!root) {
 		root = NULL;
 		goto error;
 	}

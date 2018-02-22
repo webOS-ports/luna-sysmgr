@@ -144,11 +144,11 @@ bool EASPolicyManager::cbTempPoliciesDeleted (LSHandle *sh, LSMessage *message, 
     g_debug ("%s: response %s", __func__, str);
 
     root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root)
 		goto done;
     
     returnValue = json_object_object_get (root, "returnValue");
-    if (!returnValue || is_error(returnValue)) {
+    if (!returnValue) {
 	    g_warning ("%s: check for returnValue failed", __func__);
 	    goto done;
     }
@@ -160,7 +160,7 @@ bool EASPolicyManager::cbTempPoliciesDeleted (LSHandle *sh, LSMessage *message, 
     }
 
     obj = json_object_object_get (root, "count");
-    if (!obj || is_error(obj)) {
+    if (!obj) {
 	    g_warning ("%s: count missing", __func__);
 	    goto done;
     }
@@ -169,7 +169,7 @@ bool EASPolicyManager::cbTempPoliciesDeleted (LSHandle *sh, LSMessage *message, 
     g_message ("%s: Deleted %d temporary policies", __func__, count);
 
 done:
-    if (root && !is_error(root))
+    if (root)
 	    json_object_put (root);
     // temporary policies cleared, query device policy now
     EASPolicyManager::instance()->queryDevicePolicy();
@@ -205,7 +205,7 @@ bool EASPolicyManager::cbDevicePolicy (LSHandle *sh, LSMessage *message, void *d
 		goto done;
 
     root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root)
 		goto done;
     
     results = json_object_object_get (root, "results");
@@ -230,7 +230,7 @@ bool EASPolicyManager::cbDevicePolicy (LSHandle *sh, LSMessage *message, void *d
 done:
     EASPolicyManager::instance()->querySecurityPolicies();
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put (root);
 
     return true;
@@ -250,7 +250,7 @@ void EASPolicyManager::setDevicePolicy (json_object* policy)
 		m_aggregate->fromNewJSON (policy);
 
 		json_object* prop = json_object_object_get(policy, "status");
-		if (prop && !is_error(prop)) {
+		if (prop) {
 
 			json_object* key = json_object_object_get(prop, "enforced");
 			m_isEnforced = (key == 0 ? false : json_object_get_boolean(key));
@@ -305,7 +305,7 @@ bool EASPolicyManager::cbSecurityPolicy (LSHandle *sh, LSMessage *message, void 
 		goto done;
 
     root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root)
 		goto done;
     
     results = json_object_object_get (root, "results");
@@ -318,7 +318,7 @@ bool EASPolicyManager::cbSecurityPolicy (LSHandle *sh, LSMessage *message, void 
 
 done:
 	
-    if (root && !is_error(root))
+    if (root)
 		json_object_put (root);
 
     return true;
@@ -420,11 +420,11 @@ bool EASPolicyManager::cbWatchResponse (LSHandle *sh, LSMessage *message, void *
     g_debug ("%s: response %s", __func__, str);
 
     root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root)
 		goto error;
     
     label = json_object_object_get (root, "returnValue");
-    if (!label || is_error(label))
+    if (!label)
 		goto error;
 
     returnValue = json_object_get_boolean (label);
@@ -434,7 +434,7 @@ bool EASPolicyManager::cbWatchResponse (LSHandle *sh, LSMessage *message, void *
     }
 
     label = json_object_object_get (root, "fired");
-    if (!label || is_error(label)) {
+    if (!label) {
 		goto error;
     }
 
@@ -451,7 +451,7 @@ bool EASPolicyManager::cbWatchResponse (LSHandle *sh, LSMessage *message, void *
 
 error:
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put (root);
     
     return true;
@@ -489,7 +489,7 @@ bool EASPolicyManager::importOldPolicySettings()
 {
 	json_object *root = 0, *prop = 0, *key = 0;
 	root = json_object_from_file((char*)s_policyFile);
-	if (!root || is_error(root))
+	if (!root)
 		return false;
 
 
@@ -510,7 +510,7 @@ bool EASPolicyManager::importOldPolicySettings()
 		
 		// parse all policies and create aggregate
 		prop = json_object_object_get(root, "policies");
-		if (prop && !is_error(prop) && json_object_is_type(prop, json_type_array)) {
+		if (prop && json_object_is_type(prop, json_type_array)) {
 
 			for (int i = 0; i < json_object_array_length(prop); i++) {
 
@@ -529,7 +529,7 @@ bool EASPolicyManager::importOldPolicySettings()
 	
 	// status
 	prop = json_object_object_get(root, "status");
-	if (prop && !is_error(prop)) {
+	if (prop) {
 		
 		key = json_object_object_get(prop, "enforced");
 		m_isEnforced = (key == 0 ? false : json_object_get_boolean(key));
@@ -612,7 +612,7 @@ bool EASPolicyManager::cbDevicePolicySaved (LSHandle *sh, LSMessage *message, vo
     g_debug ("%s: response %s", __func__, str);
 
     root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root)
 		goto error;
 
     label = json_object_object_get (root, "returnValue");
@@ -683,7 +683,7 @@ bool EASPolicyManager::cbDevicePolicySaved (LSHandle *sh, LSMessage *message, vo
 error:
     EASPolicyManager::instance()->watchSecurityPolicies();
 
-    if (root && !is_error(root))
+    if (root)
 		json_object_put (root);
     return true;
 }
@@ -819,7 +819,7 @@ bool EASPolicy::fromJSON(json_object* policy)
     json_object *prop = 0, *key = 0;
 
 	prop = json_object_object_get(policy, "password");
-	if (prop && !is_error(prop)) {
+	if (prop) {
 		
 		key = json_object_object_get(prop, "enabled");
 		m_passwordRequired = json_object_get_boolean(key);

@@ -1910,18 +1910,18 @@ static bool cbSetDevicePasscode(LSHandle* lsHandle, LSMessage *message, void *us
 		return false;
 
 	root = json_tokener_parse(payload);
-	if (is_error(root))
+	if (!root)
 		goto Done;
 
 	// which mode are we setting?
 	prop = json_object_object_get(root, "lockMode");
-	if (!prop || is_error(prop))
+	if (!prop)
 		goto Done;
 	mode = json_object_get_string(prop);
 
 	// should be a valid string if we are trying to set a pin/password
 	prop = json_object_object_get(root, "passCode");
-	if (prop && !is_error(prop))
+	if (prop)
 		passcode = json_object_get_string(prop);
 
 	errorCode = Security::instance()->setPasscode(mode, passcode, errorText);
@@ -1944,7 +1944,7 @@ Done:
 		LSErrorFree(&lsError);
 
 	json_object_put(json);
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 
 	return true;
@@ -2017,12 +2017,12 @@ static bool cbMatchDevicePasscode(LSHandle* lsHandle, LSMessage *message, void *
 		return false;
 
 	root = json_tokener_parse(payload);
-	if (is_error(root))
+	if (!root)
 		goto Done;
 
 	// get passcode sent by user
 	key = json_object_object_get(root, "passCode");
-	if (!key || is_error(key))
+	if (!key)
 		goto Done; // bad arguments passed in
     passcode = json_object_get_string(key);
 
@@ -2043,7 +2043,7 @@ Done:
 	if (!LSMessageReply(lsHandle, message, json_object_to_json_string(reply), &lsError))
 		LSErrorFree(&lsError);
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 	json_object_put(reply);
 
@@ -2315,10 +2315,10 @@ static bool cbUpdatePinAppState(LSHandle* lsHandle, LSMessage *message, void *us
 		return false;
 
 	json_object* root = json_tokener_parse(str);
-	if (root && !is_error(root)) {
+	if (root) {
 
 		json_object* state = json_object_object_get(root, "state");
-		if (state && !is_error(state)) {
+		if (state) {
 
 			std::string newState = json_object_get_string(state);
 			if (newState == "cancel") {
@@ -2505,12 +2505,12 @@ static bool cbRunProgressAnimation(LSHandle* lsHandle, LSMessage *message, void 
 	}
 
 	root = json_tokener_parse(str);
-	if(!root || is_error(root)) {
+	if(!root) {
 		goto Done;
 	}
 
     type = json_object_object_get(root, "type");
-    if (type && !is_error(type)) {
+    if (type) {
 
         std::string typeStr = json_object_get_string(type);
         if (typeStr == "msm") {
@@ -2522,7 +2522,7 @@ static bool cbRunProgressAnimation(LSHandle* lsHandle, LSMessage *message, void 
     }
 
 	state = json_object_object_get(root, "state");
-	if (state && !is_error(state)) {
+	if (state) {
 
 		retVal = true;
 
@@ -2545,7 +2545,7 @@ Done:
 		LSErrorFree (&lsError);
 
 	json_object_put(json);
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 	return true;
 }
@@ -2637,10 +2637,10 @@ static bool cbSetJavascriptFlags(LSHandle* lsHandle, LSMessage *message, void *u
 		return false;
 
 	root = json_tokener_parse(payload);
-	if (root && !is_error(root)) {
+	if (root) {
 
 		jflags = json_object_object_get(root, "flags");
-		if (jflags && !is_error(jflags)) {
+		if (jflags) {
 			std::string flags = json_object_get_string(jflags);
             // WebAppMgrProxy::instance()->setJavascriptFlags( flags.c_str() );
 			success = true;
@@ -2723,7 +2723,7 @@ static bool cbSetAnimationValues(LSHandle* lsHandle, LSMessage *message,
 		return false;
 
 	root = json_tokener_parse(payload);
-	if (!root || is_error(root)) {
+	if (!root) {
 		ret = false;
 		goto Done;
 	}
@@ -2740,7 +2740,7 @@ static bool cbSetAnimationValues(LSHandle* lsHandle, LSMessage *message,
 
 Done:
 
-	 if(root && !is_error(root))
+	 if(root)
 		json_object_put(root);
 
 	json_object* json = json_object_new_object();
@@ -3028,7 +3028,7 @@ bool cbSubscribeToSystemUI(LSHandle* handle, LSMessage* message, void *user_data
 	if (!LSMessageReply(handle, message, json_object_to_json_string(response), &lsError))
 		LSErrorFree(&lsError);
 
-	if(response && !is_error(response))
+	if(response)
 		json_object_put(response);
 
 	return true;
@@ -3109,7 +3109,7 @@ bool cbSubscribeToSystemUIResponses(LSHandle* handle, LSMessage* message, void *
     if (!LSMessageReply(handle, message, json_object_to_json_string(response), &lsError))
         LSErrorFree(&lsError);
 
-    if(response && !is_error(response))
+    if(response)
         json_object_put(response);
 
     return true;
@@ -3192,20 +3192,20 @@ bool cbPublishToSystemUI(LSHandle* handle, LSMessage* message, void *user_data)
 
         appId = LSMessageGetApplicationID( message );
 	root = json_tokener_parse(payload);
-	if(!root || is_error(root)) {
+	if(!root) {
 		success = false;
 		goto Done;
 	}
 
 	event = json_object_object_get(root, "event");
-	if(!event || is_error(event)) {
+	if(!event) {
 		g_warning("SysMgr::PublishToSystemUI - event property is missing ");
 		success = false;
 		goto Done;
 	}
 
 	msg = json_object_object_get(root, "message");
-	if(!msg || is_error(msg)) {
+	if(!msg) {
 		g_warning("SysMgr::PublishToSystemUI - message property is missing ");
 		success = false;
 		goto Done;
@@ -3228,10 +3228,10 @@ bool cbPublishToSystemUI(LSHandle* handle, LSMessage* message, void *user_data)
 		if (!LSMessageReply(handle, message, json_object_to_json_string(response), &lsError))
 			LSErrorFree(&lsError);
 
-		if(root && !is_error(root))
+		if(root)
 			json_object_put(root);
 
-		if(response && !is_error(response))
+		if(response)
 			json_object_put(response);
 
     return true;
@@ -3247,7 +3247,7 @@ void SystemService::postMessageToSystemUI(const char* jsonStr)
 	LSErrorInit(&lsError);
 
 	json = json_tokener_parse(jsonStr);
-	if(!json || is_error(json)) {
+	if(!json) {
 		g_warning("SysMgr::postMessageToSystemUI - Message Parsing error! ");
 		return;
 	}
@@ -3271,7 +3271,7 @@ void SystemService::postMessageToSystemUIResponses(const char* jsonStr)
     LSErrorInit(&lsError);
 
     json = json_tokener_parse(jsonStr);
-    if(!json || is_error(json)) {
+    if(!json) {
 	g_warning("SysMgr::postMessageToSystemUIResponses - Message Parsing error! ");
 	return;
     }
@@ -3339,7 +3339,7 @@ bool cbMonitorProcessMemory(LSHandle* lsHandle, LSMessage *message, void *user_d
 
 	// parse
 	root = json_tokener_parse(str);
-	if (!root || is_error(root))
+	if (!root)
 	{
 		// couldn't parse
 		root = 0;
@@ -3394,7 +3394,7 @@ bool cbMonitorProcessMemory(LSHandle* lsHandle, LSMessage *message, void *user_d
 
 	// response and cleanup.
 Done:
-	if (root && !is_error(root))
+	if (root)
 	{
 		json_object_put(root);
 	}
@@ -3426,7 +3426,7 @@ bool cbLogTouchEvents(LSHandle* lsHandle, LSMessage *message, void *user_data)
 	struct json_object* label = 0;
 	bool failed = true;
 
-	if (root && !is_error(root)){
+	if (root){
         // iterate through the elements
 		json_object_object_foreach(root, key, val)
 		{
@@ -3453,7 +3453,7 @@ bool cbLogTouchEvents(LSHandle* lsHandle, LSMessage *message, void *user_data)
 
 	json_object_put(reply);
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 
 	return true;
@@ -3476,7 +3476,7 @@ bool cbEnableFpsCounter(LSHandle* lsHandle, LSMessage *message, void *user_data)
 	bool failed = true;
 	int reset = 0;
 
-	if (!root || is_error(root))
+	if (!root)
 		goto Done;
 
 
@@ -3523,7 +3523,7 @@ Done:
 
 	json_object_put(reply);
 
-	if (!root && !is_error(root))
+	if (!root)
 		json_object_put(root);
 
 	return true;
@@ -3554,7 +3554,7 @@ bool cbEnableTouchPlot(LSHandle* lsHandle, LSMessage *message, void *user_data)
 	bool failed = true;
 	int reset = 0;
 
-	if (!root || is_error(root))
+	if (!root)
 		goto Done;
 
 //	// iterate through the elements
@@ -3588,7 +3588,7 @@ Done:
 
 	json_object_put(reply);
 
-	if (!root && !is_error(root))
+	if (!root)
 		json_object_put(root);
 
 	return true;
@@ -3998,7 +3998,7 @@ bool cbDismissModalApp(LSHandle *lsHandle, LSMessage *message, void *user_data)
 
 	// Get the json string
 	root = json_tokener_parse( messageStr );
-	if (!root || is_error(root))
+	if (!root)
 	{
 		errMsg = "Malformed JSON detected in payload";
 		goto done;
@@ -4181,7 +4181,7 @@ bool cbLaunchModalApp(LSHandle *lsHandle, LSMessage *message, void *user_data)
 	}
 
 	root = json_tokener_parse( messageStr );
-	if (!root || is_error(root))
+	if (!root)
 	{
 		errMsg = "Malformed JSON detected in payload";
 		goto done;
@@ -4276,7 +4276,7 @@ bool cbLaunchModalApp(LSHandle *lsHandle, LSMessage *message, void *user_data)
 	}
 
 	label = json_object_object_get(root, "params");
-	if (!label || is_error(label)) label = NULL;
+	if (!label) label = NULL;
 
 	if ( label != NULL )
 	{
@@ -4382,7 +4382,7 @@ bool SystemService::initiateAppLaunch(LSHandle* lshandle, LSMessage *message, st
 	}
 
 	root = json_tokener_parse( messageStr );
-	if (!root || is_error(root)) {
+	if (!root) {
 		errMsg = "Malformed JSON detected in payload";
 		goto Done;
 	}
@@ -4402,9 +4402,9 @@ bool SystemService::initiateAppLaunch(LSHandle* lshandle, LSMessage *message, st
 	label = json_object_object_get(root,"params");
 	activityMgrParam = json_object_object_get(root,"$activity");
 
-	if (is_error(activityMgrParam))
+	if (!activityMgrParam)
 		activityMgrParam  = 0;
-	if (is_error(label))
+	if (!label)
 		label = 0;
 
 	if (label) {
@@ -4455,7 +4455,7 @@ bool SystemService::initiateAppLaunch(LSHandle* lshandle, LSMessage *message, st
 
 	Done:
 
-	if( root && !is_error(root) )
+	if( root )
 		json_object_put( root );
 
 	json_object* json = json_object_new_object();
@@ -4520,7 +4520,7 @@ bool SystemService::msmAvail(LSMessage* message)
 		return false;
 
 	struct json_object* payload = json_tokener_parse(str);
-	if (is_error(payload))
+	if (!payload)
 		return false;
 
 	struct json_object* modeAvail = json_object_object_get(payload, "mode-avail");
@@ -4576,7 +4576,7 @@ bool SystemService::msmProgress(LSMessage* message)
 		return false;
 
 	struct json_object* payload = json_tokener_parse(str);
-	if (is_error(payload))
+	if (!payload)
 		return false;
 
 	struct json_object* stage = json_object_object_get(payload, "stage");
@@ -4646,7 +4646,7 @@ bool SystemService::msmEntry(LSMessage* message)
 		return false;
 
 	struct json_object* payload = json_tokener_parse(str);
-	if (is_error(payload))
+	if (!payload)
 		return false;
 
 	struct json_object* mode = json_object_object_get(payload, "new-mode");
@@ -4756,7 +4756,7 @@ bool SystemService::telephonyServiceUpCallback(LSHandle* handle, LSMessage* mess
                                SCHEMA_2(REQUIRED(serviceName, string), REQUIRED(connected, boolean)));
 
 	struct json_object* json = json_tokener_parse(LSMessageGetPayload(message));
-	if (json && !is_error(json))  {
+	if (json)  {
 
 		json_object* label = json_object_object_get(json, "connected");
 		if (label && json_object_is_type(label, json_type_boolean)) {
@@ -4797,11 +4797,11 @@ bool SystemService::telephonyEventsCallback(LSHandle* handle, LSMessage* message
 	const char* eventName = 0;
 
 	label = json_object_object_get(root, "macroEventCalls");
-	if (!label || is_error(label) || !json_object_is_type(label, json_type_object))
+	if (!label || !json_object_is_type(label, json_type_object))
 		goto Done;
 
 	label = json_object_object_get(label, "event");
-	if (!label || is_error(label) || !json_object_is_type(label, json_type_string))
+	if (!label || !json_object_is_type(label, json_type_string))
 		goto Done;
 
 	eventName = json_object_get_string(label);
@@ -4813,7 +4813,7 @@ bool SystemService::telephonyEventsCallback(LSHandle* handle, LSMessage* message
 
 Done:
 
-	if (root && !is_error(root))
+	if (root)
 		json_object_put(root);
 
 	return true;
@@ -4867,7 +4867,7 @@ static bool cbDumpRasters(LSHandle* lshandle, LSMessage *message,
 	struct json_object* label = 0;
 	std::string filePath;
 
-	if (!root || is_error(root)) {
+	if (!root) {
 		root = 0;
 		success = false;
 		goto Done;
@@ -4923,7 +4923,7 @@ static bool cbDumpJemallocHeap(LSHandle* lshandle, LSMessage *message,
 	char* dlError = 0;
 
 
-	if (!root || is_error(root)) {
+	if (!root) {
 		root = 0;
 		success = false;
 		goto Done;
@@ -4989,7 +4989,7 @@ bool SystemService::touchToShareCanTapStatus(LSHandle* handle, LSMessage* messag
 		return true;
 
 	struct json_object* payload = json_tokener_parse(str);
-	if (!payload || is_error(payload))
+	if (!payload)
 		return true;
 
 	struct json_object* canTap = json_object_object_get(payload, "canTap");
@@ -5059,7 +5059,7 @@ static bool cbTouchToShareDeviceInRange(LSHandle* lsHandle, LSMessage* message,
 		return true;
 
 	struct json_object* payload = json_tokener_parse(str);
-	if (!payload || is_error(payload))
+	if (!payload)
 		return true;
 
 	struct json_object* canTap = json_object_object_get(payload, "inRange");
@@ -5140,7 +5140,7 @@ static bool cbTouchToShareAppUrlTransferred(LSHandle* lsHandle, LSMessage* messa
 		return true;
 
 	struct json_object* payload = json_tokener_parse(str);
-	if (!payload || is_error(payload))
+	if (!payload)
 		return true;
 
 	struct json_object* label = json_object_object_get(payload, "appid");
@@ -5243,7 +5243,7 @@ static bool cbSubscribeTurboMode(LSHandle* lshandle, LSMessage *message, void *u
 	if (!LSMessageReply(lshandle, message, json_object_to_json_string(response), &lsError))
 		LSErrorFree(&lsError);
 
-	if(response && !is_error(response))
+	if(response)
 		json_object_put(response);
 
 	return true;

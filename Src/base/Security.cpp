@@ -102,7 +102,7 @@ bool Security::keyManagerConnected(LSHandle* handle, LSMessage* msg, void* ctxt)
 		return false;
 
 	root = json_tokener_parse(str);
-	if (!root || is_error(root))
+	if (!root)
 		return true;
 
 	bool connected = json_object_get_boolean(json_object_object_get(root, "connected"));
@@ -253,7 +253,7 @@ int Security::setPasscode(const std::string& mode, const std::string& passcode, 
 				goto Done;
 			}
 
-			if (saved && !is_error(saved))        
+			if (saved)        
 				json_object_put(saved);
 
 			if (success)
@@ -361,15 +361,15 @@ void Security::readLockMode()
 	if (g_file_test(s_passcodeFile.c_str(), G_FILE_TEST_EXISTS)) {
 
 		json_object* root = json_object_from_file((char*)s_passcodeFile.c_str());
-		if (root && !is_error(root)) {
+		if (root) {
 
 			json_object* obj = json_object_object_get(root, "pin");
-			if(obj && !is_error(obj)) {
+			if(obj) {
 				m_lockMode = "pin";
 			}
 			else {
 				obj = json_object_object_get(root, "password");
-				if (obj && !is_error(obj)) {
+				if (obj) {
 					m_lockMode = "password";
 				}
 			}
@@ -388,10 +388,10 @@ std::string Security::readPasscode() const
 {
 	std::string result = "";
 	json_object* root = json_object_from_file((char*)s_passcodeFile.c_str());
-	if (root && !is_error(root)) {
+	if (root) {
 
 		json_object* key = json_object_object_get(root, m_lockMode.c_str());
-		if (key && !is_error(key)) {
+		if (key) {
 
 			const char* str = json_object_get_string(key);
 			if (str)
@@ -423,11 +423,11 @@ bool Security::cbDeviceWipe (LSHandle *sh, LSMessage *message, void *data)
 		goto done;
 
 	root = json_tokener_parse(str);
-	if (!root || is_error(root))
+	if (!root)
 		goto done;
 
 	returnValue = json_object_object_get (root, "returnValue");
-	if (!returnValue || is_error (returnValue)) {
+	if (!returnValue) {
 		g_warning ("%s: No return value", __func__);
 		goto done;
 	}

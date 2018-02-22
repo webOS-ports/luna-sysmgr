@@ -541,7 +541,7 @@ bool AmbientLightSensor::controlStatus(LSHandle *sh, LSMessage *message, void *c
 		const char* str = LSMessageGetPayload(message);
 		if (str) {
 			json_object* root = json_tokener_parse(str);
-			if (root && !is_error(root)) {
+			if (root) {
 				result = true;
 	    	    disable = json_object_get_boolean(json_object_object_get(root, "disableALS"));
 				json_object_put(root);
@@ -585,7 +585,7 @@ bool AmbientLightSensor::cancelSubscription(LSHandle *sh, LSMessage *message, vo
 			const char* str = LSMessageGetPayload(message);
 			if (str) {
 				json_object* root = json_tokener_parse(str);
-				if (root && !is_error(root)) {
+				if (root) {
 					result = true;
 					disable = json_object_get_boolean(json_object_object_get(root, "disableALS"));
 					json_object_put(root);
