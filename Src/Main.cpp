@@ -199,38 +199,37 @@ void logCrashRegisterContext(int sig, siginfo_t *info, void *data) {
  */
 void logCrashRegisterContext(int sig, siginfo_t *info, void *data) {
     ucontext_t *context = reinterpret_cast<ucontext_t *>(data);
-    sigcontext *scon = &context->uc_mcontext;
     crash_printf("reg context {\n");
 
     // Dumping non-sensitive register content:
     crash_printf("  // non-sensitive register content:\n");
-    crash_printf("  trap_no       = 0x%08x %d\n", scon->trap_no, scon->trap_no);
-    crash_printf("  error_code    = 0x%08x %d\n", scon->error_code, scon->error_code);
-    crash_printf("  oldmask       = 0x%08x %d\n", scon->oldmask, scon->oldmask);
+    crash_printf("  trap_no       = 0x%08x %d\n", context->uc_mcontext.trap_no, context->uc_mcontext.trap_no);
+    crash_printf("  error_code    = 0x%08x %d\n", context->uc_mcontext.error_code, context->uc_mcontext.error_code);
+    crash_printf("  oldmask       = 0x%08x %d\n", context->uc_mcontext.oldmask, context->uc_mcontext.oldmask);
 
-    crash_printf("  arm_sp        = 0x%08x %d\n", scon->arm_sp, scon->arm_sp);
-    crash_printf("  arm_lr        = 0x%08x %d\n", scon->arm_lr, scon->arm_lr);
-    crash_printf("  arm_pc        = 0x%08x %d\n", scon->arm_pc, scon->arm_pc);
-    crash_printf("  arm_cpsr      = 0x%08x %d\n", scon->arm_cpsr, scon->arm_cpsr);
-    crash_printf("  fault_address = 0x%08x %d\n", scon->fault_address, scon->fault_address);
+    crash_printf("  arm_sp        = 0x%08x %d\n", context->uc_mcontext.arm_sp, context->uc_mcontext.arm_sp);
+    crash_printf("  arm_lr        = 0x%08x %d\n", context->uc_mcontext.arm_lr, context->uc_mcontext.arm_lr);
+    crash_printf("  arm_pc        = 0x%08x %d\n", context->uc_mcontext.arm_pc, context->uc_mcontext.arm_pc);
+    crash_printf("  arm_cpsr      = 0x%08x %d\n", context->uc_mcontext.arm_cpsr, context->uc_mcontext.arm_cpsr);
+    crash_printf("  fault_address = 0x%08x %d\n", context->uc_mcontext.fault_address, context->uc_mcontext.fault_address);
 
     if (Settings::LunaSettings()->debug_doVerboseCrashLogging) {
         // Dumping sensitive register content for internal debugging only.
         // By default, this data should not be dumped in the field (to avoid
         // potential violation of user privacy issues):
-        crash_printf("  arm_r0        = 0x%08x %d\n", scon->arm_r0, scon->arm_r0);
-        crash_printf("  arm_r1        = 0x%08x %d\n", scon->arm_r1, scon->arm_r1);
-        crash_printf("  arm_r2        = 0x%08x %d\n", scon->arm_r2, scon->arm_r2);
-        crash_printf("  arm_r3        = 0x%08x %d\n", scon->arm_r3, scon->arm_r3);
-        crash_printf("  arm_r4        = 0x%08x %d\n", scon->arm_r4, scon->arm_r4);
-        crash_printf("  arm_r5        = 0x%08x %d\n", scon->arm_r5, scon->arm_r5);
-        crash_printf("  arm_r6        = 0x%08x %d\n", scon->arm_r6, scon->arm_r6);
-        crash_printf("  arm_r7        = 0x%08x %d\n", scon->arm_r7, scon->arm_r7);
-        crash_printf("  arm_r8        = 0x%08x %d\n", scon->arm_r8, scon->arm_r8);
-        crash_printf("  arm_r9        = 0x%08x %d\n", scon->arm_r9, scon->arm_r9);
-        crash_printf("  arm_r10       = 0x%08x %d\n", scon->arm_r10, scon->arm_r10);
-        crash_printf("  arm_fp        = 0x%08x %d\n", scon->arm_fp, scon->arm_fp);
-        crash_printf("  arm_ip        = 0x%08x %d\n", scon->arm_ip, scon->arm_ip);
+        crash_printf("  arm_r0        = 0x%08x %d\n", context->uc_mcontext.arm_r0, context->uc_mcontext.arm_r0);
+        crash_printf("  arm_r1        = 0x%08x %d\n", context->uc_mcontext.arm_r1, context->uc_mcontext.arm_r1);
+        crash_printf("  arm_r2        = 0x%08x %d\n", context->uc_mcontext.arm_r2, context->uc_mcontext.arm_r2);
+        crash_printf("  arm_r3        = 0x%08x %d\n", context->uc_mcontext.arm_r3, context->uc_mcontext.arm_r3);
+        crash_printf("  arm_r4        = 0x%08x %d\n", context->uc_mcontext.arm_r4, context->uc_mcontext.arm_r4);
+        crash_printf("  arm_r5        = 0x%08x %d\n", context->uc_mcontext.arm_r5, context->uc_mcontext.arm_r5);
+        crash_printf("  arm_r6        = 0x%08x %d\n", context->uc_mcontext.arm_r6, context->uc_mcontext.arm_r6);
+        crash_printf("  arm_r7        = 0x%08x %d\n", context->uc_mcontext.arm_r7, context->uc_mcontext.arm_r7);
+        crash_printf("  arm_r8        = 0x%08x %d\n", context->uc_mcontext.arm_r8, context->uc_mcontext.arm_r8);
+        crash_printf("  arm_r9        = 0x%08x %d\n", context->uc_mcontext.arm_r9, context->uc_mcontext.arm_r9);
+        crash_printf("  arm_r10       = 0x%08x %d\n", context->uc_mcontext.arm_r10, context->uc_mcontext.arm_r10);
+        crash_printf("  arm_fp        = 0x%08x %d\n", context->uc_mcontext.arm_fp, context->uc_mcontext.arm_fp);
+        crash_printf("  arm_ip        = 0x%08x %d\n", context->uc_mcontext.arm_ip, context->uc_mcontext.arm_ip);
     }
 
     crash_printf("}\n");
@@ -403,8 +402,7 @@ static void innerCrashHandler(int sig, siginfo_t *info, void *data)
         // of memory.
 #if defined(__arm__)
         ucontext_t *context = reinterpret_cast<ucontext_t *>(data);
-        sigcontext *scon = &context->uc_mcontext;
-        scon->arm_pc = scon->arm_pc + 4;
+        context->uc_mcontext.arm_pc = context->uc_mcontext.arm_pc + 4;
 #endif
         hasCrashedInCrashHandler = true;
 
