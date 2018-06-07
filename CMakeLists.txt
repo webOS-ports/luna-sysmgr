@@ -122,8 +122,8 @@ target_link_libraries(LunaSysMgr
     ${SERVICEINSTALLER_LIBRARIES}
     ${PMLOGLIB_LIBRARIES}
     ${ROLEGEN_LIBRARIES}
+    Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Sensors
     pthread)
-qt5_use_modules(LunaSysMgr Core Gui Widgets Sensors)
 
 webos_build_daemon()
 webos_build_system_bus_files()
