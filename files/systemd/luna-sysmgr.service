@@ -1,7 +1,7 @@
 [Unit]
 Description=Luna System Manager
-After=luna-sysservice.service nyx.target configurator.service
-Requires=luna-sysservice.service
+After=luna-sys-service.service nyx.target configurator.service
+Requires=luna-sys-service.service
 BindsTo=nyx.target
 
 [Service]

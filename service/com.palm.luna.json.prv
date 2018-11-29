@@ -6,6 +6,11 @@
     },
     "permissions": [
         {
+            "service":"",
+            "inbound":["*"],
+            "outbound":["*"]
+        },
+        {
             "service":"com.palm.lunastats",
             "inbound":["*"],
             "outbound":["*"]
