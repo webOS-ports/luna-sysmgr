@@ -1,4 +1,0 @@
-[D-BUS Service]
-Name=com.palm.lunastats;com.palm.display;com.palm.keys;com.palm.sysMgrDataBackup
-Exec=/usr/sbin/LunaSysMgr
-Type=static

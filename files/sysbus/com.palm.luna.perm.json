@@ -1,0 +1,86 @@
+{
+    "com.palm.luna": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.lunastats": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.nativealertmanager": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.systemmanager": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.vibrate": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.ambientLightSensor": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.display": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.keys": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.sysMgrDataBackup": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.eventreporter.LunaSysMgr": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.eventreporter.WebAppMgr": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ],
+    "org.webosports.bootmgr": [
+        "applications",
+        "devices",
+        "services",
+        "settings",
+        "system"
+    ]
+}
