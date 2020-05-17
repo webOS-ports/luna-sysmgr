@@ -46,7 +46,8 @@
         "devices",
         "services",
         "settings",
-        "system"
+        "system",
+        "networking.internal"
     ],
     "com.palm.keys": [
         "applications",
