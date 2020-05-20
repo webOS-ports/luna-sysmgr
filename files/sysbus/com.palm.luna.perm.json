@@ -79,6 +79,7 @@
     ],
     "org.webosports.bootmgr": [
         "applications",
+        "applications.internal",
         "devices",
         "services",
         "settings",
