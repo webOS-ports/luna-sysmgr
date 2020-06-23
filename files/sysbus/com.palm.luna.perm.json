@@ -23,6 +23,7 @@
     "com.palm.systemmanager": [
         "applications",
         "devices",
+        "networking.internal",
         "services",
         "settings",
         "system"
@@ -44,10 +45,10 @@
     "com.palm.display": [
         "applications",
         "devices",
+        "networking.internal",
         "services",
         "settings",
-        "system",
-        "networking.internal"
+        "system"
     ],
     "com.palm.keys": [
         "applications",
