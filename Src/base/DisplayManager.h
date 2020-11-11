@@ -208,9 +208,7 @@ private:
     static double		   s_currentLatitude;
     static double		   s_currentLongitude;
 
-    LSPalmService*         m_palmService;
-    LSHandle*              m_service;           // private bus
-    LSHandle*              m_publicService;     // public bus
+    LSHandle*              m_service;
 
     AmbientLightSensor*    m_als;
     bool		   m_alsDisabled;

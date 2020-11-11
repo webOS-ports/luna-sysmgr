@@ -144,8 +144,8 @@ static LSMethod privateDisplayMethods[] = {
     {"getProperty", DisplayManager::controlGetProperty},
     {"status", DisplayManager::controlStatus},
 //    {"setCallStatus", DisplayManager::controlCallStatus},
-	{"lockStatus", DisplayManager::controlLockStatus},
-	{"setLockStatus", DisplayManager::controlSetLockStatus},
+    {"lockStatus", DisplayManager::controlLockStatus},
+    {"setLockStatus", DisplayManager::controlSetLockStatus},
     {"alert", DisplayManager::controlAlert},
     {},
 };
@@ -156,9 +156,7 @@ LSSignal displaySignals[] = {
 };
 
 DisplayManager::DisplayManager()
-    : m_palmService(0)
-    , m_service(0)
-    , m_publicService(0)
+    : m_service(0)
     , m_als(0)
     , m_alsDisabled(false)
     , m_powerdOnline(false)
@@ -230,27 +228,15 @@ DisplayManager::DisplayManager()
     m_lastEvent = Time::curTimeMs();
     m_lastKey= m_lastEvent;
 
-    result = LSRegisterPalmService(DISPLAY_APPID, &m_palmService, &lserror);
+    /* save off the service handle */
+    result = LSRegister(DISPLAY_APPID, &m_service, &lserror);
     if (!result)
     {
         LSErrorPrint (&lserror, stderr);
         LSErrorFree(&lserror);
     }
 
-    /* save off the public and private handles */
-    m_publicService = LSPalmServiceGetPublicConnection(m_palmService);
-    if (NULL == m_publicService)
-    {
-        g_message("unable to get public handle");
-    }
-
-    m_service = LSPalmServiceGetPrivateConnection(m_palmService);
-    if (NULL == m_service)
-    {
-        g_message("unable to get private handle");
-    }
-
-    result = LSRegisterCategory (m_publicService, "/", publicDisplayMethods, NULL, NULL, &lserror);
+    result = LSRegisterCategory (m_service, "/", publicDisplayMethods, NULL, NULL, &lserror);
     if (!result)
     {
         LSErrorPrint (&lserror, stderr);
@@ -260,7 +246,7 @@ DisplayManager::DisplayManager()
     publicCtx.ctx = this;
     publicCtx.isPublic = true;
 
-    result = LSCategorySetData (m_publicService, "/", &publicCtx, &lserror);
+    result = LSCategorySetData (m_service, "/", &publicCtx, &lserror);
     if (!result)
     {
         LSErrorPrint (&lserror, stderr);
@@ -291,7 +277,7 @@ DisplayManager::DisplayManager()
         LSErrorFree(&lserror);
     }
 
-    result = LSGmainAttachPalmService (m_palmService, mainLoop, &lserror);
+    result = LSGmainAttach (m_service, mainLoop, &lserror);
     if (!result)
     {
         LSErrorPrint (&lserror, stderr);
@@ -1531,7 +1517,7 @@ bool DisplayManager::notifySubscribers(int type, sptr<Event> event)
         // Only a subset of the events go onto the public bus
         if (isPublic)
         {
-            result = LSSubscriptionPost (m_publicService, "/", "status", notification, &lserror);
+            result = LSSubscriptionPost (m_service, "/", "status", notification, &lserror);
             if (!result)
             {
                 LSErrorPrint (&lserror, stderr);
@@ -2569,13 +2555,6 @@ DisplayManager::~DisplayManager()
     LSError lserror;
     LSErrorInit(&lserror);
     bool result;
-
-    result = LSUnregister(m_publicService, &lserror);
-    if (!result)
-    {
-        g_message ("%s: failed at %s with message %s", __FUNCTION__, lserror.func, lserror.message);
-        LSErrorFree(&lserror);
-    }
 
     result = LSUnregister(m_service, &lserror);
     if (!result)
