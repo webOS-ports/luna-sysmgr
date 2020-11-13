@@ -155,6 +155,13 @@ LSSignal displaySignals[] = {
     {},
 };
 
+LSSignal powerSignals[] = {
+    { "batteryStatusQuery" },
+    { "chargerStatusQuery" },
+    { "USBDockStatus" },
+    {},
+};
+
 DisplayManager::DisplayManager()
     : m_service(0)
     , m_als(0)
@@ -264,6 +271,13 @@ DisplayManager::DisplayManager()
     privateCtx.isPublic = false;
 
     result = LSCategorySetData (m_service, "/control", &privateCtx, &lserror);
+    if (!result)
+    {
+        LSErrorPrint (&lserror, stderr);
+        LSErrorFree(&lserror);
+    }
+
+    result = LSRegisterCategory (m_service, "/com/palm/power", NULL, powerSignals, NULL, &lserror);
     if (!result)
     {
         LSErrorPrint (&lserror, stderr);
