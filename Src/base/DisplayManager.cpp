@@ -2975,6 +2975,7 @@ void DisplayManager::backlightOffCallback (void *ctx)
     dm->m_backlightIsOn = false;
 }
 
+/* FIXME this needs rework somehow for luna-surfacemanager
 void DisplayManager::updateCompositorDisplayState(bool on, LSMethodFunction cb , void *context)
 {
     g_debug("%s: on %d", __PRETTY_FUNCTION__, on);
@@ -2988,6 +2989,7 @@ void DisplayManager::updateCompositorDisplayState(bool on, LSMethodFunction cb ,
         LSErrorFree(&lserror);
     }
 }
+*/
 
 bool DisplayManager::orientationSensorOn ()
 {
@@ -3589,7 +3591,9 @@ void DisplayManager::displayOn(bool als)
                 notifySubscribers (DISPLAY_EVENT_ON);
         }
 
+        /*FIXME this needs rework for luna-surfacemanager
         updateCompositorDisplayState(true, &DisplayManager::displayOnCallback, this);
+        */
     }
     else {
         displayOnCallback(NULL, NULL, this);
@@ -3657,7 +3661,9 @@ void DisplayManager::displayOff()
     displayOffCallback(NULL, NULL, this);
 
     if (wasDisplayOnBefore) {
+        /* FIXME this needs updating for luna-surfacemanager
         updateCompositorDisplayState(false, NULL, NULL);
+        */
     }
 }
 

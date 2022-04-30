@@ -1541,7 +1541,7 @@ static bool cbTakeScreenShot(LSHandle* lshandle, LSMessage *message, void *user_
 	screenShotHandle = lshandle;
 	LSMessageRef(message);
 	screenShotMessage = message;
-	bool result = LSCallOneReply( lshandle, "luna://org.webosports.luna/takeScreenShot", str, screenShotReplyCallback, NULL, NULL, &lserror);
+	bool result = LSCallOneReply( lshandle, "luna://com.webos.surfacemanager/captureCompositorOutput", str, screenShotReplyCallback, NULL, NULL, &lserror);
 	if (!result) {
 		g_warning("%s: Failed in takeScreenShot: %s", __PRETTY_FUNCTION__, lserror.message);
 		LSErrorFree(&lserror);
