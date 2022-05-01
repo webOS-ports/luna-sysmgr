@@ -28,6 +28,30 @@
         "settings",
         "system"
     ],
+    "com.palm.systemmanager-keymanager": [
+        "applications",
+        "devices",
+        "networking.internal",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.systemmanager-prefs-*": [
+        "applications",
+        "devices",
+        "networking.internal",
+        "services",
+        "settings",
+        "system"
+    ],
+    "com.palm.systemmanager-localeprefs-*": [
+        "applications",
+        "devices",
+        "networking.internal",
+        "services",
+        "settings",
+        "system"
+    ],
     "com.palm.vibrate": [
         "applications",
         "devices",
