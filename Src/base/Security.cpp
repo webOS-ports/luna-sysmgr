@@ -77,7 +77,7 @@ void Security::registerService()
 {
 	LSError err;
 	LSErrorInit(&err);
-	if (LSRegister(NULL, &m_service, &err)) {
+	if (LSRegister("com.palm.systemmanager-keymanager", &m_service, &err)) {
 		if (LSGmainAttach(m_service, HostBase::instance()->mainLoop(), &err)) {
 
 			LSCall(m_service, "palm://com.palm.bus/signal/registerServerStatus",
