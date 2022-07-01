@@ -112,7 +112,7 @@ AmbientLightSensor::AmbientLightSensor ()
         LSErrorFree(&lserror);
     }
 
-    result = LSRegisterServerStatus(m_service, "com.palm.hidd", AmbientLightSensor::hiddServiceNotification, this, &lserror);
+    result = LSRegisterServerStatusEx(m_service, "com.palm.hidd", AmbientLightSensor::hiddServiceNotification, this, NULL, &lserror);
     if (!result)
     {
         LSErrorPrint (&lserror, stderr);
