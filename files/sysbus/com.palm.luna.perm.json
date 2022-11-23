@@ -1,112 +1,57 @@
 {
     "com.palm.luna": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation"
     ],
     "com.palm.lunastats": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation"
     ],
     "com.palm.nativealertmanager": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation"
     ],
     "com.palm.systemmanager": [
-        "applications",
-        "devices",
-        "networking.internal",
-        "services",
-        "settings",
-        "system"
+        "database.operation",
+        "telephony.management"
     ],
     "com.palm.systemmanager-keymanager": [
-        "applications",
-        "devices",
-        "networking.internal",
-        "services",
-        "settings",
-        "system"
+        "database.operation",
+        "keymanager-service.operation"
     ],
     "com.palm.systemmanager-prefs-*": [
-        "applications",
-        "devices",
-        "networking.internal",
-        "services",
-        "settings",
-        "system"
+        "database.operation"
     ],
     "com.palm.systemmanager-localeprefs-*": [
-        "applications",
-        "devices",
-        "networking.internal",
-        "services",
-        "settings",
-        "system"
+        "database.operation"
     ],
     "com.palm.vibrate": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation"
     ],
     "com.palm.ambientLightSensor": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation"
     ],
     "com.palm.display": [
-        "applications",
-        "devices",
-        "networking.internal",
-        "services",
-        "settings",
-        "system"
+        "appmanager.management",
+        "database.operation",
+        "location-service.operation",
+        "telephony.management"
     ],
     "com.palm.keys": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation",
+        "location-service.operation"
     ],
     "com.palm.sysMgrDataBackup": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation",
+        "location-service.operation"
     ],
     "com.palm.eventreporter.LunaSysMgr": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation",
+        "location-service.operation"
     ],
     "com.palm.eventreporter.WebAppMgr": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation",
+        "location-service.operation"
     ],
     "org.webosports.bootmgr": [
-        "applications",
-        "devices",
-        "services",
-        "settings",
-        "system"
+        "database.operation",
+        "location-service.operation"
     ]
 }
