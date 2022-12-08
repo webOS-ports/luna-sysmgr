@@ -1,56 +1,71 @@
 {
     "com.palm.luna": [
+        "database.management",
         "database.operation"
     ],
     "com.palm.lunastats": [
+        "database.management",
         "database.operation"
     ],
     "com.palm.nativealertmanager": [
+        "database.management",
         "database.operation"
     ],
     "com.palm.systemmanager": [
+        "database.management",
         "database.operation",
         "telephony.management"
     ],
     "com.palm.systemmanager-keymanager": [
+        "database.management",
         "database.operation",
         "keymanager-service.operation"
     ],
     "com.palm.systemmanager-prefs-*": [
+        "database.management",
         "database.operation"
     ],
     "com.palm.systemmanager-localeprefs-*": [
+        "database.management",
         "database.operation"
     ],
     "com.palm.vibrate": [
+        "database.management",
         "database.operation"
     ],
     "com.palm.ambientLightSensor": [
+        "database.management",
         "database.operation"
     ],
     "com.palm.display": [
         "appmanager.management",
+        "database.management",
         "database.operation",
         "location-service.operation",
         "telephony.management"
     ],
     "com.palm.keys": [
+        "database.management",
         "database.operation",
         "location-service.operation"
     ],
     "com.palm.sysMgrDataBackup": [
+        "database.management",
         "database.operation",
         "location-service.operation"
     ],
     "com.palm.eventreporter.LunaSysMgr": [
+        "database.management",
         "database.operation",
         "location-service.operation"
     ],
     "com.palm.eventreporter.WebAppMgr": [
+        "database.management",
         "database.operation",
         "location-service.operation"
     ],
     "org.webosports.bootmgr": [
+        "database.management",
         "database.operation",
         "location-service.operation"
     ]
