@@ -326,21 +326,21 @@ DisplayManager::DisplayManager()
         LSErrorFree (&lserror);
     }
 
-    result = LSRegisterServerStatus(m_service, "org.webosports.bootmgr", DisplayManager::bootMgrServiceNotification, this, &lserror);
+    result = LSRegisterServerStatusEx(m_service, "org.webosports.bootmgr", DisplayManager::bootMgrServiceNotification, this, NULL, &lserror);
     if (!result)
     {
         LSErrorPrint(&lserror, stderr);
         LSErrorFree(&lserror);
     }
 
-    result = LSRegisterServerStatus(m_service, "com.palm.keys", DisplayManager::keysServiceNotification, this, &lserror);
+    result = LSRegisterServerStatusEx(m_service, "com.palm.keys", DisplayManager::keysServiceNotification, this, NULL, &lserror);
     if (!result)
     {
         LSErrorPrint (&lserror, stderr);
         LSErrorFree (&lserror);
     }
 
-    result = LSRegisterServerStatus(m_service, "com.palm.audio", DisplayManager::audiodServiceNotification, this, &lserror);
+    result = LSRegisterServerStatusEx(m_service, "com.palm.audio", DisplayManager::audiodServiceNotification, this, NULL, &lserror);
     if (!result)
     {
         LSErrorPrint (&lserror, stderr);
@@ -351,15 +351,15 @@ DisplayManager::DisplayManager()
     if (!qemu)
     {
         // check if the service is up
-        result = LSRegisterServerStatus(m_service, "com.palm.power",
-                DisplayManager::powerdServiceNotification, this, &lserror);
+        result = LSRegisterServerStatusEx(m_service, "com.palm.power",
+                DisplayManager::powerdServiceNotification, this, NULL, &lserror);
         if (!result)
         {
             LSErrorPrint (&lserror, stderr);
             LSErrorFree (&lserror);
         }
-        result = LSRegisterServerStatus(m_service, "com.palm.telephony",
-                DisplayManager::telephonyServiceNotification, this, &lserror);
+        result = LSRegisterServerStatusEx(m_service, "com.palm.telephony",
+                DisplayManager::telephonyServiceNotification, this, NULL, &lserror);
         if (!result)
         {
             LSErrorPrint (&lserror, stderr);
