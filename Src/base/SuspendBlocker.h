@@ -41,7 +41,7 @@ protected:
 
 private:
 
-	void setupService(LSHandle*& service, GMainLoop* loop);
+	void setupService(LSHandle*& service, GMainLoop* loop, bool isNested);
 	void callService(LSHandle* service, LSFilterFunc callback,
 					 const char* url, const char* message);
 	void registerSuspendRequest();

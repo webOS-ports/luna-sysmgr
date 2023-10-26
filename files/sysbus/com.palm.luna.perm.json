@@ -68,5 +68,8 @@
         "database.management",
         "database.operation",
         "location-service.operation"
+    ],
+    "com.palm.SuspendBlocker*": [
+        "powerd.management"
     ]
 }

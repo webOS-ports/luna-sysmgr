@@ -28,6 +28,9 @@
 #include <stdlib.h>
 #include <json.h>
 
+#define SUSPEND_BLOCKER_ID "com.palm.SuspendBlocker"
+#define SUSPEND_BLOCKER_NESTED_ID "com.palm.SuspendBlockerNested"
+
 static int s_counter = 0;
 static pthread_mutex_t s_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -53,8 +56,8 @@ SuspendBlockerBase::SuspendBlockerBase(GMainLoop* mainLoop)
 	m_nestedLoop = g_main_loop_new(m_nestedCtxt, FALSE);
 	m_nestedService = 0;
 
-	setupService(m_service, m_mainLoop);
-	setupService(m_nestedService, m_nestedLoop);
+	setupService(m_service, m_mainLoop, FALSE);
+	setupService(m_nestedService, m_nestedLoop, TRUE);
 
 	if (!m_service || !m_nestedService)
 		return;
@@ -146,13 +149,18 @@ bool SuspendBlockerBase::cbResume(LSHandle* sh, LSMessage* msg, void* ctx)
 	return true;
 }
 
-void SuspendBlockerBase::setupService(LSHandle*& service, GMainLoop* loop)
+void SuspendBlockerBase::setupService(LSHandle*& service, GMainLoop* loop, bool isNested)
 {
 	bool result;
 	LSError lsErr;
 	LSErrorInit(&lsErr);
 	
-	result = LSRegister(NULL, &service, &lsErr);
+	if(isNested) {
+		result = LSRegister(SUSPEND_BLOCKER_NESTED_ID, &service, &lsErr);
+	}
+	else {
+		result = LSRegister(SUSPEND_BLOCKER_ID, &service, &lsErr);
+	}
 	if (!result) {
 		g_critical("%s:%d Failed to register SuspendBlocker service: %s",
 				   __PRETTY_FUNCTION__, __LINE__, lsErr.message);
