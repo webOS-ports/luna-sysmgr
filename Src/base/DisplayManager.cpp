@@ -2611,13 +2611,6 @@ void DisplayManager::markBootFinished(bool finished)
 			on();
 
 		m_bootFinished = true;
-		if (currentState() == DisplayStateOn
-				|| currentState() == DisplayStateOnLocked
-				|| currentState() == DisplayStateOnPuck
-				|| currentState() == DisplayStateDockMode
-				|| (currentState() == DisplayStateDim && !Settings::LunaSettings()->turnOffAccelWhenDimmed))
-		orientationSensorOn();
-
 		// Update compass with correct lat/long
 		requestCurrentLocation();
 	}
@@ -2990,22 +2983,6 @@ void DisplayManager::updateCompositorDisplayState(bool on, LSMethodFunction cb ,
     }
 }
 */
-
-bool DisplayManager::orientationSensorOn ()
-{
-	if (!m_bootFinished)
-		return true;
-
-	HostBase::instance()->OrientationSensorOn(true);
-
-	return true;
-}
-
-bool DisplayManager::orientationSensorOff ()
-{
-    HostBase::instance()->OrientationSensorOn(false);
-    return true;
-}
 
 void DisplayManager::getBearingInfo(double& latitude, double& longitude)
 {

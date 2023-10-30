@@ -157,9 +157,6 @@ public:
     void setActiveTouchpanel (bool enable);
     void setAlsDisabled (bool disable);
 
-    bool orientationSensorOn();
-    bool orientationSensorOff();
-
     bool updateNyxWithLocation(double latitude, double longitude);
 
     bool isOn() const;
