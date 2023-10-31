@@ -134,10 +134,6 @@ class DisplayStateBase {
 
 	bool proximityOff();
 	bool proximityOn();
-    bool orientationSensorOn();
-    bool orientationSensorOff();
-	void enablePainting();
-	void disablePainting();
 
 	void emitDisplayStateChange(int);
 

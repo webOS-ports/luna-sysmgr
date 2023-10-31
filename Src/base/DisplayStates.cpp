@@ -157,20 +157,6 @@ bool DisplayStateBase::isDemo()
     return dm->isDemo();
 }
 
-bool DisplayStateBase::orientationSensorOn()
-{
-    if (!dm)
-        dm = DisplayManager::instance();
-    return dm->orientationSensorOn();
-}
-
-bool DisplayStateBase::orientationSensorOff()
-{
-    if (!dm)
-        dm = DisplayManager::instance();
-    return dm->orientationSensorOff();
-}
-
 void DisplayStateBase::startInactivityTimer()
 {
     updateLastEvent();
@@ -234,20 +220,6 @@ int DisplayStateBase::getCurrentAlsRegion() {
     return ALS_REGION_INDOOR;
 }
 
-void DisplayStateBase::enablePainting() {
-#if 0
-    WindowServer::instance()->setPaintingDisabled (false);
-	AppDirectRenderingArbitrator::resume();
-#endif
-}
-
-void DisplayStateBase::disablePainting() {
-#if 0
-    WindowServer::instance()->setPaintingDisabled (true);
-	AppDirectRenderingArbitrator::suspend();
-#endif
-}
-
 void DisplayStateBase::emitDisplayStateChange(int displaySignal)
 {
     if (!dm)
@@ -295,9 +267,7 @@ void DisplayOff::enter (DisplayState state, DisplayEvent displayEvent, sptr<Even
     g_message ("%s: entering state", __PRETTY_FUNCTION__);
     if (DisplayStateOffSuspended != state)
     {
-        orientationSensorOff();
         displayOff();
-        disablePainting();
         updateLockState (DisplayLockLocked, displayEvent);
         g_debug ("Emitting DISPLAY_SIGNAL_OFF");
         emitDisplayStateChange (DISPLAY_SIGNAL_OFF);
@@ -574,9 +544,7 @@ DisplayOffOnCall::DisplayOffOnCall()
 void DisplayOffOnCall::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
 {
     g_message ("%s: entering state", __PRETTY_FUNCTION__);
-    orientationSensorOff();
     displayOff();
-    disablePainting();
     emitDisplayStateChange (DISPLAY_SIGNAL_OFF_ON_CALL);
 }
 
@@ -807,11 +775,9 @@ DisplayOn::DisplayOn()
 void DisplayOn::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
 {
     g_message ("%s: entering state", __PRETTY_FUNCTION__);
-    enablePainting();
     if( updateLockState (DisplayLockUnlocked, displayEvent) ) {
         g_debug ("Emitting DISPLAY_SIGNAL_ON");
         emitDisplayStateChange (DISPLAY_SIGNAL_ON);
-        orientationSensorOn();
         displayOn(false);
 
         if (displayEvent != DisplayEventApiOn)
@@ -1096,11 +1062,9 @@ DisplayOnLocked::DisplayOnLocked()
 void DisplayOnLocked::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
 {
     g_message ("%s: entering state", __PRETTY_FUNCTION__);
-    enablePainting();
     updateLockState (DisplayLockLocked, displayEvent);
     g_debug ("Emitting DISPLAY_SIGNAL_ON");
     emitDisplayStateChange (DISPLAY_SIGNAL_ON);
-    orientationSensorOn();
     displayOn(false);
     startInactivityTimer();
 }
@@ -1396,10 +1360,6 @@ void DisplayDim::enter (DisplayState state, DisplayEvent displayEvent, sptr<Even
     g_message ("%s: entering state", __PRETTY_FUNCTION__);
     g_debug ("Emitting DISPLAY_SIGNAL_DIM");
     emitDisplayStateChange (DISPLAY_SIGNAL_DIM);
-    if (Settings::LunaSettings()->turnOffAccelWhenDimmed)
-        orientationSensorOff();
-    else
-        orientationSensorOn();
     displayDim();
     startInactivityTimer();
 }
@@ -1586,8 +1546,6 @@ void DisplayOnPuck::enter (DisplayState state, DisplayEvent displayEvent, sptr<E
     if( updateLockState (DisplayLockUnlocked, displayEvent) ) {
         g_debug ("Emitting DISPLAY_SIGNAL_ON");
         emitDisplayStateChange (DISPLAY_SIGNAL_ON);
-        enablePainting();
-        orientationSensorOn();
 
         if (!isOnCall())
             startInactivityTimer();
@@ -1784,7 +1742,6 @@ bool DisplayDockMode::timeoutExit()
 void DisplayDockMode::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
 {
     g_message ("%s: entering state", __PRETTY_FUNCTION__);
-    orientationSensorOn();
 
     g_debug ("Emitting DISPLAY_SIGNAL_DOCK");
     emitDisplayStateChange (DISPLAY_SIGNAL_DOCK);
@@ -1802,9 +1759,6 @@ void DisplayDockMode::enter (DisplayState state, DisplayEvent displayEvent, sptr
     // if display was on, update lock window that display is in nightstand mode after dimming the display
     if (state != DisplayStateOff)
         updateLockState (DisplayLockDockMode, displayEvent);
-
-    enablePainting();
-
     startInactivityTimer();
 }
 
@@ -1931,9 +1885,7 @@ DisplayOffSuspended::DisplayOffSuspended()
 void DisplayOffSuspended::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
 {
 	g_message ("%s: entering state", __PRETTY_FUNCTION__);
-    orientationSensorOff();
 	displayOff();
-	disablePainting();
 
 	if (state != DisplayStateOff && state != DisplayStateOffOnCall)
 		g_warning ("%s: entering from state %d, not a valid state to transition from!", __PRETTY_FUNCTION__, state);
