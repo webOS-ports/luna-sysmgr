@@ -16,6 +16,7 @@
     "com.palm.display/control/alert",
     "com.palm.display/control/getProperty",
     "com.palm.display/control/lockStatus",
+    "com.palm.display/control/setLockStatus",
     "com.palm.display/control/setProperty",
     "com.palm.display/control/setState",
     "com.palm.display/control/status",
