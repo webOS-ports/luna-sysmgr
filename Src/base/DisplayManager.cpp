@@ -3571,6 +3571,7 @@ void DisplayManager::displayOn(bool als)
         /*FIXME this needs rework for luna-surfacemanager
         updateCompositorDisplayState(true, &DisplayManager::displayOnCallback, this);
         */
+        displayOnCallback(NULL, NULL, this);
     }
     else {
         displayOnCallback(NULL, NULL, this);
