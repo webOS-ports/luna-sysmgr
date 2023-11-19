@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2008-2013 LG Electronics, Inc.
+* Copyright (c) 2008-2013 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -74,17 +74,17 @@ int SystemService::sModalWindowIndex = 0;
 bool SystemService::sIsParentPdkApp = false;
 
 static bool cbTakeScreenShot(LSHandle* lshandle, LSMessage *message,
-							 void *user_data);
+							void *user_data);
 static bool cbClearCache(LSHandle* lshandle, LSMessage *message,
-							 void *user_data);
+							void *user_data);
 static bool cbSystemUi(LSHandle* lshandle, LSMessage *message,
-							 void *user_data);
+							void *user_data);
 static bool cbSystemUiDbg(LSHandle* lshandle, LSMessage *message,
-							 void *user_data);
+							void *user_data);
 static bool cbGetAppRestoreNeeded(LSHandle* lshandle, LSMessage *message,
-								  void *user_data);
+							void *user_data);
 static bool cbGetForegroundApplication(LSHandle* lsHandle, LSMessage *message,
-									   void *user_data);
+							void *user_data);
 static bool cbGetLockStatus(LSHandle* lsHandle, LSMessage *message,
 							void *user_data);
 static bool cbGetDockModeStatus(LSHandle* lsHandle, LSMessage *message,
@@ -108,57 +108,57 @@ static bool cbDebugger(LSHandle* lsHandle, LSMessage *message,
 static bool cbSetJavascriptFlags(LSHandle* lsHandle, LSMessage *message,
 							void *user_data);
 static bool cbSetAnimationValues(LSHandle* lsHandle, LSMessage *message,
-								void *user_data);
+							void *user_data);
 static bool cbGetAnimationValues(LSHandle* lsHandle, LSMessage *message,
-								 void *user_data);
+							void *user_data);
 static bool cbPublishToSystemUI(LSHandle* lsHandle, LSMessage *message,
 							void *user_data);
 static bool cbSubscribeToSystemUI(LSHandle* lsHandle, LSMessage *message,
 							void *user_data);
 static bool cbSubscribeToSystemUIResponses(LSHandle* lsHandle, LSMessage *message,
-                                           void *user_data);
+							void *user_data);
 #ifdef USE_HEAP_PROFILER
 static bool cbDumpHeapProfiler(LSHandle* lsHandle, LSMessage *message,
-								 void *user_data);
+							void *user_data);
 #endif
 
 static bool cbLockButtonTriggered(LSHandle* lsHandle, LSMessage *message,
-								void *user_data);
+							void *user_data);
 static bool cbMonitorProcessMemory(LSHandle* lsHandle, LSMessage *message,
-								void *user_data);
+							void *user_data);
 
 static bool cbEnableFpsCounter(LSHandle* lsHandle, LSMessage *message,
-							   void *user_data);
+							void *user_data);
 
 bool cbEnableTouchPlot(LSHandle* lsHandle, LSMessage *message,
-								void *user_data);
+							void *user_data);
 
 static bool cbLogTouchEvents(LSHandle* lsHandle, LSMessage *message,
-							   void *user_data);
+							void *user_data);
 
 static bool cbSetBenchmarkFlags(LSHandle* lsHandle, LSMessage *message,
-                                void *user_data);
+							void *user_data);
 
 static bool cbDumpRasters(LSHandle* lsHandle, LSMessage *message,
-						  void *user_data);
+							void *user_data);
 
 static bool cbDumpJemallocHeap(LSHandle* lsHandle, LSMessage *message,
-							   void *user_data);
+							void *user_data);
 
 static bool cbTouchToShareDeviceInRange(LSHandle* lsHandle, LSMessage* message,
-									   void* user_data);
+							void* user_data);
 
 static bool cbTouchToShareAppUrlTransferred(LSHandle* lsHandle, LSMessage* message,
-											void* user_data);
+							void* user_data);
 
 static bool cbGetSystemStatus(LSHandle* lsHandle, LSMessage* message,
-                                void* user_data);
+							void* user_data);
 
 static bool cbLaunchModalApp(LSHandle* lshandle, LSMessage *message,
-							 	 void *user_data);
+							void *user_data);
 
 static bool cbDismissModalApp(LSHandle* lshandle, LSMessage *message,
-							 	 void *user_data);
+							void *user_data);
 
 static bool cbSubscribeTurboMode(LSHandle* lshandle, LSMessage *message, void *user_data);
 
@@ -196,9 +196,9 @@ static bool cbSubscriptionCancel(LSHandle *lshandle, LSMessage *message, void *u
  *  - \ref com_palm_systemmanager_subscribe_to_system_ui
  */
 static LSMethod s_methods[]  = {
-	{ "takeScreenShot",    cbTakeScreenShot },
-	{ "clearCache", 	   cbClearCache },
-	{ "systemUi",          cbSystemUi },
+	{ "takeScreenShot",	cbTakeScreenShot },
+	{ "clearCache", 		cbClearCache },
+	{ "systemUi",		  cbSystemUi },
 	{ "getAppRestoreNeeded", cbGetAppRestoreNeeded },
 	{ "getForegroundApplication", cbGetForegroundApplication },
 	{ "getLockStatus", cbGetLockStatus },
@@ -208,7 +208,7 @@ static LSMethod s_methods[]  = {
 	{ "getDeviceLockMode", cbGetDeviceLockMode },
 	{ "getSecurityPolicy", cbGetSecurityPolicy },
 	{ "updatePinAppState", cbUpdatePinAppState },
-	{ "getBootStatus",     cbGetBootStatus },
+	{ "getBootStatus",	 cbGetBootStatus },
 	{ "runProgressAnimation", cbRunProgressAnimation },
 	{ "debugger", cbDebugger },
 	{ "setJavascriptFlags", cbSetJavascriptFlags },
@@ -216,32 +216,32 @@ static LSMethod s_methods[]  = {
 	{ "getAnimationValues", cbGetAnimationValues },
 	{ "publishToSystemUI", cbPublishToSystemUI },
 	{ "subscribeToSystemUI", cbSubscribeToSystemUI },
-        { "subscribeToSystemUIResponses", cbSubscribeToSystemUIResponses },
+	{ "subscribeToSystemUIResponses", cbSubscribeToSystemUIResponses },
 #ifdef USE_HEAP_PROFILER
 	{ "dumpHeapProfile", cbDumpHeapProfiler },
 #endif
 	{ "lockButtonTriggered", cbLockButtonTriggered},
 	{ "monitorProcessMemory", cbMonitorProcessMemory},
-        { "logTouchEvents", cbLogTouchEvents},
+	{ "logTouchEvents", cbLogTouchEvents},
 	{ "enableFpsCounter", cbEnableFpsCounter },
 	{ "enableTouchPlot", cbEnableTouchPlot },
 	{ "setBenchmarkFlags", cbSetBenchmarkFlags },
-	{ "systemUiDbg",	   cbSystemUiDbg },
+	{ "systemUiDbg",		cbSystemUiDbg },
 	{ "dumpRasters", cbDumpRasters },
 	{ "dumpJemallocHeap", cbDumpJemallocHeap },
 	{ "touchToShareDeviceInRange", cbTouchToShareDeviceInRange },
 	{ "touchToShareAppUrlTransferred", cbTouchToShareAppUrlTransferred },
-    { "getSystemStatus", cbGetSystemStatus },
-    { "launchModalApp", cbLaunchModalApp },
-    { "dismissModalApp", cbDismissModalApp },
-    { "subscribeTurboMode", cbSubscribeTurboMode },
-    { 0, 0 },
+	{ "getSystemStatus", cbGetSystemStatus },
+	{ "launchModalApp", cbLaunchModalApp },
+	{ "dismissModalApp", cbDismissModalApp },
+	{ "subscribeTurboMode", cbSubscribeTurboMode },
+	{ 0, 0 },
 };
 
 
 SystemService* SystemService::instance()
 {
-    if (!s_instance)
+	if (!s_instance)
 		new SystemService;
 
 	return s_instance;
@@ -249,7 +249,7 @@ SystemService* SystemService::instance()
 
 SystemService::SystemService()
 {
-    s_instance = this;
+	s_instance = this;
 	m_brickMode = false;
 	m_msmExitClean = false;
 	m_fscking = false;
@@ -264,7 +264,7 @@ SystemService::SystemService()
 SystemService::~SystemService()
 {
 	// Should never reach here
-    s_instance = 0;
+	s_instance = 0;
 }
 
 void SystemService::init()
@@ -275,36 +275,36 @@ void SystemService::init()
 	HeapProfilerStart("sysmgr");
 #endif
 
-    // connect(SystemUiController::instance(), SIGNAL(signalBootFinished()), this, SLOT(postBootFinished()));
-    // connect(SystemUiController::instance(), SIGNAL(signalModalWindowAdded()), this, SLOT(slotModalWindowAdded()));
-    // connect(SystemUiController::instance(), SIGNAL(signalModalWindowRemoved()), this, SLOT(slotModalWindowRemoved()));
+	// connect(SystemUiController::instance(), SIGNAL(signalBootFinished()), this, SLOT(postBootFinished()));
+	// connect(SystemUiController::instance(), SIGNAL(signalModalWindowAdded()), this, SLOT(slotModalWindowAdded()));
+	// connect(SystemUiController::instance(), SIGNAL(signalModalWindowRemoved()), this, SLOT(slotModalWindowRemoved()));
 	connect(&sModalLauchCheckTimer, SIGNAL(timeout()), SLOT(slotModalDialogTimerFired()));
 }
 
 void SystemService::startService()
 {
 	bool result;
-    LSError lsError;
-    LSErrorInit(&lsError);
+	LSError lsError;
+	LSErrorInit(&lsError);
 
 	GMainLoop *mainLoop = HostBase::instance()->mainLoop();
 
 	g_debug("SystemService starting...");
 
-    result = LSRegister("com.palm.systemmanager", &m_service, &lsError);
+	result = LSRegister("com.palm.systemmanager", &m_service, &lsError);
 	if (!result)
 		goto Done;
 
-    result = LSRegisterCategory(m_service, "/", s_methods, NULL, NULL, &lsError);
-    if (!result)
+	result = LSRegisterCategory(m_service, "/", s_methods, NULL, NULL, &lsError);
+	if (!result)
 		goto Done;
 
-    result = LSSubscriptionSetCancelFunction(m_service, cbSubscriptionCancel, NULL, &lsError);
-    if (!result)
+	result = LSSubscriptionSetCancelFunction(m_service, cbSubscriptionCancel, NULL, &lsError);
+	if (!result)
 		goto Done;
 
-    result = LSGmainAttach(m_service, mainLoop, &lsError);
-    if (!result)
+	result = LSGmainAttach(m_service, mainLoop, &lsError);
+	if (!result)
 		goto Done;
 
 	// register for storage daemon signals
@@ -374,13 +374,13 @@ Done:
 
 void SystemService::stopService()
 {
-    LSError lsError;
-    LSErrorInit(&lsError);
-    bool result;
+	LSError lsError;
+	LSErrorInit(&lsError);
+	bool result;
 
 	result = LSUnregister(m_service, &lsError);
-    if (!result)
-        LSErrorFree(&lsError);
+	if (!result)
+		LSErrorFree(&lsError);
 
 	m_service = 0;
 }
@@ -389,7 +389,7 @@ void SystemService::postForegroundApplicationChange(const std::string& title,
 													const std::string& menuname,
 													const std::string& id)
 {
-    bool    retVal;
+	bool	retVal;
 	LSError lsError;
 	json_object* json = 0;
 
@@ -398,14 +398,14 @@ void SystemService::postForegroundApplicationChange(const std::string& title,
 	json = json_object_new_object();
 	if (!title.empty())
 		json_object_object_add(json, (char*) "title",
-							   json_object_new_string((char*) title.c_str()));
+								json_object_new_string((char*) title.c_str()));
 	if (!menuname.empty())
 			json_object_object_add(json, (char*) "appmenu",
-								   json_object_new_string((char*) menuname.c_str()));
+								json_object_new_string((char*) menuname.c_str()));
 
 	if (!id.empty())
 		json_object_object_add(json, (char*) "id",
-							   json_object_new_string((char*) id.c_str()));
+								json_object_new_string((char*) id.c_str()));
 
 	retVal = LSSubscriptionPost(m_service, "/", "getForegroundApplication",
 								json_object_to_json_string(json), &lsError);
@@ -465,7 +465,7 @@ void SystemService::postDeviceLockMode()
 
 void SystemService::postBootFinished()
 {
-    bool    retVal;
+	bool	retVal;
 	LSError lsError;
 	json_object* json = 0;
 
@@ -474,10 +474,10 @@ void SystemService::postBootFinished()
 	json = json_object_new_object();
 	json_object_object_add(json, (char*) "finished", json_object_new_boolean(true));
 	json_object_object_add(json, (char*) "firstUse",
-						   json_object_new_boolean(Settings::LunaSettings()->uiType == Settings::UI_MINIMAL));
+							json_object_new_boolean(Settings::LunaSettings()->uiType == Settings::UI_MINIMAL));
 
 	retVal = LSSubscriptionPost(m_service, "/", "getBootStatus",
-								json_object_to_json_string(json), &lsError);
+							json_object_to_json_string(json), &lsError);
 	if (!retVal)
 		LSErrorFree (&lsError);
 
@@ -755,7 +755,7 @@ void SystemService::postLockButtonTriggered()
 
 void SystemService::postLaunchModalResult(bool timedOut)
 {
-	bool    retVal;
+	bool	retVal;
 	json_object* json = 0;
 
 	LSError lsError;
@@ -772,14 +772,14 @@ void SystemService::postLaunchModalResult(bool timedOut)
 
 		if(false == timedOut) {
 			// if we fail to create the modal [another instance of the modal was running or some other error case] we need to add the right error code
-            bool added = false; //SystemUiController::instance()->wasModalAddedSuccessfully();
+			bool added = false; //SystemUiController::instance()->wasModalAddedSuccessfully();
 			json_object_object_add(json, "returnValue", json_object_new_boolean(added));
-            if(true == added) {
-                //json_object_object_add(json, (char*) "launchResult", json_object_new_string(SystemUiController::instance()->getModalWindowLaunchErrReason().c_str()));
-            }
+			if(true == added) {
+				//json_object_object_add(json, (char*) "launchResult", json_object_new_string(SystemUiController::instance()->getModalWindowLaunchErrReason().c_str()));
+			}
 			else {
-                // json_object_object_add(json, (char*) "errorText", json_object_new_string(SystemUiController::instance()->getModalWindowLaunchErrReason().c_str()));
-                // json_object_object_add(json, (char*) "errorCode", json_object_new_int(SystemUiController::instance()->getModalWindowLaunchErrReasonCode()));
+				// json_object_object_add(json, (char*) "errorText", json_object_new_string(SystemUiController::instance()->getModalWindowLaunchErrReason().c_str()));
+				// json_object_object_add(json, (char*) "errorCode", json_object_new_int(SystemUiController::instance()->getModalWindowLaunchErrReasonCode()));
 			}
 		}
 		else {
@@ -797,12 +797,12 @@ void SystemService::postLaunchModalResult(bool timedOut)
 	json_object_put(json);
 
 	// Reset the status of the launch result of the modal dialog
-    // SystemUiController::instance()->setModalWindowLaunchErrReason(SystemUiController::LaunchUnknown);
+	// SystemUiController::instance()->setModalWindowLaunchErrReason(SystemUiController::LaunchUnknown);
 }
 
 void SystemService::postDismissModalResult(bool timedOut)
 {
-	bool    retVal;
+	bool	retVal;
 	json_object* json = 0;
 
 	LSError lsError;
@@ -818,7 +818,7 @@ void SystemService::postDismissModalResult(bool timedOut)
 		if(false == timedOut) {
 			json_object_object_add(json, "returnValue", json_object_new_boolean(true));
 			json_object_object_add(json, (char*) "returnMessage", json_object_new_string(SystemService::instance()->getModalDismissReturnValue().c_str()));
-            //json_object_object_add(json, (char*) "dismissResult", json_object_new_string(SystemUiController::instance()->getModalWindowDismissErrReason().c_str()));
+			//json_object_object_add(json, (char*) "dismissResult", json_object_new_string(SystemUiController::instance()->getModalWindowDismissErrReason().c_str()));
 		}
 		else {
 			json_object_object_add(json, "returnValue", json_object_new_boolean(false));
@@ -835,12 +835,12 @@ void SystemService::postDismissModalResult(bool timedOut)
 	json_object_put(json);
 
 	// Reset the status of the launch result of the modal dialog
-    //SystemUiController::instance()->setModalWindowDismissErrReason(SystemUiController::DismissUnknown);
+	//SystemUiController::instance()->setModalWindowDismissErrReason(SystemUiController::DismissUnknown);
 }
 
 void SystemService::postAppRestoredNeeded()
 {
-	bool    retVal;
+	bool	retVal;
 	LSError lsError;
 	json_object* json = 0;
 
@@ -876,7 +876,7 @@ void SystemService::shutdownDevice()
 	json_object_put(json);
 
 	// shutdown sysmgr ASAP
-    //WindowServer::instance()->shutdown();
+	//WindowServer::instance()->shutdown();
 }
 
 void SystemService::enterMSM()
@@ -914,20 +914,20 @@ void SystemService::enterMSM()
 //	// TODO: Move this out to a file
 //	std::string schema =
 //	"{"
-//	    "\"type\": \"object\","
-//	    "\"properties\": {"
-//	        "\"quicklaunch\": {"
-//	            "\"type\": \"boolean\","
-//	            "\"optional\": true"
-//	        "},"
-//	        "\"launcher\": {"
-//	            "\"type\": \"boolean\","
-//	            "\"optional\": true"
-//	        "},"
-//	        "\"universal search\": {"
-//	            "\"type\": \"boolean\","
-//	            "\"optional\": true"
-//	        "},"
+//		"\"type\": \"object\","
+//		"\"properties\": {"
+//			"\"quicklaunch\": {"
+//				"\"type\": \"boolean\","
+//				"\"optional\": true"
+//			"},"
+//			"\"launcher\": {"
+//				"\"type\": \"boolean\","
+//				"\"optional\": true"
+//			"},"
+//			"\"universal search\": {"
+//				"\"type\": \"boolean\","
+//				"\"optional\": true"
+//			"},"
 //			"\"launchermenu\": {"
 //				"\"type\": \"string\","
 //				"\"optional\": true"
@@ -944,8 +944,8 @@ void SystemService::enterMSM()
 //				"\"type\": \"string\","
 //				"\"optional\": true"
 //			"}"
-//	    "},"
-//	    "\"additionalProperties\": false"
+//		"},"
+//		"\"additionalProperties\": false"
 //	"}";
 //
 //	return pbnjson::JSchemaFragment(schema.c_str());
@@ -971,7 +971,7 @@ Send commands to the system UI.
 \subsection com_palm_systemmanager_system_ui_syntax Syntax:
 \code
 {
-    "<target>": <commands>
+	"<target>": <commands>
 }
 \endcode
 
@@ -991,7 +991,7 @@ The type of the commands depends on the target.
 Syntax:
 \code
 {
-    "launcheraction": string
+	"launcheraction": string
 }
 \endcode
 
@@ -1011,7 +1011,7 @@ luna-send -n 1 -f luna://com.palm.systemmanager/systemUi '{ "launcheraction": "s
 Syntax:
 \code
 {
-    "virtualkeyboard": { <command>: <value>,  <command>: <value>, ... }
+	"virtualkeyboard": { <command>: <value>,  <command>: <value>, ... }
 }
 \endcode
 
@@ -1034,7 +1034,7 @@ Show or hide the quicklaunch dock.
 Syntax:
 \code
 {
-    "quicklaunch": boolean
+	"quicklaunch": boolean
 }
 \endcode
 
@@ -1051,7 +1051,7 @@ Show or hide the universal search.
 Syntax:
 \code
 {
-    "universal search": boolean
+	"universal search": boolean
 }
 \endcode
 
@@ -1068,7 +1068,7 @@ Show or hide the launcher.
 Syntax:
 \code
 {
-    "launcher": boolean
+	"launcher": boolean
 }
 \endcode
 
@@ -1085,7 +1085,7 @@ Send commands to launcher menu.
 Syntax:
 \code
 {
-    "launchermenu": string
+	"launchermenu": string
 }
 \endcode
 
@@ -1109,7 +1109,7 @@ Change a card title in the launcher.
 Syntax:
 \code
 {
-    "launchertitlechange": { "id": int, "label": string }
+	"launchertitlechange": { "id": int, "label": string }
 }
 \endcode
 
@@ -1122,10 +1122,10 @@ luna-send -i -n 1 luna://com.palm.systemmanager/systemUi '{"launchertitlechange"
 */
 static bool cbSystemUi(LSHandle* lshandle, LSMessage *message, void *user_data)
 {
-    DEPRECATED_SERVICE_MSG();
+	DEPRECATED_SERVICE_MSG();
 
-    LSError lserror;
-    LSErrorInit(&lserror);
+	LSError lserror;
+	LSErrorInit(&lserror);
 	std::string result;
 	std::string menuOp;
 	int launcherCardId;
@@ -1133,7 +1133,7 @@ static bool cbSystemUi(LSHandle* lshandle, LSMessage *message, void *user_data)
 	pbnjson::JValue payload = pbnjson::Object();
 
 	const char* str = LSMessageGetPayload(message);
-    if (!str)
+	if (!str)
 		return false;
 
 	pbnjson::JDomParser parser;
@@ -1242,7 +1242,7 @@ static bool cbSystemUi(LSHandle* lshandle, LSMessage *message, void *user_data)
 	else
 	{
 		if (CONV_OK == root["quicklaunch"].asBool(shown)) {
-            //SystemUiController::instance()->showOrHideDock(shown);
+			//SystemUiController::instance()->showOrHideDock(shown);
 		}
 		if (CONV_OK == root["universal search"].asBool(shown)) {
 			bool displayLauncher, speedDial = false;
@@ -1253,9 +1253,9 @@ static bool cbSystemUi(LSHandle* lshandle, LSMessage *message, void *user_data)
 //			payload.put("wasLauncherShown", SystemUiController::instance()->isLauncherShown());
 //			SystemUiController::instance()->showOrHideUniversalSearch(shown, displayLauncher, speedDial);
 		} else if (CONV_OK == root["launcher"].asBool(shown)) {
-            //SystemUiController::instance()->showOrHideLauncher(shown);
-        }
-//        else if ((CONV_OK == root["launchermenu"].asString(menuOp)) && (SystemUiController::instance()->isLauncherShown())) {
+			//SystemUiController::instance()->showOrHideLauncher(shown);
+		}
+//		else if ((CONV_OK == root["launchermenu"].asString(menuOp)) && (SystemUiController::instance()->isLauncherShown())) {
 //			if (menuOp == "addcard")
 //				SystemUiController::instance()->launcherMenuOp(SystemUiController::LAUNCHEROP_ADDCARD);
 //			else if (menuOp == "reordercards")
@@ -1295,10 +1295,10 @@ static pbnjson::JSchema cbSystemUiDbgSchema()
 static bool cbSystemUiDbg(LSHandle* lshandle, LSMessage *message,
 							 void *user_data)
 {
-    // {"state": string, "x": integer, "y", integer}
-    VALIDATE_SCHEMA_AND_RETURN(lshandle,
-                               message,
-                               SCHEMA_3(REQUIRED(state, string), REQUIRED(x, integer), REQUIRED(y, integer)));
+	// {"state": string, "x": integer, "y", integer}
+	VALIDATE_SCHEMA_AND_RETURN(lshandle,
+								message,
+								SCHEMA_3(REQUIRED(state, string), REQUIRED(x, integer), REQUIRED(y, integer)));
 
 	LSError lserror;
 	LSErrorInit(&lserror);
@@ -1327,10 +1327,10 @@ static bool cbSystemUiDbg(LSHandle* lshandle, LSMessage *message,
 			if (CONV_OK != root["y"].asNumber(yspan))
 				yspan = 4;
 
-            // SystemUiController::instance()->launcherDbgActionScreenGrid(SystemUiController::LAUNCHERACT_DBG_ACTIVATE_SCREEN_GRID,
+			// SystemUiController::instance()->launcherDbgActionScreenGrid(SystemUiController::LAUNCHERACT_DBG_ACTIVATE_SCREEN_GRID,
 //																xspan,yspan);
 		}
-        // else SystemUiController::instance()->launcherDbgActionScreenGrid(SystemUiController::LAUNCHERACT_DBG_DEACTIVATE_SCREEN_GRID);
+		// else SystemUiController::instance()->launcherDbgActionScreenGrid(SystemUiController::LAUNCHERACT_DBG_DEACTIVATE_SCREEN_GRID);
 
 	}
 
@@ -1358,7 +1358,7 @@ Subscribe to events indicating application restore is needed.
 \subsection com_palm_systemmanager_get_app_restore_needed_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -1367,8 +1367,8 @@ Subscribe to events indicating application restore is needed.
 \subsection com_palm_systemmanager_get_app_restore_needed_returns Returns:
 \code
 {
-    "returnValue": boolean,
-    "subscribed": boolean
+	"returnValue": boolean,
+	"subscribed": boolean
 }
 \endcode
 
@@ -1383,18 +1383,18 @@ luna-send -n 1 -f luna://com.palm.systemmanager/getAppRestoreNeeded '{ "subscrib
 Example response for a succesful call:
 \code
 {
-    "returnValue": true,
-    "subscribed": true
+	"returnValue": true,
+	"subscribed": true
 }
 \endcode
 */
 static bool cbGetAppRestoreNeeded(LSHandle* lsHandle, LSMessage *message,
 								  void *user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
+	SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
 
-    bool        success = true;
-	LSError     lsError;
+	bool		success = true;
+	LSError	 lsError;
 	json_object* json = json_object_new_object();
 	bool subscribed = false;
 
@@ -1442,7 +1442,7 @@ Clear the webkit cache.
 \subsection com_palm_systemmanager_clear_cache_returns Returns:
 \code
 {
-    "returnValue": boolean
+	"returnValue": boolean
 }
 \endcode
 
@@ -1456,15 +1456,15 @@ luna-send -n 1 -f luna://com.palm.systemmanager/clearCache '{}'
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 */
 static bool cbClearCache(LSHandle* handle, LSMessage * msg, void * data)
 {
-    EMPTY_SCHEMA_RETURN(handle, msg);
+	EMPTY_SCHEMA_RETURN(handle, msg);
 
-    // WebAppMgrProxy::instance()->clearWebkitCache();
+	// WebAppMgrProxy::instance()->clearWebkitCache();
 
 	json_object* payload = json_object_new_object();
 	json_object_object_add(payload, "returnValue", json_object_new_boolean(true));
@@ -1493,7 +1493,7 @@ Take a screenshot.
 \subsection com_palm_systemmanager_take_screen_shot_syntax Syntax:
 \code
 {
-    "file": string
+	"file": string
 }
 \endcode
 
@@ -1504,7 +1504,7 @@ folder.
 \subsection com_palm_systemmanager_take_screen_shot_returns Returns:
 \code
 {
-    "returnValue": boolean
+	"returnValue": boolean
 }
 \endcode
 
@@ -1518,14 +1518,14 @@ luna-send -n 1 -f luna://com.palm.systemmanager/takeScreenShot '{ "file": "scree
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 
 Example response for a failed call:
 \code
 {
-    "returnValue": false
+	"returnValue": false
 }
 \endcode
 */
@@ -1578,7 +1578,7 @@ Get foreground application.
 \subsection com_palm_systemmanager_get_foreground_application_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -1587,11 +1587,11 @@ Get foreground application.
 \subsection com_palm_systemmanager_get_foreground_application_returns Returns:
 \code
 {
-    "title": string,
-    "id": string,
-    "appmenu": string,
-    "returnValue": boolean,
-    "subscribed": boolean
+	"title": string,
+	"id": string,
+	"appmenu": string,
+	"returnValue": boolean,
+	"subscribed": boolean
 }
 \endcode
 
@@ -1609,29 +1609,29 @@ luna-send -f -n 1 luna://com.palm.systemmanager/getForegroundApplication '{"subs
 Example response when an application is running:
 \code
 {
-    "title": "Web",
-    "id": "com.palm.app.browser",
-    "appmenu": "Web",
-    "returnValue": true,
-    "subscribed": false
+	"title": "Web",
+	"id": "com.palm.app.browser",
+	"appmenu": "Web",
+	"returnValue": true,
+	"subscribed": false
 }
 \endcode
 
 Exmple response when there is no foreground application:
 \code
 {
-    "returnValue": true,
-    "subscribed": false
+	"returnValue": true,
+	"subscribed": false
 }
 \endcode
 */
 static bool cbGetForegroundApplication(LSHandle* lsHandle, LSMessage *message,
-									   void *user_data)
+										void *user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
+	SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
 
-    bool        success = true;
-	LSError     lsError;
+	bool		success = true;
+	LSError	 lsError;
 	json_object* json = json_object_new_object();
 	std::string title;
 	std::string appMenuName;
@@ -1655,10 +1655,10 @@ static bool cbGetForegroundApplication(LSHandle* lsHandle, LSMessage *message,
 
 	if (!title.empty())
 		json_object_object_add(json, (char*) "title",
-							   json_object_new_string((char*) title.c_str()));
+								json_object_new_string((char*) title.c_str()));
 	if (!id.empty())
 		json_object_object_add(json, (char*) "id",
-							   json_object_new_string((char*) id.c_str()));
+								json_object_new_string((char*) id.c_str()));
 	if (!appMenuName.empty())
 		json_object_object_add(json, (char*) "appmenu",
 				json_object_new_string((char*) appMenuName.c_str()));
@@ -1690,7 +1690,7 @@ Get status of screen lock.
 \subsection com_palm_systemmanager_get_lock_status_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -1699,9 +1699,9 @@ Get status of screen lock.
 \subsection com_palm_systemmanager_get_lock_status_returns Returns:
 \code
 {
-    "locked": boolean,
-    "returnValue": boolean,
-    "subscribed": boolean
+	"locked": boolean,
+	"returnValue": boolean,
+	"subscribed": boolean
 }
 \endcode
 
@@ -1717,15 +1717,15 @@ luna-send -n 1 -f luna://com.palm.systemmanager/getLockStatus '{ "subscribe": fa
 Example response for a succesful call:
 \code
 {
-    "locked": false,
-    "returnValue": true,
-    "subscribed": false
+	"locked": false,
+	"returnValue": true,
+	"subscribed": false
 }
 \endcode
 */
 static bool cbGetLockStatus(LSHandle* lsHandle, LSMessage* message, void* user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
+	SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
 
 	bool		success = true;
 	LSError		lsError;
@@ -1743,8 +1743,8 @@ static bool cbGetLockStatus(LSHandle* lsHandle, LSMessage* message, void* user_d
 		}
 	}
 
-    // json_object_object_add(json, (char*) "locked",
-    //					   json_object_new_boolean(SystemUiController::instance()->isScreenLocked()));
+	// json_object_object_add(json, (char*) "locked",
+	//						json_object_new_boolean(SystemUiController::instance()->isScreenLocked()));
 
 Done:
 
@@ -1773,7 +1773,7 @@ Find out if device is in dock mode.
 \subsection com_palm_systemmanager_get_dock_mode_status_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -1782,9 +1782,9 @@ Find out if device is in dock mode.
 \subsection com_palm_systemmanager_get_dock_mode_status_returns Returns:
 \code
 {
-    "enabled": boolean,
-    "returnValue": boolean,
-    "subscribed": boolean
+	"enabled": boolean,
+	"returnValue": boolean,
+	"subscribed": boolean
 }
 \endcode
 
@@ -1800,15 +1800,15 @@ luna-send -n 1 -f luna://com.palm.systemmanager/getDockModeStatus '{ "subscribe"
 Example response for a succesful call:
 \code
 {
-    "enabled": false,
-    "returnValue": true,
-    "subscribed": false
+	"enabled": false,
+	"returnValue": true,
+	"subscribed": false
 }
 \endcode
 */
 static bool cbGetDockModeStatus(LSHandle* lsHandle, LSMessage* message, void* user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
+	SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
 
 	bool		success = true;
 	LSError		lsError;
@@ -1827,7 +1827,7 @@ static bool cbGetDockModeStatus(LSHandle* lsHandle, LSMessage* message, void* us
 	}
 
 //	json_object_object_add(json, (char*) "enabled",
-//						   json_object_new_boolean(SystemUiController::instance()->isInDockMode()));
+//							json_object_new_boolean(SystemUiController::instance()->isInDockMode()));
 
 Done:
 
@@ -1856,8 +1856,8 @@ Set device lock mode and passcode. This can be a simple pin code with just digit
 \subsection com_palm_systemmanager_set_device_passcode_syntax Syntax:
 \code
 {
-    "lockMode":string,
-    "passCode":string
+	"lockMode":string,
+	"passCode":string
 }
 \endcode
 
@@ -1867,9 +1867,9 @@ Set device lock mode and passcode. This can be a simple pin code with just digit
 \subsection com_palm_systemmanager_set_device_passcode_returns Returns:
 \code
 {
-    "returnValue": boolean,
-    "errorText": string,
-    "errorCode": int
+	"returnValue": boolean,
+	"errorText": string,
+	"errorCode": int
 
 }
 \endcode
@@ -1886,7 +1886,7 @@ luna-send -n 1 -f luna://com.palm.systemmanager/setDevicePasscode '{ "lockMode":
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 */
@@ -1899,10 +1899,10 @@ static bool cbSetDevicePasscode(LSHandle* lsHandle, LSMessage *message, void *us
 	std::string passcode = "";
 	std::string errorText = "";
 
-    // {"lockMode":string, "passCode":string}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_2(REQUIRED(lockMode, string), REQUIRED(passCode, string)));
+	// {"lockMode":string, "passCode":string}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_2(REQUIRED(lockMode, string), REQUIRED(passCode, string)));
 
 	const char* payload = LSMessageGetPayload(message);
 	if (!payload)
@@ -1964,7 +1964,7 @@ Check the passcode received from user against the one set to the device.
 \subsection com_palm_systemmanager_match_device_passcode_syntax Syntax:
 \code
 {
-    "passCode":string
+	"passCode":string
 }
 \endcode
 
@@ -1973,9 +1973,9 @@ Check the passcode received from user against the one set to the device.
 \subsection com_palm_systemmanager_match_device_passcode_returns Returns:
 \code
 {
-    "returnValue": boolean,
-    "lockedOut": boolean,
-    "retriesLeft": int
+	"returnValue": boolean,
+	"lockedOut": boolean,
+	"retriesLeft": int
 }
 \endcode
 
@@ -1991,9 +1991,9 @@ luna-send -n 1 -f luna://com.palm.systemmanager/matchDevicePasscode '{ "passCode
 Example response for a succesful call:
 \code
 {
-    "returnValue": false,
-    "lockedOut": false,
-    "retriesLeft": 0
+	"returnValue": false,
+	"lockedOut": false,
+	"retriesLeft": 0
 }
 \endcode
 */
@@ -2006,10 +2006,10 @@ static bool cbMatchDevicePasscode(LSHandle* lsHandle, LSMessage *message, void *
 	int retries = 0;
 	bool lockedOut = false;
 
-    // {"passCode":string}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_1(REQUIRED(passCode, string)));
+	// {"passCode":string}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_1(REQUIRED(passCode, string)));
 
 	const char* payload = LSMessageGetPayload(message);
 	if (!payload)
@@ -2023,7 +2023,7 @@ static bool cbMatchDevicePasscode(LSHandle* lsHandle, LSMessage *message, void *
 	key = json_object_object_get(root, "passCode");
 	if (!key)
 		goto Done; // bad arguments passed in
-    passcode = json_object_get_string(key);
+	passcode = json_object_get_string(key);
 
 	success = Security::instance()->matchPasscode(passcode, retries, lockedOut);
 
@@ -2032,8 +2032,8 @@ Done:
 	json_object* reply = json_object_new_object();
 	json_object_object_add(reply, "returnValue", json_object_new_boolean(success));
 	if (!success) {
-    	json_object_object_add(reply, "lockedOut", json_object_new_boolean(lockedOut));
-	    json_object_object_add(reply, "retriesLeft", json_object_new_int(retries));
+		json_object_object_add(reply, "lockedOut", json_object_new_boolean(lockedOut));
+		json_object_object_add(reply, "retriesLeft", json_object_new_int(retries));
 	}
 
 	LSError lsError;
@@ -2063,7 +2063,7 @@ Check the device lock mode.
 \subsection com_palm_systemmanager_get_device_lock_mode_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -2072,11 +2072,11 @@ Check the device lock mode.
 \subsection com_palm_systemmanager_get_device_lock_mode_returns Returns:
 \code
 {
-    "returnValue": boolean,
-    "subscribed": boolean,
-    "lockMode": string,
-    "policyState": string,
-    "retriesLeft": int
+	"returnValue": boolean,
+	"subscribed": boolean,
+	"lockMode": string,
+	"policyState": string,
+	"retriesLeft": int
 }
 \endcode
 
@@ -2094,17 +2094,17 @@ luna-send -n 1 -f luna://com.palm.systemmanager/getDeviceLockMode '{ "subscribe"
 Example response for a succesful call:
 \code
 {
-    "returnValue": true,
-    "subscribed": true,
-    "lockMode": "pin",
-    "policyState": "active",
-    "retriesLeft": 0
+	"returnValue": true,
+	"subscribed": true,
+	"lockMode": "pin",
+	"policyState": "active",
+	"retriesLeft": 0
 }
 \endcode
 */
 static bool cbGetDeviceLockMode(LSHandle* lsHandle, LSMessage *message,	void *user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
+	SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
 
 	bool success = true;
 	bool subscribed = false;
@@ -2161,21 +2161,21 @@ Get information about the Exchange Active Sync (EAS) security policy.
 \subsection com_palm_systemmanager_get_security_policy_returns Returns:
 \code
 {
-    "policy": {
-        "password": {
-            "enabled": boolean,
-            "minLength": int,
-            "maxRetries": int,
-            "alphaNumeric": boolean
-        },
-        "inactivityInSeconds": int,
-        "id": string,
-        "status": {
-            "enforced": boolean,
-            "retriesLeft": int
-        }
-    },
-    "returnValue": boolean
+	"policy": {
+		"password": {
+			"enabled": boolean,
+			"minLength": int,
+			"maxRetries": int,
+			"alphaNumeric": boolean
+		},
+		"inactivityInSeconds": int,
+		"id": string,
+		"status": {
+			"enforced": boolean,
+			"retriesLeft": int
+		}
+	},
+	"returnValue": boolean
 }
 \endcode
 
@@ -2200,27 +2200,27 @@ luna-send -n 1 -f luna://com.palm.systemmanager/getSecurityPolicy '{}'
 Example response for a succesful call:
 \code
 {
-    "policy": {
-        "password": {
-            "enabled": false,
-            "minLength": 1,
-            "maxRetries": 0,
-            "alphaNumeric": false
-        },
-        "inactivityInSeconds": 9998,
-        "id": "++I8e9WUZ1KeeTfH",
-        "status": {
-            "enforced": true,
-            "retriesLeft": 0
-        }
-    },
-    "returnValue": true
+	"policy": {
+		"password": {
+			"enabled": false,
+			"minLength": 1,
+			"maxRetries": 0,
+			"alphaNumeric": false
+		},
+		"inactivityInSeconds": 9998,
+		"id": "++I8e9WUZ1KeeTfH",
+		"status": {
+			"enforced": true,
+			"retriesLeft": 0
+		}
+	},
+	"returnValue": true
 }
 \endcode
 */
 static bool cbGetSecurityPolicy(LSHandle* lsHandle, LSMessage* message, void* user_data)
 {
-    EMPTY_SCHEMA_RETURN(lsHandle, message);
+	EMPTY_SCHEMA_RETURN(lsHandle, message);
 
 	bool success = false;
 	json_object* json = json_object_new_object();
@@ -2264,7 +2264,7 @@ Update pin code application state.
 \subsection com_palm_systemmanager_update_pin_app_state_syntax Syntax:
 \code
 {
-    "state":string
+	"state":string
 }
 \endcode
 
@@ -2273,7 +2273,7 @@ Update pin code application state.
 \subsection com_palm_systemmanager_update_pin_app_state_returns Returns:
 \code
 {
-    "returnValue": boolean
+	"returnValue": boolean
 }
 \endcode
 
@@ -2287,14 +2287,14 @@ luna-send -n 1 -f luna://com.palm.systemmanager/updatePinAppState '{ "state": "u
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 
 Example response for a failed call:
 \code
 {
-    "returnValue": false
+	"returnValue": false
 }
 \endcode
 */
@@ -2302,15 +2302,15 @@ static bool cbUpdatePinAppState(LSHandle* lsHandle, LSMessage *message, void *us
 {
 	bool success = false;
 	LSError lserror;
-    LSErrorInit(&lserror);
+	LSErrorInit(&lserror);
 
-    // {"state":string}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_1(REQUIRED(state, string)));
+	// {"state":string}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_1(REQUIRED(state, string)));
 
 	const char* str = LSMessageGetPayload(message);
-    if( !str )
+	if( !str )
 		return false;
 
 	json_object* root = json_tokener_parse(str);
@@ -2357,7 +2357,7 @@ Check the device boot status.
 \subsection com_palm_systemmanager_get_boot_status_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -2366,10 +2366,10 @@ Check the device boot status.
 \subsection com_palm_systemmanager_get_boot_status_returns Returns:
 \code
 {
-    "finished": boolean,
-    "firstUse": boolean,
-    "returnValue": boolean,
-    "subscribed": boolean
+	"finished": boolean,
+	"firstUse": boolean,
+	"returnValue": boolean,
+	"subscribed": boolean
 }
 \endcode
 
@@ -2386,10 +2386,10 @@ luna-send -n 1 -f luna://com.palm.systemmanager/getBootStatus '{ "subscribe": fa
 Example response for a succesful call:
 \code
 {
-    "finished": true,
-    "firstUse": false,
-    "returnValue": true,
-    "subscribed": false
+	"finished": true,
+	"firstUse": false,
+	"returnValue": true,
+	"subscribed": false
 }
 \endcode
 */
@@ -2397,8 +2397,8 @@ static bool cbGetBootStatus(LSHandle* lsHandle, LSMessage *message, void *user_d
 {
 	SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
 
-	bool        success = true;
-	LSError     lsError;
+	bool		success = true;
+	LSError	 lsError;
 	json_object* json = json_object_new_object();
 	bool subscribed = false;
 	bool firstUse = false;
@@ -2448,8 +2448,8 @@ com.palm.systemmanager/runProgressAnimation
 \subsection com_palm_systemmanager_run_progress_animation_syntax Syntax:
 \code
 {
-    "type": string,
-    "state": string
+	"type": string,
+	"state": string
 }
 \endcode
 
@@ -2459,7 +2459,7 @@ com.palm.systemmanager/runProgressAnimation
 \subsection com_palm_systemmanager_run_progress_animation_returns Returns:
 \code
 {
-    "returnValue": boolean
+	"returnValue": boolean
 }
 \endcode
 
@@ -2473,14 +2473,14 @@ luna-send -n 1 -f luna://com.palm.systemmanager/runProgressAnimation '{ "type": 
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 
 Example response for a failed call:
 \code
 {
-    "returnValue": false
+	"returnValue": false
 }
 \endcode
 */
@@ -2490,16 +2490,16 @@ static bool cbRunProgressAnimation(LSHandle* lsHandle, LSMessage *message, void 
 	json_object* root = 0;
 	json_object* state = 0;
 	json_object* type = 0;
-    // ProgressAnimation::Type pType = ProgressAnimation::TypeHp;
+	// ProgressAnimation::Type pType = ProgressAnimation::TypeHp;
 	LSError lsError;
 
-    // {"type":string, "state":string}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_2(REQUIRED(type, string), REQUIRED(state, string)));
+	// {"type":string, "state":string}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_2(REQUIRED(type, string), REQUIRED(state, string)));
 
 	const char* str = LSMessageGetPayload(message);
-    if (!str) {
+	if (!str) {
 		goto Done;
 	}
 
@@ -2508,17 +2508,17 @@ static bool cbRunProgressAnimation(LSHandle* lsHandle, LSMessage *message, void 
 		goto Done;
 	}
 
-    type = json_object_object_get(root, "type");
-    if (type) {
+	type = json_object_object_get(root, "type");
+	if (type) {
 
-        std::string typeStr = json_object_get_string(type);
-        if (typeStr == "msm") {
-           // pType = ProgressAnimation::TypeMsm;
-        }
-        else if (typeStr == "fsck") {
-          //  pType = ProgressAnimation::TypeFsck;
-        }
-    }
+		std::string typeStr = json_object_get_string(type);
+		if (typeStr == "msm") {
+			// pType = ProgressAnimation::TypeMsm;
+		}
+		else if (typeStr == "fsck") {
+		  //  pType = ProgressAnimation::TypeFsck;
+		}
+	}
 
 	state = json_object_object_get(root, "state");
 	if (state) {
@@ -2527,10 +2527,10 @@ static bool cbRunProgressAnimation(LSHandle* lsHandle, LSMessage *message, void 
 
 		std::string newState = json_object_get_string(state);
 		if(newState == "start") {
-            // WindowServer::instance()->startProgressAnimation(pType);
+			// WindowServer::instance()->startProgressAnimation(pType);
 		}
 		else if (newState == "stop") {
-            // WindowServer::instance()->stopProgressAnimation();
+			// WindowServer::instance()->stopProgressAnimation();
 		}
 	}
 
@@ -2539,7 +2539,7 @@ Done:
 	json_object* json = json_object_new_object();
 	json_object_object_add(json, "returnValue", json_object_new_boolean(retVal));
 
-    LSErrorInit(&lsError);
+	LSErrorInit(&lsError);
 	if (!LSMessageReply(lsHandle, message, json_object_to_json_string(json), &lsError))
 		LSErrorFree (&lsError);
 
@@ -2551,9 +2551,9 @@ Done:
 
 static bool cbDebugger(LSHandle* lsHandle, LSMessage *message,void *user_data)
 {
-    EMPTY_SCHEMA_RETURN(lsHandle, message);
+	EMPTY_SCHEMA_RETURN(lsHandle, message);
 
-    // WebAppMgrProxy::instance()->enableDebugger( true );
+	// WebAppMgrProxy::instance()->enableDebugger( true );
 
 	LSError err;
 	LSErrorInit(&err);
@@ -2583,7 +2583,7 @@ Set JavaScript flags.
 \subsection com_palm_systemmanager_set_javascript_flags_syntax Syntax:
 \code
 {
-    "flags": string
+	"flags": string
 }
 \endcode
 
@@ -2593,7 +2593,7 @@ Set JavaScript flags.
 
 \code
 {
-    "returnValue": boolean
+	"returnValue": boolean
 }
 \endcode
 
@@ -2609,14 +2609,14 @@ luna-send -n 1 -f luna://com.palm.systemmanager/setJavascriptFlags '{"flags": "-
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 
 Example response for a failed call:
 \code
 {
-    "returnValue": false
+	"returnValue": false
 }
 \endcode
 */
@@ -2626,10 +2626,10 @@ static bool cbSetJavascriptFlags(LSHandle* lsHandle, LSMessage *message, void *u
 	json_object* root = 0;
 	json_object* jflags =0 ;
 
-    // {"flags":string}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_1(REQUIRED(flags, string)));
+	// {"flags":string}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_1(REQUIRED(flags, string)));
 
 	const char* payload = LSMessageGetPayload(message);
 	if (!payload)
@@ -2641,7 +2641,7 @@ static bool cbSetJavascriptFlags(LSHandle* lsHandle, LSMessage *message, void *u
 		jflags = json_object_object_get(root, "flags");
 		if (jflags) {
 			std::string flags = json_object_get_string(jflags);
-            // WebAppMgrProxy::instance()->setJavascriptFlags( flags.c_str() );
+			// WebAppMgrProxy::instance()->setJavascriptFlags( flags.c_str() );
 			success = true;
 		}
 		json_object_put(root);
@@ -2675,9 +2675,9 @@ Set animation parameters.
 \subsection com_palm_systemmanager_set_animation_values_syntax Syntax:
 \code
 {
-    "<key>": int,
-    "<key>": int,
-    ...
+	"<key>": int,
+	"<key>": int,
+	...
 }
 \endcode
 
@@ -2686,7 +2686,7 @@ Set animation parameters.
 \subsection com_palm_systemmanager_set_animation_values_returns Returns:
 \code
 {
-    "returnValue": boolean
+	"returnValue": boolean
 }
 \endcode
 
@@ -2700,14 +2700,14 @@ luna-send -n 1 -f luna://com.palm.systemmanager/setAnimationValues '{ "brickDura
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 
 Example response for a failed call:
 \code
 {
-    "returnValue": false
+	"returnValue": false
 }
 \endcode
 */
@@ -2745,8 +2745,8 @@ Done:
 	json_object* json = json_object_new_object();
 	json_object_object_add(json, "returnValue", json_object_new_boolean(ret));
 
-    LSError lserror;
-    LSErrorInit(&lserror);
+	LSError lserror;
+	LSErrorInit(&lserror);
 
 	if (!LSMessageReply(lsHandle, message, json_object_to_json_string(json), &lserror)) {
 		LSErrorFree (&lserror);
@@ -2777,11 +2777,11 @@ Get animation parameters.
 \subsection com_palm_systemmanager_get_animation_values_returns Returns:
 \code
 {
-    "<key>": int,
-    "<key>": int,
-    ...
-    "<key>": int,
-    "returnValue": boolean
+	"<key>": int,
+	"<key>": int,
+	...
+	"<key>": int,
+	"returnValue": boolean
 
 }
 \endcode
@@ -2797,22 +2797,22 @@ luna-send -n 1 -f luna://com.palm.systemmanager/getAnimationValues '{ }'
 Example response for a succesful call:
 \code
 {
-    "brickCurve": 0,
-    "brickDuration": 300,
-    "cardAddMaxDuration": 750,
-    "cardBeforeAddDelay": 0,
-    ...
-    "statusBarTitleChangeDuration": 300,
-    "universalSearchCrossFadeCurve": 6,
-    "universalSearchCrossFadeDuration": 150,
-    "returnValue": true
+	"brickCurve": 0,
+	"brickDuration": 300,
+	"cardAddMaxDuration": 750,
+	"cardBeforeAddDelay": 0,
+	...
+	"statusBarTitleChangeDuration": 300,
+	"universalSearchCrossFadeCurve": 6,
+	"universalSearchCrossFadeDuration": 150,
+	"returnValue": true
 }
 \endcode
 */
 static bool cbGetAnimationValues(LSHandle* lsHandle, LSMessage *message,
 								void *user_data)
 {
-    EMPTY_SCHEMA_RETURN(lsHandle, message);
+	EMPTY_SCHEMA_RETURN(lsHandle, message);
 
 	AnimationSettings* as = AnimationSettings::instance();
 	json_object* json = json_object_new_object();
@@ -2821,11 +2821,11 @@ static bool cbGetAnimationValues(LSHandle* lsHandle, LSMessage *message,
 	for (std::map<std::string, int>::const_iterator it = animationValues.begin();
 		 it != animationValues.end(); ++it) {
 		json_object_object_add(json, (char*) (*it).first.c_str(),
-							   json_object_new_int((*it).second));
+								json_object_new_int((*it).second));
 	}
 	json_object_object_add(json, "returnValue", json_object_new_boolean(true));
 
-	LSError     lsError;
+	LSError	 lsError;
 	LSErrorInit(&lsError);
 	if (!LSMessageReply(lsHandle, message, json_object_to_json_string(json), &lsError))
 		LSErrorFree (&lsError);
@@ -2839,7 +2839,7 @@ static bool cbGetAnimationValues(LSHandle* lsHandle, LSMessage *message,
 static bool cbDumpHeapProfiler(LSHandle* lsHandle, LSMessage *message,
 								void *user_data)
 {
-    EMPTY_SCHEMA_RETURN(lsHandle, message);
+	EMPTY_SCHEMA_RETURN(lsHandle, message);
 
 	HeapProfilerDump("period");
 
@@ -2871,7 +2871,7 @@ Subscribe to lock button trigger events.
 \subsection com_palm_systemmanager_lock_button_triggered_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -2880,9 +2880,9 @@ Subscribe to lock button trigger events.
 \subsection com_palm_systemmanager_lock_button_triggered_returns Returns:
 \code
 {
-    "returnValue": boolean,
-    "subscribed": boolean,
-    "triggered": boolean
+	"returnValue": boolean,
+	"subscribed": boolean,
+	"triggered": boolean
 }
 \endcode
 
@@ -2898,15 +2898,15 @@ luna-send -n 2 -f luna://com.palm.systemmanager/lockButtonTriggered '{ "subscrib
 Example response for a succesful call:
 \code
 {
-    "returnValue": true,
-    "subscribed": true,
-    "triggered": false
+	"returnValue": true,
+	"subscribed": true,
+	"triggered": false
 }
 \endcode
 */
 bool cbLockButtonTriggered(LSHandle* lsHandle, LSMessage *message, void *user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
+	SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
 
 	bool success = true;
 	bool subscribed = false;
@@ -2930,7 +2930,7 @@ bool cbLockButtonTriggered(LSHandle* lsHandle, LSMessage *message, void *user_da
 		LSErrorFree(&lsError);
 
 	json_object_put(json);
-        return true;
+		return true;
 }
 
 /*  Do not include this in the created documentation.
@@ -2954,8 +2954,8 @@ com.palm.systemmanager/subscribeToSystemUI
 \subsection com_palm_systemmanager_subscribe_to_system_ui_returns Returns:
 \code
 {
-    "returnValue": boolean,
-    "subscribed": boolean
+	"returnValue": boolean,
+	"subscribed": boolean
 }
 \endcode
 
@@ -2970,22 +2970,22 @@ luna-send -n 1 -f luna://com.palm.systemmanager/subscribeToSystemUI '{ }'
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
-    "subscribed": true
+	"returnValue": true
+	"subscribed": true
 }
 \endcode
 
 Example response for a failed call:
 \code
 {
-    "returnValue": false,
-    "subscribed": false
+	"returnValue": false,
+	"subscribed": false
 }
 \endcode
 */
 bool cbSubscribeToSystemUI(LSHandle* handle, LSMessage* message, void *user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(handle, message);
+	SUBSCRIBE_SCHEMA_RETURN(handle, message);
 
 	bool success = true;
 	bool subscribed = false;
@@ -3047,7 +3047,7 @@ Subscribe to messages published by SystemUI.
 \subsection com_palm_systemmanager_subscribe_to_system_ui_responses_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -3055,8 +3055,8 @@ Subscribe to messages published by SystemUI.
 \subsection com_palm_systemmanager_subscribe_to_system_ui_responses_returns Returns:
 \code
 {
-    "returnValue": boolean,
-    "subscribed": boolean
+	"returnValue": boolean,
+	"subscribed": boolean
 }
 \endcode
 
@@ -3071,47 +3071,47 @@ luna-send -n 1 -f luna://com.palm.systemmanager/subscribeToSystemUIResponses '{ 
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
-    "subscribed": true
+	"returnValue": true
+	"subscribed": true
 }
 \endcode
 
 Example response for a failed call:
 \code
 {
-    "returnValue": false,
-    "subscribed": false
+	"returnValue": false,
+	"subscribed": false
 }
 \endcode
 */
 bool cbSubscribeToSystemUIResponses(LSHandle* handle, LSMessage* message, void *user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(handle, message);
+	SUBSCRIBE_SCHEMA_RETURN(handle, message);
 
-    bool success = true;
-    bool subscribed = false;
-    LSError lsError;
-    json_object* response = json_object_new_object();
+	bool success = true;
+	bool subscribed = false;
+	LSError lsError;
+	json_object* response = json_object_new_object();
 
-    LSErrorInit(&lsError);
+	LSErrorInit(&lsError);
 
-    if (LSMessageIsSubscription(message)) {
-        success = LSSubscriptionProcess(handle, message, &subscribed, &lsError);
-        if (!success) {
-            LSErrorFree(&lsError);
-        }
-    }
+	if (LSMessageIsSubscription(message)) {
+		success = LSSubscriptionProcess(handle, message, &subscribed, &lsError);
+		if (!success) {
+			LSErrorFree(&lsError);
+		}
+	}
 
-    json_object_object_add(response, "returnValue", json_object_new_boolean(success));
-    json_object_object_add(response, "subscribed", json_object_new_boolean(subscribed));
+	json_object_object_add(response, "returnValue", json_object_new_boolean(success));
+	json_object_object_add(response, "subscribed", json_object_new_boolean(subscribed));
 
-    if (!LSMessageReply(handle, message, json_object_to_json_string(response), &lsError))
-        LSErrorFree(&lsError);
+	if (!LSMessageReply(handle, message, json_object_to_json_string(response), &lsError))
+		LSErrorFree(&lsError);
 
-    if(response)
-        json_object_put(response);
+	if(response)
+		json_object_put(response);
 
-    return true;
+	return true;
 }
 
 /*!
@@ -3129,8 +3129,8 @@ the message will be published to listeners of subscribeToSystemUIResponses().
 \subsection com_palm_systemmanager_publish_to_system_ui_syntax Syntax:
 \code
 {
-    "event": string,
-    "message": string
+	"event": string,
+	"message": string
 }
 \endcode
 
@@ -3142,7 +3142,7 @@ the message will be published to listeners of subscribeToSystemUIResponses().
 \subsection com_palm_systemmanager_publish_to_system_ui_returns Returns:
 \code
 {
-    "returnValue": boolean
+	"returnValue": boolean
 }
 \endcode
 
@@ -3156,14 +3156,14 @@ luna-send -n 1 -f luna://com.palm.systemmanager/publishToSystemUI '{ "event": "i
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 
 Example response for a failed call:
 \code
 {
-    "returnValue": false
+	"returnValue": false
 }
 \endcode
 */
@@ -3176,20 +3176,20 @@ bool cbPublishToSystemUI(LSHandle* handle, LSMessage* message, void *user_data)
 	json_object* event = NULL;
 	json_object* msg = NULL;
 
-    // {"event":"string", "message":"string"}
-    VALIDATE_SCHEMA_AND_RETURN(handle,
-                               message,
-                               SCHEMA_2(REQUIRED(event, string), REQUIRED(message, object)));
+	// {"event":"string", "message":"string"}
+	VALIDATE_SCHEMA_AND_RETURN(handle,
+								message,
+								SCHEMA_2(REQUIRED(event, string), REQUIRED(message, object)));
 	LSErrorInit(&lsError);
 
-        const char* appId;
+		const char* appId;
 	const char* payload = LSMessageGetPayload( message );
 	if(!payload) {
 		success = false;
 		goto Done;
 	}
 
-        appId = LSMessageGetApplicationID( message );
+		appId = LSMessageGetApplicationID( message );
 	root = json_tokener_parse(payload);
 	if(!root) {
 		success = false;
@@ -3212,13 +3212,13 @@ bool cbPublishToSystemUI(LSHandle* handle, LSMessage* message, void *user_data)
 	//Posting to SystemUI client to process the message. If the event is unknown then the message will dropped at the client level.
 	SystemService::instance()->postMessageToSystemUI(payload);
 
-        // If the message is posted from SystemUI we broadcast it to all subscribers of its responses.
-        if(appId != NULL && strlen(appId) > 0) {
-            std::string appStr;
-            appStr = appId;
-            if(appStr.find("com.palm.systemui", 0) != std::string::npos)
-                SystemService::instance()->postMessageToSystemUIResponses(payload);
-        }
+		// If the message is posted from SystemUI we broadcast it to all subscribers of its responses.
+		if(appId != NULL && strlen(appId) > 0) {
+			std::string appStr;
+			appStr = appId;
+			if(appStr.find("com.palm.systemui", 0) != std::string::npos)
+				SystemService::instance()->postMessageToSystemUIResponses(payload);
+		}
 
 	Done:
 
@@ -3233,13 +3233,13 @@ bool cbPublishToSystemUI(LSHandle* handle, LSMessage* message, void *user_data)
 		if(response)
 			json_object_put(response);
 
-    return true;
+	return true;
 
 }
 
 void SystemService::postMessageToSystemUI(const char* jsonStr)
 {
-	bool    retVal;
+	bool	retVal;
 	LSError lsError;
 	json_object* json = 0;
 
@@ -3263,51 +3263,51 @@ void SystemService::postMessageToSystemUI(const char* jsonStr)
 
 void SystemService::postMessageToSystemUIResponses(const char* jsonStr)
 {
-    bool    retVal;
-    LSError lsError;
-    json_object* json = 0;
+	bool	retVal;
+	LSError lsError;
+	json_object* json = 0;
 
-    LSErrorInit(&lsError);
+	LSErrorInit(&lsError);
 
-    json = json_tokener_parse(jsonStr);
-    if(!json) {
+	json = json_tokener_parse(jsonStr);
+	if(!json) {
 	g_warning("SysMgr::postMessageToSystemUIResponses - Message Parsing error! ");
 	return;
-    }
+	}
 
-    retVal = LSSubscriptionPost(m_service, "/", "subscribeToSystemUIResponses",
+	retVal = LSSubscriptionPost(m_service, "/", "subscribeToSystemUIResponses",
 				json_object_to_json_string(json), &lsError);
 
-    if (!retVal)
+	if (!retVal)
 	LSErrorFree (&lsError);
 
 
-    LSSubscriptionIter* iter;
-    if (!LSSubscriptionAcquire(m_service, "/subscribeToSystemUIResponses", &iter, &lsError)) {
-        g_warning("SysMgr::postMessageToSystemUIResponses - failed to retrieve subscription");
-        LSErrorFree(&lsError);
-        return;
-    }
-    while (LSSubscriptionHasNext(iter)) {
-        LSMessage* message = LSSubscriptionNext(iter);
-        const char* payload = LSMessageGetPayload(message);
-        const char* appId = LSMessageGetApplicationID(message);
+	LSSubscriptionIter* iter;
+	if (!LSSubscriptionAcquire(m_service, "/subscribeToSystemUIResponses", &iter, &lsError)) {
+		g_warning("SysMgr::postMessageToSystemUIResponses - failed to retrieve subscription");
+		LSErrorFree(&lsError);
+		return;
+	}
+	while (LSSubscriptionHasNext(iter)) {
+		LSMessage* message = LSSubscriptionNext(iter);
+		const char* payload = LSMessageGetPayload(message);
+		const char* appId = LSMessageGetApplicationID(message);
 
-        json_object* payload_json = json_tokener_parse(payload);
-        if (payload_json) {
-            json_object* payload_message_json = json_object_object_get(payload_json, "message");
-            if (payload_message_json) {
-                json_object *payload_appId_json = json_object_object_get(payload_message_json, "appId");
-                if (payload_appId_json && json_object_get_string(payload_appId_json)) {
-                    if (g_strcmp0(json_object_get_string(payload_appId_json), appId) == 0)
-                        LSMessageReply(m_service, message, json_object_to_json_string(json), &lsError);
-                }
-            }
-            json_object_put(payload_json);
-        }
-    }
+		json_object* payload_json = json_tokener_parse(payload);
+		if (payload_json) {
+			json_object* payload_message_json = json_object_object_get(payload_json, "message");
+			if (payload_message_json) {
+				json_object *payload_appId_json = json_object_object_get(payload_message_json, "appId");
+				if (payload_appId_json && json_object_get_string(payload_appId_json)) {
+					if (g_strcmp0(json_object_get_string(payload_appId_json), appId) == 0)
+						LSMessageReply(m_service, message, json_object_to_json_string(json), &lsError);
+				}
+			}
+			json_object_put(payload_json);
+		}
+	}
 
-    json_object_put(json);
+	json_object_put(json);
 
 }
 
@@ -3317,10 +3317,10 @@ bool cbMonitorProcessMemory(LSHandle* lsHandle, LSMessage *message, void *user_d
 	LSError lsError;
 	struct json_object* root = 0;
 
-    // {"pid":integer, "maxMemory": integer}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_2(REQUIRED(pid, integer), REQUIRED(maxMemory, integer)));
+	// {"pid":integer, "maxMemory": integer}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_2(REQUIRED(pid, integer), REQUIRED(maxMemory, integer)));
 
 	const char* str = LSMessageGetPayload(message);
 	if (!str)
@@ -3412,10 +3412,10 @@ Done:
 
 bool cbLogTouchEvents(LSHandle* lsHandle, LSMessage *message, void *user_data)
 {
-    // {"enable":true}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_1(REQUIRED(enable, boolean)));
+	// {"enable":true}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_1(REQUIRED(enable, boolean)));
 
 	const char* str = LSMessageGetPayload(message);
 	if (!str)
@@ -3426,7 +3426,7 @@ bool cbLogTouchEvents(LSHandle* lsHandle, LSMessage *message, void *user_data)
 	bool failed = true;
 
 	if (root){
-        // iterate through the elements
+		// iterate through the elements
 		json_object_object_foreach(root, key, val)
 		{
 			if (strcmp(key, "enable") == 0)
@@ -3435,7 +3435,7 @@ bool cbLogTouchEvents(LSHandle* lsHandle, LSMessage *message, void *user_data)
 
 				if (label && json_object_is_type(label, json_type_boolean))
 				{
-                    // SingleClickGestureRecognizer::g_logSingleClick = json_object_get_boolean(label);
+					// SingleClickGestureRecognizer::g_logSingleClick = json_object_get_boolean(label);
 					failed = false;
 				}
 			}
@@ -3461,10 +3461,10 @@ bool cbLogTouchEvents(LSHandle* lsHandle, LSMessage *message, void *user_data)
 
 bool cbEnableFpsCounter(LSHandle* lsHandle, LSMessage *message, void *user_data)
 {
-    // {"enable":boolean} or {"reset":integer} or {"dump":boolean}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_3(OPTIONAL(enable, boolean), OPTIONAL(reset, integer), OPTIONAL(dump, boolean)));
+	// {"enable":boolean} or {"reset":integer} or {"dump":boolean}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_3(OPTIONAL(enable, boolean), OPTIONAL(reset, integer), OPTIONAL(dump, boolean)));
 
 	const char* str = LSMessageGetPayload(message);
 	if (!str)
@@ -3530,10 +3530,10 @@ Done:
 
 bool cbEnableTouchPlot(LSHandle* lsHandle, LSMessage *message, void *user_data)
 {
-    // {"collection":true} or {"trails":true} or {"crosshairs":false}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_3(OPTIONAL(collection, boolean), OPTIONAL(trails, boolean), OPTIONAL(crosshairs, boolean)));
+	// {"collection":true} or {"trails":true} or {"crosshairs":false}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_3(OPTIONAL(collection, boolean), OPTIONAL(trails, boolean), OPTIONAL(crosshairs, boolean)));
 
 //	static struct touchPlotOptions_t {
 //		TouchPlot::TouchPlotOption_t type;
@@ -3662,9 +3662,9 @@ bool cbSetBenchmarkFlags(LSHandle *lsHandle, LSMessage *message, void *user_data
 		g_debug("Changing animation interval to %d", animInterval);
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-        QAbstractAnimation::setAnimationTimerInterval(animInterval);
+		QAbstractAnimation::setAnimationTimerInterval(animInterval);
 #else
-        // QT5_TODO: Is something needed here?
+		// QT5_TODO: Is something needed here?
 #endif
 
 		hasRequest = true;
@@ -3672,9 +3672,9 @@ bool cbSetBenchmarkFlags(LSHandle *lsHandle, LSMessage *message, void *user_data
 
 	if (request.hasKey("vsync")) {
 		bool allowVsync;
-        request["vsync"].asBool(allowVsync);
+		request["vsync"].asBool(allowVsync);
 
-        //DisplayManager::instance()->forceVsyncOff(!allowVsync);
+		//DisplayManager::instance()->forceVsyncOff(!allowVsync);
 
 		if (allowVsync)
 			g_debug("regular vsync mode");
@@ -3727,36 +3727,36 @@ Done:
 
 void constructSystemStatusPayload(pbnjson::JValue& obj)
 {
-    pbnjson::JValue imeObj = pbnjson::Object();
-    //imeObj.put("visible", IMEController::instance()->isIMEOpened());
-    obj.put("ime", imeObj);
+	pbnjson::JValue imeObj = pbnjson::Object();
+	//imeObj.put("visible", IMEController::instance()->isIMEOpened());
+	obj.put("ime", imeObj);
 
-    // report the ui orientation of the device
-    pbnjson::JValue orientationObj = pbnjson::Object();
+	// report the ui orientation of the device
+	pbnjson::JValue orientationObj = pbnjson::Object();
 
-    /*
-    switch (WindowServer::instance()->getUiOrientation()) {
-    case OrientationEvent::Orientation_Up:     orientationObj.put("ui", "up"); break;
-    case OrientationEvent::Orientation_Down:   orientationObj.put("ui", "down"); break;
-    case OrientationEvent::Orientation_Left:   orientationObj.put("ui", "left"); break;
-    case OrientationEvent::Orientation_Right:  orientationObj.put("ui", "right"); break;
-    case OrientationEvent::Orientation_FaceUp: orientationObj.put("ui", "faceup"); break;
-    case OrientationEvent::Orientation_FaceDown: orientationObj.put("ui", "facedown"); break;
-    default: orientationObj.put("ui", "unknown"); break;
-    }
-    // report the device orientation
-    switch (WindowServer::instance()->getOrientation()) {
-    case OrientationEvent::Orientation_Up:     orientationObj.put("device", "up"); break;
-    case OrientationEvent::Orientation_Down:   orientationObj.put("device", "down"); break;
-    case OrientationEvent::Orientation_Left:   orientationObj.put("device", "left"); break;
-    case OrientationEvent::Orientation_Right:  orientationObj.put("device", "right"); break;
-    case OrientationEvent::Orientation_FaceUp: orientationObj.put("device", "faceup"); break;
-    case OrientationEvent::Orientation_FaceDown: orientationObj.put("device", "facedown"); break;
-    default: orientationObj.put("device", "unknown"); break;
-    }
-    */
+	/*
+	switch (WindowServer::instance()->getUiOrientation()) {
+	case OrientationEvent::Orientation_Up:	 orientationObj.put("ui", "up"); break;
+	case OrientationEvent::Orientation_Down:	orientationObj.put("ui", "down"); break;
+	case OrientationEvent::Orientation_Left:	orientationObj.put("ui", "left"); break;
+	case OrientationEvent::Orientation_Right:  orientationObj.put("ui", "right"); break;
+	case OrientationEvent::Orientation_FaceUp: orientationObj.put("ui", "faceup"); break;
+	case OrientationEvent::Orientation_FaceDown: orientationObj.put("ui", "facedown"); break;
+	default: orientationObj.put("ui", "unknown"); break;
+	}
+	// report the device orientation
+	switch (WindowServer::instance()->getOrientation()) {
+	case OrientationEvent::Orientation_Up:	 orientationObj.put("device", "up"); break;
+	case OrientationEvent::Orientation_Down:	orientationObj.put("device", "down"); break;
+	case OrientationEvent::Orientation_Left:	orientationObj.put("device", "left"); break;
+	case OrientationEvent::Orientation_Right:  orientationObj.put("device", "right"); break;
+	case OrientationEvent::Orientation_FaceUp: orientationObj.put("device", "faceup"); break;
+	case OrientationEvent::Orientation_FaceDown: orientationObj.put("device", "facedown"); break;
+	default: orientationObj.put("device", "unknown"); break;
+	}
+	*/
 
-    obj.put("orientation", orientationObj);
+	obj.put("orientation", orientationObj);
 }
 
 /*!
@@ -3773,7 +3773,7 @@ Get information about system status.
 \subsection com_palm_systemmanager_get_system_status_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -3782,15 +3782,15 @@ Get information about system status.
 \subsection com_palm_systemmanager_get_system_status_returns Returns:
 \code
 {
-    "ime": {
-        "visible": boolean
-    },
-    "orientation": {
-        "ui": string,
-        "device": string
-    },
-    "subscribed": boolean,
-    "returnValue": boolean
+	"ime": {
+		"visible": boolean
+	},
+	"orientation": {
+		"ui": string,
+		"device": string
+	},
+	"subscribed": boolean,
+	"returnValue": boolean
 }
 \endcode
 
@@ -3810,80 +3810,80 @@ luna-send -n 100 -f luna://com.palm.systemmanager/getSystemStatus '{ "subscribe"
 Example response for a succesful call:
 \code
 {
-    "ime": {
-        "visible": false
-    },
-    "orientation": {
-        "ui": "up",
-        "device": "up"
-    },
-    "subscribed": true,
-    "returnValue": true
+	"ime": {
+		"visible": false
+	},
+	"orientation": {
+		"ui": "up",
+		"device": "up"
+	},
+	"subscribed": true,
+	"returnValue": true
 }
 \endcode
 
 Example of a status change event after subscribing:
 \code
 {
-    "ime": {
-        "visible": false
-    },
-    "orientation": {
-        "ui": "up",
-        "device": "facedown"
-    }
+	"ime": {
+		"visible": false
+	},
+	"orientation": {
+		"ui": "up",
+		"device": "facedown"
+	}
 }
 \endcode
 */
 bool cbGetSystemStatus(LSHandle *lsHandle, LSMessage *message, void *user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
+	SUBSCRIBE_SCHEMA_RETURN(lsHandle, message);
 
-    bool subscribed = false;
-    const char* str = LSMessageGetPayload(message);
-    if (!str)
-        return false;
+	bool subscribed = false;
+	const char* str = LSMessageGetPayload(message);
+	if (!str)
+		return false;
 
-    LSError error;
-    LSErrorInit(&error);
+	LSError error;
+	LSErrorInit(&error);
 
-    if (LSMessageIsSubscription(message)) {
-        if (!LSSubscriptionProcess(lsHandle, message, &subscribed, &error))
-            LSErrorFree(&error);
-    }
+	if (LSMessageIsSubscription(message)) {
+		if (!LSSubscriptionProcess(lsHandle, message, &subscribed, &error))
+			LSErrorFree(&error);
+	}
 
-    pbnjson::JValue replyObj = pbnjson::Object();
+	pbnjson::JValue replyObj = pbnjson::Object();
 
-    constructSystemStatusPayload(replyObj);
+	constructSystemStatusPayload(replyObj);
 
-    replyObj.put("subscribed", subscribed);
-    replyObj.put("returnValue", true);
+	replyObj.put("subscribed", subscribed);
+	replyObj.put("returnValue", true);
 
-    std::string replyStr;
-    pbnjson::JGenerator generator;
-    generator.toString(replyObj, pbnjson::JSchemaFragment("{}"), replyStr);
+	std::string replyStr;
+	pbnjson::JGenerator generator;
+	generator.toString(replyObj, pbnjson::JSchemaFragment("{}"), replyStr);
 
-    if (!LSMessageReply(lsHandle, message, replyStr.c_str(), &error)) {
-        LSErrorFree(&error);
-    }
+	if (!LSMessageReply(lsHandle, message, replyStr.c_str(), &error)) {
+		LSErrorFree(&error);
+	}
 
-    return true;
+	return true;
 }
 
 void SystemService::postSystemStatus()
 {
-    LSError lsError;
-    LSErrorInit(&lsError);
-    
-    pbnjson::JValue replyObj = pbnjson::Object();
+	LSError lsError;
+	LSErrorInit(&lsError);
+	
+	pbnjson::JValue replyObj = pbnjson::Object();
 
-    constructSystemStatusPayload(replyObj);
+	constructSystemStatusPayload(replyObj);
 
-    std::string replyStr;
-    pbnjson::JGenerator generator;
-    generator.toString(replyObj, pbnjson::JSchemaFragment("{}"), replyStr);
-    if (!LSSubscriptionPost(m_service, "/", "getSystemStatus", replyStr.c_str(), &lsError))
-        LSErrorFree (&lsError);
+	std::string replyStr;
+	pbnjson::JGenerator generator;
+	generator.toString(replyObj, pbnjson::JSchemaFragment("{}"), replyStr);
+	if (!LSSubscriptionPost(m_service, "/", "getSystemStatus", replyStr.c_str(), &lsError))
+		LSErrorFree (&lsError);
 }
 
 /*!
@@ -3900,8 +3900,8 @@ Dismiss a modal application.
 \subsection com_palm_systemmanager_dismiss_modal_app_syntax Syntax:
 \code
 {
-    "subscribe": true,
-    "modalId": string
+	"subscribe": true,
+	"modalId": string
 }
 \endcode
 
@@ -3911,10 +3911,10 @@ Dismiss a modal application.
 \subsection com_palm_systemmanager_dismiss_modal_app_returns Returns:
 \code
 {
-    "returnValue": boolean,
-    "returnMessage": string,
-    "dismissResult": string,
-    "subscribed": boolean
+	"returnValue": boolean,
+	"returnMessage": string,
+	"dismissResult": string,
+	"subscribed": boolean
 }
 \endcode
 
@@ -3931,29 +3931,29 @@ luna-send -n 2 -f luna://com.palm.systemmanager/dismissModalApp '{ "subscribe": 
 Example responses:
 \code
 {
-    "returnValue": true,
-    "dismissResult": "Initiating removal of active modal window",
-    "subscribed": true
+	"returnValue": true,
+	"dismissResult": "Initiating removal of active modal window",
+	"subscribed": true
 }
 {
-    "returnValue": true,
-    "returnMessage": "",
-    "dismissResult": "Modal card was dismissed by the service"
+	"returnValue": true,
+	"returnMessage": "",
+	"dismissResult": "Modal card was dismissed by the service"
 }
 \endcode
 */
 bool cbDismissModalApp(LSHandle *lsHandle, LSMessage *message, void *user_data)
 {
-    // {"subscribe":true, "modalId": "dlg"}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_2(REQUIRED(subscribe, boolean), REQUIRED(modalId, string)));
+	// {"subscribe":true, "modalId": "dlg"}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_2(REQUIRED(subscribe, boolean), REQUIRED(modalId, string)));
 
 	bool subscribed = true;
 	bool success = false;
 	std::string errMsg, modalId, retValue = "";
 	json_object *root = NULL;
-    //SystemUiController* uiController = NULL;
+	//SystemUiController* uiController = NULL;
 
 	LSError lserror;
 	LSErrorInit(&lserror);
@@ -4073,10 +4073,10 @@ Launch an application as a modal window from another application.
 \subsection com_palm_systemmanager_launch_modal_app_syntax Syntax:
 \code
 {
-    "subscribe": boolean,
-    "callerId": string,
-    "launchId": string,
-    "params": object
+	"subscribe": boolean,
+	"callerId": string,
+	"launchId": string,
+	"params": object
 }
 \endcode
 
@@ -4088,10 +4088,10 @@ Launch an application as a modal window from another application.
 \subsection com_palm_systemmanager_launch_modal_app_returns_succesful Returns for a succesfull call:
 \code
 {
-    "returnValue": boolean,
-    "launchResult": string,
-    "modalId": string,
-    "subscribed": boolean,
+	"returnValue": boolean,
+	"launchResult": string,
+	"modalId": string,
+	"subscribed": boolean,
 }
 \endcode
 
@@ -4103,10 +4103,10 @@ Launch an application as a modal window from another application.
 \subsection com_palm_systemmanager_launch_modal_app_returns_failed Returns for a failed call:
 \code
 {
-    "returnValue": boolean,
-    "errorText": string,
-    "subscribed": boolean,
-    "errorCode": int
+	"returnValue": boolean,
+	"errorText": string,
+	"subscribed": boolean,
+	"errorCode": int
 }
 \endcode
 
@@ -4123,24 +4123,24 @@ luna-send -n 2 -f luna://com.palm.systemmanager/launchModalApp '{ "subscribe": t
 Example response for a succesful launch:
 \code
 {
-    "returnValue": true,
-    "launchResult": "Modal window launch initiated",
-    "modalId": "MODAL_WINDOW_com.palm.app.photos_com.palm.app.browser_1",
-    "subscribed": true
+	"returnValue": true,
+	"launchResult": "Modal window launch initiated",
+	"modalId": "MODAL_WINDOW_com.palm.app.photos_com.palm.app.browser_1",
+	"subscribed": true
 }
 {
-    "returnValue": true,
-    "launchResult": "Modal window was launched successfully"
+	"returnValue": true,
+	"launchResult": "Modal window was launched successfully"
 }
 \endcode
 
 Example response for a failed call:
 \code
 {
-    "returnValue": false,
-    "errorText": "App to launch doesnt exist",
-    "subscribed": true,
-    "errorCode": 5
+	"returnValue": false,
+	"errorText": "App to launch doesnt exist",
+	"subscribed": true,
+	"errorCode": 5
 }
 \endcode
 */
@@ -4150,21 +4150,21 @@ bool cbLaunchModalApp(LSHandle *lsHandle, LSMessage *message, void *user_data)
 	bool subscribed = true;
 	bool returnError = true;
 	std::string errMsg, modalId, launchId, callerId, params, parentAppId;
-    //SystemUiController* uiController = NULL;
-    // Window* maximizedCardWindow = NULL;
+	//SystemUiController* uiController = NULL;
+	// Window* maximizedCardWindow = NULL;
 	ApplicationDescription* appDesc = NULL;
 	json_object *root, *label, *launchParams = NULL;
 	ApplicationDescription* desc = NULL;
-    int launchErr = 0;// SystemUiController::MalformedRequest;
-    // CardWindow* cWin = NULL;
+	int launchErr = 0;// SystemUiController::MalformedRequest;
+	// CardWindow* cWin = NULL;
 
 	LSError lserror;
 	LSErrorInit(&lserror);
 
-    // {"subscribe": true, "callerId":"1234", "launchId": 547, "params":{"p1 p2"}}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_4(REQUIRED(subscribe, boolean), REQUIRED(callerId, string), REQUIRED(launchId, string), REQUIRED(params, object)));
+	// {"subscribe": true, "callerId":"1234", "launchId": 547, "params":{"p1 p2"}}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_4(REQUIRED(subscribe, boolean), REQUIRED(callerId, string), REQUIRED(launchId, string), REQUIRED(params, object)));
 
 	const char* messageStr = LSMessageGetPayload(message);
 	if (!messageStr)
@@ -4231,16 +4231,16 @@ bool cbLaunchModalApp(LSHandle *lsHandle, LSMessage *message, void *user_data)
 //		}
 //	}
 //	else {
-//        //launchErr = SystemUiController::InternalError;
+//		//launchErr = SystemUiController::InternalError;
 //		errMsg = "Unable to get maximized card window from system";
 //		goto done;
 //	}
 
 	// Get the string we need to compare the AppId's
-    parentAppId = (NULL != appDesc)?appDesc->id():  ""; // cWin->appId();
+	parentAppId = (NULL != appDesc)?appDesc->id():  ""; // cWin->appId();
 
 	if(0 != parentAppId.compare(callerId)) {
-        //launchErr = SystemUiController::ParentDifferent;
+		//launchErr = SystemUiController::ParentDifferent;
 		errMsg = "Caller Id Not the same as currently active window";
 		goto done;
 	}
@@ -4256,13 +4256,13 @@ bool cbLaunchModalApp(LSHandle *lsHandle, LSMessage *message, void *user_data)
 	// Check if this app actually exists/is ready/and isnt headless.
 	if((NULL == (desc = s_AppManInstance->getAppById(launchId))))
 	{
-        //launchErr = SystemUiController::AppToLaunchDoesntExist;
+		//launchErr = SystemUiController::AppToLaunchDoesntExist;
 		errMsg = "App to launch doesnt exist";
 		goto done;
 	}
 	else {
 		if(ApplicationDescription::Status_Ready != desc->status()) {
-            //launchErr = SystemUiController::AppToLaunchIsntReady;
+			//launchErr = SystemUiController::AppToLaunchIsntReady;
 			errMsg = "App to launch isnt in ready state";
 			goto done;
 		}
@@ -4315,7 +4315,7 @@ bool cbLaunchModalApp(LSHandle *lsHandle, LSMessage *message, void *user_data)
 	// Add a subscription to the service for this modal window.cbLaunch
 	if (!LSSubscriptionAdd (lsHandle, SystemService::instance()->getModalWindowSubscriptionId().c_str(), message, &lserror))
 	{
-        //launchErr = SystemUiController::InternalError;
+		//launchErr = SystemUiController::InternalError;
 		subscribed = false;
 		errMsg = "could not setup subscription";
 		goto done;
@@ -4367,12 +4367,12 @@ bool SystemService::initiateAppLaunch(LSHandle* lshandle, LSMessage *message, st
 	std::string callerAppId;
 	std::string callerProcessId;
 	bool success=false;
-    int launchErr = 0; // SystemUiController::MalformedRequest;
+	int launchErr = 0; // SystemUiController::MalformedRequest;
 
-    // {"id": "5879", "params":{p1 p2}}
-    VALIDATE_SCHEMA_AND_RETURN(lshandle,
-                               message,
-                               SCHEMA_2(REQUIRED(id, string), REQUIRED(params, object)));
+	// {"id": "5879", "params":{p1 p2}}
+	VALIDATE_SCHEMA_AND_RETURN(lshandle,
+								message,
+								SCHEMA_2(REQUIRED(id, string), REQUIRED(params, object)));
 
 	if (!messageStr)
 	{
@@ -4438,12 +4438,12 @@ bool SystemService::initiateAppLaunch(LSHandle* lshandle, LSMessage *message, st
 		callerAppId = callerApp;
 
 		//Get the processId of the running process.
-        //callerProcessId = SystemUiController::instance()->maximizedCardWindow()->processId();
+		//callerProcessId = SystemUiController::instance()->maximizedCardWindow()->processId();
 	}
 
 	// Set the flag that we are creating a modal child window
 	SystemService::instance()->setActiveModalBeingLaunched();
-    //processId = WebAppMgrProxy::instance()->appLaunchModal(id, params, callerAppId, callerProcessId, errMsg, isHeadless, SystemService::instance()->isParentPdk());
+	//processId = WebAppMgrProxy::instance()->appLaunchModal(id, params, callerAppId, callerProcessId, errMsg, isHeadless, SystemService::instance()->isParentPdk());
 	success = !processId.empty();
 
 	// Set the message that we are ready to launch the modal window.
@@ -4494,25 +4494,25 @@ bool SystemService::msmProgressCallback(LSHandle* handle, LSMessage* message, vo
 
 bool SystemService::msmEntryCallback(LSHandle* handle, LSMessage* message, void* ctxt)
 {
-    return SystemService::instance()->msmEntry(message);
+	return SystemService::instance()->msmEntry(message);
 }
 
 bool SystemService::msmFsckingCallback(LSHandle* handle, LSMessage* message, void* ctxt)
 {
-    return SystemService::instance()->msmFscking(message);
+	return SystemService::instance()->msmFscking(message);
 }
 
 bool SystemService::msmPartitionAvailCallback(LSHandle* handle, LSMessage* message, void* ctxt)
 {
-    return SystemService::instance()->msmPartitionAvail(message);
+	return SystemService::instance()->msmPartitionAvail(message);
 }
 
 bool SystemService::msmAvail(LSMessage* message)
 {
-    // {"mode-avail":boolean}
-    VALIDATE_SCHEMA_AND_RETURN(0,
-                               message,
-                               SCHEMA_1(REQUIRED(mode-avail, boolean)));
+	// {"mode-avail":boolean}
+	VALIDATE_SCHEMA_AND_RETURN(0,
+								message,
+								SCHEMA_1(REQUIRED(mode-avail, boolean)));
 
 	const char* str = LSMessageGetPayload( message );
 	if( !str )
@@ -4530,7 +4530,7 @@ bool SystemService::msmAvail(LSMessage* message)
 
 	g_debug("MSM available: %s", json_object_get_boolean(modeAvail) ? "true" : "false");
 
-    //DisplayManager* dm = WindowServer::instance()->displayManager();
+	//DisplayManager* dm = WindowServer::instance()->displayManager();
 
 	if (json_object_get_boolean(modeAvail) == FALSE) {
 
@@ -4545,14 +4545,14 @@ bool SystemService::msmAvail(LSMessage* message)
 
 			if (m_brickMode) {
 				g_debug("%s: exiting brick mode", __PRETTY_FUNCTION__);
-                //dm->popDNAST("brickmode-local");
+				//dm->popDNAST("brickmode-local");
 				Q_EMIT signalExitBrickMode();
 				m_brickMode = false;
 			}
 
 			if (m_fscking) {
 				g_debug("%s: fsck ended", __PRETTY_FUNCTION__);
-                //WindowServer::instance()->stopProgressAnimation();
+				//WindowServer::instance()->stopProgressAnimation();
 				m_fscking = false;
 			}
 		}
@@ -4565,10 +4565,10 @@ bool SystemService::msmAvail(LSMessage* message)
 
 bool SystemService::msmProgress(LSMessage* message)
 {
-    // {"stage": string, "enterIMasq":boolean}
-    VALIDATE_SCHEMA_AND_RETURN(0,
-                               message,
-                               SCHEMA_2(REQUIRED(stage, string), REQUIRED(enterIMasq, boolean)));
+	// {"stage": string, "enterIMasq":boolean}
+	VALIDATE_SCHEMA_AND_RETURN(0,
+								message,
+								SCHEMA_2(REQUIRED(stage, string), REQUIRED(enterIMasq, boolean)));
 
 	const char* str = LSMessageGetPayload( message );
 	if( !str )
@@ -4587,7 +4587,7 @@ bool SystemService::msmProgress(LSMessage* message)
 	char* stageText = json_object_get_string( stage );
 	g_debug("MSM Progress: %s", stageText);
 
-    // DisplayManager* dm = WindowServer::instance()->displayManager();
+	// DisplayManager* dm = WindowServer::instance()->displayManager();
 
 	if (strcasecmp(stageText, "attempting") == 0) {
 		// going into brick mode
@@ -4596,7 +4596,7 @@ bool SystemService::msmProgress(LSMessage* message)
 
 			// Go into brick mode
 			g_debug("%s: entering brick mode", __PRETTY_FUNCTION__);
-            //dm->pushDNAST("brickmode-local");
+			//dm->pushDNAST("brickmode-local");
 
 			// are we going into media sync or USB drive mode?
 			struct json_object* mode = json_object_object_get(payload, "enterIMasq");
@@ -4613,7 +4613,7 @@ bool SystemService::msmProgress(LSMessage* message)
 		if (m_brickMode) {
 
 			g_debug("%s: exiting brick mode", __PRETTY_FUNCTION__);
-            //dm->popDNAST("brickmode-local");
+			//dm->popDNAST("brickmode-local");
 			Q_EMIT signalExitBrickMode();
 			Q_EMIT signalBrickModeFailed();
 
@@ -4622,7 +4622,7 @@ bool SystemService::msmProgress(LSMessage* message)
 
 		if (m_fscking) {
 			g_debug("%s: fsck ended", __PRETTY_FUNCTION__);
-            //WindowServer::instance()->stopProgressAnimation();
+			//WindowServer::instance()->stopProgressAnimation();
 			m_fscking = false;
 		}
 	}
@@ -4635,10 +4635,10 @@ bool SystemService::msmProgress(LSMessage* message)
 
 bool SystemService::msmEntry(LSMessage* message)
 {
-    // {"new-mode": string, "enterIMasq": boolean}
-    VALIDATE_SCHEMA_AND_RETURN(0,
-                               message,
-                               SCHEMA_2(REQUIRED(new-mode, string), REQUIRED(enterIMasq, boolean)));
+	// {"new-mode": string, "enterIMasq": boolean}
+	VALIDATE_SCHEMA_AND_RETURN(0,
+								message,
+								SCHEMA_2(REQUIRED(new-mode, string), REQUIRED(enterIMasq, boolean)));
 
 	const char* str = LSMessageGetPayload( message );
 	if( !str )
@@ -4657,7 +4657,7 @@ bool SystemService::msmEntry(LSMessage* message)
 	char* modeText = json_object_get_string(mode);
 	g_debug("MSM Mode: %s", modeText);
 
-    //DisplayManager* dm = WindowServer::instance()->displayManager();
+	//DisplayManager* dm = WindowServer::instance()->displayManager();
 
 	if (strcasecmp(modeText, "phone") == 0) {
 
@@ -4665,7 +4665,7 @@ bool SystemService::msmEntry(LSMessage* message)
 
 		if (m_brickMode) {
 			g_debug("%s: exiting brick mode", __PRETTY_FUNCTION__);
-            //dm->popDNAST("brickmode-local");
+			//dm->popDNAST("brickmode-local");
 			Q_EMIT signalExitBrickMode();
 
 			m_brickMode = false;
@@ -4673,7 +4673,7 @@ bool SystemService::msmEntry(LSMessage* message)
 
 		if (m_fscking) {
 			g_debug("%s: fsck ended", __PRETTY_FUNCTION__);
-            //WindowServer::instance()->stopProgressAnimation();
+			//WindowServer::instance()->stopProgressAnimation();
 			m_fscking = false;
 		}
 	}
@@ -4684,7 +4684,7 @@ bool SystemService::msmEntry(LSMessage* message)
 		if (!m_brickMode) {
 
 			g_debug("%s: entering brick mode", __PRETTY_FUNCTION__);
-            //dm->pushDNAST("brickmode-local");
+			//dm->pushDNAST("brickmode-local");
 
 			// are we going into media sync or USB drive mode?
 			mode = json_object_object_get(payload, "enterIMasq");
@@ -4711,7 +4711,7 @@ bool SystemService::msmFscking(LSMessage* message)
 	m_msmExitClean = false;
 	m_fscking = true;
 
-    //WindowServer::instance()->startProgressAnimation(ProgressAnimation::TypeFsck);
+	//WindowServer::instance()->startProgressAnimation(ProgressAnimation::TypeFsck);
 
 	return true;
 }
@@ -4728,8 +4728,8 @@ bool SystemService::msmPartitionAvail(LSMessage* message)
 void SystemService::vibrate(const char* soundClass)
 {
 	bool result;
-    LSError lsError;
-    LSErrorInit(&lsError);
+	LSError lsError;
+	LSErrorInit(&lsError);
 
 	bool isAlert = soundClass && ((strcasestr(soundClass, "alerts") != 0) ||
 								  (strcasestr(soundClass, "alarm")  != 0) ||
@@ -4749,10 +4749,10 @@ void SystemService::vibrate(const char* soundClass)
 
 bool SystemService::telephonyServiceUpCallback(LSHandle* handle, LSMessage* message, void* ctxt)
 {
-    // {"serviceName":"com.palm.telephony", "connected": true}
-    VALIDATE_SCHEMA_AND_RETURN(handle,
-                               message,
-                               SCHEMA_2(REQUIRED(serviceName, string), REQUIRED(connected, boolean)));
+	// {"serviceName":"com.palm.telephony", "connected": true}
+	VALIDATE_SCHEMA_AND_RETURN(handle,
+								message,
+								SCHEMA_2(REQUIRED(serviceName, string), REQUIRED(connected, boolean)));
 
 	struct json_object* json = json_tokener_parse(LSMessageGetPayload(message));
 	if (json)  {
@@ -4786,10 +4786,10 @@ bool SystemService::telephonyServiceUpCallback(LSHandle* handle, LSMessage* mess
 
 bool SystemService::telephonyEventsCallback(LSHandle* handle, LSMessage* message, void* ctxt)
 {
-    // {"macroEventCalls":{"event":string}}
-    VALIDATE_SCHEMA_AND_RETURN(handle,
-                               message,
-                               OBJECT_REQUIRED_1(macroEventCalls, event, string));
+	// {"macroEventCalls":{"event":string}}
+	VALIDATE_SCHEMA_AND_RETURN(handle,
+								message,
+								OBJECT_REQUIRED_1(macroEventCalls, event, string));
 
 	struct json_object* root = json_tokener_parse(LSMessageGetPayload(message));
 	struct json_object* label = 0;
@@ -4821,8 +4821,8 @@ Done:
 void SystemService::postNovacomStatus()
 {
 	bool result;
-    LSError lsError;
-    LSErrorInit(&lsError);
+	LSError lsError;
+	LSErrorInit(&lsError);
 
 	bool novacomEnabled = false;
 	struct stat stBuf;
@@ -4846,18 +4846,18 @@ void SystemService::postNovacomStatus()
 extern "C" void __attribute__((weak)) qt_dumpAllRasters(const char* path);
 
 static bool cbDumpRasters(LSHandle* lshandle, LSMessage *message,
-							   void *userData)
+								void *userData)
 {
-    LSError lsError;
-    LSErrorInit(&lsError);
+	LSError lsError;
+	LSErrorInit(&lsError);
 
-    // {"path":string}
-    VALIDATE_SCHEMA_AND_RETURN(lshandle,
-                               message,
-                               SCHEMA_1(REQUIRED(path, string)));
+	// {"path":string}
+	VALIDATE_SCHEMA_AND_RETURN(lshandle,
+								message,
+								SCHEMA_1(REQUIRED(path, string)));
 
 	const char* str = LSMessageGetPayload(message);
-    if( !str )
+	if( !str )
 		return false;
 
 	bool success = false;
@@ -4903,13 +4903,13 @@ Done:
 }
 
 static bool cbDumpJemallocHeap(LSHandle* lshandle, LSMessage *message,
-							   void *userData)
+								void *userData)
 {
-/*    LSError lsError;
-    LSErrorInit(&lsError);
+/*	LSError lsError;
+	LSErrorInit(&lsError);
 
 	const char* str = LSMessageGetPayload(message);
-    if( !str )
+	if( !str )
 		return false;
 
 	bool success = false;
@@ -4943,7 +4943,7 @@ static bool cbDumpJemallocHeap(LSHandle* lshandle, LSMessage *message,
 	}
 
 	dlerror();
-	*(void**) (&je_dumpHeap) = dlsym(dlHandle, "je_dumpHeap");         
+	*(void**) (&je_dumpHeap) = dlsym(dlHandle, "je_dumpHeap");		 
 	if ((dlError = dlerror()) != 0) {
 		printf("dl error: %s\n", dlError);
 		dlclose((dlHandle));
@@ -4973,15 +4973,15 @@ Done:
 
 bool SystemService::touchToShareCanTapStatusCallback(LSHandle* handle, LSMessage* message, void* ctxt)
 {
-	return SystemService::instance()->touchToShareCanTapStatus(handle, message, ctxt);    
+	return SystemService::instance()->touchToShareCanTapStatus(handle, message, ctxt);	
 }
 
 bool SystemService::touchToShareCanTapStatus(LSHandle* handle, LSMessage* message, void* ctxt)
 {
-    // {"canTap" : boolean}
-    VALIDATE_SCHEMA_AND_RETURN(handle,
-                               message,
-                               SCHEMA_1(REQUIRED(canTap, boolean)));
+	// {"canTap" : boolean}
+	VALIDATE_SCHEMA_AND_RETURN(handle,
+								message,
+								SCHEMA_1(REQUIRED(canTap, boolean)));
 
 	const char* str = LSMessageGetPayload(message);
 	if (!str)
@@ -5001,7 +5001,7 @@ bool SystemService::touchToShareCanTapStatus(LSHandle* handle, LSMessage* messag
 
 	json_object_put(payload);
 
-	return true;    
+	return true;	
 }
 
 /*!
@@ -5018,7 +5018,7 @@ Start or stop the animation that indicates to user that Touch-to-share is active
 \subsection com_palm_systemmanager_touch_to_share_device_in_range_syntax Syntax:
 \code
 {
-    "inRange" : boolean
+	"inRange" : boolean
 }
 \endcode
 
@@ -5027,7 +5027,7 @@ Start or stop the animation that indicates to user that Touch-to-share is active
 \subsection com_palm_systemmanager_touch_to_share_device_in_range_returns Returns:
 \code
 {
-    "returnValue": boolean
+	"returnValue": boolean
 }
 \endcode
 
@@ -5041,17 +5041,17 @@ luna-send -n 1 -f luna://com.palm.systemmanager/touchToShareDeviceInRange '{ "in
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 */
 static bool cbTouchToShareDeviceInRange(LSHandle* lsHandle, LSMessage* message,
-									   void* user_data)
+										void* user_data)
 {
-    // {"inRange" : boolean}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_1(REQUIRED(inRange, boolean)));
+	// {"inRange" : boolean}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_1(REQUIRED(inRange, boolean)));
 
 	const char* str = LSMessageGetPayload(message);
 	if (!str)
@@ -5082,7 +5082,7 @@ static bool cbTouchToShareDeviceInRange(LSHandle* lsHandle, LSMessage* message,
 
 	json_object_put(reply);
 
-	return true;	    
+	return true;		
 }
 
 /*!
@@ -5099,7 +5099,7 @@ After Touch-to-share transfer is complete, call this to show the appropriate ani
 \subsection com_palm_systemmanager_touch_to_share_app_url_transferred_syntax Syntax:
 \code
 {
-    "appid" : string
+	"appid" : string
 }
 \endcode
 
@@ -5108,7 +5108,7 @@ After Touch-to-share transfer is complete, call this to show the appropriate ani
 \subsection com_palm_systemmanager_touch_to_share_app_url_transferred_returns Returns:
 \code
 {
-    "returnValue": boolean
+	"returnValue": boolean
 }
 \endcode
 
@@ -5122,17 +5122,17 @@ luna-send -n 1 -f luna://com.palm.systemmanager/touchToShareAppUrlTransferred '{
 Example response for a succesful call:
 \code
 {
-    "returnValue": true
+	"returnValue": true
 }
 \endcode
 */
 static bool cbTouchToShareAppUrlTransferred(LSHandle* lsHandle, LSMessage* message,
 											void* user_data)
 {
-    // {"appid" : string}
-    VALIDATE_SCHEMA_AND_RETURN(lsHandle,
-                               message,
-                               SCHEMA_1(REQUIRED(appid, string)));
+	// {"appid" : string}
+	VALIDATE_SCHEMA_AND_RETURN(lsHandle,
+								message,
+								SCHEMA_1(REQUIRED(appid, string)));
 
 	const char* str = LSMessageGetPayload(message);
 	if (!str)
@@ -5163,7 +5163,7 @@ static bool cbTouchToShareAppUrlTransferred(LSHandle* lsHandle, LSMessage* messa
 
 	json_object_put(reply);
 
-	return true;	    
+	return true;		
 }
 
 /*!
@@ -5180,7 +5180,7 @@ Subscribe to turbo mode status changes. Turbo mode is enabled on subscription, i
 \subsection com_palm_systemmanager_subscribe_turbo_mode_syntax Syntax:
 \code
 {
-    "subscribe": boolean
+	"subscribe": boolean
 }
 \endcode
 
@@ -5189,8 +5189,8 @@ Subscribe to turbo mode status changes. Turbo mode is enabled on subscription, i
 \subsection com_palm_systemmanager_subscribe_turbo_mode_returns Returns:
 \code
 {
-    "returnValue": boolean,
-    "subscribed": boolean
+	"returnValue": boolean,
+	"subscribed": boolean
 }
 \endcode
 
@@ -5205,15 +5205,15 @@ luna-send -n 1 -f luna://com.palm.systemmanager/subscribeTurboMode '{ "subscribe
 Example response for a succesful call:
 \code
 {
-    "returnValue": true,
-    "subscribed": true
+	"returnValue": true,
+	"subscribed": true
 }
 \endcode
 */
 static std::set<LSMessage *> sTurboModeSubscriptions;
 static bool cbSubscribeTurboMode(LSHandle* lshandle, LSMessage *message, void *user_data)
 {
-    SUBSCRIBE_SCHEMA_RETURN(lshandle, message);
+	SUBSCRIBE_SCHEMA_RETURN(lshandle, message);
 
 	bool success = true;
 	bool subscribed = false;
