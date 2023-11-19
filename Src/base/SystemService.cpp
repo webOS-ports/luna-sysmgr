@@ -359,8 +359,7 @@ void SystemService::startService()
 	if (!result)
 		goto Done;
 
-	//We don't have com.palm.accountservices available, so it doesn't make much sense to do the call to postNovacomStatus either
-	//postNovacomStatus();
+	postNovacomStatus();
 
 Done:
 
@@ -4832,13 +4831,13 @@ void SystemService::postNovacomStatus()
 		novacomEnabled = true;
 
 	result = LSCall(m_service,
-					"palm://com.palm.accountservices/updateDeviceProperties",
+					"luna://com.webos.service.systemservice/setPreferences",
 					novacomEnabled ?
 					"{\"novacomEnabled\":\"true\"}" :
 					"{\"novacomEnabled\":\"false\"}",
 					NULL, NULL, NULL, &lsError);
 	if (!result) {
-		g_warning("Failed to call palm://com.palm.accountservices/updateDeviceProperties: %s",
+		g_warning("Failed to call luna://com.webos.service.systemservice/setPreferences: %s",
 				  lsError.message);
 		LSErrorFree(&lsError);
 	}
