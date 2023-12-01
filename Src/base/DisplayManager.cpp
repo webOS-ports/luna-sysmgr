@@ -58,7 +58,7 @@
 
 #define DISPLAY_APPID "com.palm.display"
 #define URI_PREFS_GET "palm://com.palm.preferences/appProperties/Get"
-#define URI_PREFS_SET "palm://com.palm.preferences/appProperties/Set"
+#define URI_PREFS_SET "palm://com.palm.preferences/appProperties/setAppProperty"
 
 #define URI_SIGNAL_ADDMATCH "palm://com.palm.lunabus/signal/addmatch"
 #define URI_POWERD_BATTERY_SIGNAL_REQUEST "palm://com.palm.display/com/palm/power/batteryStatusQuery"
