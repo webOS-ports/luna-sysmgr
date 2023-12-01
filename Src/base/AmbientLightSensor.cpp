@@ -1,6 +1,7 @@
 /* @@@LICENSE
 *
 *      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2023 Herman van Hazendonk <github.com@herrie.org>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -59,16 +60,11 @@ AmbientLightSensor::AmbientLightSensor ()
     , m_alsEnabled(false)
     , m_alsIsOn(false)
     , m_alsRegion(ALS_REGION_UNDEFINED)
-    , m_alsSum(0)
     , m_alsLastOff(0)
     , m_alsDisplayOn(false)
     , m_alsSubscriptions(0)
     , m_alsDisabled(0)
     , m_alsHiddOnline(false)
-    , m_alsFastRate(false)
-    , m_alsSampleCount(0)
-    , m_alsCountInRegion(0)
-    , m_alsSamplesNeeded (ALS_INIT_SAMPLE_SIZE)
     , m_als (0)
 {
     LSError lserror;
@@ -120,26 +116,10 @@ AmbientLightSensor::AmbientLightSensor ()
     }
 
     if (Settings::LunaSettings()->enableAls) {
-	m_alsEnabled = true; 
+    m_alsEnabled = true; 
 
-	g_warning ("ALSCal token found, expecting lux values in light events");
-
-
-	m_alsBorder[ALS_REGION_UNDEFINED] = -1;
-	m_alsBorder[ALS_REGION_DARK] = 6;
-	m_alsBorder[ALS_REGION_DIM] = 100;
-	m_alsBorder[ALS_REGION_INDOOR] = 1000;
-	m_alsBorder[ALS_REGION_OUTDOOR] = INT_MAX;
-
-	// margins are higher at lower lux values
-	m_alsMargin[ALS_REGION_UNDEFINED] = 0;
-	m_alsMargin[ALS_REGION_DARK] = 4;
-	m_alsMargin[ALS_REGION_DIM] = 10;
-	m_alsMargin[ALS_REGION_INDOOR] = 100;
-	m_alsMargin[ALS_REGION_OUTDOOR] = 0;
-
-	m_als = new QLightSensor();
-	connect(m_als, SIGNAL(readingChanged()), this, SLOT(slotReadingChanged()));
+    m_als = new QAmbientLightSensor();
+    connect(m_als, SIGNAL(readingChanged()), this, SLOT(slotReadingChanged()));
     }
     else {
         g_warning ("%s: ALS is not enabled", __PRETTY_FUNCTION__); 
@@ -162,7 +142,7 @@ AmbientLightSensor::~AmbientLightSensor()
     LSErrorInit(&lserror);
     bool result;
 
-	result = LSUnregister(m_service, &lserror);
+    result = LSUnregister(m_service, &lserror);
     if (!result)
     {
         g_message ("%s: failed at %s with message %s", __PRETTY_FUNCTION__, lserror.func, lserror.message);
@@ -174,9 +154,9 @@ AmbientLightSensor::~AmbientLightSensor()
 
 void AmbientLightSensor::slotReadingChanged ()
 {
-	QLightReading *reading = m_als->reading();
-	update(static_cast<int>(reading->lux()));
-	return;
+    QAmbientLightReading *reading = m_als->reading();
+    update(static_cast<int>(reading->lightLevel()));
+    return;
 }
 
 int AmbientLightSensor::getCurrentRegion ()
@@ -223,16 +203,11 @@ bool AmbientLightSensor::on ()
 
     int timeSinceLastReading = Time::curTimeMs() - m_alsLastOff;
 
-    m_alsSampleCount = 0;
-    m_alsCountInRegion = 0;
-    m_alsSamplesNeeded = ALS_INIT_SAMPLE_SIZE;
-    m_alsSampleList.clear();
     m_alsRegion = ALS_REGION_INDOOR;
 
     if (NULL != m_als)
     {
         g_debug ("%s: ALS on!", __PRETTY_FUNCTION__);
-        m_alsFastRate = true;
         return m_als->start();
     }
     return true;
@@ -270,10 +245,10 @@ bool AmbientLightSensor::off ()
     return true;
 }
 
-bool AmbientLightSensor::update (int intensity)
+bool AmbientLightSensor::update (int lightLevel)
 {
     if (Settings::LunaSettings()->enableAls)
-        return updateAls (intensity);
+        return updateAls (lightLevel);
     else 
         return false;
 }
@@ -281,17 +256,13 @@ bool AmbientLightSensor::update (int intensity)
 bool sortIncr (int32_t alsVal1, int32_t alsVal2) 
 {
     if (alsVal1 > alsVal2)
-	return false;
+    return false;
     return true;
 }
 
-// this is the als region estimation for the newer sensors
-// the als region is estimated from  a fixed number of samples (m_alsSamplesNeeded).
-// once the als region is determined, all incoming values that fall in the current region are discarded
-// if an incoming value is outside the current region, we collect the samples again and re-estimate the region
 // this allows the als region to move directly to the current light condition.
 
-bool AmbientLightSensor::updateAls(int intensity)
+bool AmbientLightSensor::updateAls(int lightLevel)
 {
     if (Settings::LunaSettings()->hardwareType != Settings::HardwareTypeDevice)
         return false;
@@ -306,7 +277,7 @@ bool AmbientLightSensor::updateAls(int intensity)
         m_alsRegion = ALS_REGION_UNDEFINED;
         g_debug(
                 "%s: reported light level of %d [region set to default by subscription]",
-                __PRETTY_FUNCTION__, intensity);
+                __PRETTY_FUNCTION__, lightLevel);
 
         goto end;
     }
@@ -314,84 +285,31 @@ bool AmbientLightSensor::updateAls(int intensity)
     if (!m_alsEnabled) {
         m_alsRegion = ALS_REGION_UNDEFINED;
         g_debug("%s: reported light level of %d [device not calibrated]",
-                __PRETTY_FUNCTION__, intensity);
+                __PRETTY_FUNCTION__, lightLevel);
 
         goto end;
     }
 
-    if (intensity < 0) {
-        g_warning("%s: invalid intensity %d", __PRETTY_FUNCTION__, intensity);
+    if (lightLevel < 0) {
+        g_warning("%s: invalid lightLevel %d", __PRETTY_FUNCTION__, lightLevel);
         return false;
     }
 
-    if (m_alsRegion < ALS_REGION_UNDEFINED || m_alsRegion > ALS_REGION_OUTDOOR) {
+    if (m_alsRegion < ALS_REGION_UNDEFINED || m_alsRegion > ALS_REGION_SUNNY) {
         g_warning("%s: current region is invalid, resetting to indoor",
                 __PRETTY_FUNCTION__);
         m_alsRegion = ALS_REGION_INDOOR;
     }
 
-    if (m_alsSampleCount == 0)
-    {
-        m_alsSum = 0;
-    }
-
-    if (m_alsSampleCount == m_alsSamplesNeeded) {
-        m_alsSum -= m_alsSampleList.front();
-        m_alsSampleList.pop_front();
-        m_alsSampleCount--;
-    }
-
-    // start collecting samples
-    if (m_alsSampleCount < m_alsSamplesNeeded) {
-        // g_debug("%s: received sample %d", __PRETTY_FUNCTION__, intensity);
-        // maintaining a running sum of the last m_alsSamplesNeeded number of samples
-        // also maintaining the last m_alsSamplesNeeded values in an array
-        m_alsSampleList.push_back(intensity);
-        m_alsSum += intensity;
-        m_alsSampleCount++;
-    }
-
-    if (intensity < m_alsBorder[m_alsRegion - 1] - m_alsMargin[m_alsRegion - 1] || intensity > m_alsBorder[m_alsRegion] + m_alsMargin[m_alsRegion])
-    {
-        if (!m_alsFastRate)
-        {
-            m_alsCountInRegion = 0;
-            g_debug ("resetting ALS to sample at fast rate");
-            // switch to the fast mode
-            m_alsFastRate = true;
-        }
-    } else {
-        if (m_alsCountInRegion == ALS_INIT_SAMPLE_SIZE)
-        {
-            if (m_alsFastRate) {
-                g_debug ("resetting ALS to sample at slow rate");
-                // switch to the slow mode
-                m_alsFastRate = false;
-            }
-        }
-        if (m_alsCountInRegion <= ALS_INIT_SAMPLE_SIZE)
-            m_alsCountInRegion++;
-    }
-
-    if (m_alsSampleCount == m_alsSamplesNeeded) {
-        // sample count is now the required sample size, estimate ALS region
-        while (m_alsRegion > ALS_REGION_DARK && (m_alsSum / ALS_SAMPLE_SIZE)
-                < (m_alsBorder[m_alsRegion - 1] - m_alsMargin[m_alsRegion - 1])) {
-            --m_alsRegion;
-        }
-
-        while (m_alsRegion < ALS_REGION_OUTDOOR && (m_alsSum / ALS_SAMPLE_SIZE)
-                > (m_alsBorder[m_alsRegion] + m_alsMargin[m_alsRegion])) {
-            ++m_alsRegion;
-        }
-    }
+    //FIXME: Is this really correct?
+    m_alsRegion = lightLevel;
 
 end:
 
     if (m_alsSubscriptions > 0) {
         gchar *status = g_strdup_printf(
-                "{\"returnValue\":true,\"current\":%i,\"region\":%i}",
-                intensity, m_alsRegion);
+                "{\"returnValue\":true,\"region\":%i}",
+                m_alsRegion);
 
         if (NULL != status)
             result = LSSubscriptionReply(m_service, "/control/status", status,
@@ -433,16 +351,14 @@ Get status and optionally enable or disable the ambient light sensor.
 \code
 {
     "returnValue": boolean,
-    "current": int,
-    "average": int,
+    "region": int,
     "disabled": boolean,
     "subscribed": boolean
 }
 \endcode
 
 \param returnValue Indicates if the call was succesful.
-\param current Current value of the ambient light sensor.
-\param average Average value of the ambient light sensor.
+\param region Current value of the ambient light sensor.
 \param disabled True if ambient light sensor is disabled.
 \param subscribed True if subscribed to receive status updates.
 
@@ -450,19 +366,18 @@ Get status and optionally enable or disable the ambient light sensor.
 \code
 {
     "returnValue": boolean,
-    "current": int,
     "region": int
 }
 \endcode
 
 \param returnValue Indicates if the call was succesful.
-\param current Current value of the ambient light sensor.
-\param region A value between 0-4 describing the amount of ambient light:
+\param region A value between 0-5 describing the amount of ambient light:
 \li 0: Undefined, when the sensor is disabled.
 \li 1: Dark
 \li 2: Dim
 \li 3: Indoor
 \li 4: Outdoor
+\li 5: Sunny
 
 \subsection com_palm_ambient_light_sensor_control_status_examples Examples:
 \code
@@ -473,8 +388,7 @@ Example response for a succesful call:
 \code
 {
     "returnValue": true,
-    "current": 6,
-    "average": 187,
+    "region": 1,
     "disabled": true,
     "subscribed": true
 }
@@ -484,22 +398,18 @@ Example status updates:
 \code
 {
     "returnValue": true,
-    "current": 184,
     "region": 3
 }
 {
     "returnValue": true,
-    "current": 179,
-    "region": 3
+    "region": 2
 }
 {
     "returnValue": true,
-    "current": 171,
-    "region": 3
+    "region": 1
 }
 {
     "returnValue": true,
-    "current": 66,
     "region": 3
 }
 \endcode
@@ -537,23 +447,23 @@ bool AmbientLightSensor::controlStatus(LSHandle *sh, LSMessage *message, void *c
         als->m_alsSubscriptions++;
         als->on ();
 
-		bool disable = false;
-		const char* str = LSMessageGetPayload(message);
-		if (str) {
-			json_object* root = json_tokener_parse(str);
-			if (root) {
-				result = true;
-	    	    disable = json_object_get_boolean(json_object_object_get(root, "disableALS"));
-				json_object_put(root);
-			}
-		}
+        bool disable = false;
+        const char* str = LSMessageGetPayload(message);
+        if (str) {
+            json_object* root = json_tokener_parse(str);
+            if (root) {
+                result = true;
+                disable = json_object_get_boolean(json_object_object_get(root, "disableALS"));
+                json_object_put(root);
+            }
+        }
 
         if (disable)
             als->m_alsDisabled++;
     }
 
-    gchar *status = g_strdup_printf ("{\"returnValue\":true,\"current\":%i,\"average\":%i,\"disabled\":%s,\"subscribed\":%s}",
-            als->m_alsSampleList.empty() ? 0: als->m_alsSampleList.back(), als->m_alsSum / als->m_alsSamplesNeeded, als->m_alsDisabled > 0 ? "true" : "false",
+    gchar *status = g_strdup_printf ("{\"returnValue\":true,\"current\":%i,\"disabled\":%s,\"subscribed\":%s}",
+            als->m_alsRegion, als->m_alsDisabled > 0 ? "true" : "false",
             subscribed ? "true" : "false");
 
     if (NULL != status)
@@ -581,16 +491,16 @@ bool AmbientLightSensor::cancelSubscription(LSHandle *sh, LSMessage *message, vo
         als->m_alsSubscriptions--;
         if (als->m_alsSubscriptions == 0)
         {
-			bool disable = false;
-			const char* str = LSMessageGetPayload(message);
-			if (str) {
-				json_object* root = json_tokener_parse(str);
-				if (root) {
-					result = true;
-					disable = json_object_get_boolean(json_object_object_get(root, "disableALS"));
-					json_object_put(root);
-				}
-			}
+            bool disable = false;
+            const char* str = LSMessageGetPayload(message);
+            if (str) {
+                json_object* root = json_tokener_parse(str);
+                if (root) {
+                    result = true;
+                    disable = json_object_get_boolean(json_object_object_get(root, "disableALS"));
+                    json_object_put(root);
+                }
+            }
             if (result && disable)
                 als->m_alsDisabled--;
             als->off ();

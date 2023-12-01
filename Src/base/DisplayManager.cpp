@@ -2030,10 +2030,12 @@ uint32_t DisplayManager::getCoreNaviBrightness()
     switch (region)
     {
         case ALS_REGION_OUTDOOR:
+        case ALS_REGION_SUNNY:
         return 100;
         break;
         case ALS_REGION_UNDEFINED:
         case ALS_REGION_DARK:
+        case ALS_REGION_DIM:
         default:
         return 25;
         break;
@@ -2086,6 +2088,7 @@ int32_t DisplayManager::getDisplayBrightness()
         switch (region)
         {
         case ALS_REGION_OUTDOOR:
+        case ALS_REGION_SUNNY:
             b = Settings::LunaSettings()->backlightOutdoorScale * b / 100;
             break;
         case ALS_REGION_DIM:
@@ -2143,6 +2146,7 @@ int32_t DisplayManager::getKeypadBrightness()
     switch (region)
     {
         case ALS_REGION_OUTDOOR:
+        case ALS_REGION_SUNNY:
             b = 0;
             break;
         default:
