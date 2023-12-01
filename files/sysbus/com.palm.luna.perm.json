@@ -42,7 +42,9 @@
         "database.management",
         "database.operation",
         "location-service.operation",
-        "telephony.management"
+        "telephony.management",
+        "preferences.systempropertyquery",
+        "preferences.operation"
     ],
     "com.palm.keys": [
         "database.management",
