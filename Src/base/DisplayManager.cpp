@@ -65,7 +65,7 @@
 #define URI_CHARGER_SIGNAL_REQUEST "palm://com.palm.display/com/palm/power/chargerStatusQuery"
 #define URI_TELEPHONY_CHARGER_SIGNAL_REQUEST "palm://com.palm.telephony/chargeSourceQuery"
 #define URI_USBDOCK_SIGNAL_REQUEST "palm://com.palm.display/com/palm/power/USBDockStatus"
-#define URI_LBS_GETCURRENTLOC			"palm://com.palm.location/getCurrentPosition"
+#define URI_LBS_GETCURRENTLOC            "palm://com.palm.location/getCurrentPosition"
 
 #define URI_SLIDER_STATUS_REQUEST "palm://com.palm.keys/switches/status"
 
@@ -73,7 +73,7 @@
 #define JSON_USBDOCK_SIGNAL_ADDMATCH "{\"category\":\"/com/palm/power\",\"method\":\"USBDockStatus\"}"
 #define JSON_BATTERY_SIGNAL_ADDMATCH "{\"category\":\"/com/palm/power\",\"method\":\"batteryStatus\"}"
 #define JSON_SIGNAL_REQUEST "{}"
-#define JSON_LBS_CURRENTLOCATIONINF		"{\"accuracy\":%i,\"responseTime\":%i}"
+#define JSON_LBS_CURRENTLOCATIONINF        "{\"accuracy\":%i,\"responseTime\":%i}"
 
 #define JSON_SLIDER_STATUS_REQUEST "{\"get\":\"slider\"}"
 #define URI_AUDIOD_STATUS "palm://org.webosports.service.audio/getStatus"
@@ -393,14 +393,14 @@ DisplayManager::DisplayManager()
     if (LP_ERR_NONE == e && prefHandle)
     {
         // restore the preferences :-)
-		json_object* object = 0;
+        json_object* object = 0;
         LPAppCopyValueCJ (prefHandle, "maximumBrightness", &object);
         if (object)
         {
-			m_maxBrightness = json_object_get_int(json_object_object_get(object, "maximumBrightness"));
+            m_maxBrightness = json_object_get_int(json_object_object_get(object, "maximumBrightness"));
             m_maxBrightness = qBound(MINIMUM_ON_BRIGHTNESS, m_maxBrightness, 100);
-			json_object_put(object);
-			object = 0;
+            json_object_put(object);
+            object = 0;
         }
 
         // maybe we should get more preferences here
@@ -409,16 +409,16 @@ DisplayManager::DisplayManager()
         {
             int timeout = json_object_get_int(json_object_object_get(object, "timeout")) * 1000;
             setTimeout (timeout);
-			json_object_put(object);
-			object = 0;
+            json_object_put(object);
+            object = 0;
         }
 
         LPAppCopyValueCJ (prefHandle, "onWhenConnected", &object);
         if (object)
         {
             m_onWhenConnected = json_object_get_boolean(json_object_object_get(object, "onWhenConnected"));
-			json_object_put(object);
-			object = 0;
+            json_object_put(object);
+            object = 0;
         }
 
         // discard the prefs handle
@@ -472,7 +472,7 @@ void DisplayManager::clearStates()
 
 GMainLoop* DisplayManager::mainLoop()
 {
-	return HostBase::instance()->mainLoop();
+    return HostBase::instance()->mainLoop();
 }
 
 bool DisplayManager::isUSBCharging() const
@@ -550,7 +550,7 @@ bool DisplayManager::hasSlider() const
 
 std::string DisplayManager::puckId() const
 {
-	return m_puckId;
+    return m_puckId;
 }
 
 bool DisplayManager::isProximityActivated() const
@@ -580,8 +580,8 @@ bool DisplayManager::pushDNAST(const char *id)
 
     m_dnast++;
 
-	if (!m_powerdOnline)
-		return true;
+    if (!m_powerdOnline)
+        return true;
 
     g_debug ("%s: push (%i)", __FUNCTION__, m_dnast);
 
@@ -594,7 +594,7 @@ bool DisplayManager::pushDNAST(const char *id)
             on();
         }
 
-	m_currentState->stopInactivityTimer();
+    m_currentState->stopInactivityTimer();
         notifySubscribers(DISPLAY_EVENT_PUSH_DNAST);
     }
 
@@ -607,8 +607,8 @@ bool DisplayManager::popDNAST(const char *id)
 
     if (m_dnast <= 0) {
         g_critical ("%s: unmatched pop: %d", __FUNCTION__, m_dnast);
-		return false;
-	}
+        return false;
+    }
 
     m_dnast--;
 
@@ -868,18 +868,18 @@ bool DisplayManager::sliderCallback(LSHandle *sh, LSMessage *message, void *ctx)
 
     // modify the state according to the message
     // and store it in the newState
-	json_object* root = 0;
-	json_object* label = 0;
-	const char* str = LSMessageGetPayload(message);
-	if (!str)
-		goto error;
-	root = json_tokener_parse(str);
-	if (!root)
-		goto error;
+    json_object* root = 0;
+    json_object* label = 0;
+    const char* str = LSMessageGetPayload(message);
+    if (!str)
+        goto error;
+    root = json_tokener_parse(str);
+    if (!root)
+        goto error;
 
-	label = json_object_object_get(root, "key");
-	if (!label)
-		goto error;
+    label = json_object_object_get(root, "key");
+    if (!label)
+        goto error;
 
     if (0 != strcmp (json_object_get_string(label), "slider"))
         goto error;
@@ -900,7 +900,7 @@ bool DisplayManager::sliderCallback(LSHandle *sh, LSMessage *message, void *ctx)
 error:
 
     token = LSMessageGetResponseToken (message);
-   	if (!LSCallCancel (sh, token, &lserror))
+       if (!LSCallCancel (sh, token, &lserror))
     {
         LSErrorPrint (&lserror, stderr);
         LSErrorFree (&lserror);
@@ -927,8 +927,8 @@ bool DisplayManager::batteryCallback(LSHandle *sh, LSMessage *message, void *ctx
     json_object* root = 0;
     const char* str = LSMessageGetPayload(message);
     if (str) {
-	root = json_tokener_parse(str);
-	result = (root);
+    root = json_tokener_parse(str);
+    result = (root);
     }
 
     if (result)
@@ -1012,61 +1012,61 @@ bool DisplayManager::usbDockCallback(LSHandle *sh, LSMessage *message, void *ctx
 
     label = json_object_object_get(root, "Charging");
     if (label) {
-	    charging = json_object_get_boolean (label);
+        charging = json_object_get_boolean (label);
     }
 
     label = json_object_object_get(root, "DockConnected");
     if (label) {
-	    bool dockConnected = json_object_get_boolean (label);
-	    if (dockConnected && charging) {
-		    newState |= CHARGER_INDUCTIVE;
+        bool dockConnected = json_object_get_boolean (label);
+        if (dockConnected && charging) {
+            newState |= CHARGER_INDUCTIVE;
 
-		    label = json_object_object_get(root, "DockSerialNo");
-		    if (label) {
-			    dm->m_puckId = json_object_get_string (label);
-			    if (dm->m_puckId == "NULL")
-				    dm->m_puckId.clear();
-		    }
+            label = json_object_object_get(root, "DockSerialNo");
+            if (label) {
+                dm->m_puckId = json_object_get_string (label);
+                if (dm->m_puckId == "NULL")
+                    dm->m_puckId.clear();
+            }
 
-		    if (dm->m_chargerConnected != newState)
-		    {
-			    event = DISPLAY_EVENT_INDUCTIVE_CHARGER_CONNECTED;
-			    dm->updateState (event);
-		    }
-	    }
-	    else if (dm->m_chargerConnected & CHARGER_INDUCTIVE) {
-		    newState &= ~(CHARGER_INDUCTIVE);
-		    dm->m_puckId.clear();
+            if (dm->m_chargerConnected != newState)
+            {
+                event = DISPLAY_EVENT_INDUCTIVE_CHARGER_CONNECTED;
+                dm->updateState (event);
+            }
+        }
+        else if (dm->m_chargerConnected & CHARGER_INDUCTIVE) {
+            newState &= ~(CHARGER_INDUCTIVE);
+            dm->m_puckId.clear();
 
-		    if (dm->m_chargerConnected != newState)
-		    {
-			    event = DISPLAY_EVENT_INDUCTIVE_CHARGER_DISCONNECTED;
-			    dm->updateState (event);
-		    }
-	    }
+            if (dm->m_chargerConnected != newState)
+            {
+                event = DISPLAY_EVENT_INDUCTIVE_CHARGER_DISCONNECTED;
+                dm->updateState (event);
+            }
+        }
     }
 
     label = json_object_object_get(root, "USBConnected");
     if (label) {
-	    bool usbConnected = json_object_get_boolean (label);
-	    if (usbConnected) {
-		    newState |= CHARGER_USB;
-		    if (dm->m_chargerConnected != newState
-				    && !(dm->m_chargerConnected & CHARGER_INDUCTIVE))
-		    {
-			    event = DISPLAY_EVENT_USB_CHARGER_CONNECTED;
-			    dm->updateState (event);
-		    }
-	    }
-	    else {
-		    newState &= ~(CHARGER_USB);
-		    if (dm->m_chargerConnected != newState
-				    && !(dm->m_chargerConnected & CHARGER_INDUCTIVE))
-		    {
-			    event = DISPLAY_EVENT_USB_CHARGER_DISCONNECTED;
-			    dm->updateState (event);
-		    }
-	    }
+        bool usbConnected = json_object_get_boolean (label);
+        if (usbConnected) {
+            newState |= CHARGER_USB;
+            if (dm->m_chargerConnected != newState
+                    && !(dm->m_chargerConnected & CHARGER_INDUCTIVE))
+            {
+                event = DISPLAY_EVENT_USB_CHARGER_CONNECTED;
+                dm->updateState (event);
+            }
+        }
+        else {
+            newState &= ~(CHARGER_USB);
+            if (dm->m_chargerConnected != newState
+                    && !(dm->m_chargerConnected & CHARGER_INDUCTIVE))
+            {
+                event = DISPLAY_EVENT_USB_CHARGER_DISCONNECTED;
+                dm->updateState (event);
+            }
+        }
     }
 
     dm->m_chargerConnected = newState;
@@ -1074,8 +1074,8 @@ bool DisplayManager::usbDockCallback(LSHandle *sh, LSMessage *message, void *ctx
 
 error:
 
-	if (root)
-		json_object_put(root);
+    if (root)
+        json_object_put(root);
 
     return true;
 }
@@ -1178,8 +1178,8 @@ bool DisplayManager::chargerCallback(LSHandle *sh, LSMessage *message, void *ctx
 
 error:
 
-	if (root)
-		json_object_put(root);
+    if (root)
+        json_object_put(root);
 
     return true;
 }
@@ -1252,18 +1252,18 @@ bool DisplayManager::controlSetState(LSHandle *sh, LSMessage *message, void *ctx
 
     bool result = false;
     DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
-	json_object* root = 0;
-	const char* value = 0;
-	const char* str = LSMessageGetPayload(message);
-	if (!str)
-		goto send;
-	root = json_tokener_parse(str);
-	if (!root)
-		goto send;
+    json_object* root = 0;
+    const char* value = 0;
+    const char* str = LSMessageGetPayload(message);
+    if (!str)
+        goto send;
+    root = json_tokener_parse(str);
+    if (!root)
+        goto send;
 
-	value = json_object_get_string(json_object_object_get(root, "state"));
-	if (!value)
-		goto send;
+    value = json_object_get_string(json_object_object_get(root, "state"));
+    if (!value)
+        goto send;
 
 
     result = true;
@@ -1319,8 +1319,8 @@ send:
         LSErrorFree (&lserror);
     }
 
-	if (root)
-		json_object_put(root);
+    if (root)
+        json_object_put(root);
 
     return true;
 }
@@ -1333,16 +1333,16 @@ bool DisplayManager::controlCallStatus(LSHandle *sh, LSMessage *message, void *c
 
     bool result = false;
     DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
-	json_object* root = 0;
-	const char* value = 0;
-	const char* str = LSMessageGetPayload(message);
-	if (!str)
-		goto send;
-	root = json_tokener_parse(str);
-	if (!root)
-		goto send;
+    json_object* root = 0;
+    const char* value = 0;
+    const char* str = LSMessageGetPayload(message);
+    if (!str)
+        goto send;
+    root = json_tokener_parse(str);
+    if (!root)
+        goto send;
 
-	value = json_object_get_string(json_object_object_get(root, "state"));
+    value = json_object_get_string(json_object_object_get(root, "state"));
 
     result = true;
     if (0 == strcmp (value, "on"))
@@ -1382,8 +1382,8 @@ send:
         LSErrorFree (&lserror);
     }
 
-	if (root)
-		json_object_put(root);
+    if (root)
+        json_object_put(root);
 
     return true;
 }
@@ -1405,13 +1405,13 @@ bool DisplayManager::cancelSubscription(LSHandle *sh, LSMessage *message, void *
 
         // deterimne it if for DNAST or PKBSK
         const char* str = LSMessageGetPayload(message);
-		if (!str)
-			return true;
-		json_object* root = json_tokener_parse(str);
-		if (!root)
-			return true;
+        if (!str)
+            return true;
+        json_object* root = json_tokener_parse(str);
+        if (!root)
+            return true;
 
-		bool value = json_object_get_boolean(json_object_object_get(root, "requestBlock"));
+        bool value = json_object_get_boolean(json_object_object_get(root, "requestBlock"));
         if (value)
         {
             const char *client = json_object_get_string(json_object_object_get(root, "client"));
@@ -1423,7 +1423,7 @@ bool DisplayManager::cancelSubscription(LSHandle *sh, LSMessage *message, void *
             }
         }
 
-		value = json_object_get_boolean(json_object_object_get(root, "powerKeyBlock"));
+        value = json_object_get_boolean(json_object_object_get(root, "powerKeyBlock"));
         if (value)
         {
             const char *client = json_object_get_string(json_object_object_get(root, "client"));
@@ -1439,7 +1439,7 @@ bool DisplayManager::cancelSubscription(LSHandle *sh, LSMessage *message, void *
             }
         }
 
-		value = json_object_get_boolean(json_object_object_get(root, "proximityEnabled"));
+        value = json_object_get_boolean(json_object_object_get(root, "proximityEnabled"));
         if (value)
         {
             const char *client = json_object_get_string(json_object_object_get(root, "client"));
@@ -1459,7 +1459,7 @@ bool DisplayManager::cancelSubscription(LSHandle *sh, LSMessage *message, void *
             }
         }
 
-		json_object_put(root);
+        json_object_put(root);
     }
 
     return true;
@@ -1547,22 +1547,22 @@ bool DisplayManager::notifySubscribers(int type, sptr<Event> event)
 
 bool DisplayManager::updateTimeout(int timeoutInMs)
 {
-	bool success = setTimeout(timeoutInMs);
-	if (!success)
-		return false;
+    bool success = setTimeout(timeoutInMs);
+    if (!success)
+        return false;
 
-	// save to luna-prefs
-	LSError lserror;
-	LSErrorInit(&lserror);
-	gchar* payload = g_strdup_printf("{\"appId\":\"com.palm.display\",\"key\":\"timeout\",\"value\":{\"timeout\":%i}}",
-									 (m_totalTimeout) / 1000);
-	success = LSCallOneReply (m_service, URI_PREFS_SET, payload, NULL, NULL, NULL, &lserror);
-	if (!success) {
-		LSErrorPrint(&lserror, stderr);
-		LSErrorFree(&lserror);
-	}
-	g_free(payload);
-	return success;
+    // save to luna-prefs
+    LSError lserror;
+    LSErrorInit(&lserror);
+    gchar* payload = g_strdup_printf("{\"appId\":\"com.palm.display\",\"key\":\"timeout\",\"value\":{\"timeout\":%i}}",
+                                     (m_totalTimeout) / 1000);
+    success = LSCallOneReply (m_service, URI_PREFS_SET, payload, NULL, NULL, NULL, &lserror);
+    if (!success) {
+        LSErrorPrint(&lserror, stderr);
+        LSErrorFree(&lserror);
+    }
+    g_free(payload);
+    return success;
 }
 
 bool DisplayManager::setTimeout (int timeoutInMs)
@@ -1659,71 +1659,71 @@ bool DisplayManager::controlGetProperty(LSHandle *sh, LSMessage *message, void *
                                SCHEMA_1(REQUIRED(properties, array)));
 
     bool result = true;
-	const char* str = LSMessageGetPayload(message);
-	json_object* root = 0;
-	json_object* array = 0;
-	json_object* reply = 0;
+    const char* str = LSMessageGetPayload(message);
+    json_object* root = 0;
+    json_object* array = 0;
+    json_object* reply = 0;
 
     DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
 
-	reply = json_object_new_object();
+    reply = json_object_new_object();
 
-	if (!str) {
+    if (!str) {
         result = false;
         goto done;
     }
-	root = json_tokener_parse(str);
-	if (!root) {
-		result = false;
-		goto done;
-	}
+    root = json_tokener_parse(str);
+    if (!root) {
+        result = false;
+        goto done;
+    }
 
-	json_object_object_add(reply, "returnValue", json_object_new_boolean(true));
+    json_object_object_add(reply, "returnValue", json_object_new_boolean(true));
 
     result = false;
 
-	array = json_object_object_get(root, "properties");
+    array = json_object_object_get(root, "properties");
     if (!array || !json_object_is_type(array, json_type_array))
         goto done;
 
-	for (int i=0; i<json_object_array_length(array); i++) {
+    for (int i=0; i<json_object_array_length(array); i++) {
 
-		const char* property = json_object_get_string(json_object_array_get_idx(array, i));
-		if (!property)
-			continue;
+        const char* property = json_object_get_string(json_object_array_get_idx(array, i));
+        if (!property)
+            continue;
 
         g_debug ("%s: (%d) %s", __FUNCTION__, i, property);
 
-		if (0 == strcmp (property, "requestBlock"))
-		{
-			result = true;
-			json_object_object_add(reply, "requestBlock", json_object_new_boolean(dm->m_dnast > 0));
-		}
-		else if (0 == strcmp (property, "powerKeyBlock"))
-		{
-			result = true;
-			json_object_object_add(reply, "powerKeyBlock", json_object_new_boolean(dm->m_blockedPowerKey > 0));
-		}
-		else if (0 == strcmp (property, "timeout"))
-		{
-			result = true;
-			json_object_object_add(reply, "timeout", json_object_new_int( (dm->m_totalTimeout) / 1000));
-		}
-		else if (0 == strcmp (property, "maximumBrightness"))
-		{
-			result = true;
-			json_object_object_add(reply, "maximumBrightness", json_object_new_int(dm->m_maxBrightness));
-		}
-		else if (0 == strcmp (property, "onWhenConnected"))
-		{
-			result = true;
-			json_object_object_add(reply, "onWhenConnected", json_object_new_boolean(dm->m_onWhenConnected));
-		}
-		else if (0 == strcmp (property, "proximityEnabled"))
-		{
-			result = true;
-			json_object_object_add(reply, "proximityEnabled", json_object_new_boolean(dm->m_proximityCount > 0));
-		}
+        if (0 == strcmp (property, "requestBlock"))
+        {
+            result = true;
+            json_object_object_add(reply, "requestBlock", json_object_new_boolean(dm->m_dnast > 0));
+        }
+        else if (0 == strcmp (property, "powerKeyBlock"))
+        {
+            result = true;
+            json_object_object_add(reply, "powerKeyBlock", json_object_new_boolean(dm->m_blockedPowerKey > 0));
+        }
+        else if (0 == strcmp (property, "timeout"))
+        {
+            result = true;
+            json_object_object_add(reply, "timeout", json_object_new_int( (dm->m_totalTimeout) / 1000));
+        }
+        else if (0 == strcmp (property, "maximumBrightness"))
+        {
+            result = true;
+            json_object_object_add(reply, "maximumBrightness", json_object_new_int(dm->m_maxBrightness));
+        }
+        else if (0 == strcmp (property, "onWhenConnected"))
+        {
+            result = true;
+            json_object_object_add(reply, "onWhenConnected", json_object_new_boolean(dm->m_onWhenConnected));
+        }
+        else if (0 == strcmp (property, "proximityEnabled"))
+        {
+            result = true;
+            json_object_object_add(reply, "proximityEnabled", json_object_new_boolean(dm->m_proximityCount > 0));
+        }
     }
 
 done:
@@ -1734,7 +1734,7 @@ done:
         result = LSMessageReply(sh, message, "{\"returnValue\":false,\"errorCode\":1,\"errorText\":\"failed to get property\"}", &lserror);
 
     if (reply)
-	json_object_put(reply);
+    json_object_put(reply);
 
     if(!result)
     {
@@ -1822,9 +1822,9 @@ bool DisplayManager::controlSetProperty(LSHandle *sh, LSMessage *message, void *
                                SCHEMA_7(REQUIRED(requestBlock, boolean), REQUIRED(client, string), REQUIRED(powerKeyBlock, boolean), REQUIRED(timeout, integer), REQUIRED(onWhenConnected, boolean), REQUIRED(maximumBrightness, integer), REQUIRED(proximityEnabled, boolean)));
 
     bool result = false;
-	const char* str = LSMessageGetPayload(message);
-	json_object* root = 0;
-	json_object* label = 0;
+    const char* str = LSMessageGetPayload(message);
+    json_object* root = 0;
+    json_object* label = 0;
     DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
     const char *errorText = NULL;
     int errorCode = 0;
@@ -1833,13 +1833,13 @@ bool DisplayManager::controlSetProperty(LSHandle *sh, LSMessage *message, void *
     bool onWhenConnected = true;
     int32_t mbr = dm->m_maxBrightness;
 
-	if (!str)
+    if (!str)
         goto done;
-	root = json_tokener_parse(str);
-	if (!root)
-		goto done;
+    root = json_tokener_parse(str);
+    if (!root)
+        goto done;
 
-	label = json_object_object_get(root, "requestBlock");
+    label = json_object_object_get(root, "requestBlock");
     if (json_object_get_boolean(label))
     {
         const char *client = json_object_get_string(json_object_object_get(root, "client"));
@@ -1868,7 +1868,7 @@ bool DisplayManager::controlSetProperty(LSHandle *sh, LSMessage *message, void *
     else
         result = true;
 
-	label = json_object_object_get(root, "powerKeyBlock");
+    label = json_object_object_get(root, "powerKeyBlock");
     if (json_object_get_boolean(label))
     {
         const char *client = json_object_get_string(json_object_object_get(root, "client"));
@@ -1895,12 +1895,12 @@ bool DisplayManager::controlSetProperty(LSHandle *sh, LSMessage *message, void *
     else
         result = true;
 
-	label = json_object_object_get(root, "timeout");
-	timeout = json_object_get_int(label);
+    label = json_object_object_get(root, "timeout");
+    timeout = json_object_get_int(label);
     if (label && timeout != -1)
     {
-		result = dm->updateTimeout(timeout * 1000);
-		if (!result) {
+        result = dm->updateTimeout(timeout * 1000);
+        if (!result) {
             errorCode = 43;
             errorText = "failed to set timeout values";
             result = false;
@@ -1910,10 +1910,10 @@ bool DisplayManager::controlSetProperty(LSHandle *sh, LSMessage *message, void *
     else
         result = true;
 
-	label = json_object_object_get(root, "onWhenConnected");
+    label = json_object_object_get(root, "onWhenConnected");
     if (label)
     {
-		onWhenConnected = json_object_get_boolean(label);
+        onWhenConnected = json_object_get_boolean(label);
         // store the setting in the preferences.
         gchar *blah = g_strdup_printf ("{\"appId\":\"com.palm.display\",\"key\":\"onWhenConnected\",\"value\":{\"onWhenConnected\":%s}}",
                 onWhenConnected ? "true" : "false");
@@ -1950,8 +1950,8 @@ bool DisplayManager::controlSetProperty(LSHandle *sh, LSMessage *message, void *
     else
         result = true;
 
-	label = json_object_object_get(root, "maximumBrightness");
-	mbr = json_object_get_int(label);
+    label = json_object_object_get(root, "maximumBrightness");
+    mbr = json_object_get_int(label);
     if (label)
     {
         result = dm->setMaximumBrightness (mbr);
@@ -1965,7 +1965,7 @@ bool DisplayManager::controlSetProperty(LSHandle *sh, LSMessage *message, void *
     else
         result = true;
 
-	label = json_object_object_get(root, "proximityEnabled");
+    label = json_object_object_get(root, "proximityEnabled");
     if (json_object_get_boolean(label))
     {
         const char *client = json_object_get_string(json_object_object_get(root, "client"));
@@ -2011,8 +2011,8 @@ done:
         LSErrorFree (&lserror);
     }
 
-	if (root)
-		json_object_put(root);
+    if (root)
+        json_object_put(root);
 
     return true;
 }
@@ -2024,31 +2024,31 @@ done:
 uint32_t DisplayManager::getCoreNaviBrightness()
 {
     if (DeviceInfo::instance()->coreNaviButton()) {
-	// Only castle ALS is bust
-	int region = m_als->getCurrentRegion ();
+    // Only castle ALS is bust
+    int region = m_als->getCurrentRegion ();
 
-	switch (region)
-	{
-	    case ALS_REGION_OUTDOOR:
-		return 100;
-		break;
-	    case ALS_REGION_UNDEFINED:
-	    case ALS_REGION_DARK:
-	    default:
-		return 25;
-		break;
-	}
+    switch (region)
+    {
+        case ALS_REGION_OUTDOOR:
+        return 100;
+        break;
+        case ALS_REGION_UNDEFINED:
+        case ALS_REGION_DARK:
+        default:
+        return 25;
+        break;
+    }
     }
     else {
-	if (currentState() == DisplayStateOn
-		|| currentState() == DisplayStateOnLocked
-		|| currentState() == DisplayStateOnPuck)
-	    return Settings::LunaSettings()->coreNaviScaler * getDisplayBrightness() / 100;
-	else if (currentState() == DisplayStateDim
-		|| currentState() == DisplayStateDockMode)
-	    return MINIMUM_DIMMED_BRIGHTNESS;
-	else
-	    return 0;
+    if (currentState() == DisplayStateOn
+        || currentState() == DisplayStateOnLocked
+        || currentState() == DisplayStateOnPuck)
+        return Settings::LunaSettings()->coreNaviScaler * getDisplayBrightness() / 100;
+    else if (currentState() == DisplayStateDim
+        || currentState() == DisplayStateDockMode)
+        return MINIMUM_DIMMED_BRIGHTNESS;
+    else
+        return 0;
     }
 
 }
@@ -2060,54 +2060,54 @@ uint32_t DisplayManager::getCoreNaviBrightness()
  */
 int32_t DisplayManager::getDisplayBrightness()
 {
-	// Set display to max brightness when in minimal mode.
+    // Set display to max brightness when in minimal mode.
     if (Settings::LunaSettings()->uiType == Settings::UI_MINIMAL) {
-	    g_message ("UI is in minimal mode, setting to max brightness");
-	    return 100;
+        g_message ("UI is in minimal mode, setting to max brightness");
+        return 100;
     }
 
     int b = m_maxBrightness;
 
     if (m_chargerConnected == CHARGER_NONE)
     {
-	// since there is no charger adjust the level
-	// of brightness if battery is low
-	if (m_batteryL < 30)
-	    b -= 5;
-	if (m_batteryL < 20)
-	    b -= 5;
-	if (m_batteryL < 10)
-	    b -= 10;
+    // since there is no charger adjust the level
+    // of brightness if battery is low
+    if (m_batteryL < 30)
+        b -= 5;
+    if (m_batteryL < 20)
+        b -= 5;
+    if (m_batteryL < 10)
+        b -= 10;
     }
 
     if (Preferences::instance()->isAlsEnabled()) {
-		int region = m_als->getCurrentRegion ();
+        int region = m_als->getCurrentRegion ();
 
-		switch (region)
-		{
-		case ALS_REGION_OUTDOOR:
-			b = Settings::LunaSettings()->backlightOutdoorScale * b / 100;
-			break;
-		case ALS_REGION_DIM:
-			b = Settings::LunaSettings()->backlightDimScale * b / 100;
-			break;
-		case ALS_REGION_DARK:
-			b = Settings::LunaSettings()->backlightDarkScale * b / 100;
-			break;
-		default:
-			// for all other cases, we use b directly
-			break;
-		}
+        switch (region)
+        {
+        case ALS_REGION_OUTDOOR:
+            b = Settings::LunaSettings()->backlightOutdoorScale * b / 100;
+            break;
+        case ALS_REGION_DIM:
+            b = Settings::LunaSettings()->backlightDimScale * b / 100;
+            break;
+        case ALS_REGION_DARK:
+            b = Settings::LunaSettings()->backlightDarkScale * b / 100;
+            break;
+        default:
+            // for all other cases, we use b directly
+            break;
+        }
     }
 
     if (b < MINIMUM_ON_BRIGHTNESS)
-	b = MINIMUM_ON_BRIGHTNESS;
+    b = MINIMUM_ON_BRIGHTNESS;
 
     if (b > 100)
-	b = 100;
+    b = 100;
 
     if (b < 0)
-	b = 0;
+    b = 0;
 
     return b;
 }
@@ -2121,9 +2121,9 @@ int32_t DisplayManager::getKeypadBrightness()
         return 0;
 
     if (currentState() == DisplayStateOff
-	    || currentState() == DisplayStateOffOnCall
-	    || currentState() == DisplayStateDim
-	    || currentState() == DisplayStateDockMode)
+        || currentState() == DisplayStateOffOnCall
+        || currentState() == DisplayStateDim
+        || currentState() == DisplayStateDockMode)
         return 0;
 
     if (m_chargerConnected == CHARGER_NONE)
@@ -2150,10 +2150,10 @@ int32_t DisplayManager::getKeypadBrightness()
     }
 
     if (b > 100)
-	b = 100;
+    b = 100;
 
     if (b < 0)
-	b = 0;
+    b = 0;
 
     return b;
 }
@@ -2167,42 +2167,42 @@ bool DisplayManager::updateBrightness ()
 
 bool DisplayManager::setMaximumBrightness (int maxBrightness, bool save)
 {
-	int result = true;
+    int result = true;
 
     maxBrightness = qBound(MINIMUM_ON_BRIGHTNESS, maxBrightness, 100);
 
     if (maxBrightness != m_maxBrightness)
     {
         if(currentState() == DisplayStateOn
-			|| currentState() == DisplayStateOnPuck
-			|| currentState() == DisplayStateDockMode) {
-		// set the new max brightness
-		m_maxBrightness = maxBrightness;
-		// update the brightness directly
+            || currentState() == DisplayStateOnPuck
+            || currentState() == DisplayStateDockMode) {
+        // set the new max brightness
+        m_maxBrightness = maxBrightness;
+        // update the brightness directly
         backlightOn (getDisplayBrightness(), getKeypadBrightness());
-		// update navi brightness
-		// // CoreNaviManager::instance()->updateBrightness (getCoreNaviBrightness());
+        // update navi brightness
+        // // CoreNaviManager::instance()->updateBrightness (getCoreNaviBrightness());
 
-		Q_EMIT signalDisplayMaxBrightnessChanged(maxBrightness);
-	}
-	else {
+        Q_EMIT signalDisplayMaxBrightnessChanged(maxBrightness);
+    }
+    else {
             updateBrightness ();
         }
     }
 
-	if(save) {
-		LSError lserror;
-		LSErrorInit(&lserror);
-	   // send a call to set a new value
-		gchar *blah = g_strdup_printf ("{\"appId\":\"com.palm.display\",\"key\":\"maximumBrightness\",\"value\":{\"maximumBrightness\":%i}}", m_maxBrightness);
-		result = LSCallOneReply  (m_service, URI_PREFS_SET, blah, NULL, NULL, NULL, &lserror);
-		g_free (blah);
-		if (!result)
-		{
-			LSErrorPrint (&lserror, stderr);
-			LSErrorFree (&lserror);
-		}
-	}
+    if(save) {
+        LSError lserror;
+        LSErrorInit(&lserror);
+       // send a call to set a new value
+        gchar *blah = g_strdup_printf ("{\"appId\":\"com.palm.display\",\"key\":\"maximumBrightness\",\"value\":{\"maximumBrightness\":%i}}", m_maxBrightness);
+        result = LSCallOneReply  (m_service, URI_PREFS_SET, blah, NULL, NULL, NULL, &lserror);
+        g_free (blah);
+        if (!result)
+        {
+            LSErrorPrint (&lserror, stderr);
+            LSErrorFree (&lserror);
+        }
+    }
     return result;
 }
 
@@ -2375,55 +2375,55 @@ bool DisplayManager::controlStatus(LSHandle *sh, LSMessage *message, void *ctx)
 
 bool DisplayManager::controlLockStatus(LSHandle *sh, LSMessage *message, void *ctx)
 {
-	SUBSCRIBE_SCHEMA_RETURN(sh, message);
+    SUBSCRIBE_SCHEMA_RETURN(sh, message);
 
-	LSError lserror;
-	LSErrorInit(&lserror);
-	bool result = true;
+    LSError lserror;
+    LSErrorInit(&lserror);
+    bool result = true;
 
-	DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
+    DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
 
-	bool subscribed = false;
-	const char *state = "undefined";
+    bool subscribed = false;
+    const char *state = "undefined";
 
-	result = LSSubscriptionProcess (sh, message, &subscribed, &lserror);
-	if(!result)
-	{
-		LSErrorFree (&lserror);
-		result = true;
-		subscribed = false;
-	}
+    result = LSSubscriptionProcess (sh, message, &subscribed, &lserror);
+    if(!result)
+    {
+        LSErrorFree (&lserror);
+        result = true;
+        subscribed = false;
+    }
 
-	switch (dm->m_lockState) {
-	case DisplayLockDockMode:
-		state = "dockmode";
-		break;
-	case DisplayLockLocked:
-		state = "locked";
-		break;
-	case DisplayLockUnlocked:
-		state = "unlocked";
-		break;
-	default:
-		break;
-	}
+    switch (dm->m_lockState) {
+    case DisplayLockDockMode:
+        state = "dockmode";
+        break;
+    case DisplayLockLocked:
+        state = "locked";
+        break;
+    case DisplayLockUnlocked:
+        state = "unlocked";
+        break;
+    default:
+        break;
+    }
 
-	gchar *payload = g_strdup_printf("{\"returnValue\":true,\"subscribed\":%s,\"lockState\":\"%s\"}",
-									 subscribed ? "true" : "false", state);
+    gchar *payload = g_strdup_printf("{\"returnValue\":true,\"subscribed\":%s,\"lockState\":\"%s\"}",
+                                     subscribed ? "true" : "false", state);
 
-	if (NULL != payload)
-		result = LSMessageReply(sh, message, payload, &lserror);
+    if (NULL != payload)
+        result = LSMessageReply(sh, message, payload, &lserror);
 
-	if (!result)
-	{
-		LSErrorPrint (&lserror, stderr);
-		LSErrorFree (&lserror);
-	}
+    if (!result)
+    {
+        LSErrorPrint (&lserror, stderr);
+        LSErrorFree (&lserror);
+    }
 
-	if (NULL != payload)
-		g_free(payload);
+    if (NULL != payload)
+        g_free(payload);
 
-	return true;
+    return true;
 }
 
 bool DisplayManager::controlAlert(LSHandle *sh, LSMessage *message, void *ctx)
@@ -2502,66 +2502,66 @@ done:
 
 bool DisplayManager::controlSetLockStatus(LSHandle *sh, LSMessage *message, void *ctx)
 {
-	LSError lserror;
-	LSErrorInit(&lserror);
+    LSError lserror;
+    LSErrorInit(&lserror);
 
-	// {"status": string}
-	VALIDATE_SCHEMA_AND_RETURN(sh, message, SCHEMA_1(REQUIRED(status, string)));
+    // {"status": string}
+    VALIDATE_SCHEMA_AND_RETURN(sh, message, SCHEMA_1(REQUIRED(status, string)));
 
-	bool result = false;
-	const char* str = LSMessageGetPayload(message);
-	json_object* root = 0;
-	json_object* label = 0;
-	DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
-	const char *errorText = NULL;
-	int errorCode = 0;
+    bool result = false;
+    const char* str = LSMessageGetPayload(message);
+    json_object* root = 0;
+    json_object* label = 0;
+    DisplayManager *dm = ((DisplayCallbackCtx_t *)ctx)->ctx;
+    const char *errorText = NULL;
+    int errorCode = 0;
 
-	if (!str)
-		 goto done;
+    if (!str)
+         goto done;
 
-	root = json_tokener_parse(str);
-	if (!root)
-		 goto done;
+    root = json_tokener_parse(str);
+    if (!root)
+         goto done;
 
-	label = json_object_object_get(root, "status");
-	if (json_object_get_boolean(label))
-	{
-		const char *status = json_object_get_string(json_object_object_get(root, "status"));
+    label = json_object_object_get(root, "status");
+    if (json_object_get_boolean(label))
+    {
+        const char *status = json_object_get_string(json_object_object_get(root, "status"));
 
-		if (g_strcmp0(status, "lock") == 0) {
-			dm->lock();
-			result = true;
-		}
-		else if (g_strcmp0(status, "unlock") == 0) {
-			dm->unlock();
-			result = true;
-		}
-		else {
-			errorText = "Unknown status";
-			errorCode = 1;
-		}
-	}
+        if (g_strcmp0(status, "lock") == 0) {
+            dm->lock();
+            result = true;
+        }
+        else if (g_strcmp0(status, "unlock") == 0) {
+            dm->unlock();
+            result = true;
+        }
+        else {
+            errorText = "Unknown status";
+            errorCode = 1;
+        }
+    }
 
 done:
-	if (result)
-		result = LSMessageReply(sh, message, "{\"returnValue\":true}", &lserror);
-	else
-	{
-		gchar *r = g_strdup_printf ("{\"returnValue\":false,\"errorCode\":%i,\"errorText\":\"%s\"}", errorCode, errorText);
-		result = LSMessageReply(sh, message, r, &lserror);
-		g_free (r);
-	}
+    if (result)
+        result = LSMessageReply(sh, message, "{\"returnValue\":true}", &lserror);
+    else
+    {
+        gchar *r = g_strdup_printf ("{\"returnValue\":false,\"errorCode\":%i,\"errorText\":\"%s\"}", errorCode, errorText);
+        result = LSMessageReply(sh, message, r, &lserror);
+        g_free (r);
+    }
 
-	if(!result)
-	{
-		LSErrorPrint (&lserror, stderr);
-		LSErrorFree (&lserror);
-	}
+    if(!result)
+    {
+        LSErrorPrint (&lserror, stderr);
+        LSErrorFree (&lserror);
+    }
 
-	if (root)
-		json_object_put(root);
+    if (root)
+        json_object_put(root);
 
-	return true;
+    return true;
 }
 
 DisplayManager::~DisplayManager()
@@ -2588,43 +2588,43 @@ void DisplayManager::slotEmergencyMode (bool enable)
 
 void DisplayManager::slotAlsEnabled (bool enable)
 {
-	g_message ("%s: ALS being %s", __PRETTY_FUNCTION__, enable ? "enabled" : "disabled");
-	if (enable) {
-		if (currentState() == DisplayStateOn
-				|| currentState() == DisplayStateOnLocked
-				|| currentState() == DisplayStateOnPuck
-				|| currentState() == DisplayStateDockMode)
-			m_als->start();
-	}
-	else {
-		m_als->stop();
-		updateBrightness();
-	}
+    g_message ("%s: ALS being %s", __PRETTY_FUNCTION__, enable ? "enabled" : "disabled");
+    if (enable) {
+        if (currentState() == DisplayStateOn
+                || currentState() == DisplayStateOnLocked
+                || currentState() == DisplayStateOnPuck
+                || currentState() == DisplayStateDockMode)
+            m_als->start();
+    }
+    else {
+        m_als->stop();
+        updateBrightness();
+    }
 }
 
 void DisplayManager::markBootFinished(bool finished)
 {
-	if (finished) {
-		// If boot was already finished before we have to deal with a restart of the
-		// whole UI hére and therefore turning on the display
-		if (m_bootFinished)
-			on();
+    if (finished) {
+        // If boot was already finished before we have to deal with a restart of the
+        // whole UI hére and therefore turning on the display
+        if (m_bootFinished)
+            on();
 
-		m_bootFinished = true;
-		// Update compass with correct lat/long
-		requestCurrentLocation();
-	}
+        m_bootFinished = true;
+        // Update compass with correct lat/long
+        requestCurrentLocation();
+    }
 }
 
 void DisplayManager::slotShowIME()
 {
-	setTouchpanelMode(true);
+    setTouchpanelMode(true);
 }
 
 void DisplayManager::slotHideIME()
 {
-	if (!m_activeTouchpanel)
-		setTouchpanelMode(false);
+    if (!m_activeTouchpanel)
+        setTouchpanelMode(false);
 }
 
 void DisplayManager::slotBluetoothKeyboardActive(bool active)
@@ -2690,26 +2690,26 @@ bool DisplayManager::updateState (int eventType)
             {
                 m_dropPowerKey = false;
                 // start the timer
-		if ((currentState() == DisplayStateOn
-					|| currentState() == DisplayStateOnPuck
-					|| currentState() == DisplayStateDockMode
-					|| currentState() == DisplayStateDim)
-				&& !m_power->running()) {
+        if ((currentState() == DisplayStateOn
+                    || currentState() == DisplayStateOnPuck
+                    || currentState() == DisplayStateDockMode
+                    || currentState() == DisplayStateDim)
+                && !m_power->running()) {
                     m_power->start (m_powerKeyTimeout);
-		}
+        }
             }
             break;
         case DISPLAY_EVENT_INDUCTIVE_CHARGER_DISCONNECTED:
             {
                 g_message ("%s: off the puck", __PRETTY_FUNCTION__);
                 m_currentState->handleEvent (DisplayEventOffPuck);
-		Q_EMIT signalPuckConnected (false);
+        Q_EMIT signalPuckConnected (false);
             }
             break;
         case DISPLAY_EVENT_INDUCTIVE_CHARGER_CONNECTED:
             {
                 g_message ("%s: on the puck", __PRETTY_FUNCTION__);
-		Q_EMIT signalPuckConnected (true);
+        Q_EMIT signalPuckConnected (true);
                 m_currentState->handleEvent (DisplayEventOnPuck);
             }
             break;
@@ -2742,26 +2742,26 @@ bool DisplayManager::updateState (int eventType)
             break;
         case DISPLAY_EVENT_ENTER_EMERGENCY_MODE:
             {
-		/*
-		if (SystemUiController::instance()->isInEmergencyMode()) {
-		    g_message ("%s: entering emergency mode, pushing DNAST\n", __PRETTY_FUNCTION__);
-		    gchar *report = g_strdup_printf ("%s-dm-in-emergency-mode", __FUNCTION__);
-		    pushDNAST (report);
-		    g_free (report);
-		}
-		*/
+        /*
+        if (SystemUiController::instance()->isInEmergencyMode()) {
+            g_message ("%s: entering emergency mode, pushing DNAST\n", __PRETTY_FUNCTION__);
+            gchar *report = g_strdup_printf ("%s-dm-in-emergency-mode", __FUNCTION__);
+            pushDNAST (report);
+            g_free (report);
+        }
+        */
             }
             break;
         case DISPLAY_EVENT_EXIT_EMERGENCY_MODE:
             {
-		/*
-		if (!SystemUiController::instance()->isInEmergencyMode()) {
-		    g_message ("%s: exiting emergency mode, popping DNAST\n", __PRETTY_FUNCTION__);
-		    gchar *report = g_strdup_printf ("%s-dm-in-emergency-mode", __FUNCTION__);
-		    popDNAST (report);
-		    g_free (report);
-		}
-		*/
+        /*
+        if (!SystemUiController::instance()->isInEmergencyMode()) {
+            g_message ("%s: exiting emergency mode, popping DNAST\n", __PRETTY_FUNCTION__);
+            gchar *report = g_strdup_printf ("%s-dm-in-emergency-mode", __FUNCTION__);
+            popDNAST (report);
+            g_free (report);
+        }
+        */
             }
             break;
         case DISPLAY_EVENT_PROXIMITY_ON:
@@ -2869,8 +2869,8 @@ void DisplayManager::backlightOnCallback(void *ctx)
 
 void DisplayManager::setActiveTouchpanel (bool enable)
 {
-	m_activeTouchpanel = enable;
-	setTouchpanelMode (enable);
+    m_activeTouchpanel = enable;
+    setTouchpanelMode (enable);
 }
 
 void DisplayManager::setTouchpanelMode (bool active)
@@ -2883,14 +2883,14 @@ void DisplayManager::setTouchpanelMode (bool active)
     InputControl* ic = HostBase::instance()->getInputControlTouchpanel();
     if (NULL != ic)
     {
-	    if (active) {
-		    g_message ("%s: Setting nyx touchpanel mode to %d", __PRETTY_FUNCTION__, NYX_TOUCHPANEL_MODE_VIRTUAL_KEYBOARD);
-		    err = nyx_touchpanel_set_mode (ic->getHandle(), NYX_TOUCHPANEL_MODE_VIRTUAL_KEYBOARD);
-	    }
-	    else  {
-		    g_message ("%s: Setting nyx touchpanel mode to %d", __PRETTY_FUNCTION__, NYX_TOUCHPANEL_MODE_DEFAULT);
-		    err = nyx_touchpanel_set_mode (ic->getHandle(), NYX_TOUCHPANEL_MODE_DEFAULT);
-	    }
+        if (active) {
+            g_message ("%s: Setting nyx touchpanel mode to %d", __PRETTY_FUNCTION__, NYX_TOUCHPANEL_MODE_VIRTUAL_KEYBOARD);
+            err = nyx_touchpanel_set_mode (ic->getHandle(), NYX_TOUCHPANEL_MODE_VIRTUAL_KEYBOARD);
+        }
+        else  {
+            g_message ("%s: Setting nyx touchpanel mode to %d", __PRETTY_FUNCTION__, NYX_TOUCHPANEL_MODE_DEFAULT);
+            err = nyx_touchpanel_set_mode (ic->getHandle(), NYX_TOUCHPANEL_MODE_DEFAULT);
+        }
        if (err) {
            g_warning("%s: failed to set Touchpanel mode !", __PRETTY_FUNCTION__);
        }
@@ -2901,9 +2901,9 @@ void DisplayManager::setTouchpanelMode (bool active)
 
 void DisplayManager::setAlsDisabled (bool disable)
 {
-	g_message ("%s: %s Als", __PRETTY_FUNCTION__, disable ? "Disabling" : "Enabling");
-	m_alsDisabled = disable;
-	slotAlsEnabled (!disable);
+    g_message ("%s: %s Als", __PRETTY_FUNCTION__, disable ? "Disabling" : "Enabling");
+    m_alsDisabled = disable;
+    slotAlsEnabled (!disable);
 }
 
 
@@ -2941,9 +2941,9 @@ bool DisplayManager::touchPanelOffCallback (LSHandle *sh, LSMessage *message, vo
     DisplayManager *dm = (DisplayManager *)ctx;
 
     if (!dm->m_displayOn)
-	dm->backlightOff();
+    dm->backlightOff();
     else
-	g_warning ("%s: display is supposed to be on, not turning off backlight", __PRETTY_FUNCTION__);
+    g_warning ("%s: display is supposed to be on, not turning off backlight", __PRETTY_FUNCTION__);
 
     return true;
 }
@@ -2986,81 +2986,81 @@ void DisplayManager::updateCompositorDisplayState(bool on, LSMethodFunction cb ,
 
 void DisplayManager::getBearingInfo(double& latitude, double& longitude)
 {
-	latitude = DisplayManager::s_currentLatitude;
-	longitude = DisplayManager::s_currentLongitude;
+    latitude = DisplayManager::s_currentLatitude;
+    longitude = DisplayManager::s_currentLongitude;
 }
 
 void DisplayManager::setBearingInfo(double latitude, double longitude)
 {
-	DisplayManager::s_currentLatitude = latitude;
-	DisplayManager::s_currentLongitude = longitude;
+    DisplayManager::s_currentLatitude = latitude;
+    DisplayManager::s_currentLongitude = longitude;
 }
 
 bool DisplayManager::updateCompassBearingInfo(LSHandle* sh, LSMessage* message, void* ctx)
 {
-	LSError lserror;
-	LSErrorInit(&lserror);
-	bool result = false;
+    LSError lserror;
+    LSErrorInit(&lserror);
+    bool result = false;
 
-	json_object* label = 0;
-	json_object* root = 0;
-	int errCode = -1;
-	double latitude = 0.0, longitude = 0.0, currentLatitude = 0.0, currentLongitude = 0.0;
+    json_object* label = 0;
+    json_object* root = 0;
+    int errCode = -1;
+    double latitude = 0.0, longitude = 0.0, currentLatitude = 0.0, currentLongitude = 0.0;
 
     // {"errorCode": integer, "latitude": double, "longitude": double}
     VALIDATE_SCHEMA_AND_RETURN(sh,
                                message,
                                SCHEMA_3(REQUIRED(errorCode, integer), REQUIRED(latitude, double), REQUIRED(longitude, double)));
 
-	// if we dont have a valid message just return
-	if(!message) {
-		return false;
-	}
+    // if we dont have a valid message just return
+    if(!message) {
+        return false;
+    }
 
-	const char* str = LSMessageGetPayload(message);
+    const char* str = LSMessageGetPayload(message);
 
-	if (!str)
-		goto error;
+    if (!str)
+        goto error;
 
-	root = json_tokener_parse(str);
-	if (!root) {
-		goto error;
-	}
+    root = json_tokener_parse(str);
+    if (!root) {
+        goto error;
+    }
 
-	// Try to parse the message - These values are set based on the WIKI
+    // Try to parse the message - These values are set based on the WIKI
 
-	// get the errorCode
-	label = json_object_object_get(root, "errorCode");
-	if (label) {
-		errCode = json_object_get_int (label);
-		if(0 != errCode) {
-			goto error;
-		}
-	}
+    // get the errorCode
+    label = json_object_object_get(root, "errorCode");
+    if (label) {
+        errCode = json_object_get_int (label);
+        if(0 != errCode) {
+            goto error;
+        }
+    }
 
-	// get latitude
-	label = json_object_object_get(root, "latitude");
-	if (label) {
-		latitude = json_object_get_double (label);
-	}
-	else {
-		goto error;
-	}
+    // get latitude
+    label = json_object_object_get(root, "latitude");
+    if (label) {
+        latitude = json_object_get_double (label);
+    }
+    else {
+        goto error;
+    }
 
-	// get longitude
-	label = json_object_object_get(root, "longitude");
-	if (label) {
-		longitude = json_object_get_double (label);
-	}
-	else {
-		goto error;
-	}
+    // get longitude
+    label = json_object_object_get(root, "longitude");
+    if (label) {
+        longitude = json_object_get_double (label);
+    }
+    else {
+        goto error;
+    }
 
-	// Get the current bearings
-	DisplayManager::instance()->getBearingInfo(currentLatitude, currentLongitude);
+    // Get the current bearings
+    DisplayManager::instance()->getBearingInfo(currentLatitude, currentLongitude);
 
-	// Ensure that we have valid data - then call NYX and update them with the new values
-	if(currentLatitude != latitude || currentLongitude != longitude)
+    // Ensure that we have valid data - then call NYX and update them with the new values
+    if(currentLatitude != latitude || currentLongitude != longitude)
     {
         result = DisplayManager::instance()->updateNyxWithLocation(latitude, longitude);
         // If we updated NYX correctly, update our state as well
@@ -3069,7 +3069,7 @@ bool DisplayManager::updateCompassBearingInfo(LSHandle* sh, LSMessage* message, 
     }
 
 error:
-	return result;
+    return result;
 }
 
 void DisplayManager::slotAirplaneModeChanged(bool change)
@@ -3083,25 +3083,25 @@ void DisplayManager::slotAirplaneModeChanged(bool change)
 
 void DisplayManager::requestCurrentLocation()
 {
-	LSError lserror;
-	LSErrorInit(&lserror);
-	bool result;
+    LSError lserror;
+    LSErrorInit(&lserror);
+    bool result;
 
-	static const int kAccuracy = 2;
-	static const int kResponseTime = 3;
+    static const int kAccuracy = 2;
+    static const int kResponseTime = 3;
 
-	gchar *compassInf = g_strdup_printf (JSON_LBS_CURRENTLOCATIONINF, kAccuracy, kResponseTime);
+    gchar *compassInf = g_strdup_printf (JSON_LBS_CURRENTLOCATIONINF, kAccuracy, kResponseTime);
 
-	// Now request the current location from LBS
-	result = LSCallOneReply (m_service, URI_LBS_GETCURRENTLOC, compassInf, &DisplayManager::updateCompassBearingInfo, this, NULL, &lserror);
-	if(!result) {
-		LSErrorFree(&lserror);
-	}
+    // Now request the current location from LBS
+    result = LSCallOneReply (m_service, URI_LBS_GETCURRENTLOC, compassInf, &DisplayManager::updateCompassBearingInfo, this, NULL, &lserror);
+    if(!result) {
+        LSErrorFree(&lserror);
+    }
 }
 
 bool DisplayManager::updateNyxWithLocation(double latitude, double longitude)
 {
-	bool result = false;
+    bool result = false;
 #ifdef HAS_NYX
     NYXBearingSensorConnector* pBearingSensor = static_cast<NYXBearingSensorConnector *> (NYXConnectorBase::getSensor(NYXConnectorBase::SensorBearing));
     if (pBearingSensor)
@@ -3110,7 +3110,7 @@ bool DisplayManager::updateNyxWithLocation(double latitude, double longitude)
         delete pBearingSensor;
     }
 #endif
-	return result;
+    return result;
 }
 
 bool DisplayManager::alertTimerCallback ()
@@ -3135,7 +3135,7 @@ bool DisplayManager::alert (int state)
             if (currentState() != DisplayStateOn
                     && currentState() != DisplayStateOnLocked
                     && currentState() != DisplayStateOnPuck
-		    && currentState() != DisplayStateDockMode)
+            && currentState() != DisplayStateDockMode)
             {
                 m_alertTimer->start (ALERT_TIMEOUT);
                 g_message ("%s: calling on due to alert %d", __PRETTY_FUNCTION__, state);
@@ -3209,9 +3209,9 @@ bool DisplayManager::on (sptr<Event> event)
 
     m_lastEvent = Time::curTimeMs();
     if (currentState() == DisplayStateOn
-	    || currentState() == DisplayStateOnLocked
+        || currentState() == DisplayStateOnLocked
             || currentState() == DisplayStateOnPuck)
-	return true;
+    return true;
 
     m_currentState->handleEvent (DisplayEventApiOn, event);
     return true;
@@ -3232,8 +3232,8 @@ bool DisplayManager::off (sptr<Event> event)
         return true;
 
     if (currentState() == DisplayStateOff
-	    || currentState() == DisplayStateOffOnCall)
-	return true;
+        || currentState() == DisplayStateOffOnCall)
+    return true;
 
     m_currentState->handleEvent (DisplayEventApiOff, event);
 
@@ -3262,7 +3262,7 @@ bool DisplayManager::dock()
 
     m_lastEvent = Time::curTimeMs();
     if (currentState() == DisplayStateDockMode)
-	return true;
+    return true;
 
     m_currentState->handleEvent (DisplayEventApiDock, NULL);
     return true;
@@ -3278,8 +3278,8 @@ bool DisplayManager::undock()
 
     m_lastEvent = Time::curTimeMs();
     if (currentState() != DisplayStateDockMode) {
-    	g_debug ("Display not in dock mode, so returning true");
-    	return true;
+        g_debug ("Display not in dock mode, so returning true");
+        return true;
     }
 
     g_debug ("Display in dock mode, sending ApiUndock event") ;
@@ -3311,7 +3311,7 @@ bool DisplayManager::isOn() const
     return (currentState() == DisplayStateOn
             || currentState() == DisplayStateOnLocked
             || currentState() == DisplayStateOnPuck
-	    || currentState() == DisplayStateDockMode);
+        || currentState() == DisplayStateDockMode);
 }
 
 
@@ -3340,22 +3340,22 @@ void DisplayManager::changeDisplayState (DisplayState newState, DisplayState old
 void DisplayManager::emitDisplayStateChange (int displaySignal)
 {
     switch (displaySignal) {
-	case DISPLAY_SIGNAL_OFF:
-	    Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_OFF);
-	    break;
-	case DISPLAY_SIGNAL_ON:
-	    Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_ON);
-	    break;
-	case DISPLAY_SIGNAL_DIM:
-	    Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_DIM);
-	    break;
-	case DISPLAY_SIGNAL_DOCK:
-	    Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_DOCK);
-	    break;
-	case DISPLAY_SIGNAL_OFF_ON_CALL:
-	    Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_OFF_ON_CALL);
-	    break;
-	default:
+    case DISPLAY_SIGNAL_OFF:
+        Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_OFF);
+        break;
+    case DISPLAY_SIGNAL_ON:
+        Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_ON);
+        break;
+    case DISPLAY_SIGNAL_DIM:
+        Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_DIM);
+        break;
+    case DISPLAY_SIGNAL_DOCK:
+        Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_DOCK);
+        break;
+    case DISPLAY_SIGNAL_OFF_ON_CALL:
+        Q_EMIT signalDisplayStateChange (DISPLAY_SIGNAL_OFF_ON_CALL);
+        break;
+    default:
         g_warning("%s: invalid display signal %d", __PRETTY_FUNCTION__, displaySignal);
         break;
     }
@@ -3363,191 +3363,191 @@ void DisplayManager::emitDisplayStateChange (int displaySignal)
 
 bool DisplayManager::unlockRequiresPasscode() const
 {
-	if (EASPolicyManager::instance()->policyPending() &&
-		EASPolicyManager::instance()->getPolicy()->passwordRequired())
-		return true;
+    if (EASPolicyManager::instance()->policyPending() &&
+        EASPolicyManager::instance()->getPolicy()->passwordRequired())
+        return true;
 
-	return Security::instance()->passcodeSet();
+    return Security::instance()->passcodeSet();
 }
 
 bool DisplayManager::updateLockState (DisplayLockState lockState, DisplayState displayState, DisplayEvent displayEvent)
 {
-	bool success = true;
+    bool success = true;
 
-	if (lockState != m_lockState) {
-		m_lockState = lockState;
-		switch (lockState) {
-			case DisplayLockLocked:
-				{
-					if(!Settings::LunaSettings()->disableLocking)
-					{
-						g_debug ("%s: firing DISPLAY_LOCK_SCREEN", __PRETTY_FUNCTION__);
-						handleLockStateChange(DISPLAY_LOCK_SCREEN, displayEvent);
-					}
-				}
-				break;
-			case DisplayLockUnlocked:
-				{
-					// If we're going to unlock check first if that requires a passcode or not
-					if (unlockRequiresPasscode() &&
-						displayEvent != DisplayEventUnlockScreen &&
-						!isOnCall())
-					{
-						g_warning("%s: Can't unlock as we have a passcode set", __PRETTY_FUNCTION__);
-						success = false;
-						lock();
-						break;
-					}
+    if (lockState != m_lockState) {
+        m_lockState = lockState;
+        switch (lockState) {
+            case DisplayLockLocked:
+                {
+                    if(!Settings::LunaSettings()->disableLocking)
+                    {
+                        g_debug ("%s: firing DISPLAY_LOCK_SCREEN", __PRETTY_FUNCTION__);
+                        handleLockStateChange(DISPLAY_LOCK_SCREEN, displayEvent);
+                    }
+                }
+                break;
+            case DisplayLockUnlocked:
+                {
+                    // If we're going to unlock check first if that requires a passcode or not
+                    if (unlockRequiresPasscode() &&
+                        displayEvent != DisplayEventUnlockScreen &&
+                        !isOnCall())
+                    {
+                        g_warning("%s: Can't unlock as we have a passcode set", __PRETTY_FUNCTION__);
+                        success = false;
+                        lock();
+                        break;
+                    }
 
-					g_debug ("%s: firing DISPLAY_UNLOCK_SCREEN", __PRETTY_FUNCTION__);
-					handleLockStateChange(DISPLAY_UNLOCK_SCREEN, displayEvent);
-				}
-				break;
-			case DisplayLockDockMode:
-				{
-					g_debug ("%s: firing DISPLAY_DOCK_SCREEN", __PRETTY_FUNCTION__);
-					handleLockStateChange(DISPLAY_DOCK_SCREEN, displayEvent);
-				}
-				break;
-			default:
-				g_warning("%s: Unknown lock state %d", __PRETTY_FUNCTION__, lockState);
-				break;
-		}
-	}
+                    g_debug ("%s: firing DISPLAY_UNLOCK_SCREEN", __PRETTY_FUNCTION__);
+                    handleLockStateChange(DISPLAY_UNLOCK_SCREEN, displayEvent);
+                }
+                break;
+            case DisplayLockDockMode:
+                {
+                    g_debug ("%s: firing DISPLAY_DOCK_SCREEN", __PRETTY_FUNCTION__);
+                    handleLockStateChange(DISPLAY_DOCK_SCREEN, displayEvent);
+                }
+                break;
+            default:
+                g_warning("%s: Unknown lock state %d", __PRETTY_FUNCTION__, lockState);
+                break;
+        }
+    }
 
-	return success;
+    return success;
 }
 
 void DisplayManager::handleLockStateChange(int state, int displayEvent)
 {
-	bool result;
-	gchar *payload;
-	gchar *stateStr = "undefined";
-	gchar *event = "undefined";
-	LSError lserror;
+    bool result;
+    gchar *payload;
+    gchar *stateStr = "undefined";
+    gchar *event = "undefined";
+    LSError lserror;
 
-	LSErrorInit(&lserror);
+    LSErrorInit(&lserror);
 
-	g_debug("%s: state %d displayEvent %d", __PRETTY_FUNCTION__, state, displayEvent);
+    g_debug("%s: state %d displayEvent %d", __PRETTY_FUNCTION__, state, displayEvent);
 
-	switch (state) {
-	case DISPLAY_LOCK_SCREEN:
-		stateStr = "locked";
-		break;
-	case DISPLAY_UNLOCK_SCREEN:
-		stateStr = "unlocked";
-		break;
-	case DISPLAY_DOCK_SCREEN:
-		stateStr = "dockmode";
-		break;
-	default:
-		break;
-	}
+    switch (state) {
+    case DISPLAY_LOCK_SCREEN:
+        stateStr = "locked";
+        break;
+    case DISPLAY_UNLOCK_SCREEN:
+        stateStr = "unlocked";
+        break;
+    case DISPLAY_DOCK_SCREEN:
+        stateStr = "dockmode";
+        break;
+    default:
+        break;
+    }
 
-	switch (displayEvent) {
-	case DisplayEventPowerKeyPress:
-		event = "powerkey-pressed";
-		break;
-	case DisplayEventPowerKeyHold:
-		event = "powerkey-hold";
-		break;
-	case DisplayEventOnPuck:
-		event = "on-puck";
-		break;
-	case DisplayEventOffPuck:
-		event = "off-puck";
-		break;
-	case DisplayEventUsbIn:
-		event = "usb-in";
-		break;
-	case DisplayEventUsbOut:
-		event = "usb-out";
-		break;
-	case DisplayEventIncomingCall:
-		event = "incoming-call";
-		break;
-	case DisplayEventIncomingCallDone:
-		event = "incoming-call-done";
-		break;
-	case DisplayEventOnCall:
-		event = "on-call";
-		break;
-	case DisplayEventOffCall:
-		event = "off-call";
-		break;
-	case DisplayEventSliderOpen:
-		event = "slider-open";
-		break;
-	case DisplayEventSliderClose:
-		event = "slider-close";
-		break;
-	case DisplayEventAlsChange:
-		event = "als-change";
-		break;
-	case DisplayEventProximityOn:
-		event = "proximity-on";
-		break;
-	case DisplayEventProximityOff:
-		event = "proxyimity-off";
-		break;
-	case DisplayEventApiOn:
-		event = "api-on";
-		break;
-	case DisplayEventApiDim:
-		event = "api-dim";
-		break;
-	case DisplayEventApiOff:
-		event = "api-off";
-		break;
-	case DisplayEventUserActivity:
-		event = "user-activity";
-		break;
-	case DisplayEventUpdateBrightness:
-		event = "update-brightness";
-		break;
-	case DisplayEventLockScreen:
-		event = "lock-screen";
-		break;
-	case DisplayEventUnlockScreen:
-		event = "unlock-screen";
-		break;
-	case DisplayEventTimeout:
-		event = "timeout";
-		break;
-	case DisplayEventApiDock:
-		event = "api-dock";
-		break;
-	case DisplayEventApiUndock:
-		event = "api-undock";
-		break;
-	case DisplayEventPowerdSuspend:
-		event = "powerd-suspend";
-		break;
-	case DisplayEventPowerdResume:
-		event = "powerd-resume";
-		break;
-	case DisplayEventUserActivityExternalInput:
-		event = "activity-external-input";
-		break;
-	case DisplayEventHomeKeyPress:
-		event = "homekey-pressed";
-		break;
-	default:
-		break;
-	}
+    switch (displayEvent) {
+    case DisplayEventPowerKeyPress:
+        event = "powerkey-pressed";
+        break;
+    case DisplayEventPowerKeyHold:
+        event = "powerkey-hold";
+        break;
+    case DisplayEventOnPuck:
+        event = "on-puck";
+        break;
+    case DisplayEventOffPuck:
+        event = "off-puck";
+        break;
+    case DisplayEventUsbIn:
+        event = "usb-in";
+        break;
+    case DisplayEventUsbOut:
+        event = "usb-out";
+        break;
+    case DisplayEventIncomingCall:
+        event = "incoming-call";
+        break;
+    case DisplayEventIncomingCallDone:
+        event = "incoming-call-done";
+        break;
+    case DisplayEventOnCall:
+        event = "on-call";
+        break;
+    case DisplayEventOffCall:
+        event = "off-call";
+        break;
+    case DisplayEventSliderOpen:
+        event = "slider-open";
+        break;
+    case DisplayEventSliderClose:
+        event = "slider-close";
+        break;
+    case DisplayEventAlsChange:
+        event = "als-change";
+        break;
+    case DisplayEventProximityOn:
+        event = "proximity-on";
+        break;
+    case DisplayEventProximityOff:
+        event = "proxyimity-off";
+        break;
+    case DisplayEventApiOn:
+        event = "api-on";
+        break;
+    case DisplayEventApiDim:
+        event = "api-dim";
+        break;
+    case DisplayEventApiOff:
+        event = "api-off";
+        break;
+    case DisplayEventUserActivity:
+        event = "user-activity";
+        break;
+    case DisplayEventUpdateBrightness:
+        event = "update-brightness";
+        break;
+    case DisplayEventLockScreen:
+        event = "lock-screen";
+        break;
+    case DisplayEventUnlockScreen:
+        event = "unlock-screen";
+        break;
+    case DisplayEventTimeout:
+        event = "timeout";
+        break;
+    case DisplayEventApiDock:
+        event = "api-dock";
+        break;
+    case DisplayEventApiUndock:
+        event = "api-undock";
+        break;
+    case DisplayEventPowerdSuspend:
+        event = "powerd-suspend";
+        break;
+    case DisplayEventPowerdResume:
+        event = "powerd-resume";
+        break;
+    case DisplayEventUserActivityExternalInput:
+        event = "activity-external-input";
+        break;
+    case DisplayEventHomeKeyPress:
+        event = "homekey-pressed";
+        break;
+    default:
+        break;
+    }
 
-	payload = g_strdup_printf("{\"returnValue\":true,\"lockState\":\"%s\",\"event\":\"%s\"}",
-							  stateStr, event);
+    payload = g_strdup_printf("{\"returnValue\":true,\"lockState\":\"%s\",\"event\":\"%s\"}",
+                              stateStr, event);
 
-	// Post all events to private bus
-	result = LSSubscriptionPost (m_service, "/control", "lockStatus", payload, &lserror);
-	if (!result)
-	{
-		LSErrorPrint (&lserror, stderr);
-		LSErrorFree (&lserror);
-	}
+    // Post all events to private bus
+    result = LSSubscriptionPost (m_service, "/control", "lockStatus", payload, &lserror);
+    if (!result)
+    {
+        LSErrorPrint (&lserror, stderr);
+        LSErrorFree (&lserror);
+    }
 
-	g_free(payload);
+    g_free(payload);
 }
 
 void DisplayManager::displayOn(bool als)
@@ -3606,7 +3606,7 @@ void DisplayManager::displayDim()
 
     b /= 10;
     if (b < MINIMUM_DIMMED_BRIGHTNESS)
-	b = MINIMUM_DIMMED_BRIGHTNESS;
+    b = MINIMUM_DIMMED_BRIGHTNESS;
 
     // backlight has to be turned on first, On completion,
     // the callback will turn on the touchpanel
@@ -3632,7 +3632,7 @@ void DisplayManager::displayOff()
         notifySubscribers (DISPLAY_EVENT_OFF);
 
     if (m_penDown) {
-	    m_drop_pen = true;
+        m_drop_pen = true;
     }
 
     // whatever the state was, the backlight has to be turned off before we blank the hwcomposer
@@ -3697,37 +3697,37 @@ bool DisplayManager::s_vsyncEnabled = true;
 
 void DisplayManager::forceVsyncOff(bool forceNoVsync)
 {
-	if (s_forceVsyncDisable == forceNoVsync)
-		return;
+    if (s_forceVsyncDisable == forceNoVsync)
+        return;
 
-	if (forceNoVsync) {
-		// turn off vsync before disabling vsync control
-		// make sure to back up the state first so that this call
-		// doesn't corrupt it
-		bool wasEnabled = s_vsyncEnabled;
-		changeVsyncControl(false);
-		s_vsyncEnabled = wasEnabled;
-		s_forceVsyncDisable = forceNoVsync;
-	} else {
-		s_forceVsyncDisable = forceNoVsync;
-		changeVsyncControl(s_vsyncEnabled);
-	}
+    if (forceNoVsync) {
+        // turn off vsync before disabling vsync control
+        // make sure to back up the state first so that this call
+        // doesn't corrupt it
+        bool wasEnabled = s_vsyncEnabled;
+        changeVsyncControl(false);
+        s_vsyncEnabled = wasEnabled;
+        s_forceVsyncDisable = forceNoVsync;
+    } else {
+        s_forceVsyncDisable = forceNoVsync;
+        changeVsyncControl(s_vsyncEnabled);
+    }
 }
 
 bool DisplayManager::isVsyncOff()
 {
-	return s_forceVsyncDisable || !s_vsyncEnabled;
+    return s_forceVsyncDisable || !s_vsyncEnabled;
 }
 
 void DisplayManager::changeVsyncControl(bool enable)
 {
-	if (Settings::LunaSettings()->forceSoftwareRendering)
-		return;
+    if (Settings::LunaSettings()->forceSoftwareRendering)
+        return;
 
-	s_vsyncEnabled = enable;
+    s_vsyncEnabled = enable;
 
-	if (s_forceVsyncDisable)
-		return;
+    if (s_forceVsyncDisable)
+        return;
 }
 
 void DisplayManager::handlePowerKey(bool pressed)
