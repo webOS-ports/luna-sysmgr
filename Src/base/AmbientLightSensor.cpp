@@ -164,6 +164,14 @@ int AmbientLightSensor::getCurrentRegion ()
     return m_alsRegion;
 }
 
+void AmbientLightSensor::setCurrentRegion (int newRegion)
+{
+    if (m_alsRegion != newRegion) {
+        m_alsRegion = newRegion;
+        Q_EMIT currentRegionChanged(m_alsRegion);
+    }
+}
+
 bool AmbientLightSensor::start ()
 {
     m_alsDisplayOn = true;
@@ -203,7 +211,7 @@ bool AmbientLightSensor::on ()
 
     int timeSinceLastReading = Time::curTimeMs() - m_alsLastOff;
 
-    m_alsRegion = ALS_REGION_INDOOR;
+    setCurrentRegion(ALS_REGION_INDOOR);
 
     if (NULL != m_als)
     {
@@ -274,7 +282,7 @@ bool AmbientLightSensor::updateAls(int lightLevel)
     int current = m_alsRegion;
 
     if (m_alsDisabled > 0) {
-        m_alsRegion = ALS_REGION_UNDEFINED;
+        setCurrentRegion(ALS_REGION_UNDEFINED);
         g_debug(
                 "%s: reported light level of %d [region set to default by subscription]",
                 __PRETTY_FUNCTION__, lightLevel);
@@ -283,7 +291,7 @@ bool AmbientLightSensor::updateAls(int lightLevel)
     }
 
     if (!m_alsEnabled) {
-        m_alsRegion = ALS_REGION_UNDEFINED;
+        setCurrentRegion(ALS_REGION_UNDEFINED);
         g_debug("%s: reported light level of %d [device not calibrated]",
                 __PRETTY_FUNCTION__, lightLevel);
 
@@ -298,11 +306,11 @@ bool AmbientLightSensor::updateAls(int lightLevel)
     if (m_alsRegion < ALS_REGION_UNDEFINED || m_alsRegion > ALS_REGION_SUNNY) {
         g_warning("%s: current region is invalid, resetting to indoor",
                 __PRETTY_FUNCTION__);
-        m_alsRegion = ALS_REGION_INDOOR;
+        setCurrentRegion(ALS_REGION_INDOOR);
     }
 
     //FIXME: Is this really correct?
-    m_alsRegion = lightLevel;
+    setCurrentRegion(lightLevel);
 
 end:
 

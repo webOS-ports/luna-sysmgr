@@ -50,6 +50,7 @@ public:
 
     bool update (int intensity);
     int getCurrentRegion ();
+    void setCurrentRegion (int newRegion);
 
     bool start ();
     bool stop ();
@@ -58,6 +59,8 @@ public:
     static bool cancelSubscription(LSHandle *sh, LSMessage *message, void *ctx);
     static bool hiddServiceNotification(LSHandle *sh, const char *serviceName, bool connected, void *ctx);
 
+Q_SIGNALS:
+    void currentRegionChanged(int newRegion);
 
 private:
     LSHandle*              m_service;

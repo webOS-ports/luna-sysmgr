@@ -371,6 +371,7 @@ DisplayManager::DisplayManager()
 
     // initialize als
     m_als = new AmbientLightSensor ();
+    connect(m_als, &AmbientLightSensor::currentRegionChanged, this, &DisplayManager::updateBrightness);
 
 #if defined(HAS_LUNA_PREF)
     char *build = NULL;
