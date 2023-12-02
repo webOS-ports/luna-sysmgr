@@ -76,7 +76,7 @@
 #define JSON_LBS_CURRENTLOCATIONINF		"{\"accuracy\":%i,\"responseTime\":%i}"
 
 #define JSON_SLIDER_STATUS_REQUEST "{\"get\":\"slider\"}"
-#define URI_AUDIOD_STATUS "palm://com.palm.audio/phone/status"
+#define URI_AUDIOD_STATUS "palm://org.webosports.service.audio/getStatus"
 #define JSON_AUDIOD_SUBSCRIBE "{\"subscribe\":true}"
 
 #define URI_DISPLAY_POWER_KEY_SIGNAL "palm://com.palm.display/com/palm/display/powerKeyPressed"
@@ -826,7 +826,7 @@ bool DisplayManager::audiodCallback(LSHandle *sh, LSMessage *message, void *ctx)
         }
     }
 
-    active = json_object_object_get(root, "active");
+    active = json_object_object_get(root, "inCall");
     if (active)
     {
         onCall = json_object_get_boolean(active);

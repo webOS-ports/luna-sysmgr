@@ -44,7 +44,8 @@
         "location-service.operation",
         "telephony.management",
         "preferences.systempropertyquery",
-        "preferences.operation"
+        "preferences.operation",
+        "audio.operation"
     ],
     "com.palm.keys": [
         "database.management",
