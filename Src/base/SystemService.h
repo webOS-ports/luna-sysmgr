@@ -34,143 +34,143 @@ struct json_object;
 
 class SystemService : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 
-	typedef struct __ActiveModalDialogInfo {
-		bool m_isModalAppBeingLaunched;
-		bool m_isModalAppLaunched;
-		bool m_isModalAppBeingRemoved;
-		std::string m_activeDialogApp;
-		std::string m_activeDialogCaller;
-		std::string m_returnValueToPost;
-	} ActiveModalDialogInfo;
+    typedef struct __ActiveModalDialogInfo {
+        bool m_isModalAppBeingLaunched;
+        bool m_isModalAppLaunched;
+        bool m_isModalAppBeingRemoved;
+        std::string m_activeDialogApp;
+        std::string m_activeDialogCaller;
+        std::string m_returnValueToPost;
+    } ActiveModalDialogInfo;
 
-	static SystemService* instance();
+    static SystemService* instance();
 
-	static void buildSubscriptionModalId(std::string& caller, std::string& launchApp);
-	static void resetModalDialogInfo();
-	static void setActiveModalBeingLaunched();
-	static void setActiveModalBeingRemoved();
-	static void setActiveModalInfo();
-	static bool isModalActive();
-	static std::string getStrFromJSON(json_object *root, const char *id);
-	static std::string getModalWindowSubscriptionId();
-	static std::string getModalDismissReturnValue();
-	static bool initiateAppLaunch(LSHandle* lshandle, LSMessage *message, std::string& callerId, const char *messageStr, void *user_data, const char *modalId, bool isHeadless);
-	static json_object* buildParamsForAppLaunch(std::string params, std::string& launchId, bool& success, std::string& errMsg);
-	static void saveLauncherAndCallerInfo(std::string& caller, std::string& launchedApp);
-	static void setReturnValueToPost(const std::string& retValue);
-	static bool isParentPdk();
-	static void setParentAppPdk(bool isSdk);
+    static void buildSubscriptionModalId(std::string& caller, std::string& launchApp);
+    static void resetModalDialogInfo();
+    static void setActiveModalBeingLaunched();
+    static void setActiveModalBeingRemoved();
+    static void setActiveModalInfo();
+    static bool isModalActive();
+    static std::string getStrFromJSON(json_object *root, const char *id);
+    static std::string getModalWindowSubscriptionId();
+    static std::string getModalDismissReturnValue();
+    static bool initiateAppLaunch(LSHandle* lshandle, LSMessage *message, std::string& callerId, const char *messageStr, void *user_data, const char *modalId, bool isHeadless);
+    static json_object* buildParamsForAppLaunch(std::string params, std::string& launchId, bool& success, std::string& errMsg);
+    static void saveLauncherAndCallerInfo(std::string& caller, std::string& launchedApp);
+    static void setReturnValueToPost(const std::string& retValue);
+    static bool isParentPdk();
+    static void setParentAppPdk(bool isSdk);
 
-	~SystemService();
+    ~SystemService();
 
-	void init();
+    void init();
 
-	bool brickMode() const { return m_brickMode; }
-	LSHandle* serviceHandle() const { return m_service; }
+    bool brickMode() const { return m_brickMode; }
+    LSHandle* serviceHandle() const { return m_service; }
 
-	void postForegroundApplicationChange(const std::string& name,const std::string& menuname, const std::string& id);
-	
-	void postLockStatus(bool locked);
-	void postDeviceLockMode();
-	void postLockButtonTriggered();
+    void postForegroundApplicationChange(const std::string& name,const std::string& menuname, const std::string& id);
 
-	void shutdownDevice();
+    void postLockStatus(bool locked);
+    void postDeviceLockMode();
+    void postLockButtonTriggered();
 
-	void enterMSM();
+    void shutdownDevice();
 
-	void vibrate(const char* soundClass);
+    void enterMSM();
 
-	void postLaunchModalResult(bool timedOut = false);
-	void postDismissModalResult(bool timedOut = false);
-	void postAppRestoredNeeded();
-	
-	void postMessageToSystemUI(const char* jsonStr);
-	void postMessageToSystemUIResponses(const char* jsonStr);
+    void vibrate(const char* soundClass);
+
+    void postLaunchModalResult(bool timedOut = false);
+    void postDismissModalResult(bool timedOut = false);
+    void postAppRestoredNeeded();
+    
+    void postMessageToSystemUI(const char* jsonStr);
+    void postMessageToSystemUIResponses(const char* jsonStr);
 
     void postSystemStatus();
-	
-	void notifyDeviceUnlocked() { Q_EMIT signalDeviceUnlocked(); }
-	void notifyCancelPinEntry() { Q_EMIT signalCancelPinEntry(); }
-	void notifyTouchToShareCanTap(bool val) { Q_EMIT signalTouchToShareCanTap(val); }
-	void notifyTouchToShareAppUrlTransfered(const std::string& str) { Q_EMIT signalTouchToShareAppUrlTransfered(str); }
-	void notifyDismissModalDialog() {Q_EMIT signalDismissModalDialog(); }
-	void notifyDismissModalTimerStopped() {Q_EMIT signalStopModalDismissTimer(); }
 
-	bool showCardLoadingAnimation() const { return m_cardLoadingAnimation; }
-	void setShowCardLoadingAnimation(bool val) { m_cardLoadingAnimation = val; }
+    void notifyDeviceUnlocked() { Q_EMIT signalDeviceUnlocked(); }
+    void notifyCancelPinEntry() { Q_EMIT signalCancelPinEntry(); }
+    void notifyTouchToShareCanTap(bool val) { Q_EMIT signalTouchToShareCanTap(val); }
+    void notifyTouchToShareAppUrlTransfered(const std::string& str) { Q_EMIT signalTouchToShareAppUrlTransfered(str); }
+    void notifyDismissModalDialog() {Q_EMIT signalDismissModalDialog(); }
+    void notifyDismissModalTimerStopped() {Q_EMIT signalStopModalDismissTimer(); }
+
+    bool showCardLoadingAnimation() const { return m_cardLoadingAnimation; }
+    void setShowCardLoadingAnimation(bool val) { m_cardLoadingAnimation = val; }
 
 private Q_SLOTS:
 
-	void postBootFinished();
-	void postDockModeStatus(bool enabled);
-	void slotModalWindowAdded();
-	void slotModalWindowRemoved();
-	void slotModalDialogTimerFired();
+    void postBootFinished();
+    void postDockModeStatus(bool enabled);
+    void slotModalWindowAdded();
+    void slotModalWindowRemoved();
+    void slotModalDialogTimerFired();
 
 Q_SIGNALS:
 
-	void signalIncomingPhoneCall();
-	
-	void signalEnterBrickMode(bool mediaSync);
-	void signalExitBrickMode();
-	void signalBrickModeFailed();
+    void signalIncomingPhoneCall();
 
-	void signalMediaPartitionAvailable(bool);
-	
-	void signalDeviceUnlocked();
-	void signalCancelPinEntry();
+    void signalEnterBrickMode(bool mediaSync);
+    void signalExitBrickMode();
+    void signalBrickModeFailed();
 
-	void signalTouchToShareCanTap(bool);
-	void signalTouchToShareAppUrlTransfered(const std::string&);
-	void signalDismissModalDialog();
-	void signalStopModalDismissTimer();
+    void signalMediaPartitionAvailable(bool);
 
-private:
+    void signalDeviceUnlocked();
+    void signalCancelPinEntry();
 
-	SystemService();
-
-	void startService();
-	void stopService();
-
-	static bool msmAvailCallback(LSHandle* handle, LSMessage* message, void* ctxt);
-	static bool msmProgressCallback(LSHandle* handle, LSMessage* message, void* ctxt);
-	static bool msmEntryCallback(LSHandle* handle, LSMessage* message, void* ctxt);
-	static bool msmFsckingCallback(LSHandle* handle, LSMessage* message, void* ctxt);
-	static bool msmPartitionAvailCallback(LSHandle* handle, LSMessage* message, void* ctxt);
-	static bool telephonyServiceUpCallback(LSHandle* handle, LSMessage* message, void* ctxt);
-	static bool telephonyEventsCallback(LSHandle* handle, LSMessage* message, void* ctxt);
-	static bool touchToShareCanTapStatusCallback(LSHandle* handle, LSMessage* message, void* ctxt);
-
-	static void initModalTimerInfo();
-
-	bool msmAvail(LSMessage* message);
-	bool msmProgress(LSMessage* message);
-	bool msmEntry(LSMessage* message);
-	bool msmFscking(LSMessage* message);
-	bool msmPartitionAvail(LSMessage* message);
-	bool touchToShareCanTapStatus(LSHandle* handle, LSMessage* message, void* ctxt);
-	void postNovacomStatus();
+    void signalTouchToShareCanTap(bool);
+    void signalTouchToShareAppUrlTransfered(const std::string&);
+    void signalDismissModalDialog();
+    void signalStopModalDismissTimer();
 
 private:
-	LSHandle* m_service;
-	LSMessageToken m_storageDaemonToken;
-	bool m_brickMode;
-	bool m_msmExitClean;
-	bool m_fscking;
-	bool m_cardLoadingAnimation;
-	static ActiveModalDialogInfo sActiveModalInfo;
-	static std::string sTempCaller;
-	static std::string sTempLaunchApp;
-	static std::string sModalWindowSubscriptionId;
-	static QTimer sModalLauchCheckTimer;
-	static int sModalWindowIndex;
-	static bool sIsParentPdkApp;
+
+    SystemService();
+
+    void startService();
+    void stopService();
+
+    static bool msmAvailCallback(LSHandle* handle, LSMessage* message, void* ctxt);
+    static bool msmProgressCallback(LSHandle* handle, LSMessage* message, void* ctxt);
+    static bool msmEntryCallback(LSHandle* handle, LSMessage* message, void* ctxt);
+    static bool msmFsckingCallback(LSHandle* handle, LSMessage* message, void* ctxt);
+    static bool msmPartitionAvailCallback(LSHandle* handle, LSMessage* message, void* ctxt);
+    static bool telephonyServiceUpCallback(LSHandle* handle, LSMessage* message, void* ctxt);
+    static bool telephonyEventsCallback(LSHandle* handle, LSMessage* message, void* ctxt);
+    static bool touchToShareCanTapStatusCallback(LSHandle* handle, LSMessage* message, void* ctxt);
+
+    static void initModalTimerInfo();
+
+    bool msmAvail(LSMessage* message);
+    bool msmProgress(LSMessage* message);
+    bool msmEntry(LSMessage* message);
+    bool msmFscking(LSMessage* message);
+    bool msmPartitionAvail(LSMessage* message);
+    bool touchToShareCanTapStatus(LSHandle* handle, LSMessage* message, void* ctxt);
+    void postNovacomStatus();
+
+private:
+    LSHandle* m_service;
+    LSMessageToken m_storageDaemonToken;
+    bool m_brickMode;
+    bool m_msmExitClean;
+    bool m_fscking;
+    bool m_cardLoadingAnimation;
+    static ActiveModalDialogInfo sActiveModalInfo;
+    static std::string sTempCaller;
+    static std::string sTempLaunchApp;
+    static std::string sModalWindowSubscriptionId;
+    static QTimer sModalLauchCheckTimer;
+    static int sModalWindowIndex;
+    static bool sIsParentPdkApp;
 };
 
 
-	
+    
 #endif /* SYSTEMSERVICE_H */

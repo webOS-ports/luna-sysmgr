@@ -94,17 +94,17 @@ class DisplayStateBase {
     public:
         DisplayStateBase();
 
-	virtual DisplayState state() const = 0;
+    virtual DisplayState state() const = 0;
 
-	virtual void enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event = NULL) = 0;
-	virtual void leave (DisplayState state, DisplayEvent displayEvent, sptr<Event> event = NULL) = 0;
+    virtual void enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event = NULL) = 0;
+    virtual void leave (DisplayState state, DisplayEvent displayEvent, sptr<Event> event = NULL) = 0;
 
-	virtual void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL) = 0;
+    virtual void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL) = 0;
 
-	virtual bool updateBrightness (int alsRegion);
+    virtual bool updateBrightness (int alsRegion);
 
-	void changeDisplayState (DisplayState state, DisplayEvent displayEvent, sptr<Event> event = NULL);
-	bool updateLockState (DisplayLockState, DisplayEvent displayEvent);
+    void changeDisplayState (DisplayState state, DisplayEvent displayEvent, sptr<Event> event = NULL);
+    bool updateLockState (DisplayLockState, DisplayEvent displayEvent);
 
         bool isDisplayUnlocked();
         bool isUSBCharging();
@@ -114,30 +114,30 @@ class DisplayStateBase {
         bool isOnPuck();
         bool isProximityActivated();
         int  getCurrentAlsRegion();
-	bool isBacklightOn();
-	bool isDisplayOn();
-	bool isTouchpanelOn();
-	bool isDemo();
+    bool isBacklightOn();
+    bool isDisplayOn();
+    bool isTouchpanelOn();
+    bool isDemo();
 
-	int dimTimeout();
-	int offTimeout();
-	int lockedOffTimeout();
-	int lastEvent();
+    int dimTimeout();
+    int offTimeout();
+    int lockedOffTimeout();
+    int lastEvent();
 
         void updateLastEvent();
         virtual void stopInactivityTimer();
         virtual void startInactivityTimer();
 
-	void displayOn(bool als);
-	void displayDim();
-	void displayOff();
+    void displayOn(bool als);
+    void displayDim();
+    void displayOff();
 
-	bool proximityOff();
-	bool proximityOn();
+    bool proximityOff();
+    bool proximityOn();
 
-	void emitDisplayStateChange(int);
+    void emitDisplayStateChange(int);
 
-	bool postPenCancel (int id = 0);
+    bool postPenCancel (int id = 0);
 };
 
 
@@ -149,12 +149,12 @@ class DisplayStateBase {
 // all other events do not cause change in state
 class DisplayOff: public DisplayStateBase {
     public:
-	DisplayState state() const { return DisplayStateOff; }
+    DisplayState state() const { return DisplayStateOff; }
 
-	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
-	void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
 
-	void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
+    void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
 
 };
 
@@ -165,12 +165,12 @@ class DisplayOff: public DisplayStateBase {
 class DisplayOffOnCall : public DisplayStateBase {
     public:
         DisplayOffOnCall();
-	DisplayState state() const { return DisplayStateOffOnCall; }
+    DisplayState state() const { return DisplayStateOffOnCall; }
 
-	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
-	void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
 
-	void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
+    void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
 
 };
 
@@ -188,24 +188,24 @@ class DisplayOffOnCall : public DisplayStateBase {
 
 class DisplayOn : public DisplayStateBase {
     private:
-	Timer<DisplayOn> *m_timerUser;
-	Timer<DisplayOn> *m_timerInternal;
+    Timer<DisplayOn> *m_timerUser;
+    Timer<DisplayOn> *m_timerInternal;
 
         void startUserInactivityTimer();
         void startInternalInactivityTimer();
     public:
         DisplayOn();
 
-	DisplayState state() const { return DisplayStateOn; }
+    DisplayState state() const { return DisplayStateOn; }
 
-	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
-	void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
 
-	void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
+    void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
 
         bool updateBrightness (int alsRegion);
-	bool timeoutUser();
-	bool timeoutInternal();
+    bool timeoutUser();
+    bool timeoutInternal();
         void stopInactivityTimer();
         void startInactivityTimer();
 };
@@ -222,20 +222,20 @@ class DisplayOn : public DisplayStateBase {
 
 class DisplayOnLocked : public DisplayStateBase {
     private:
-	Timer<DisplayOnLocked> *m_timer;
+    Timer<DisplayOnLocked> *m_timer;
 
     public:
         DisplayOnLocked();
 
-	DisplayState state() const { return DisplayStateOnLocked; }
+    DisplayState state() const { return DisplayStateOnLocked; }
 
-	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
-	void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
 
-	void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
+    void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
 
         bool updateBrightness (int alsRegion);
-	bool timeout();
+    bool timeout();
         void stopInactivityTimer();
         void startInactivityTimer();
 };
@@ -251,17 +251,17 @@ class DisplayOnLocked : public DisplayStateBase {
 
 class DisplayDim : public DisplayStateBase {
     private:
-	Timer<DisplayDim> *m_timer;
+    Timer<DisplayDim> *m_timer;
 
     public:
         DisplayDim();
-	DisplayState state() const { return DisplayStateDim; }
+    DisplayState state() const { return DisplayStateDim; }
 
-	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
-	void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
 
-	void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
-	bool timeout();
+    void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
+    bool timeout();
 
         void stopInactivityTimer();
         void startInactivityTimer();
@@ -276,19 +276,19 @@ class DisplayDim : public DisplayStateBase {
 
 class DisplayOnPuck : public DisplayStateBase {
     private:
-	Timer<DisplayOnPuck> *m_timer;
+    Timer<DisplayOnPuck> *m_timer;
 
     public:
         DisplayOnPuck();
-	DisplayState state() const { return DisplayStateOnPuck; }
+    DisplayState state() const { return DisplayStateOnPuck; }
 
-	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
-	void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
 
-	void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
+    void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
 
         bool updateBrightness (int alsRegion);
-	bool timeout();
+    bool timeout();
 
         void stopInactivityTimer();
         void startInactivityTimer();
@@ -304,17 +304,17 @@ class DisplayOnPuck : public DisplayStateBase {
 class DisplayDockMode : public DisplayStateBase {
     public:
         DisplayDockMode();
-	DisplayState state() const { return DisplayStateDockMode; }
+    DisplayState state() const { return DisplayStateDockMode; }
 
-	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
-	void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
 
-	void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
+    void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
 
-	bool timeoutExit();
+    bool timeoutExit();
 
     private:
-	Timer<DisplayDockMode> * m_timerExit;
+    Timer<DisplayDockMode> * m_timerExit;
 
 };
 
@@ -324,18 +324,18 @@ class DisplayDockMode : public DisplayStateBase {
 // all other events do not cause change in state
 class DisplayOffSuspended: public DisplayStateBase {
     private:
-	DisplayState		   m_restoreState;
-	DisplayEvent		   m_restoreDisplayEvent;
-	sptr<Event>		   m_restoreEvent;
+    DisplayState           m_restoreState;
+    DisplayEvent           m_restoreDisplayEvent;
+    sptr<Event>           m_restoreEvent;
 
     public:
-	DisplayOffSuspended();
-	DisplayState state() const { return DisplayStateOffSuspended; }
+    DisplayOffSuspended();
+    DisplayState state() const { return DisplayStateOffSuspended; }
 
-	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
-	void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
+    void leave (DisplayState, DisplayEvent, sptr<Event> = NULL);
 
-	void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
+    void handleEvent (DisplayEvent displayEvent, sptr<Event> event = NULL);
 
 };
 

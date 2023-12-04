@@ -28,14 +28,14 @@
 #include "HapticsController.h"
 
 class HapticsControllerCastle : public HapticsController {
-	public:
-	HapticsControllerCastle();
-	~HapticsControllerCastle();	
-	virtual int cancel(int id);
-	virtual int vibrate(int period,int duration);
-	virtual int vibrate(const char *name);
-	virtual int vibrateWithAudioFeedback(const char *name, const char *audiosample);
-	virtual void cancelAll();
+    public:
+    HapticsControllerCastle();
+    ~HapticsControllerCastle();    
+    virtual int cancel(int id);
+    virtual int vibrate(int period,int duration);
+    virtual int vibrate(const char *name);
+    virtual int vibrateWithAudioFeedback(const char *name, const char *audiosample);
+    virtual void cancelAll();
 
 };
 
@@ -80,21 +80,21 @@ int HapticsControllerCastle::vibrate(const char *name)
     nyx_error_t error = NYX_ERROR_NONE;
     nyx_haptics_configuration_t configuration;
 
-	int index = 0;
-	int id;
-	if(strcmp(name,"ringtone") == 0) {
-		configuration.type = NYX_HAPTICS_EFFECT_RINGTONE;
-	} else if(strcmp(name,"alert") == 0) { //long
-		configuration.type = NYX_HAPTICS_EFFECT_ALERT;
-	} else if(strcmp(name, "notification") == 0) { //short
+    int index = 0;
+    int id;
+    if(strcmp(name,"ringtone") == 0) {
+        configuration.type = NYX_HAPTICS_EFFECT_RINGTONE;
+    } else if(strcmp(name,"alert") == 0) { //long
+        configuration.type = NYX_HAPTICS_EFFECT_ALERT;
+    } else if(strcmp(name, "notification") == 0) { //short
         configuration.type = NYX_HAPTICS_EFFECT_NOTIFICATION;
-	} else if(strcmp(name, "tapdown") == 0) {
+    } else if(strcmp(name, "tapdown") == 0) {
         configuration.type = NYX_HAPTICS_EFFECT_TAPDOWN;
-	} else if(strcmp(name, "tapup") == 0) {
+    } else if(strcmp(name, "tapup") == 0) {
         configuration.type = NYX_HAPTICS_EFFECT_TAPUP;
-	} else {
-		return -1;
-	}
+    } else {
+        return -1;
+    }
 
     error = nyx_haptics_vibrate(d, configuration);
 
@@ -119,10 +119,10 @@ int HapticsControllerCastle::vibrateWithAudioFeedback(const char *name, const ch
 
 int HapticsControllerCastle::vibrate(int period,int duration)
 {
-	int id;
+    int id;
     //printf("vibrate(%d,%d)\n",period,duration);
-	if(duration == 0) 
-		duration = 2147483647L;
+    if(duration == 0) 
+        duration = 2147483647L;
 
     nyx_error_t error = NYX_ERROR_NONE;
     nyx_haptics_configuration_t configuration;

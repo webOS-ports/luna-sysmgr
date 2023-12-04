@@ -29,7 +29,7 @@
 #include <QLightSensor>
 
 #define ALS_INIT_SAMPLE_SIZE   10
-#define ALS_SAMPLE_SIZE 	   10
+#define ALS_SAMPLE_SIZE        10
 #define ALS_REGION_COUNT       5
 
 #define ALS_REGION_UNDEFINED  0
@@ -41,12 +41,12 @@
 
 class AmbientLightSensor : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	AmbientLightSensor();
+    AmbientLightSensor();
 
-	virtual ~AmbientLightSensor();
+    virtual ~AmbientLightSensor();
     static AmbientLightSensor* instance ();
 
     bool update (int intensity);
@@ -77,7 +77,7 @@ private:
     int32_t                m_alsSampleCount;
     int32_t                m_alsCountInRegion;
     int32_t                m_alsSamplesNeeded;
-    std::list<int32_t>	   m_alsSampleList;
+    std::list<int32_t>       m_alsSampleList;
     QLightSensor*          m_als;
 
     static AmbientLightSensor * m_instance;

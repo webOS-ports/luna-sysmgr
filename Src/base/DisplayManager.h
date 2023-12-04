@@ -97,7 +97,7 @@
 
 class DisplayManager : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 
@@ -132,8 +132,8 @@ public:
     static bool controlGetProperty(LSHandle *sh, LSMessage *message, void *ctx);
     static bool controlSetProperty(LSHandle *sh, LSMessage *message, void *ctx);
     static bool controlCallStatus(LSHandle *sh, LSMessage *message, void *ctx);
-	static bool controlLockStatus(LSHandle *sh, LSMessage *message, void *ctx);
-	static bool controlSetLockStatus(LSHandle *sh, LSMessage *message, void *ctx);
+    static bool controlLockStatus(LSHandle *sh, LSMessage *message, void *ctx);
+    static bool controlSetLockStatus(LSHandle *sh, LSMessage *message, void *ctx);
     static bool controlAlert(LSHandle *sh, LSMessage *message, void *ctx);
 
     // service callbacks
@@ -195,20 +195,20 @@ public:
     bool allowSuspend();
     void setSuspended (bool suspended);
 
-	static void forceVsyncOff(bool forceNoVsync);
-	static bool isVsyncOff();
+    static void forceVsyncOff(bool forceNoVsync);
+    static bool isVsyncOff();
 
 private:
     static DisplayManager* m_instance;
     static bool            s_forceVsyncDisable;
     static bool            s_vsyncEnabled;
-    static double		   s_currentLatitude;
-    static double		   s_currentLongitude;
+    static double           s_currentLatitude;
+    static double           s_currentLongitude;
 
     LSHandle*              m_service;
 
     AmbientLightSensor*    m_als;
-    bool		   m_alsDisabled;
+    bool           m_alsDisabled;
     bool                   m_powerdOnline;
     int32_t                m_chargerConnected;
     int32_t                m_batteryL;
@@ -240,10 +240,10 @@ private:
     int32_t                m_activityTimeout;
     int32_t                m_powerKeyTimeout;
     bool                   m_onCall;
-    bool		   m_demo;
-    bool		   m_homeKeyDown;
+    bool           m_demo;
+    bool           m_homeKeyDown;
 
-    bool		   m_bootFinished;
+    bool           m_bootFinished;
 
     int32_t                m_alertState;
     int32_t                m_proximityCount;
@@ -256,14 +256,14 @@ private:
     bool                   m_displayOn;
     bool                   m_touchpanelIsOn;
     bool                   m_backlightIsOn;
-    bool		   m_activeTouchpanel;
+    bool           m_activeTouchpanel;
     Timer<DisplayManager>* m_activity;
     Timer<DisplayManager>* m_power;
     Timer<DisplayManager>* m_slider;
     Timer<DisplayManager>* m_alertTimer;
     int32_t                m_maxBrightness;
 
-    std::string 	   m_puckId;
+    std::string        m_puckId;
 
     DisplayStateBase* m_currentState;
     DisplayStateBase** m_displayStates;
@@ -293,8 +293,8 @@ private:
 
     friend class DisplayStateBase;
 
-    void	changeDisplayState (DisplayState newDisplayState, DisplayState oldDisplayState, DisplayEvent displayEvent, sptr<Event> event);
-    bool	updateLockState (DisplayLockState lockState, DisplayState state, DisplayEvent displayEvent);
+    void    changeDisplayState (DisplayState newDisplayState, DisplayState oldDisplayState, DisplayEvent displayEvent, sptr<Event> event);
+    bool    updateLockState (DisplayLockState lockState, DisplayState state, DisplayEvent displayEvent);
     // used by DisplayStateBase class to change current state. Returns false is target lockState couldn't be reached
 
     void handleLockStateChange(int state, int displayEvent);
@@ -325,16 +325,16 @@ private:
     void initStates();
     void clearStates();
 
-	static void changeVsyncControl(bool enable);
+    static void changeVsyncControl(bool enable);
 
-	void markBootFinished(bool finished);
+    void markBootFinished(bool finished);
 
     void updateCompositorDisplayState(bool on, LSMethodFunction cb , void *context);
 
     static bool displayOnCallback(LSHandle *handle, LSMessage *message, gpointer context);
     static bool displayOffCallback(LSHandle *handle, LSMessage *message, gpointer context);
 
-	bool unlockRequiresPasscode() const;
+    bool unlockRequiresPasscode() const;
 
 private Q_SLOTS:
 
@@ -348,7 +348,7 @@ private Q_SLOTS:
 Q_SIGNALS:
 
     void signalDisplayStateChange(int state);
-	void signalPuckConnected(bool connected);
+    void signalPuckConnected(bool connected);
     void signalDisplayMaxBrightnessChanged(int brightness);
 };
 

@@ -232,13 +232,13 @@ void DisplayStateBase::changeDisplayState (DisplayState displayState, DisplayEve
     if (!dm)
         dm = DisplayManager::instance();
 
-	DisplayState currentState = state();
+    DisplayState currentState = state();
 
     if (currentState == displayState)
-	return;
+    return;
 
     if (displayState >= DisplayStateMax)
-	return;
+    return;
 
     leave (displayState, displayEvent, event);
 
@@ -249,9 +249,9 @@ void DisplayStateBase::changeDisplayState (DisplayState displayState, DisplayEve
 bool DisplayStateBase::updateLockState (DisplayLockState lockState, DisplayEvent displayEvent)
 {
     if (!dm)
-	dm = DisplayManager::instance();
+    dm = DisplayManager::instance();
 
-	return dm->updateLockState (lockState, state(), displayEvent);
+    return dm->updateLockState (lockState, state(), displayEvent);
 }
 
 bool DisplayStateBase::updateBrightness (int alsRegion)
@@ -277,254 +277,254 @@ void DisplayOff::enter (DisplayState state, DisplayEvent displayEvent, sptr<Even
 void DisplayOff::handleEvent (DisplayEvent displayEvent, sptr<Event> event) 
 {
     switch (displayEvent) {
-	case DisplayEventPowerKeyPress:
-	    if (isBacklightOn()) {
-		g_warning ("backlight not off yet, debouncing power key");
-		break;
-	    }
-	    if (isOnPuck()) {
-		if (isDisplayUnlocked() || isOnCall()) {
-		    g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
-			    (isDisplayUnlocked()) ? "unlocked" : "locked", 
-			    (isUSBCharging()) ? "connected" : "disconnected",
-			    (isSliderOpen()) ? "open" : "closed",
-			    (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
-			    (isOnCall()) ? "on" : "off");
-		    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		}
-		else {
-		    g_debug ("%s: power key press when on puck, move to dock mode", __PRETTY_FUNCTION__);
-		    changeDisplayState (DisplayStateDockMode, displayEvent, event);
-		}
-	    }
-	    else if (isDisplayUnlocked() || isOnCall()) {
-		g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
-			(isDisplayUnlocked()) ? "unlocked" : "locked", 
-			(isUSBCharging()) ? "connected" : "disconnected",
-			(isSliderOpen()) ? "open" : "closed",
-			(Settings::LunaSettings()->disableLocking) ? "set" : "unset",
-			(isOnCall()) ? "on" : "off");
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    else  {
-		g_debug ("%s: power key press, moving to OnLocked", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnLocked, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventPowerKeyPress:
+        if (isBacklightOn()) {
+        g_warning ("backlight not off yet, debouncing power key");
+        break;
+        }
+        if (isOnPuck()) {
+        if (isDisplayUnlocked() || isOnCall()) {
+            g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
+                (isDisplayUnlocked()) ? "unlocked" : "locked", 
+                (isUSBCharging()) ? "connected" : "disconnected",
+                (isSliderOpen()) ? "open" : "closed",
+                (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
+                (isOnCall()) ? "on" : "off");
+            changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else {
+            g_debug ("%s: power key press when on puck, move to dock mode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateDockMode, displayEvent, event);
+        }
+        }
+        else if (isDisplayUnlocked() || isOnCall()) {
+        g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
+            (isDisplayUnlocked()) ? "unlocked" : "locked", 
+            (isUSBCharging()) ? "connected" : "disconnected",
+            (isSliderOpen()) ? "open" : "closed",
+            (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
+            (isOnCall()) ? "on" : "off");
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        else  {
+        g_debug ("%s: power key press, moving to OnLocked", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnLocked, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventPowerKeyHold:
-	    if (isOnPuck()) {
-		g_debug ("%s: power key hold on puck, moving to on", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else if (isDisplayUnlocked()) {
-		g_debug ("%s: power key hold, moving to on", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    else  {
-		g_debug ("%s: power key hold, moving to OnLocked", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnLocked, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventPowerKeyHold:
+        if (isOnPuck()) {
+        g_debug ("%s: power key hold on puck, moving to on", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else if (isDisplayUnlocked()) {
+        g_debug ("%s: power key hold, moving to on", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        else  {
+        g_debug ("%s: power key hold, moving to OnLocked", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnLocked, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventOnPuck:
-	    if (isOnCall() || isDisplayUnlocked()) {
-		g_debug ("%s: on puck on a call, moving to onpuck", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else {
-		g_debug ("%s: on puck, moving to dock mode", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateDockMode, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventOnPuck:
+        if (isOnCall() || isDisplayUnlocked()) {
+        g_debug ("%s: on puck on a call, moving to onpuck", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else {
+        g_debug ("%s: on puck, moving to dock mode", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateDockMode, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventOffPuck:
-	    g_debug ("%s: off puck received in Off state, staying off", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventOffPuck:
+        g_debug ("%s: off puck received in Off state, staying off", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventUsbIn:
-	    if (isOnPuck()) {
-		g_debug ("%s: usb in when on puck, move to on puck", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else {
-		g_debug ("%s: usb in, moving to on", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventUsbIn:
+        if (isOnPuck()) {
+        g_debug ("%s: usb in when on puck, move to on puck", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else {
+        g_debug ("%s: usb in, moving to on", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventUsbOut:
-	    break;
+    case DisplayEventUsbOut:
+        break;
 
-	case DisplayEventIncomingCall:
-	    if (isOnPuck()) {
-		g_debug ("%s: incoming call when on puck, move to OnPuck", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else {
-		g_debug ("%s: incoming call, moving to on / onlocked", __PRETTY_FUNCTION__);
-		if (isDisplayUnlocked())
-		    changeDisplayState (DisplayStateOn, displayEvent, event);
-		else 
-		    changeDisplayState (DisplayStateOnLocked, displayEvent, event);
-	    }
+    case DisplayEventIncomingCall:
+        if (isOnPuck()) {
+        g_debug ("%s: incoming call when on puck, move to OnPuck", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else {
+        g_debug ("%s: incoming call, moving to on / onlocked", __PRETTY_FUNCTION__);
+        if (isDisplayUnlocked())
+            changeDisplayState (DisplayStateOn, displayEvent, event);
+        else 
+            changeDisplayState (DisplayStateOnLocked, displayEvent, event);
+        }
 
-	    break;
+        break;
 
-	case DisplayEventIncomingCallDone:
-	    g_warning ("%s: incoming call done, should never happen", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventIncomingCallDone:
+        g_warning ("%s: incoming call done, should never happen", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventOnCall:
-	    if (isOnPuck()) {
-		g_debug ("%s: on call on puck, move to OnPuck", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else if (isDisplayUnlocked()) {
-		g_debug ("%s: on call, moving to On", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    else {
-		g_debug ("%s: on call, moving to OnLocked", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnLocked, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventOnCall:
+        if (isOnPuck()) {
+        g_debug ("%s: on call on puck, move to OnPuck", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else if (isDisplayUnlocked()) {
+        g_debug ("%s: on call, moving to On", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        else {
+        g_debug ("%s: on call, moving to OnLocked", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnLocked, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventOffCall:
-	    g_warning ("%s: off call - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventOffCall:
+        g_warning ("%s: off call - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventSliderOpen:
-	    if (isOnPuck()) {
-		g_debug ("%s: slider open when on puck, move to OnPuck", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else {
-		g_debug ("%s: slider open, moving to on", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventSliderOpen:
+        if (isOnPuck()) {
+        g_debug ("%s: slider open when on puck, move to OnPuck", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else {
+        g_debug ("%s: slider open, moving to on", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventSliderClose:
-	    break;
+    case DisplayEventSliderClose:
+        break;
 
-	case DisplayEventAlsChange:
-	    break;
+    case DisplayEventAlsChange:
+        break;
 
-	case DisplayEventProximityOn:
-	    g_warning ("%s: proximity on event received in off state - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventProximityOn:
+        g_warning ("%s: proximity on event received in off state - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventProximityOff:
-	    g_warning ("%s: proximity off event received in off state - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventProximityOff:
+        g_warning ("%s: proximity off event received in off state - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventApiOn:
-	    if (isOnPuck()) {
-		    if (isOnCall()) {
-			    g_debug ("%s: public api on called when on puck on call, move to on puck", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		    }
-		    else {
-			    g_debug ("%s: public api on called when on puck, move to dock mode", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateDockMode, displayEvent, event);
-		    }
-	    }
-	    else if (isDisplayUnlocked()) {
-		g_debug ("%s: public api on called, move to on", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    else {
-		g_debug ("%s: public api on called, move to onLocked", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnLocked, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventApiOn:
+        if (isOnPuck()) {
+            if (isOnCall()) {
+                g_debug ("%s: public api on called when on puck on call, move to on puck", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+            }
+            else {
+                g_debug ("%s: public api on called when on puck, move to dock mode", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateDockMode, displayEvent, event);
+            }
+        }
+        else if (isDisplayUnlocked()) {
+        g_debug ("%s: public api on called, move to on", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        else {
+        g_debug ("%s: public api on called, move to onLocked", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnLocked, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventApiDim:
-	    break;
+    case DisplayEventApiDim:
+        break;
 
-	case DisplayEventApiOff:
-	    break;
+    case DisplayEventApiOff:
+        break;
 
-	case DisplayEventUserActivity:
-	    if (isOnPuck()) {
-		g_debug ("%s: user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else if (isDisplayUnlocked()) {
-		g_debug ("%s: received user activity when display is off and unlocked, moving to on", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    else {
-		g_debug ("%s: received user activity when display is off and locked, moving to onlocked", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnLocked, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventUserActivity:
+        if (isOnPuck()) {
+        g_debug ("%s: user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else if (isDisplayUnlocked()) {
+        g_debug ("%s: received user activity when display is off and unlocked, moving to on", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        else {
+        g_debug ("%s: received user activity when display is off and locked, moving to onlocked", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnLocked, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventUserActivityExternalInput:
-	    if (isOnPuck()) {
-			g_debug ("%s: external input user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
-			changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else  {
-			g_debug ("%s: external input user activity, moving to on", __PRETTY_FUNCTION__);
-			changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    break;		
+    case DisplayEventUserActivityExternalInput:
+        if (isOnPuck()) {
+            g_debug ("%s: external input user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else  {
+            g_debug ("%s: external input user activity, moving to on", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        break;        
 
-	case DisplayEventHomeKeyPress:
-	    if (isOnPuck()) {
-		if (isDisplayUnlocked() || isOnCall()) {
-		    g_message ("%s: home key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
-			    (isDisplayUnlocked()) ? "unlocked" : "locked", 
-			    (isUSBCharging()) ? "connected" : "disconnected",
-			    (isSliderOpen()) ? "open" : "closed",
-			    (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
-			    (isOnCall()) ? "on" : "off");
-		    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		}
-		else {
-		    g_debug ("%s: home key press when on puck, move to dock mode", __PRETTY_FUNCTION__);
-		    changeDisplayState (DisplayStateDockMode, displayEvent, event);
-		}
-	    }
-	    else if (isDisplayUnlocked() || isOnCall()) {
-		g_message ("%s: home key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
-			(isDisplayUnlocked()) ? "unlocked" : "locked", 
-			(isUSBCharging()) ? "connected" : "disconnected",
-			(isSliderOpen()) ? "open" : "closed",
-			(Settings::LunaSettings()->disableLocking) ? "set" : "unset",
-			(isOnCall()) ? "on" : "off");
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    else  {
-		g_debug ("%s: home key press, moving to OnLocked", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOnLocked, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventHomeKeyPress:
+        if (isOnPuck()) {
+        if (isDisplayUnlocked() || isOnCall()) {
+            g_message ("%s: home key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
+                (isDisplayUnlocked()) ? "unlocked" : "locked", 
+                (isUSBCharging()) ? "connected" : "disconnected",
+                (isSliderOpen()) ? "open" : "closed",
+                (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
+                (isOnCall()) ? "on" : "off");
+            changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else {
+            g_debug ("%s: home key press when on puck, move to dock mode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateDockMode, displayEvent, event);
+        }
+        }
+        else if (isDisplayUnlocked() || isOnCall()) {
+        g_message ("%s: home key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
+            (isDisplayUnlocked()) ? "unlocked" : "locked", 
+            (isUSBCharging()) ? "connected" : "disconnected",
+            (isSliderOpen()) ? "open" : "closed",
+            (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
+            (isOnCall()) ? "on" : "off");
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        else  {
+        g_debug ("%s: home key press, moving to OnLocked", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnLocked, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventUpdateBrightness:
-	    break;
-	case DisplayEventLockScreen:
-	    break;
-	case DisplayEventUnlockScreen:
-	    break;
-	case DisplayEventPowerdSuspend:
-	    g_debug ("%s: received suspend event, going to off suspended", __PRETTY_FUNCTION__);
-	    changeDisplayState (DisplayStateOffSuspended, displayEvent, event);
-	    break;
-	case DisplayEventPowerdResume:
-	    break;
-	case DisplayEventApiDock:
-	    if (!isOnCall()) {
-		    g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
-		    changeDisplayState (DisplayStateDockMode, displayEvent, event);
-	    }
-	    break;
-	case DisplayEventApiUndock:
-	    break;
-	default:
-	    break;
+    case DisplayEventUpdateBrightness:
+        break;
+    case DisplayEventLockScreen:
+        break;
+    case DisplayEventUnlockScreen:
+        break;
+    case DisplayEventPowerdSuspend:
+        g_debug ("%s: received suspend event, going to off suspended", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOffSuspended, displayEvent, event);
+        break;
+    case DisplayEventPowerdResume:
+        break;
+    case DisplayEventApiDock:
+        if (!isOnCall()) {
+            g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateDockMode, displayEvent, event);
+        }
+        break;
+    case DisplayEventApiUndock:
+        break;
+    default:
+        break;
     }
 
 }
@@ -551,64 +551,64 @@ void DisplayOffOnCall::enter (DisplayState state, DisplayEvent displayEvent, spt
 void DisplayOffOnCall::handleEvent (DisplayEvent displayEvent, sptr<Event> event) 
 {
     switch (displayEvent) {
-	case DisplayEventPowerKeyPress:
-	    if (isBacklightOn()) {
-		g_warning ("backlight not off yet, debouncing power key");
-		break;
-	    }
+    case DisplayEventPowerKeyPress:
+        if (isBacklightOn()) {
+        g_warning ("backlight not off yet, debouncing power key");
+        break;
+        }
             if (!isProximityActivated()) {
-		    if (isOnPuck()) {
-			    g_debug ("%s: power key press on puck, proximity not activated, going to OnPuck", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		    }
-		    else {
-			    g_debug ("%s: power key press, proximity not activated, going to on", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOn, displayEvent, event);
-		    }
+            if (isOnPuck()) {
+                g_debug ("%s: power key press on puck, proximity not activated, going to OnPuck", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+            }
+            else {
+                g_debug ("%s: power key press, proximity not activated, going to on", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOn, displayEvent, event);
+            }
             }
             else {
                 g_message ("%s: power key press when off on call, proximity is activated, ignoring", __PRETTY_FUNCTION__);
             }
-	    break;
+        break;
 
-	case DisplayEventPowerKeyHold:
+    case DisplayEventPowerKeyHold:
             if (!isProximityActivated()) {
-		    if (isOnPuck()) {
-			    g_debug ("%s: power key on puck hold going to OnPuck", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		    }
-		    else {
-			    g_debug ("%s: power key hold going to On", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOn, displayEvent, event);
-		    }
+            if (isOnPuck()) {
+                g_debug ("%s: power key on puck hold going to OnPuck", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
             }
-	    break;
+            else {
+                g_debug ("%s: power key hold going to On", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOn, displayEvent, event);
+            }
+            }
+        break;
 
-	case DisplayEventOnPuck:
+    case DisplayEventOnPuck:
             g_debug ("%s: on a call, going to On", __PRETTY_FUNCTION__);
             changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    break;
+        break;
 
-	case DisplayEventOffPuck:
-	    g_warning ("%s: off puck received - invalid event", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventOffPuck:
+        g_warning ("%s: off puck received - invalid event", __PRETTY_FUNCTION__);
+        break;
 
         case DisplayEventUsbIn:
-	    break;
+        break;
 
         case DisplayEventUsbOut:
-	    break;
+        break;
 
         case DisplayEventIncomingCall:
-	    if (!isProximityActivated()) {
-		    if (isOnPuck()) {
-			    g_message ("%s: incoming call when off on call on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		    }
-		    else {
-			    g_message ("%s: incoming call when off on call, proximity not activated, going On", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOn, displayEvent, event);
-		    }
+        if (!isProximityActivated()) {
+            if (isOnPuck()) {
+                g_message ("%s: incoming call when off on call on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+            }
+            else {
+                g_message ("%s: incoming call when off on call, proximity not activated, going On", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOn, displayEvent, event);
+            }
             }
             else {
                 g_message ("%s: incoming call when off on call, proximity is activated, ignoring", __PRETTY_FUNCTION__);
@@ -619,142 +619,142 @@ void DisplayOffOnCall::handleEvent (DisplayEvent displayEvent, sptr<Event> event
             g_message ("%s: incoming call done when off on call, ignoring", __PRETTY_FUNCTION__);
             break;
 
-	case DisplayEventOnCall:
-	    g_warning ("%s: on call event - invalid event", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventOnCall:
+        g_warning ("%s: on call event - invalid event", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventOffCall:
+    case DisplayEventOffCall:
             if (!isProximityActivated()) {
-		    if (isOnPuck()) {
-			    g_message ("%s: off call on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		    } 
-		    else {
-			    g_debug ("%s: off call, going to on", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOn, displayEvent, event);
-		    }
+            if (isOnPuck()) {
+                g_message ("%s: off call on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+            } 
+            else {
+                g_debug ("%s: off call, going to on", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOn, displayEvent, event);
             }
-	    else {
-		    g_message ("Call disconnected, not going to on till proximity sensor has unactivated as per HI requirement");
-	    }
-	    break;
+            }
+        else {
+            g_message ("Call disconnected, not going to on till proximity sensor has unactivated as per HI requirement");
+        }
+        break;
 
         case DisplayEventSliderOpen:
             if (!isProximityActivated()) {
-		    if (isOnPuck()) {
-			    g_message ("%s: slider open on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		    } 
-		    else {
-			    g_debug ("%s: slider open, going to on", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOn, displayEvent, event);
-		    }
+            if (isOnPuck()) {
+                g_message ("%s: slider open on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+            } 
+            else {
+                g_debug ("%s: slider open, going to on", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOn, displayEvent, event);
             }
-	    break;
+            }
+        break;
 
         case DisplayEventSliderClose:
-	    break;
+        break;
 
-	case DisplayEventAlsChange:
+    case DisplayEventAlsChange:
             g_debug ("%s: ignoring Als change", __PRETTY_FUNCTION__);
-	    break;
+        break;
 
-	case DisplayEventProximityOn:
-	    break;
+    case DisplayEventProximityOn:
+        break;
 
-	case DisplayEventProximityOff:
-	    if (isOnPuck()) {
-		    g_message ("%s: proximity off event on puck, moving to OnPuck", __PRETTY_FUNCTION__);
-		    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else {
-		    g_message ("%s: proximity off event, moving to on", __PRETTY_FUNCTION__);
-		    changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    break;
+    case DisplayEventProximityOff:
+        if (isOnPuck()) {
+            g_message ("%s: proximity off event on puck, moving to OnPuck", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else {
+            g_message ("%s: proximity off event, moving to on", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventApiOn:
-	    if (!isProximityActivated()) {
-		    if (isOnPuck()) {
-			    g_message ("%s: public api on called when off on call on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		    }
-		    else {
-			    g_message ("%s: public api on called when off on call, proximity not activated, going on", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOn, displayEvent, event);
-		    }
+    case DisplayEventApiOn:
+        if (!isProximityActivated()) {
+            if (isOnPuck()) {
+                g_message ("%s: public api on called when off on call on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+            }
+            else {
+                g_message ("%s: public api on called when off on call, proximity not activated, going on", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOn, displayEvent, event);
+            }
             }
             else {
                 g_message ("%s: public api on called when off on call, proximity is activated, ignoring", __PRETTY_FUNCTION__);
             }
-	    break;
+        break;
 
-	case DisplayEventApiDim:
-	    break;
-	case DisplayEventApiOff:
-	    break;
-	case DisplayEventUserActivity:
-	    if (!isProximityActivated()) {
-		    if (isOnPuck()) {
-			    g_message ("%s: user activity when off on call on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		    }
-		    else {
-			    g_message ("%s: user activity when off on call, proximity not activated, going on", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOn, displayEvent, event);
-		    }
-	    }
-	    break;
+    case DisplayEventApiDim:
+        break;
+    case DisplayEventApiOff:
+        break;
+    case DisplayEventUserActivity:
+        if (!isProximityActivated()) {
+            if (isOnPuck()) {
+                g_message ("%s: user activity when off on call on puck, proximity not activated, going OnPuck", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+            }
+            else {
+                g_message ("%s: user activity when off on call, proximity not activated, going on", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOn, displayEvent, event);
+            }
+        }
+        break;
 
-	case DisplayEventUserActivityExternalInput:
-	    if (isOnPuck()) {
-			g_debug ("%s: external input user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
-			changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    }
-	    else  {
-			g_debug ("%s: external input user activity, moving to on", __PRETTY_FUNCTION__);
-			changeDisplayState (DisplayStateOn, displayEvent, event);
-	    }
-	    break;		
-		
+    case DisplayEventUserActivityExternalInput:
+        if (isOnPuck()) {
+            g_debug ("%s: external input user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        }
+        else  {
+            g_debug ("%s: external input user activity, moving to on", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        break;        
+        
         case DisplayEventUpdateBrightness:
             break;
         case DisplayEventLockScreen:
-	    g_message ("%s: locking screen", __PRETTY_FUNCTION__);
-	    updateLockState (DisplayLockLocked, displayEvent);
+        g_message ("%s: locking screen", __PRETTY_FUNCTION__);
+        updateLockState (DisplayLockLocked, displayEvent);
             break;
         case DisplayEventUnlockScreen:
-	    g_message ("%s: unlocking screen", __PRETTY_FUNCTION__);
-	    updateLockState (DisplayLockUnlocked, displayEvent);
+        g_message ("%s: unlocking screen", __PRETTY_FUNCTION__);
+        updateLockState (DisplayLockUnlocked, displayEvent);
             break;
-	case DisplayEventPowerdSuspend:
+    case DisplayEventPowerdSuspend:
 #if defined(MACHINE_BROADWAY) || defined(MACHINE_MANTARAY)
-	    g_debug ("%s: received suspend event, going to off suspended", __PRETTY_FUNCTION__);
-	    changeDisplayState (DisplayStateOffSuspended, displayEvent, event);
+        g_debug ("%s: received suspend event, going to off suspended", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOffSuspended, displayEvent, event);
 #else
-	    g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
+        g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
 #endif
-	    break;
-	case DisplayEventPowerdResume:
-	    break;
-	case DisplayEventHomeKeyPress:
+        break;
+    case DisplayEventPowerdResume:
+        break;
+    case DisplayEventHomeKeyPress:
             if (!isProximityActivated()) {
-		    if (isOnPuck()) {
-			    g_debug ("%s: home key press on puck, proximity not activated, going to OnPuck", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-		    }
-		    else {
-			    g_debug ("%s: home key press, proximity not activated, going to on", __PRETTY_FUNCTION__);
-			    changeDisplayState (DisplayStateOn, displayEvent, event);
-		    }
+            if (isOnPuck()) {
+                g_debug ("%s: home key press on puck, proximity not activated, going to OnPuck", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+            }
+            else {
+                g_debug ("%s: home key press, proximity not activated, going to on", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateOn, displayEvent, event);
+            }
             }
             else {
                 g_message ("%s: power key press when off on call, proximity is activated, ignoring", __PRETTY_FUNCTION__);
             }
-	    break;
+        break;
 
-	default:
-	    break;
+    default:
+        break;
     }
 
 }
@@ -854,33 +854,33 @@ bool DisplayOn::timeoutUser()
 #if 0
     // check for brick mode
     if (SystemService::instance()->brickMode() || 
-	    !SystemUiController::instance()->bootFinished() || 
-	    WindowServer::instance()->progressRunning())
-	return false;
+        !SystemUiController::instance()->bootFinished() || 
+        WindowServer::instance()->progressRunning())
+    return false;
 #endif
 
     if (dimTimeout() == 0 && offTimeout() == 0)
-	return false;
+    return false;
 
     if (isDNAST())
-	return false;
+    return false;
 
     if (now <  (unsigned int) dimTimeout() + lastEvent())
     {
-	g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
-	m_timerUser->start (dimTimeout() + lastEvent() - now);
+    g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
+    m_timerUser->start (dimTimeout() + lastEvent() - now);
     }
     else
     {
-	g_message ("%s: change to dim in on", __PRETTY_FUNCTION__);
-	if (isDemo()) {
-	    if (isOnCall())
-		changeDisplayState (DisplayStateOffOnCall, DisplayEventTimeout, NULL);
-	    else
-		changeDisplayState (DisplayStateOff, DisplayEventTimeout, NULL);
-	}
-	else 
-	    changeDisplayState (DisplayStateDim, DisplayEventTimeout, NULL);
+    g_message ("%s: change to dim in on", __PRETTY_FUNCTION__);
+    if (isDemo()) {
+        if (isOnCall())
+        changeDisplayState (DisplayStateOffOnCall, DisplayEventTimeout, NULL);
+        else
+        changeDisplayState (DisplayStateOff, DisplayEventTimeout, NULL);
+    }
+    else 
+        changeDisplayState (DisplayStateDim, DisplayEventTimeout, NULL);
     }
     return false;
 }
@@ -896,18 +896,18 @@ bool DisplayOn::timeoutInternal()
 #if 0
     // check for brick mode
     if (SystemService::instance()->brickMode() || 
-	    !SystemUiController::instance()->bootFinished() || 
-	    WindowServer::instance()->progressRunning())
-	return false;
+        !SystemUiController::instance()->bootFinished() || 
+        WindowServer::instance()->progressRunning())
+    return false;
 #endif
 
     if (isDNAST())
-	return false;
+    return false;
 
     if (now <  (unsigned int) lockedOffTimeout() + lastEvent())
     {
-	g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
-	m_timerInternal->start (lockedOffTimeout() + lastEvent() - now);
+    g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
+    m_timerInternal->start (lockedOffTimeout() + lastEvent() - now);
     }
     else
     {
@@ -929,15 +929,15 @@ bool DisplayOn::timeoutInternal()
 void DisplayOn::handleEvent (DisplayEvent displayEvent, sptr<Event> event) 
 {
     if (displayEvent != DisplayEventAlsChange && displayEvent != DisplayEventUpdateBrightness)
-	startUserInactivityTimer();
+    startUserInactivityTimer();
 
     switch (displayEvent) {
-	case DisplayEventPowerKeyPress:
-	    if (!isBacklightOn()) {
-		g_warning ("backlight not on yet, debouncing power key");
-		break;
-	    }
-	    g_debug ("%s: power key down", __PRETTY_FUNCTION__);
+    case DisplayEventPowerKeyPress:
+        if (!isBacklightOn()) {
+        g_warning ("backlight not on yet, debouncing power key");
+        break;
+        }
+        g_debug ("%s: power key down", __PRETTY_FUNCTION__);
             if (isOnCall())
                 changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
             else if (isOnPuck()) 
@@ -945,52 +945,52 @@ void DisplayOn::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
             else
                 changeDisplayState (DisplayStateOff, displayEvent, event);
 
-	    break;
+        break;
 
-	case DisplayEventPowerKeyHold:
-	    break;
+    case DisplayEventPowerKeyHold:
+        break;
 
-	case DisplayEventOnPuck:
-	    g_debug ("%s: on puck, moving to onpuck", __PRETTY_FUNCTION__);
-	    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    break;
+    case DisplayEventOnPuck:
+        g_debug ("%s: on puck, moving to onpuck", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        break;
 
-	case DisplayEventOffPuck:
-	    g_warning ("%s: off puck received - invalid event", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventOffPuck:
+        g_warning ("%s: off puck received - invalid event", __PRETTY_FUNCTION__);
+        break;
 
         case DisplayEventUsbIn:
         case DisplayEventUsbOut:
         case DisplayEventIncomingCall:
         case DisplayEventIncomingCallDone:
-	case DisplayEventOnCall:
-	case DisplayEventOffCall:
-	    break;
+    case DisplayEventOnCall:
+    case DisplayEventOffCall:
+        break;
 
         case DisplayEventSliderOpen:
-	    g_debug ("%s: slider open, updating last event and turning on keypad", __PRETTY_FUNCTION__);
+        g_debug ("%s: slider open, updating last event and turning on keypad", __PRETTY_FUNCTION__);
             displayOn(false);  // turning on keypad
-	    break;
+        break;
 
         case DisplayEventSliderClose:
-	    break;
+        break;
 
-	case DisplayEventAlsChange:
+    case DisplayEventAlsChange:
             g_debug ("%s: received Als update, update brightness", __PRETTY_FUNCTION__);
             displayOn(true);
             break;
 
-	case DisplayEventProximityOn:
-	    g_debug ("%s: proximity on event, moving to OffOnCall", __PRETTY_FUNCTION__);
-	    changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
-	    break;
+    case DisplayEventProximityOn:
+        g_debug ("%s: proximity on event, moving to OffOnCall", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
+        break;
 
-	case DisplayEventApiDim:
-	    g_debug ("%s: public api dim called, going to dim", __PRETTY_FUNCTION__);
+    case DisplayEventApiDim:
+        g_debug ("%s: public api dim called, going to dim", __PRETTY_FUNCTION__);
             changeDisplayState (DisplayStateDim, displayEvent, event);
-	    break;
+        break;
 
-	case DisplayEventApiOff:
+    case DisplayEventApiOff:
             if (isOnCall()) {
                 g_debug ("%s: public api off called, going to OffOnCall", __PRETTY_FUNCTION__);
                 changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
@@ -1003,10 +1003,10 @@ void DisplayOn::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
                 g_debug ("%s: public api off called, going to off", __PRETTY_FUNCTION__);
                 changeDisplayState (DisplayStateOff, displayEvent, event);
             }
-	    break;
+        break;
 
-	case DisplayEventUserActivity:
-	case DisplayEventUserActivityExternalInput:
+    case DisplayEventUserActivity:
+    case DisplayEventUserActivityExternalInput:
             break;
         case DisplayEventUpdateBrightness:
             g_debug ("%s: received update brightness event", __PRETTY_FUNCTION__);
@@ -1014,29 +1014,29 @@ void DisplayOn::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
             break;
         case DisplayEventLockScreen:
         if (!isOnCall()) {
-		    g_debug ("%s: received lock event, going to OnLocked", __PRETTY_FUNCTION__);
-			changeDisplayState (DisplayStateOnLocked, displayEvent, event);
-	    }
+            g_debug ("%s: received lock event, going to OnLocked", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOnLocked, displayEvent, event);
+        }
             break;
         case DisplayEventUnlockScreen:
             break;
-	case DisplayEventPowerdSuspend:
-	    g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
-	    break;
-	case DisplayEventPowerdResume:
-	    break;
-	case DisplayEventApiDock:
-	    if (!isOnCall()) {
-		    g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
-		    changeDisplayState (DisplayStateDockMode, displayEvent, event);
-	    }
-	    break;
-	case DisplayEventApiUndock:
-	    break;
-	case DisplayEventHomeKeyPress:
-	    break;
-	default:
-	    break;
+    case DisplayEventPowerdSuspend:
+        g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
+        break;
+    case DisplayEventPowerdResume:
+        break;
+    case DisplayEventApiDock:
+        if (!isOnCall()) {
+            g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateDockMode, displayEvent, event);
+        }
+        break;
+    case DisplayEventApiUndock:
+        break;
+    case DisplayEventHomeKeyPress:
+        break;
+    default:
+        break;
     }
 
 }
@@ -1076,8 +1076,8 @@ void DisplayOnLocked::startInactivityTimer()
         m_timer->stop();
 
     if (isDNAST()) {
-	g_warning ("not starting timer due to DNAST enabled");
-	return;
+    g_warning ("not starting timer due to DNAST enabled");
+    return;
     }
     g_debug ("%s: %d ms", __PRETTY_FUNCTION__, lockedOffTimeout());
 
@@ -1102,22 +1102,22 @@ bool DisplayOnLocked::timeout()
 #if 0
     // check for brick mode
     if (SystemService::instance()->brickMode() || 
-	    !SystemUiController::instance()->bootFinished() || 
-	    WindowServer::instance()->progressRunning())
-	return false;
+        !SystemUiController::instance()->bootFinished() || 
+        WindowServer::instance()->progressRunning())
+    return false;
 #endif
 
 
     if (dimTimeout() == 0 && offTimeout() == 0)
-	return false;
+    return false;
 
     if (isDNAST())
-	return false;
+    return false;
 
     if (now <  (unsigned int) lockedOffTimeout() + lastEvent())
     {
-	g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, lockedOffTimeout() + lastEvent() - now);
-	m_timer->start (lockedOffTimeout() + lastEvent() - now);
+    g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, lockedOffTimeout() + lastEvent() - now);
+    m_timer->start (lockedOffTimeout() + lastEvent() - now);
     }
     else
     {
@@ -1141,133 +1141,133 @@ bool DisplayOnLocked::timeout()
 
 void DisplayOnLocked::handleEvent (DisplayEvent displayEvent, sptr<Event> event) 
 {
-	switch (displayEvent) {
-	case DisplayEventPowerKeyPress:
-		if (!isBacklightOn()) {
-			g_warning ("backlight not on yet, debouncing power key");
-			break;
-		}
+    switch (displayEvent) {
+    case DisplayEventPowerKeyPress:
+        if (!isBacklightOn()) {
+            g_warning ("backlight not on yet, debouncing power key");
+            break;
+        }
 
-		g_debug ("%s: power key up, moving to off", __PRETTY_FUNCTION__);
-		// if power key timer has not fired, turn display off
-		if (isOnCall())
-			changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
-		else
-			changeDisplayState (DisplayStateOff, displayEvent, event);
-		break;
+        g_debug ("%s: power key up, moving to off", __PRETTY_FUNCTION__);
+        // if power key timer has not fired, turn display off
+        if (isOnCall())
+            changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
+        else
+            changeDisplayState (DisplayStateOff, displayEvent, event);
+        break;
 
-	case DisplayEventPowerKeyHold:
-		break;
+    case DisplayEventPowerKeyHold:
+        break;
 
-	case DisplayEventOnPuck:
-		break;
+    case DisplayEventOnPuck:
+        break;
 
-	case DisplayEventOffPuck:
-		g_warning ("%s: off puck received - invalid event", __PRETTY_FUNCTION__);
-		break;
+    case DisplayEventOffPuck:
+        g_warning ("%s: off puck received - invalid event", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventUsbIn:
-		break;
+    case DisplayEventUsbIn:
+        break;
 
-	case DisplayEventUsbOut:
-		break;
+    case DisplayEventUsbOut:
+        break;
 
-	case DisplayEventIncomingCall:
-		break;
+    case DisplayEventIncomingCall:
+        break;
 
-	case DisplayEventIncomingCallDone:
-		break;
+    case DisplayEventIncomingCallDone:
+        break;
 
-	case DisplayEventOnCall:
-		break;
+    case DisplayEventOnCall:
+        break;
 
-	case DisplayEventOffCall:
-		break;
+    case DisplayEventOffCall:
+        break;
 
-	case DisplayEventSliderOpen:
-		break;
+    case DisplayEventSliderOpen:
+        break;
 
-	case DisplayEventSliderClose:
-		break;
+    case DisplayEventSliderClose:
+        break;
 
-	case DisplayEventAlsChange:
-		g_debug ("%s: received ALS change, update brightness", __PRETTY_FUNCTION__);
-		displayOn(true);
-		break;
+    case DisplayEventAlsChange:
+        g_debug ("%s: received ALS change, update brightness", __PRETTY_FUNCTION__);
+        displayOn(true);
+        break;
 
-	case DisplayEventProximityOn:
-		g_debug ("%s: proximity on event, changing to OffOnCall", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
-		break;
+    case DisplayEventProximityOn:
+        g_debug ("%s: proximity on event, changing to OffOnCall", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
+        break;
 
-	case DisplayEventProximityOff:
-		g_warning ("%s: proximity off event - invalid event", __PRETTY_FUNCTION__);
-		break;
+    case DisplayEventProximityOff:
+        g_warning ("%s: proximity off event - invalid event", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventApiOn:
-		break;
+    case DisplayEventApiOn:
+        break;
 
-	case DisplayEventApiOff:
-		g_debug ("%s: public api off called, going to Off / OffOnCall", __PRETTY_FUNCTION__);
-		if (isOnCall())
-			changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
-		else
-			changeDisplayState (DisplayStateOff, displayEvent, event);
-		break;
+    case DisplayEventApiOff:
+        g_debug ("%s: public api off called, going to Off / OffOnCall", __PRETTY_FUNCTION__);
+        if (isOnCall())
+            changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
+        else
+            changeDisplayState (DisplayStateOff, displayEvent, event);
+        break;
 
-	case DisplayEventUserActivity:
-		break;
-	case DisplayEventUserActivityExternalInput:
-		g_debug ("%s: external input user activity, moving to on", __PRETTY_FUNCTION__);
-		// changeDisplayState (DisplayStateOn, displayEvent, event);
-		break;
+    case DisplayEventUserActivity:
+        break;
+    case DisplayEventUserActivityExternalInput:
+        g_debug ("%s: external input user activity, moving to on", __PRETTY_FUNCTION__);
+        // changeDisplayState (DisplayStateOn, displayEvent, event);
+        break;
 
-	case DisplayEventUpdateBrightness:
-		displayOn(true);
-		break;
+    case DisplayEventUpdateBrightness:
+        displayOn(true);
+        break;
 
-	case DisplayEventLockScreen:
-		break;
-	case DisplayEventApiDock:
-		  if (!isOnCall()) {
-			g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
-			changeDisplayState (DisplayStateDockMode, displayEvent, event);
-		  }
-		break;
-	case DisplayEventApiUndock:
-		break;
+    case DisplayEventLockScreen:
+        break;
+    case DisplayEventApiDock:
+          if (!isOnCall()) {
+            g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateDockMode, displayEvent, event);
+          }
+        break;
+    case DisplayEventApiUndock:
+        break;
 
-	case DisplayEventUnlockScreen:
-		if (isOnPuck()) {
-			if (isDisplayUnlocked() || isOnCall()) {
-				g_message ("%s: unlock while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
-						   (isDisplayUnlocked()) ? "unlocked" : "locked",
-						   (isUSBCharging()) ? "connected" : "disconnected",
-						   (isSliderOpen()) ? "open" : "closed",
-						   (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
-						   (isOnCall()) ? "on" : "off");
-				changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-			}
-			else {
-				g_debug ("%s: unlock press when on puck, move to dock mode", __PRETTY_FUNCTION__);
-				changeDisplayState (DisplayStateDockMode, displayEvent, event);
-			}
-		}
-		else {
-			changeDisplayState (DisplayStateOn, displayEvent, event);
-		}
-		break;
+    case DisplayEventUnlockScreen:
+        if (isOnPuck()) {
+            if (isDisplayUnlocked() || isOnCall()) {
+                g_message ("%s: unlock while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
+                           (isDisplayUnlocked()) ? "unlocked" : "locked",
+                           (isUSBCharging()) ? "connected" : "disconnected",
+                           (isSliderOpen()) ? "open" : "closed",
+                           (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
+                           (isOnCall()) ? "on" : "off");
+                changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+            }
+            else {
+                g_debug ("%s: unlock press when on puck, move to dock mode", __PRETTY_FUNCTION__);
+                changeDisplayState (DisplayStateDockMode, displayEvent, event);
+            }
+        }
+        else {
+            changeDisplayState (DisplayStateOn, displayEvent, event);
+        }
+        break;
 
-	case DisplayEventPowerdSuspend:
-		g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
-		break;
-	case DisplayEventPowerdResume:
-		break;
-	case DisplayEventHomeKeyPress:
-		break;
-	default:
-		break;
-	}
+    case DisplayEventPowerdSuspend:
+        g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
+        break;
+    case DisplayEventPowerdResume:
+        break;
+    case DisplayEventHomeKeyPress:
+        break;
+    default:
+        break;
+    }
 
 }
 
@@ -1326,31 +1326,31 @@ bool DisplayDim::timeout()
 #if 0
     // check for brick mode
     if (SystemService::instance()->brickMode() || 
-	    !SystemUiController::instance()->bootFinished() || 
-	    WindowServer::instance()->progressRunning())
-	return false;
+        !SystemUiController::instance()->bootFinished() || 
+        WindowServer::instance()->progressRunning())
+    return false;
 #endif
 
 
     if (dimTimeout() == 0 && offTimeout() == 0)
-	return false;
+    return false;
 
     if (isDNAST())
-	return false;
+    return false;
 
     if (now <  (unsigned int) offTimeout() + lastEvent())
     {
-	g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
-	m_timer->start (offTimeout() + lastEvent() - now);
+    g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
+    m_timer->start (offTimeout() + lastEvent() - now);
     }
     else {
-	g_message ("%s: calling off() in on or onpuck state", __PRETTY_FUNCTION__);
-	if (isOnCall())
-	    changeDisplayState (DisplayStateOffOnCall, DisplayEventTimeout, NULL);
-	else if (isOnPuck())
-	    changeDisplayState (DisplayStateDockMode, DisplayEventTimeout, NULL);
-	else
-	    changeDisplayState (DisplayStateOff, DisplayEventTimeout, NULL);
+    g_message ("%s: calling off() in on or onpuck state", __PRETTY_FUNCTION__);
+    if (isOnCall())
+        changeDisplayState (DisplayStateOffOnCall, DisplayEventTimeout, NULL);
+    else if (isOnPuck())
+        changeDisplayState (DisplayStateDockMode, DisplayEventTimeout, NULL);
+    else
+        changeDisplayState (DisplayStateOff, DisplayEventTimeout, NULL);
     }
     return false;
 }
@@ -1370,8 +1370,8 @@ void DisplayDim::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
         g_warning ("%s: in dim when on call and on puck, bug!", __PRETTY_FUNCTION__);
 
     switch (displayEvent) {
-	case DisplayEventPowerKeyPress:
-	    g_debug ("%s: power key press, moving to off/dockmode", __PRETTY_FUNCTION__);
+    case DisplayEventPowerKeyPress:
+        g_debug ("%s: power key press, moving to off/dockmode", __PRETTY_FUNCTION__);
 
             if (isOnCall()) {
                 changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
@@ -1382,37 +1382,37 @@ void DisplayDim::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
                 else
                     changeDisplayState (DisplayStateOff, displayEvent, event);
             }
-	    break;
+        break;
 
-	case DisplayEventPowerKeyHold:
-	    g_debug ("%s: power key hold, moving to on/onpuck", __PRETTY_FUNCTION__);
+    case DisplayEventPowerKeyHold:
+        g_debug ("%s: power key hold, moving to on/onpuck", __PRETTY_FUNCTION__);
             if (isOnPuck())
                 changeDisplayState (DisplayStateOnPuck, displayEvent, event);
             else
                 changeDisplayState (DisplayStateOn, displayEvent, event);
-	    break;
+        break;
 
-	case DisplayEventOnPuck:
-	    g_debug ("%s: on puck, moving to on puck", __PRETTY_FUNCTION__);
-	    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    break;
+    case DisplayEventOnPuck:
+        g_debug ("%s: on puck, moving to on puck", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        break;
 
-	case DisplayEventOffPuck:
-	    g_debug ("%s: lifted off puck, moving to on", __PRETTY_FUNCTION__);
-	    changeDisplayState (DisplayStateOn, displayEvent, event);
-	    break;
+    case DisplayEventOffPuck:
+        g_debug ("%s: lifted off puck, moving to on", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        break;
 
         case DisplayEventUsbIn:
-	    g_debug ("%s: usb in, going to on / onpuck", __PRETTY_FUNCTION__);
+        g_debug ("%s: usb in, going to on / onpuck", __PRETTY_FUNCTION__);
             if (isOnPuck())
                 changeDisplayState (DisplayStateOnPuck, displayEvent, event);
             else 
                 changeDisplayState (DisplayStateOn, displayEvent, event);
 
-	    break;
+        break;
 
         case DisplayEventUsbOut:
-	    break;
+        break;
 
         case DisplayEventIncomingCall:
             g_debug ("%s: incoming call when dim, moving to on/on locked", __PRETTY_FUNCTION__);
@@ -1425,40 +1425,40 @@ void DisplayDim::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
         case DisplayEventIncomingCallDone:
             break;
 
-	case DisplayEventOnCall:
-	    break;
+    case DisplayEventOnCall:
+        break;
 
-	case DisplayEventOffCall:
-	    break;
+    case DisplayEventOffCall:
+        break;
 
         case DisplayEventSliderOpen:
-	    break;
+        break;
 
         case DisplayEventSliderClose:
-	    g_debug ("%s: slider close, going to DockMode/OffOnCall/Off", __PRETTY_FUNCTION__);
+        g_debug ("%s: slider close, going to DockMode/OffOnCall/Off", __PRETTY_FUNCTION__);
             if (isOnCall())
                 changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
             else if (isOnPuck())
                 changeDisplayState (DisplayStateDockMode, displayEvent, event);
             else
                 changeDisplayState (DisplayStateOff, displayEvent, event);
-	    break;
+        break;
 
-	case DisplayEventAlsChange:
-	    break;
+    case DisplayEventAlsChange:
+        break;
 
-	case DisplayEventProximityOn:
+    case DisplayEventProximityOn:
             if (isOnCall()) {
                 g_debug ("%s: proximity on event, moving to off on call", __PRETTY_FUNCTION__);
                 changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
             }
-	    break;
+        break;
 
-	case DisplayEventProximityOff:
-	    g_warning ("%s: proximity off event - invalid event", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventProximityOff:
+        g_warning ("%s: proximity off event - invalid event", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventApiOn:
+    case DisplayEventApiOn:
             if (isOnPuck()) {
                 g_debug ("%s: public api on called, going to onpuck", __PRETTY_FUNCTION__);
                 changeDisplayState (DisplayStateOnPuck, displayEvent, event);
@@ -1467,12 +1467,12 @@ void DisplayDim::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
                 g_debug ("%s: public api on called, going to on", __PRETTY_FUNCTION__);
                 changeDisplayState (DisplayStateOn, displayEvent, event);
             }
-	    break;
+        break;
 
-	case DisplayEventApiDim:
-	    break;
+    case DisplayEventApiDim:
+        break;
 
-	case DisplayEventApiOff:
+    case DisplayEventApiOff:
             if (isOnCall()) {
                 g_debug ("%s: public api off called while on call, going to OffOnCall", __PRETTY_FUNCTION__);
                 changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
@@ -1485,11 +1485,11 @@ void DisplayDim::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
                 g_debug ("%s: public api off called, going to off", __PRETTY_FUNCTION__);
                 changeDisplayState (DisplayStateOff, displayEvent, event);
             }
-	    break;
+        break;
 
-	case DisplayEventHomeKeyPress:
-	case DisplayEventUserActivity:
-	case DisplayEventUserActivityExternalInput:
+    case DisplayEventHomeKeyPress:
+    case DisplayEventUserActivity:
+    case DisplayEventUserActivityExternalInput:
             if (isOnPuck()) {
                 g_debug ("%s: received key/pen/gesture event, going to onpuck", __PRETTY_FUNCTION__);
                 changeDisplayState (DisplayStateOnPuck, displayEvent, event);
@@ -1506,21 +1506,21 @@ void DisplayDim::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
             break;
         case DisplayEventUnlockScreen:
             break;
-	case DisplayEventPowerdSuspend:
-	    g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
-	    break;
-	case DisplayEventPowerdResume:
-	    break;
-	case DisplayEventApiDock:
-	    if (!isOnCall()) {
-		    g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
-		    changeDisplayState (DisplayStateDockMode, displayEvent, event);
-	    }
-	    break;
-	case DisplayEventApiUndock:
-	    break;
-	default:
-	    break;
+    case DisplayEventPowerdSuspend:
+        g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
+        break;
+    case DisplayEventPowerdResume:
+        break;
+    case DisplayEventApiDock:
+        if (!isOnCall()) {
+            g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateDockMode, displayEvent, event);
+        }
+        break;
+    case DisplayEventApiUndock:
+        break;
+    default:
+        break;
     }
 
 }
@@ -1559,8 +1559,8 @@ void DisplayOnPuck::startInactivityTimer()
         m_timer->stop();
 
     if (isOnCall() || isDNAST()) {
-	g_warning ("not starting timer due to DNAST enabled or onCall");
-	return;
+    g_warning ("not starting timer due to DNAST enabled or onCall");
+    return;
     }
 
     g_debug ("%s: %d ms", __PRETTY_FUNCTION__, dimTimeout() + offTimeout());
@@ -1585,28 +1585,28 @@ bool DisplayOnPuck::timeout()
 #if 0
     // check for brick mode
     if (SystemService::instance()->brickMode() || 
-	    !SystemUiController::instance()->bootFinished() || 
-	    WindowServer::instance()->progressRunning())
-	return false;
+        !SystemUiController::instance()->bootFinished() || 
+        WindowServer::instance()->progressRunning())
+    return false;
 #endif
 
 
     if (dimTimeout() == 0 && offTimeout() == 0)
-	return false;
+    return false;
 
     if (isDNAST())
-	return false;
+    return false;
 
     if (isOnCall())
-	    return false;
+        return false;
     if (now <  (unsigned int) (dimTimeout() + offTimeout()) + lastEvent())
     {
-	g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
-	m_timer->start ((dimTimeout() + offTimeout()) + lastEvent() - now);
+    g_debug ("%s: restart the dim timer for %u ms", __PRETTY_FUNCTION__, dimTimeout() + lastEvent() - now);
+    m_timer->start ((dimTimeout() + offTimeout()) + lastEvent() - now);
     }
     else {
-	g_message ("%s: going to dockmode", __PRETTY_FUNCTION__);
-	changeDisplayState (DisplayStateDockMode, DisplayEventTimeout, NULL);
+    g_message ("%s: going to dockmode", __PRETTY_FUNCTION__);
+    changeDisplayState (DisplayStateDockMode, DisplayEventTimeout, NULL);
     }
     return false;
 }
@@ -1616,96 +1616,96 @@ void DisplayOnPuck::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
 {
     switch (displayEvent) {
         case DisplayEventPowerKeyPress:
-		if (isOnCall()) {
-			g_debug ("%s: power key press received, going to off", __PRETTY_FUNCTION__);
-			changeDisplayState (DisplayStateOff, displayEvent, event);
-		}
-		else {
-			g_debug ("%s: power key press received, going to dockmode", __PRETTY_FUNCTION__);
-			changeDisplayState (DisplayStateDockMode, displayEvent, event);
-		}
-	    break;
+        if (isOnCall()) {
+            g_debug ("%s: power key press received, going to off", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOff, displayEvent, event);
+        }
+        else {
+            g_debug ("%s: power key press received, going to dockmode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateDockMode, displayEvent, event);
+        }
+        break;
         case DisplayEventPowerKeyHold:
             break;
-	case DisplayEventOnPuck:
-	    g_warning ("%s: on puck, invalid - bug?", __PRETTY_FUNCTION__);
-	    break;
-	case DisplayEventOffPuck:
-	    g_debug ("%s: off puck received, going to on", __PRETTY_FUNCTION__);
-	    changeDisplayState (DisplayStateOn, displayEvent, event);
-	    break;
+    case DisplayEventOnPuck:
+        g_warning ("%s: on puck, invalid - bug?", __PRETTY_FUNCTION__);
+        break;
+    case DisplayEventOffPuck:
+        g_debug ("%s: off puck received, going to on", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        break;
         case DisplayEventUsbIn:
-	    break;
+        break;
         case DisplayEventUsbOut:
             break;
         case DisplayEventIncomingCall:
-	    break;
+        break;
         case DisplayEventIncomingCallDone:
-	    break;
-	case DisplayEventOnCall:
+        break;
+    case DisplayEventOnCall:
             stopInactivityTimer();
-	    break;
-	case DisplayEventOffCall:
+        break;
+    case DisplayEventOffCall:
             if (!isOnCall())
                 startInactivityTimer();
-	    break;
+        break;
         case DisplayEventSliderOpen:
-	    break;
+        break;
         case DisplayEventSliderClose:
-	    break;
-	case DisplayEventAlsChange:
+        break;
+    case DisplayEventAlsChange:
             g_debug ("%s: received ALS change, update brightness", __PRETTY_FUNCTION__);
             displayOn(true);
-	    break;
-	case DisplayEventProximityOn:
-	    break;
-	case DisplayEventProximityOff:
-	    break;
-	case DisplayEventApiOn:
-	    break;
-	case DisplayEventApiDim:
-	    break;
-	case DisplayEventApiOff:
-	    if (isOnCall()) {
-	        g_debug ("%s: public api off called, going to off on call", __PRETTY_FUNCTION__);
-	        changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
-	    }
-	    else {
-	        g_debug ("%s: public api off called, going to dock mode", __PRETTY_FUNCTION__);
-	        changeDisplayState (DisplayStateDockMode, displayEvent, event);
-	    }
-	    break;
-	case DisplayEventApiDock:
-	    if (!isOnCall()) {
-		    g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
-		    changeDisplayState (DisplayStateDockMode, displayEvent, event);
-	    }
-	    break;
-	case DisplayEventApiUndock:
-	    break;
-	case DisplayEventUserActivity:
-	case DisplayEventUserActivityExternalInput:
-	    break;
+        break;
+    case DisplayEventProximityOn:
+        break;
+    case DisplayEventProximityOff:
+        break;
+    case DisplayEventApiOn:
+        break;
+    case DisplayEventApiDim:
+        break;
+    case DisplayEventApiOff:
+        if (isOnCall()) {
+            g_debug ("%s: public api off called, going to off on call", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOffOnCall, displayEvent, event);
+        }
+        else {
+            g_debug ("%s: public api off called, going to dock mode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateDockMode, displayEvent, event);
+        }
+        break;
+    case DisplayEventApiDock:
+        if (!isOnCall()) {
+            g_debug ("%s: received dock event, going to dock mode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateDockMode, displayEvent, event);
+        }
+        break;
+    case DisplayEventApiUndock:
+        break;
+    case DisplayEventUserActivity:
+    case DisplayEventUserActivityExternalInput:
+        break;
         case DisplayEventUpdateBrightness:
             displayOn(true);
             break;
         case DisplayEventLockScreen:
-	    if (!isOnCall()) {
-		    g_debug ("%s: public api lock called, going to dock mode", __PRETTY_FUNCTION__);
-			changeDisplayState (DisplayStateOnLocked, displayEvent, event);
-	    }
+        if (!isOnCall()) {
+            g_debug ("%s: public api lock called, going to dock mode", __PRETTY_FUNCTION__);
+            changeDisplayState (DisplayStateOnLocked, displayEvent, event);
+        }
             break;
         case DisplayEventUnlockScreen:
             break;
-	case DisplayEventPowerdSuspend:
-	    g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
-	    break;
-	case DisplayEventPowerdResume:
-	    break;
-	case DisplayEventHomeKeyPress:
-	    break;
-	default:
-	    break;
+    case DisplayEventPowerdSuspend:
+        g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
+        break;
+    case DisplayEventPowerdResume:
+        break;
+    case DisplayEventHomeKeyPress:
+        break;
+    default:
+        break;
     }
 
 }
@@ -1732,11 +1732,11 @@ DisplayDockMode::DisplayDockMode()
 
 bool DisplayDockMode::timeoutExit()
 {
-	if (!isOnPuck()) {
-		g_warning ("%s: Exiting dock mode", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOn, DisplayEventOffPuck, NULL);
-	}
-	return false;
+    if (!isOnPuck()) {
+        g_warning ("%s: Exiting dock mode", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, DisplayEventOffPuck, NULL);
+    }
+    return false;
 }
 
 void DisplayDockMode::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
@@ -1765,80 +1765,80 @@ void DisplayDockMode::enter (DisplayState state, DisplayEvent displayEvent, sptr
 void DisplayDockMode::handleEvent (DisplayEvent displayEvent, sptr<Event> event) 
 {
     switch (displayEvent) {
-	case DisplayEventPowerKeyPress:
-		g_debug ("%s: power key press, moving to off", __PRETTY_FUNCTION__);
-		changeDisplayState (DisplayStateOff, displayEvent, event);
-	    break;
+    case DisplayEventPowerKeyPress:
+        g_debug ("%s: power key press, moving to off", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOff, displayEvent, event);
+        break;
 
-	case DisplayEventPowerKeyHold:
-	    break;
+    case DisplayEventPowerKeyHold:
+        break;
 
-	case DisplayEventOnPuck:
-	    // g_message ("%s: on puck - canceling exit timer", __PRETTY_FUNCTION__);
-	    // m_timerExit->stop(); // Remove landscape from dock mode
-	    break;
+    case DisplayEventOnPuck:
+        // g_message ("%s: on puck - canceling exit timer", __PRETTY_FUNCTION__);
+        // m_timerExit->stop(); // Remove landscape from dock mode
+        break;
 
-	case DisplayEventOffPuck:
-	    g_message ("%s: off puck received - exiting dock mode, going to on", __PRETTY_FUNCTION__);
-	    changeDisplayState (DisplayStateOn, DisplayEventOffPuck, NULL);
-	    break;
+    case DisplayEventOffPuck:
+        g_message ("%s: off puck received - exiting dock mode, going to on", __PRETTY_FUNCTION__);
+        changeDisplayState (DisplayStateOn, DisplayEventOffPuck, NULL);
+        break;
 
         case DisplayEventUsbIn:
-	    break;
+        break;
         case DisplayEventIncomingCall:
             break;
         case DisplayEventIncomingCallDone:
             break;
 
-	case DisplayEventOnCall:
-	    g_debug ("%s: on call, moving to onpuck", __PRETTY_FUNCTION__);
-	    if (isOnPuck())
-		changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    else 
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    break;
+    case DisplayEventOnCall:
+        g_debug ("%s: on call, moving to onpuck", __PRETTY_FUNCTION__);
+        if (isOnPuck())
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        else 
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        break;
 
-	case DisplayEventOffCall:
-	    g_warning ("%s: off call - invalid event bug?", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventOffCall:
+        g_warning ("%s: off call - invalid event bug?", __PRETTY_FUNCTION__);
+        break;
 
         case DisplayEventSliderOpen:
-	    break;
+        break;
 
         case DisplayEventSliderClose:
-	    break;
+        break;
 
-	case DisplayEventProximityOn:
-	    g_warning ("%s: proximity on event received - invalid event", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventProximityOn:
+        g_warning ("%s: proximity on event received - invalid event", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventProximityOff:
-	    g_warning ("%s: proximity off event received - invalid event", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventProximityOff:
+        g_warning ("%s: proximity off event received - invalid event", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventApiOn:
-	    g_debug ("%s: public api on called, move to onpuck", __PRETTY_FUNCTION__);
-	    if (isOnPuck())
-		    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    else 
-		    changeDisplayState (DisplayStateOn, displayEvent, event);
-	    break;
-	case DisplayEventApiOff:
-	    break;
-	case DisplayEventApiDock:
-	    break;
-	case DisplayEventApiUndock:
-	    g_debug ("%s: api undock called, going to onpuck / on", __PRETTY_FUNCTION__);
-	    if (isOnPuck())
-		changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    else 
-		changeDisplayState (DisplayStateOn, displayEvent, event);
-	    break;
-	case DisplayEventUserActivity:
-	case DisplayEventUserActivityExternalInput:
-	    break;
+    case DisplayEventApiOn:
+        g_debug ("%s: public api on called, move to onpuck", __PRETTY_FUNCTION__);
+        if (isOnPuck())
+            changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        else 
+            changeDisplayState (DisplayStateOn, displayEvent, event);
+        break;
+    case DisplayEventApiOff:
+        break;
+    case DisplayEventApiDock:
+        break;
+    case DisplayEventApiUndock:
+        g_debug ("%s: api undock called, going to onpuck / on", __PRETTY_FUNCTION__);
+        if (isOnPuck())
+        changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        else 
+        changeDisplayState (DisplayStateOn, displayEvent, event);
+        break;
+    case DisplayEventUserActivity:
+    case DisplayEventUserActivityExternalInput:
+        break;
         case DisplayEventUpdateBrightness:
-	    displayOn(true);
+        displayOn(true);
             break;
         case DisplayEventLockScreen:
         if (!isOnCall()) {
@@ -1848,21 +1848,21 @@ void DisplayDockMode::handleEvent (DisplayEvent displayEvent, sptr<Event> event)
             break;
         case DisplayEventUnlockScreen:
             break;
-	case DisplayEventPowerdSuspend:
-	    g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
-	    break;
-	case DisplayEventPowerdResume:
-	    break;
-	case DisplayEventHomeKeyPress:
-	    g_debug ("%s: home key press, move to onpuck", __PRETTY_FUNCTION__);
-	    if (isOnPuck())
-		    changeDisplayState (DisplayStateOnPuck, displayEvent, event);
-	    else
-		    changeDisplayState (DisplayStateOn, displayEvent, event);
+    case DisplayEventPowerdSuspend:
+        g_warning ("%s: got powerd suspend, invalid event in current state", __PRETTY_FUNCTION__);
+        break;
+    case DisplayEventPowerdResume:
+        break;
+    case DisplayEventHomeKeyPress:
+        g_debug ("%s: home key press, move to onpuck", __PRETTY_FUNCTION__);
+        if (isOnPuck())
+            changeDisplayState (DisplayStateOnPuck, displayEvent, event);
+        else
+            changeDisplayState (DisplayStateOn, displayEvent, event);
 
-	    break;
-	default:
-	    break;
+        break;
+    default:
+        break;
     }
 
 }
@@ -1876,32 +1876,32 @@ void DisplayDockMode::leave (DisplayState newState, DisplayEvent displayEvent, s
 // ---------------------- DisplayOffSuspended -------------------------------------
 
 DisplayOffSuspended::DisplayOffSuspended()
-	: m_restoreState (DisplayStateOff)
-	, m_restoreDisplayEvent (DisplayEventPowerdResume)
-	, m_restoreEvent (NULL)
+    : m_restoreState (DisplayStateOff)
+    , m_restoreDisplayEvent (DisplayEventPowerdResume)
+    , m_restoreEvent (NULL)
 {
 }
 
 void DisplayOffSuspended::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
 {
-	g_message ("%s: entering state", __PRETTY_FUNCTION__);
-	displayOff();
+    g_message ("%s: entering state", __PRETTY_FUNCTION__);
+    displayOff();
 
-	if (state != DisplayStateOff && state != DisplayStateOffOnCall)
-		g_warning ("%s: entering from state %d, not a valid state to transition from!", __PRETTY_FUNCTION__, state);
+    if (state != DisplayStateOff && state != DisplayStateOffOnCall)
+        g_warning ("%s: entering from state %d, not a valid state to transition from!", __PRETTY_FUNCTION__, state);
 
-	// We do not emit signals or update the locked state in this state, since this is an internal-only state
-	// and the system should does not need to be aware of this state, or change behavior based on this.
-	m_restoreState = state;
-	m_restoreDisplayEvent = DisplayEventPowerdResume;
-	m_restoreEvent = NULL;
+    // We do not emit signals or update the locked state in this state, since this is an internal-only state
+    // and the system should does not need to be aware of this state, or change behavior based on this.
+    m_restoreState = state;
+    m_restoreDisplayEvent = DisplayEventPowerdResume;
+    m_restoreEvent = NULL;
 }
 
 void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> event) 
 {
     switch (displayEvent) {
-	case DisplayEventPowerKeyPress:
-	    if (isOnPuck()) {
+    case DisplayEventPowerKeyPress:
+        if (isOnPuck()) {
             if (isDisplayUnlocked() || isOnCall()) {
                 g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
                     (isDisplayUnlocked()) ? "unlocked" : "locked",
@@ -1919,8 +1919,8 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
                 m_restoreDisplayEvent = displayEvent;
                 m_restoreEvent = event;
             }
-	    }
-	    else if (isDisplayUnlocked() || isOnCall()) {
+        }
+        else if (isDisplayUnlocked() || isOnCall()) {
             g_message ("%s: power key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
                 (isDisplayUnlocked()) ? "unlocked" : "locked",
                 (isUSBCharging()) ? "connected" : "disconnected",
@@ -1936,52 +1936,52 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
             m_restoreState = DisplayStateOnLocked;
             m_restoreDisplayEvent = displayEvent;
             m_restoreEvent = event;
-	    }
+        }
 
         dm->wakeupDevice("powerkey");
 
-	    break;
+        break;
 
-	case DisplayEventPowerKeyHold:
-	    if (isOnPuck()) {
-		g_debug ("%s: power key hold on puck, moving to on", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnPuck;
-		m_restoreDisplayEvent = displayEvent;
+    case DisplayEventPowerKeyHold:
+        if (isOnPuck()) {
+        g_debug ("%s: power key hold on puck, moving to on", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnPuck;
+        m_restoreDisplayEvent = displayEvent;
         m_restoreEvent = event;
-	    }
-	    else if (isDisplayUnlocked()) {
-		g_debug ("%s: power key hold, moving to on", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOn;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else  {
+        }
+        else if (isDisplayUnlocked()) {
+        g_debug ("%s: power key hold, moving to on", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOn;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else  {
         g_debug ("%s: power key hold, moving to OnLocked", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnLocked;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    break;
-	case DisplayEventOnPuck:
-	    if (isOnCall() || isDisplayUnlocked()) {
-		g_debug ("%s: on puck on a call, moving to onpuck", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnPuck;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else {
-		g_debug ("%s: on puck, moving to dock mode", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateDockMode;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    break;
+        m_restoreState = DisplayStateOnLocked;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        break;
+    case DisplayEventOnPuck:
+        if (isOnCall() || isDisplayUnlocked()) {
+        g_debug ("%s: on puck on a call, moving to onpuck", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnPuck;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else {
+        g_debug ("%s: on puck, moving to dock mode", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateDockMode;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        break;
 
-	case DisplayEventOffPuck:
-	    g_debug ("%s: off puck received in Off state, staying off", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventOffPuck:
+        g_debug ("%s: off puck received in Off state, staying off", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventUsbIn:
+    case DisplayEventUsbIn:
         if (isOnPuck()) {
         g_debug ("%s: usb in when on puck, move to on puck", __PRETTY_FUNCTION__);
         m_restoreState = DisplayStateOnPuck;
@@ -1997,201 +1997,201 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
 
         dm->wakeupDevice("usb");
 
-	    break;
+        break;
 
-	case DisplayEventUsbOut:
-	    break;
+    case DisplayEventUsbOut:
+        break;
 
-	case DisplayEventIncomingCall:
-	    if (isOnPuck()) {
-		g_debug ("%s: incoming call when on puck, move to OnPuck", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnPuck;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else {
-		g_debug ("%s: incoming call, moving to on / onlocked", __PRETTY_FUNCTION__);
-		if (isDisplayUnlocked()) {
-		    m_restoreState = DisplayStateOn;
-		    m_restoreDisplayEvent = displayEvent;
-		    m_restoreEvent = event;
-		}
-		else  {
-		    m_restoreState = DisplayStateOnLocked;
-		    m_restoreDisplayEvent = displayEvent;
-		    m_restoreEvent = event;
-		}
-	    }
+    case DisplayEventIncomingCall:
+        if (isOnPuck()) {
+        g_debug ("%s: incoming call when on puck, move to OnPuck", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnPuck;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else {
+        g_debug ("%s: incoming call, moving to on / onlocked", __PRETTY_FUNCTION__);
+        if (isDisplayUnlocked()) {
+            m_restoreState = DisplayStateOn;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
+        }
+        else  {
+            m_restoreState = DisplayStateOnLocked;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
+        }
+        }
 
         dm->wakeupDevice("incoming-call");
 
-	    break;
+        break;
 
-	case DisplayEventIncomingCallDone:
-	    g_warning ("%s: incoming call done, should never happen", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventIncomingCallDone:
+        g_warning ("%s: incoming call done, should never happen", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventOnCall:
-	    if (isOnPuck()) {
-		g_debug ("%s: on call on puck, move to OnPuck", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnPuck;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else if (isDisplayUnlocked()) {
-		g_debug ("%s: on call, moving to On", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOn;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else {
-		g_debug ("%s: on call, moving to OnLocked", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnLocked;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    break;
+    case DisplayEventOnCall:
+        if (isOnPuck()) {
+        g_debug ("%s: on call on puck, move to OnPuck", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnPuck;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else if (isDisplayUnlocked()) {
+        g_debug ("%s: on call, moving to On", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOn;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else {
+        g_debug ("%s: on call, moving to OnLocked", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnLocked;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        break;
 
-	case DisplayEventOffCall:
-	    g_warning ("%s: off call - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventOffCall:
+        g_warning ("%s: off call - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventSliderOpen:
-	    if (isOnPuck()) {
-		g_debug ("%s: slider open when on puck, move to OnPuck", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnPuck;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else {
-		g_debug ("%s: slider open, moving to on", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOn;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    break;
+    case DisplayEventSliderOpen:
+        if (isOnPuck()) {
+        g_debug ("%s: slider open when on puck, move to OnPuck", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnPuck;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else {
+        g_debug ("%s: slider open, moving to on", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOn;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        break;
 
-	case DisplayEventSliderClose:
-	    break;
+    case DisplayEventSliderClose:
+        break;
 
-	case DisplayEventAlsChange:
-	    break;
+    case DisplayEventAlsChange:
+        break;
 
-	case DisplayEventProximityOn:
-	    g_warning ("%s: proximity on event received in off state - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
-	    break;
+    case DisplayEventProximityOn:
+        g_warning ("%s: proximity on event received in off state - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
+        break;
 
-	case DisplayEventProximityOff:
+    case DisplayEventProximityOff:
 #if defined(MACHINE_BROADWAY) || defined(MACHINE_MANTARAY)
-	    if (isOnPuck()) {
-		    g_message ("%s: proximity off event on puck, moving to OnPuck", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnPuck;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else {
-		    g_message ("%s: proximity off event, moving to on", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOn;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
+        if (isOnPuck()) {
+            g_message ("%s: proximity off event on puck, moving to OnPuck", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnPuck;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else {
+            g_message ("%s: proximity off event, moving to on", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOn;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
 #else
-	    g_warning ("%s: proximity off event received in off state - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
+        g_warning ("%s: proximity off event received in off state - invalid event, should be OffOnCall", __PRETTY_FUNCTION__);
 #endif
-	    break;
+        break;
 
-	case DisplayEventApiOn:
-	    if (isOnPuck()) {
-		g_debug ("%s: public api on called when on puck, move to on puck", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnPuck;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else if (isDisplayUnlocked()) {
-		g_debug ("%s: public api on called, move to on", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOn;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else {
-		g_debug ("%s: public api on called, move to onLocked", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnLocked;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    break;
+    case DisplayEventApiOn:
+        if (isOnPuck()) {
+        g_debug ("%s: public api on called when on puck, move to on puck", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnPuck;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else if (isDisplayUnlocked()) {
+        g_debug ("%s: public api on called, move to on", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOn;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else {
+        g_debug ("%s: public api on called, move to onLocked", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnLocked;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        break;
 
-	case DisplayEventApiDim:
-	    break;
+    case DisplayEventApiDim:
+        break;
 
-	case DisplayEventApiOff:
-	    break;
+    case DisplayEventApiOff:
+        break;
 
-	case DisplayEventUserActivity:
-	    if (isOnPuck()) {
-		g_debug ("%s: user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOnPuck;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    else if (isDisplayUnlocked()) {
-		g_debug ("%s: received key down for key, moving to on", __PRETTY_FUNCTION__);
-		m_restoreState = DisplayStateOn;
-		m_restoreDisplayEvent = displayEvent;
-		m_restoreEvent = event;
-	    }
-	    break;
+    case DisplayEventUserActivity:
+        if (isOnPuck()) {
+        g_debug ("%s: user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOnPuck;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        else if (isDisplayUnlocked()) {
+        g_debug ("%s: received key down for key, moving to on", __PRETTY_FUNCTION__);
+        m_restoreState = DisplayStateOn;
+        m_restoreDisplayEvent = displayEvent;
+        m_restoreEvent = event;
+        }
+        break;
 
-	case DisplayEventUserActivityExternalInput:
-	    if (isOnPuck()) {
-			g_debug ("%s: external input user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
-			m_restoreState = DisplayStateOnPuck;
-			m_restoreDisplayEvent = displayEvent;
-			m_restoreEvent = event;
-	    }
-	    else  {
-			g_debug ("%s: external input user activity, moving to on", __PRETTY_FUNCTION__);
-			m_restoreState = DisplayStateOn;
-			m_restoreDisplayEvent = displayEvent;
-			m_restoreEvent = event;
-	    }
-	    break;		
-		
-	    // reacted to the event, but the key should be handled elsewhere
-	case DisplayEventUpdateBrightness:
-	    break;
-	case DisplayEventLockScreen:
-	    break;
-	case DisplayEventUnlockScreen:
-	    break;
-	case DisplayEventPowerdSuspend:
-	    break;
-	case DisplayEventPowerdResume:
-	    g_debug ("%s: On resume, restoring to state %d with event %d",
-			    __PRETTY_FUNCTION__, (int)m_restoreState, (int)m_restoreDisplayEvent);
-	    changeDisplayState (m_restoreState, m_restoreDisplayEvent, m_restoreEvent);
-	    break;
-	case DisplayEventHomeKeyPress:
-	    if (isOnPuck()) {
-		if (isDisplayUnlocked() || isOnCall()) {
-		    g_message ("%s: home key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
-			    (isDisplayUnlocked()) ? "unlocked" : "locked", 
-			    (isUSBCharging()) ? "connected" : "disconnected",
-			    (isSliderOpen()) ? "open" : "closed",
-			    (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
-			    (isOnCall()) ? "on" : "off");
-		    m_restoreState = DisplayStateOnPuck;
-		    m_restoreDisplayEvent = displayEvent;
-		    m_restoreEvent = event;
-		}
-		else {
-		    g_debug ("%s: home key press when on puck, move to dock mode", __PRETTY_FUNCTION__);
-		    m_restoreState = DisplayStateDockMode;
-		    m_restoreDisplayEvent = displayEvent;
-		    m_restoreEvent = event;
-		}
-	    }
-	    else if (isDisplayUnlocked() || isOnCall()) {
+    case DisplayEventUserActivityExternalInput:
+        if (isOnPuck()) {
+            g_debug ("%s: external input user activity when on puck, move to on puck", __PRETTY_FUNCTION__);
+            m_restoreState = DisplayStateOnPuck;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
+        }
+        else  {
+            g_debug ("%s: external input user activity, moving to on", __PRETTY_FUNCTION__);
+            m_restoreState = DisplayStateOn;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
+        }
+        break;        
+        
+        // reacted to the event, but the key should be handled elsewhere
+    case DisplayEventUpdateBrightness:
+        break;
+    case DisplayEventLockScreen:
+        break;
+    case DisplayEventUnlockScreen:
+        break;
+    case DisplayEventPowerdSuspend:
+        break;
+    case DisplayEventPowerdResume:
+        g_debug ("%s: On resume, restoring to state %d with event %d",
+                __PRETTY_FUNCTION__, (int)m_restoreState, (int)m_restoreDisplayEvent);
+        changeDisplayState (m_restoreState, m_restoreDisplayEvent, m_restoreEvent);
+        break;
+    case DisplayEventHomeKeyPress:
+        if (isOnPuck()) {
+        if (isDisplayUnlocked() || isOnCall()) {
+            g_message ("%s: home key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to OnPuck", __PRETTY_FUNCTION__,
+                (isDisplayUnlocked()) ? "unlocked" : "locked", 
+                (isUSBCharging()) ? "connected" : "disconnected",
+                (isSliderOpen()) ? "open" : "closed",
+                (Settings::LunaSettings()->disableLocking) ? "set" : "unset",
+                (isOnCall()) ? "on" : "off");
+            m_restoreState = DisplayStateOnPuck;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
+        }
+        else {
+            g_debug ("%s: home key press when on puck, move to dock mode", __PRETTY_FUNCTION__);
+            m_restoreState = DisplayStateDockMode;
+            m_restoreDisplayEvent = displayEvent;
+            m_restoreEvent = event;
+        }
+        }
+        else if (isDisplayUnlocked() || isOnCall()) {
             g_message ("%s: home key press while display %s (usb %s slider %s disable locking %s) and phonecall %s, moving to on", __PRETTY_FUNCTION__,
                 (isDisplayUnlocked()) ? "unlocked" : "locked",
                 (isUSBCharging()) ? "connected" : "disconnected",
@@ -2201,17 +2201,17 @@ void DisplayOffSuspended::handleEvent (DisplayEvent displayEvent, sptr<Event> ev
             m_restoreState = DisplayStateOn;
             m_restoreDisplayEvent = displayEvent;
             m_restoreEvent = event;
-	    }
-	    else  {
+        }
+        else  {
             g_debug ("%s: home key press, moving to OnLocked", __PRETTY_FUNCTION__);
             m_restoreState = DisplayStateOnLocked;
             m_restoreDisplayEvent = displayEvent;
             m_restoreEvent = event;
-	    }
-	    break;
+        }
+        break;
 
-	default:
-	    break;
+    default:
+        break;
     }
 
 }

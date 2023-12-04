@@ -39,31 +39,31 @@ void *vibetonz_thread(void*);
 class HapticsController
 {
 public:
-	static HapticsController *instance();
-	
-	virtual ~HapticsController() { }
-	
-	virtual int vibrate(int period,int duration) {return -1;}
-	virtual int vibrate(const char *name) { return -1;}
-	virtual int vibrateWithAudioFeedback(const char *name, const char *audiosample) { return -1; };
-	virtual int cancel(int id) {return -1;}
-	virtual void cancelAll() {}
-	void addMapping(const char *key,void *value) {
-		g_hash_table_insert(m_mappingTable,(void*)key,value);
-	}
-	int getAndRemoveMapping(const char *key) {
-		int id;
-		id = (int)g_hash_table_lookup(m_mappingTable,(void*)key);
-		g_hash_table_remove(m_mappingTable,(void*)key);
-		return id;
-	}
-	void startService();
+    static HapticsController *instance();
+    
+    virtual ~HapticsController() { }
+    
+    virtual int vibrate(int period,int duration) {return -1;}
+    virtual int vibrate(const char *name) { return -1;}
+    virtual int vibrateWithAudioFeedback(const char *name, const char *audiosample) { return -1; };
+    virtual int cancel(int id) {return -1;}
+    virtual void cancelAll() {}
+    void addMapping(const char *key,void *value) {
+        g_hash_table_insert(m_mappingTable,(void*)key,value);
+    }
+    int getAndRemoveMapping(const char *key) {
+        int id;
+        id = (int)g_hash_table_lookup(m_mappingTable,(void*)key);
+        g_hash_table_remove(m_mappingTable,(void*)key);
+        return id;
+    }
+    void startService();
 protected:
-	HapticsController();
-	LSHandle *m_service;
+    HapticsController();
+    LSHandle *m_service;
 private:
-	static HapticsController *s_instance;
-	GHashTable *m_mappingTable;
+    static HapticsController *s_instance;
+    GHashTable *m_mappingTable;
 };
 
 #endif

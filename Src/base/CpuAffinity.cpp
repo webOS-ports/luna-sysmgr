@@ -34,24 +34,24 @@
 void setCpuAffinity(int pid, int processor)
 {
 #if defined(HAS_AFFINITY)
-	int ret = libaffinity_set_affinity(pid, processor);
-	if (ret)
-		g_warning("Failed to set cpu affinity for process %d to processor %d: retVal: %d, errno: %s",
-				  pid, processor, ret, strerror(errno));
-	else
-		g_message("Successfully set cpu affinity for process %d to processor %d",
-				  pid, processor);
-#endif	
+    int ret = libaffinity_set_affinity(pid, processor);
+    if (ret)
+        g_warning("Failed to set cpu affinity for process %d to processor %d: retVal: %d, errno: %s",
+                  pid, processor, ret, strerror(errno));
+    else
+        g_message("Successfully set cpu affinity for process %d to processor %d",
+                  pid, processor);
+#endif    
 }
 
 void resetCpuAffinity(int pid)
 {
 #if defined(HAS_AFFINITY)
     int ret = libaffinity_reset_affinity(pid);
-	if (ret)
-		g_warning("Failed to reset cpu affinity for process %d: retVal: %d, errno: %s",
-				  pid, ret, strerror(errno));
-	else
-		g_message("Successfully reset cpu affinity for process %d", pid);
+    if (ret)
+        g_warning("Failed to reset cpu affinity for process %d: retVal: %d, errno: %s",
+                  pid, ret, strerror(errno));
+    else
+        g_message("Successfully reset cpu affinity for process %d", pid);
 #endif    
 }
