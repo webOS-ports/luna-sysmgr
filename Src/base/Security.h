@@ -37,66 +37,66 @@ class EASPolicy;
 
 class Security : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 
-	static Security* instance();
-	~Security();
+    static Security* instance();
+    ~Security();
 
-	bool passcodeSet() const;
+    bool passcodeSet() const;
 
-	std::string getLockMode() const { return m_lockMode; };
+    std::string getLockMode() const { return m_lockMode; };
 
-	int setPasscode(const std::string& mode, const std::string& passcode, std::string& errorText);
-	bool matchPasscode(std::string passcode, int& retriesLeft, bool& lockedOut);
+    int setPasscode(const std::string& mode, const std::string& passcode, std::string& errorText);
+    bool matchPasscode(std::string passcode, int& retriesLeft, bool& lockedOut);
 
-	bool passcodeSatisfiesPolicy(const EASPolicy * const policy) const;
+    bool passcodeSatisfiesPolicy(const EASPolicy * const policy) const;
 
-	enum FailureCode {
-		Success = 0,
-		FailureEmptyPasscode = -1,
-		FailureMinLength = -2,
-		FailureInvalidPassword = -3,
-		FailureAlphaNumeric = -4,
-		FailureInvalidPin = -5,
-		FailureWeakPassword = -6,
-		FailureSave = -7,
-		FailureWeakPasswordRepeat = -8,
-		FailureWeakPasswordSequence = -9
-	};
+    enum FailureCode {
+        Success = 0,
+        FailureEmptyPasscode = -1,
+        FailureMinLength = -2,
+        FailureInvalidPassword = -3,
+        FailureAlphaNumeric = -4,
+        FailureInvalidPin = -5,
+        FailureWeakPassword = -6,
+        FailureSave = -7,
+        FailureWeakPasswordRepeat = -8,
+        FailureWeakPasswordSequence = -9
+    };
 
-	static bool cbDeviceWipe (LSHandle *sh, LSMessage *message, void *data);
+    static bool cbDeviceWipe (LSHandle *sh, LSMessage *message, void *data);
 private:
 
-	Security();
+    Security();
 
-	void registerService();
+    void registerService();
 
-	int validatePasscode(const EASPolicy * const policy, const std::string& mode, 
-						  const std::string& passcode) const;
-	int validateStrength(QString passcode) const;
+    int validatePasscode(const EASPolicy * const policy, const std::string& mode, 
+                          const std::string& passcode) const;
+    int validateStrength(QString passcode) const;
 
-	void readLockMode();
-	std::string readPasscode() const;
-	void readDecryptedPasscode(std::string& passcode) const;
-	void safelyEraseString(std::string& str) const;
+    void readLockMode();
+    std::string readPasscode() const;
+    void readDecryptedPasscode(std::string& passcode) const;
+    void safelyEraseString(std::string& str) const;
 
-	void eraseDevice();
+    void eraseDevice();
 
-	static bool keyManagerConnected(LSHandle* handle, LSMessage* msg, void* ctxt);
-	void initKeyManager();
-	void updateKeyManager(const std::string& oldPasscode);
+    static bool keyManagerConnected(LSHandle* handle, LSMessage* msg, void* ctxt);
+    void initKeyManager();
+    void updateKeyManager(const std::string& oldPasscode);
 
 private Q_SLOTS:
 
-	void slotPolicyChanged (const EASPolicy * const policy);
+    void slotPolicyChanged (const EASPolicy * const policy);
 
 private:
 
-	int m_numRetries;
-	std::string m_lockMode;
-	LSHandle* m_service;
+    int m_numRetries;
+    std::string m_lockMode;
+    LSHandle* m_service;
 };
 
 #endif

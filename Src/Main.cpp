@@ -125,20 +125,20 @@ pid_t sysmgrPid;
  * Safe printf that does not call malloc (to avoid re-entrancy issue when
  * called from the signal handler.
  * 
- * @param	format		Format of output string
- * @param	...		List of values to include in the output string
+ * @param    format        Format of output string
+ * @param    ...        List of values to include in the output string
  */
 static void crash_printf(const char *format, ...) {
     // Allocate the buffer staticly because we don't want to assume that
     // there's a lot of stack space left at the time of the crash:
-	static char buf[512];
-	va_list ap;
+    static char buf[512];
+    va_list ap;
 
-	va_start(ap, format);
-	vsnprintf(buf, sizeof(buf), format, ap);
-	va_end(ap);
-	ssize_t result = write(crashLogFD, buf, strlen(buf));
-	Q_UNUSED(result);
+    va_start(ap, format);
+    vsnprintf(buf, sizeof(buf), format, ap);
+    va_end(ap);
+    ssize_t result = write(crashLogFD, buf, strlen(buf));
+    Q_UNUSED(result);
 }
 
 /**
@@ -168,9 +168,9 @@ const char *const regNames[NGREG] = {
 /**
  * Log register values
  * 
- * @param	sig		The signal which triggered this handler
- * @param	info		Pointer to information about the signal
- * @param	data		Pointer to a ucontext_t with info on the crashing process
+ * @param    sig        The signal which triggered this handler
+ * @param    info        Pointer to information about the signal
+ * @param    data        Pointer to a ucontext_t with info on the crashing process
  */
 void logCrashRegisterContext(int sig, siginfo_t *info, void *data) {
     ucontext_t *context = reinterpret_cast<ucontext_t *>(data);
@@ -193,9 +193,9 @@ void logCrashRegisterContext(int sig, siginfo_t *info, void *data) {
 /**
  * Log register values
  * 
- * @param	sig		The signal which triggered this handler
- * @param	info		Pointer to information about the signal
- * @param	data		Pointer to a ucontext_t with info on the crashing process
+ * @param    sig        The signal which triggered this handler
+ * @param    info        Pointer to information about the signal
+ * @param    data        Pointer to a ucontext_t with info on the crashing process
  */
 void logCrashRegisterContext(int sig, siginfo_t *info, void *data) {
     ucontext_t *context = reinterpret_cast<ucontext_t *>(data);
@@ -267,8 +267,8 @@ static void outerCrashHandler(int sig, siginfo_t *info, void *data);
 /**
  * Installs innerCrashHandler as the handler for a given signal
  * 
- * @param	sig		The signal to handle using {@link innerCrashHandler innerCrashHandler}
- * @param	previous_crash_action		Pointer at which to store the previous crash handler when installing this one
+ * @param    sig        The signal to handle using {@link innerCrashHandler innerCrashHandler}
+ * @param    previous_crash_action        Pointer at which to store the previous crash handler when installing this one
  */
 static void installInnerCrashHandler(int sig,
                                      struct sigaction *previous_crash_action)
@@ -287,7 +287,7 @@ static void installInnerCrashHandler(int sig,
 /**
  * Installs outerCrashHandler as the handler for a given signal
  * 
- * @param	sig		The signal to handle using {@link outerCrashHandler outerCrashHandler}
+ * @param    sig        The signal to handle using {@link outerCrashHandler outerCrashHandler}
  */
 static void installOuterCrashHandler(int sig)
 {
@@ -306,60 +306,60 @@ static void installOuterCrashHandler(int sig)
 /**
  * Writes malloc statistics to stderr
  * 
- * @param	data			Data of some sort - currently unused
+ * @param    data            Data of some sort - currently unused
  * 
- * @return				Always returns TRUE
+ * @return                Always returns TRUE
  */
 static gboolean mallocStatsCb(gpointer data)
 {
-	char buf[30];
-	time_t cur_time;
-	time(&cur_time);
-	static pid_t my_pid = 0;
-	static char process_name[16] = { 0 };
+    char buf[30];
+    time_t cur_time;
+    time(&cur_time);
+    static pid_t my_pid = 0;
+    static char process_name[16] = { 0 };
 
-	if (!my_pid) {
-		my_pid = getpid();
-	}
+    if (!my_pid) {
+        my_pid = getpid();
+    }
 
-	if (!process_name[0]) {
-		::prctl(PR_GET_NAME, (unsigned long)process_name, 0, 0, 0);
-		process_name[sizeof(process_name) - 1] = '\0';
-	}
+    if (!process_name[0]) {
+        ::prctl(PR_GET_NAME, (unsigned long)process_name, 0, 0, 0);
+        process_name[sizeof(process_name) - 1] = '\0';
+    }
 
-	struct timespec ts;
-	clock_gettime(CLOCK_MONOTONIC, &ts);
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
 
     flock(STDERR_FILENO, LOCK_EX);
 
-	fflush(stderr);
-	fprintf(stderr, "\nMALLOC STATS FOR PROCESS: \"%s\" (PID: %d) AT [%ld.%ld] %s", process_name, my_pid, ts.tv_sec, ts.tv_nsec, ctime_r(&cur_time, buf));
-	fflush(stderr);
-	malloc_stats();
-	fprintf(stderr, "\n\n");
-	fflush(stderr);
-	fsync(STDERR_FILENO);
+    fflush(stderr);
+    fprintf(stderr, "\nMALLOC STATS FOR PROCESS: \"%s\" (PID: %d) AT [%ld.%ld] %s", process_name, my_pid, ts.tv_sec, ts.tv_nsec, ctime_r(&cur_time, buf));
+    fflush(stderr);
+    malloc_stats();
+    fprintf(stderr, "\n\n");
+    fflush(stderr);
+    fsync(STDERR_FILENO);
 
     flock(STDERR_FILENO, LOCK_UN);
-	
-	
-	return TRUE;
+    
+    
+    return TRUE;
 }
 
 /**
  * Sets up mallocStatsCb to run at a specified time interval
  * 
- * @param	mainLoop		Pointer to main loop of parent
- * @param	secs			Number of seconds between calls to mallocStatsCb
+ * @param    mainLoop        Pointer to main loop of parent
+ * @param    secs            Number of seconds between calls to mallocStatsCb
  */
 static void initMallocStatsCb(GMainLoop* mainLoop, int secs)
 {
-	// negative means no stats
-	if ((secs < 0) || (s_mallocStatsFileStr == NULL)) return;
+    // negative means no stats
+    if ((secs < 0) || (s_mallocStatsFileStr == NULL)) return;
 
-	GSource *timeoutSource = g_timeout_source_new_seconds(secs);
-	g_source_set_callback(timeoutSource, mallocStatsCb, NULL, NULL);
-	g_source_attach(timeoutSource, g_main_loop_get_context(mainLoop));
+    GSource *timeoutSource = g_timeout_source_new_seconds(secs);
+    g_source_set_callback(timeoutSource, mallocStatsCb, NULL, NULL);
+    g_source_attach(timeoutSource, g_main_loop_get_context(mainLoop));
 }
 
 /**
@@ -367,15 +367,15 @@ static void initMallocStatsCb(GMainLoop* mainLoop, int secs)
  * 
  * Logs a critical error message if unable to open the given file.
  * 
- * @param	mallocStatsFile			Filename of file to log malloc statistics to
+ * @param    mallocStatsFile            Filename of file to log malloc statistics to
  */
 static void setupMallocStats(const char* mallocStatsFile)
 {
-	FILE* file = ::freopen(mallocStatsFile, "a+", stderr);
+    FILE* file = ::freopen(mallocStatsFile, "a+", stderr);
 
-	if (!file) {
-		g_critical("Unable to open file: %s", mallocStatsFile);
-	}
+    if (!file) {
+        g_critical("Unable to open file: %s", mallocStatsFile);
+    }
 }
 
 /**
@@ -387,9 +387,9 @@ static void setupMallocStats(const char* mallocStatsFile)
  * 
  * @see hasCrashedInCrashHandler
  * 
- * @param	sig		The signal which triggered this handler
- * @param	info		Pointer to information about the signal
- * @param	data		Pointer to a ucontext_t with info on the crashing process
+ * @param    sig        The signal which triggered this handler
+ * @param    info        Pointer to information about the signal
+ * @param    data        Pointer to a ucontext_t with info on the crashing process
  */
 static void innerCrashHandler(int sig, siginfo_t *info, void *data)
 {
@@ -425,9 +425,9 @@ static void innerCrashHandler(int sig, siginfo_t *info, void *data)
  * - Log crash diagnostics.
  * - If debugging is enabled, start an infinite loop to give gdb a chance to connect and see what's going on.
  * 
- * @param	sig		The signal which triggered this handler
- * @param	info		Pointer to information about the signal
- * @param	data		Pointer to a ucontext_t with info on the crashing process
+ * @param    sig        The signal which triggered this handler
+ * @param    info        Pointer to information about the signal
+ * @param    data        Pointer to a ucontext_t with info on the crashing process
  */
 static void outerCrashHandler(int sig, siginfo_t *info, void *data)
 {
@@ -457,7 +457,7 @@ static void outerCrashHandler(int sig, siginfo_t *info, void *data)
     crashLogFD = open(logFileName, O_WRONLY | O_CREAT | O_TRUNC);
 
 #if 0 // Disable until we can do this without calling malloc and free:
-	int memTotal, memFree, swapTotal, swapFree, memchuteFree, memUsage;
+    int memTotal, memFree, swapTotal, swapFree, memchuteFree, memUsage;
 #endif
 
 
@@ -522,27 +522,27 @@ static void outerCrashHandler(int sig, siginfo_t *info, void *data)
  * - QtFatalMsg = g_error
  * - Anything else = g_message
  * 
- * @param	type		Message type
- * @param	str		Message to log
+ * @param    type        Message type
+ * @param    str        Message to log
  */
 void qtMsgHandler(QtMsgType type, const char *str) {
     switch(type)
     {
-	case QtDebugMsg:
-	    g_debug("QDebug: %s", str);
-	    break;
-	case QtWarningMsg:
-	    g_warning("QWarning: %s", str);
-	    break;
-	case QtCriticalMsg:
-	    g_critical("QCritical: %s", str);
-	    break;
-	case QtFatalMsg:
-	    g_error("QFatal: %s", str);
-	    break;
-	default:
-	    g_message("QMessage: %s", str);
-	    break;
+    case QtDebugMsg:
+        g_debug("QDebug: %s", str);
+        break;
+    case QtWarningMsg:
+        g_warning("QWarning: %s", str);
+        break;
+    case QtCriticalMsg:
+        g_critical("QCritical: %s", str);
+        break;
+    case QtFatalMsg:
+        g_error("QFatal: %s", str);
+        break;
+    default:
+        g_message("QMessage: %s", str);
+        break;
     }
 }
 #else
@@ -574,53 +574,53 @@ void qtMsgHandler(QtMsgType type, const QMessageLogContext&, const QString& str)
  * This function parses command-line arguments and sets the corresponding variables
  * in Settings::LunaSettings()
  *
- * @param	argc		Number of arguments
- * @param	argv		Pointer to list of char* pointers for each of the arguments
+ * @param    argc        Number of arguments
+ * @param    argv        Pointer to list of char* pointers for each of the arguments
  */
 static void parseCommandlineOptions(int argc, char** argv)
 {
     GError* error = NULL;
     GOptionContext* context = NULL;
 
-	static GOptionEntry entries[] = {
-		{ "ui",  'u',  0, G_OPTION_ARG_STRING, &s_uiStr, "UI type to launch (minimal, luna)", "name" },
-		{ "app", 'a', 0, G_OPTION_ARG_STRING,  &s_appToLaunchStr, "App Id of app to launch", "id" },
-		{ "logger", 'l', 0, G_OPTION_ARG_STRING,  &s_logLevelStr, "log level", "level"},
-		{ "syslog", 's', 0, G_OPTION_ARG_NONE, &s_useSysLog, "Use syslog", NULL },
-		{ "colorlogging", 'c', 0, G_OPTION_ARG_NONE, &s_colorLog, "Color logging on or off", NULL },	// use -c=0 or --colorlogging=0 to disable color logging
-		{ "terminal", 't', 0, G_OPTION_ARG_NONE, &s_useTerminal, "Use terminal for logs", NULL },
-		{ "debug-trap", 'x', 0, G_OPTION_ARG_STRING,  &s_debugTrapStr, "debug trap (on/ off)", "state"},
-		{ "force-software-rendering", 'S', 0, G_OPTION_ARG_NONE, &s_forceSoftwareRendering, "Force Software rendering", NULL},
-		{ "malloc-stats-file", 'm', 0, G_OPTION_ARG_STRING,  &s_mallocStatsFileStr, "File for logging malloc stats", "file" },
-		{ "malloc-stats-interval", 'i', 0, G_OPTION_ARG_INT,  &s_mallocStatsInterval, "Interval at which to log malloc stats", "seconds" },
-		{ NULL }
-	};
+    static GOptionEntry entries[] = {
+        { "ui",  'u',  0, G_OPTION_ARG_STRING, &s_uiStr, "UI type to launch (minimal, luna)", "name" },
+        { "app", 'a', 0, G_OPTION_ARG_STRING,  &s_appToLaunchStr, "App Id of app to launch", "id" },
+        { "logger", 'l', 0, G_OPTION_ARG_STRING,  &s_logLevelStr, "log level", "level"},
+        { "syslog", 's', 0, G_OPTION_ARG_NONE, &s_useSysLog, "Use syslog", NULL },
+        { "colorlogging", 'c', 0, G_OPTION_ARG_NONE, &s_colorLog, "Color logging on or off", NULL },    // use -c=0 or --colorlogging=0 to disable color logging
+        { "terminal", 't', 0, G_OPTION_ARG_NONE, &s_useTerminal, "Use terminal for logs", NULL },
+        { "debug-trap", 'x', 0, G_OPTION_ARG_STRING,  &s_debugTrapStr, "debug trap (on/ off)", "state"},
+        { "force-software-rendering", 'S', 0, G_OPTION_ARG_NONE, &s_forceSoftwareRendering, "Force Software rendering", NULL},
+        { "malloc-stats-file", 'm', 0, G_OPTION_ARG_STRING,  &s_mallocStatsFileStr, "File for logging malloc stats", "file" },
+        { "malloc-stats-interval", 'i', 0, G_OPTION_ARG_INT,  &s_mallocStatsInterval, "Interval at which to log malloc stats", "seconds" },
+        { NULL }
+    };
 
-	context = g_option_context_new(NULL);
-	g_option_context_add_main_entries (context, entries, NULL);
-	g_option_context_parse (context, &argc, &argv, &error);
+    context = g_option_context_new(NULL);
+    g_option_context_add_main_entries (context, entries, NULL);
+    g_option_context_parse (context, &argc, &argv, &error);
 
 #if !defined(HAVE_OPENGL)
-	// if there's no OpenGL, then implicitely force software rendering
-	s_forceSoftwareRendering = true;
+    // if there's no OpenGL, then implicitely force software rendering
+    s_forceSoftwareRendering = true;
 #endif
 
-	if (s_uiStr && strcasecmp(s_uiStr, "minimal") == 0)
-		Settings::LunaSettings()->uiType = Settings::UI_MINIMAL;
-	else
-		Settings::LunaSettings()->uiType = Settings::UI_LUNA;
+    if (s_uiStr && strcasecmp(s_uiStr, "minimal") == 0)
+        Settings::LunaSettings()->uiType = Settings::UI_MINIMAL;
+    else
+        Settings::LunaSettings()->uiType = Settings::UI_LUNA;
 
-	Settings::LunaSettings()->logger_useSyslog = s_useSysLog;
-	Settings::LunaSettings()->logger_useColor = s_colorLog;
-	Settings::LunaSettings()->logger_useTerminal = s_useTerminal;
+    Settings::LunaSettings()->logger_useSyslog = s_useSysLog;
+    Settings::LunaSettings()->logger_useColor = s_colorLog;
+    Settings::LunaSettings()->logger_useTerminal = s_useTerminal;
 #if SHIPPING_VERSION
-	Settings::LunaSettings()->logger_level = G_LOG_LEVEL_CRITICAL;
+    Settings::LunaSettings()->logger_level = G_LOG_LEVEL_CRITICAL;
 #else
-	Settings::LunaSettings()->logger_level = G_LOG_LEVEL_DEBUG;
+    Settings::LunaSettings()->logger_level = G_LOG_LEVEL_DEBUG;
 #endif
-	Settings::LunaSettings()->forceSoftwareRendering = s_forceSoftwareRendering;
-	if (s_forceSoftwareRendering)
-		Settings::LunaSettings()->atlasEnabled = false;
+    Settings::LunaSettings()->forceSoftwareRendering = s_forceSoftwareRendering;
+    if (s_forceSoftwareRendering)
+        Settings::LunaSettings()->atlasEnabled = false;
 
     if (s_logLevelStr)
     {
@@ -646,9 +646,9 @@ static void parseCommandlineOptions(int argc, char** argv)
  */
 static void generateGoodBacktraceTerminateHandler()
 {
-	volatile int* p = 0;
-	*p = 0;
-	exit(-1);
+    volatile int* p = 0;
+    *p = 0;
+    exit(-1);
 }
 
 /**
@@ -679,110 +679,110 @@ char** appArgv = 0;
  * @see appArgc
  * @see appArgv
  *
- * @param	argc		Number of command-line arguments
- * @param	argv		Pointer to list of char* of each of the arguments
+ * @param    argc        Number of command-line arguments
+ * @param    argv        Pointer to list of char* of each of the arguments
  *
- * @return			0 = success, anything else = failure
+ * @return            0 = success, anything else = failure
  */
 int main( int argc, char** argv)
 {
-	appArgc = argc;
-	appArgv = argv;
+    appArgc = argc;
+    appArgv = argv;
 
-	std::set_terminate(generateGoodBacktraceTerminateHandler);
+    std::set_terminate(generateGoodBacktraceTerminateHandler);
 
-	g_thread_init(NULL);
+    g_thread_init(NULL);
 
-	g_debug("SysMgr compiled against Qt %s, running on %s", QT_VERSION_STR, qVersion());
+    g_debug("SysMgr compiled against Qt %s, running on %s", QT_VERSION_STR, qVersion());
 
-	// Command-Line options
-	parseCommandlineOptions(argc, argv);
+    // Command-Line options
+    parseCommandlineOptions(argc, argv);
 
-	if (s_debugTrapStr && 0 == strcasecmp(s_debugTrapStr, "on")) {
-		debugCrashes = true;
-	}
+    if (s_debugTrapStr && 0 == strcasecmp(s_debugTrapStr, "on")) {
+        debugCrashes = true;
+    }
 
-	if (s_mallocStatsFileStr) {
-		setupMallocStats(s_mallocStatsFileStr);
-	}
+    if (s_mallocStatsFileStr) {
+        setupMallocStats(s_mallocStatsFileStr);
+    }
 
-	sysmgrPid = getpid();
+    sysmgrPid = getpid();
 
-	// Load Settings (first!)
-	Settings* settings = Settings::LunaSettings();
+    // Load Settings (first!)
+    Settings* settings = Settings::LunaSettings();
 
-	// Initialize logging handler
-	g_log_set_default_handler(logFilter, NULL);
+    // Initialize logging handler
+    g_log_set_default_handler(logFilter, NULL);
 
 #if defined(TARGET_DESKTOP)
-	// use terminal logging when running on desktop
-	settings->logger_useTerminal = true;
+    // use terminal logging when running on desktop
+    settings->logger_useTerminal = true;
 #endif
 
-	// disable color logging using an environment variable. Useful when run from QtCreator
-	const char* useColor = ::getenv("COLOR_LOGGING");
-	if (useColor)
-		settings->logger_useColor = (useColor[0] != 0 && useColor[0] != '0');
+    // disable color logging using an environment variable. Useful when run from QtCreator
+    const char* useColor = ::getenv("COLOR_LOGGING");
+    if (useColor)
+        settings->logger_useColor = (useColor[0] != 0 && useColor[0] != '0');
 
-	HostBase* host = HostBase::instance();
-	// the resolution is just a hint, the actual
-	// resolution may get picked up from the fb driver on arm
-	host->init(settings->displayWidth, settings->displayHeight);
+    HostBase* host = HostBase::instance();
+    // the resolution is just a hint, the actual
+    // resolution may get picked up from the fb driver on arm
+    host->init(settings->displayWidth, settings->displayHeight);
 
-	// Tie LunaSysMgr to Processor 0
-	setCpuAffinity(getpid(), 1);
+    // Tie LunaSysMgr to Processor 0
+    setCpuAffinity(getpid(), 1);
 
-	// Safe to create logging threads now
-	logInit();
+    // Safe to create logging threads now
+    logInit();
 
 #if !defined(TARGET_DESKTOP)
-	// Set "nice" property
-	setpriority(PRIO_PROCESS,getpid(),-1);
+    // Set "nice" property
+    setpriority(PRIO_PROCESS,getpid(),-1);
 #endif
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-	qInstallMsgHandler(qtMsgHandler);
+    qInstallMsgHandler(qtMsgHandler);
 #else
-	qInstallMessageHandler(qtMsgHandler);
+    qInstallMessageHandler(qtMsgHandler);
 #endif
 
-	QCoreApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
 
-	// We need this to start up services and input controls provided by the host
-	// implementation
-	host->show();
+    // We need this to start up services and input controls provided by the host
+    // implementation
+    host->show();
 
-	initMallocStatsCb(HostBase::instance()->mainLoop(), s_mallocStatsInterval);
+    initMallocStatsCb(HostBase::instance()->mainLoop(), s_mallocStatsInterval);
 
-	// Initialize Preferences handler
-	(void) Preferences::instance();
+    // Initialize Preferences handler
+    (void) Preferences::instance();
 
-	LocalePreferences* lp = LocalePreferences::instance();
+    LocalePreferences* lp = LocalePreferences::instance();
 
-	// Initialize Localization handler
-	(void) Localization::instance();
+    // Initialize Localization handler
+    (void) Localization::instance();
 
-	//Register vibration/haptics support
-	HapticsController::instance()->startService();
+    //Register vibration/haptics support
+    HapticsController::instance()->startService();
 
-	(void) DeviceInfo::instance();
+    (void) DeviceInfo::instance();
 
-	// Initialize Security handler
+    // Initialize Security handler
     (void) Security::instance();
 
-	// Initialize the System Service
-	SystemService::instance()->init();
+    // Initialize the System Service
+    SystemService::instance()->init();
 
-	// load all set policies
-	EASPolicyManager::instance()->load();
+    // load all set policies
+    EASPolicyManager::instance()->load();
 
-	// Initialize our display manager
-	new DisplayManager();
+    // Initialize our display manager
+    new DisplayManager();
 
-	// Initialize input event monitor
-	InputEventMonitor::instance();
+    // Initialize input event monitor
+    InputEventMonitor::instance();
 
-	app.exec();
+    app.exec();
 
-	return 0;
+    return 0;
 }

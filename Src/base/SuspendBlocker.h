@@ -31,47 +31,47 @@ class SuspendBlockerBase
 {
 public:
 
-	SuspendBlockerBase(GMainLoop* mainLoop);
-	~SuspendBlockerBase();
+    SuspendBlockerBase(GMainLoop* mainLoop);
+    ~SuspendBlockerBase();
 
 protected:
 
-	virtual bool allowSuspend() = 0;
-	virtual void setSuspended(bool) = 0;
+    virtual bool allowSuspend() = 0;
+    virtual void setSuspended(bool) = 0;
 
 private:
 
-	void setupService(LSHandle*& service, GMainLoop* loop, bool isNested);
-	void callService(LSHandle* service, LSFilterFunc callback,
-					 const char* url, const char* message);
-	void registerSuspendRequest();
-	void registerPrepareSuspend();
-	
-	static bool cbSuspendRequest(LSHandle* sh, LSMessage* message, void* ctx);
-	static bool cbPrepareSuspend(LSHandle* sh, LSMessage* message, void* ctx);
-	static bool cbResume(LSHandle* sh, LSMessage* message, void* ctx);
-	static bool cbPowerdUp(LSHandle* sh, LSMessage* message, void* ctx);
-	static bool cbIdentify(LSHandle* sh, LSMessage* message, void* ctx);
+    void setupService(LSHandle*& service, GMainLoop* loop, bool isNested);
+    void callService(LSHandle* service, LSFilterFunc callback,
+                     const char* url, const char* message);
+    void registerSuspendRequest();
+    void registerPrepareSuspend();
+    
+    static bool cbSuspendRequest(LSHandle* sh, LSMessage* message, void* ctx);
+    static bool cbPrepareSuspend(LSHandle* sh, LSMessage* message, void* ctx);
+    static bool cbResume(LSHandle* sh, LSMessage* message, void* ctx);
+    static bool cbPowerdUp(LSHandle* sh, LSMessage* message, void* ctx);
+    static bool cbIdentify(LSHandle* sh, LSMessage* message, void* ctx);
 
 private:
 
-	char* m_name;
-	char* m_id;
-	
-	GMainLoop* m_mainLoop;
-	LSHandle* m_service;
+    char* m_name;
+    char* m_id;
+    
+    GMainLoop* m_mainLoop;
+    LSHandle* m_service;
 
-	LSHandle* m_nestedService;
-	GMainContext* m_nestedCtxt;
-	GMainLoop* m_nestedLoop;
+    LSHandle* m_nestedService;
+    GMainContext* m_nestedCtxt;
+    GMainLoop* m_nestedLoop;
 
-	bool m_registeredSuspendRequest;
-	bool m_registeredPrepareSuspend;
+    bool m_registeredSuspendRequest;
+    bool m_registeredPrepareSuspend;
 
 private:
 
-	SuspendBlockerBase(const SuspendBlockerBase&);
-	SuspendBlockerBase& operator=(const SuspendBlockerBase&);
+    SuspendBlockerBase(const SuspendBlockerBase&);
+    SuspendBlockerBase& operator=(const SuspendBlockerBase&);
 };
 
 template<class Target>
@@ -79,25 +79,25 @@ class SuspendBlocker : public SuspendBlockerBase
 {
 public:
 
-	typedef bool (Target::*AllowSuspendFunction)();
-	typedef void (Target::*SetSuspendedFunction)(bool);
+    typedef bool (Target::*AllowSuspendFunction)();
+    typedef void (Target::*SetSuspendedFunction)(bool);
 
-	SuspendBlocker(GMainLoop* loop, Target* target, AllowSuspendFunction f1, SetSuspendedFunction f2)
-		: SuspendBlockerBase(loop)
-		, m_target(target)
-		, m_allowSuspendFunction(f1)
-		, m_setSuspendedFunction(f2) {}
-
-private:
-
-	virtual bool allowSuspend() { return (m_target->*m_allowSuspendFunction)(); }
-	virtual void setSuspended(bool isSuspended) { (m_target->*m_setSuspendedFunction)(isSuspended); }
+    SuspendBlocker(GMainLoop* loop, Target* target, AllowSuspendFunction f1, SetSuspendedFunction f2)
+        : SuspendBlockerBase(loop)
+        , m_target(target)
+        , m_allowSuspendFunction(f1)
+        , m_setSuspendedFunction(f2) {}
 
 private:
 
-	Target* m_target;
-	AllowSuspendFunction m_allowSuspendFunction;
-	SetSuspendedFunction m_setSuspendedFunction;
+    virtual bool allowSuspend() { return (m_target->*m_allowSuspendFunction)(); }
+    virtual void setSuspended(bool isSuspended) { (m_target->*m_setSuspendedFunction)(isSuspended); }
+
+private:
+
+    Target* m_target;
+    AllowSuspendFunction m_allowSuspendFunction;
+    SetSuspendedFunction m_setSuspendedFunction;
 };
 
 
