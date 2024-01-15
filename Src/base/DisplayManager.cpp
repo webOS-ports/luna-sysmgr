@@ -51,8 +51,8 @@
 #include <lunaprefs.h>
 #endif
 
-#define URI_POWERD_ACTIVITY_START  "palm://com.palm.power/com/palm/power/activityStart"
-#define URI_POWERD_ACTIVITY_END    "palm://com.palm.power/com/palm/power/activityEnd"
+#define URI_POWERD_ACTIVITY_START  "palm://com.webos.service.sleep/com/palm/power/activityStart"
+#define URI_POWERD_ACTIVITY_END    "palm://com.webos.service.sleep/com/palm/power/activityEnd"
 #define JSON_POWERD_ACTIVITY_START "{\"id\":\"com.palm.display-lock.timer\",\"duration_ms\":%i}"
 #define JSON_POWERD_ACTIVITY_END   "{\"id\":\"com.palm.display-lock.timer\"}"
 
@@ -351,7 +351,7 @@ DisplayManager::DisplayManager()
     if (!qemu)
     {
         // check if the service is up
-        result = LSRegisterServerStatusEx(m_service, "com.palm.power",
+        result = LSRegisterServerStatusEx(m_service, "com.webos.service.sleep",
                 DisplayManager::powerdServiceNotification, this, NULL, &lserror);
         if (!result)
         {
@@ -3756,7 +3756,7 @@ void DisplayManager::wakeupDevice(const char *reason)
 
     LSErrorInit(&lserror);
     payload = g_strdup_printf("{\"reason\":\"%s\"}", reason);
-    if (!LSCallOneReply (m_service, "luna://com.palm.sleep/com/palm/power/resume", payload, NULL, NULL, NULL, &lserror)) {
+    if (!LSCallOneReply (m_service, "luna://com.webos.service.sleep/com/palm/power/resume", payload, NULL, NULL, NULL, &lserror)) {
         LSErrorPrint(&lserror, stderr);
         LSErrorFree(&lserror);
     }
