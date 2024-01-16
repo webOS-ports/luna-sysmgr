@@ -65,7 +65,7 @@ SuspendBlockerBase::SuspendBlockerBase(GMainLoop* mainLoop)
     // Register with bus to known when powerd is up
     callService(m_service, SuspendBlockerBase::cbPowerdUp,
                 "palm://com.palm.lunabus/signal/registerServerStatus",
-                "{\"serviceName\":\"com.palm.power\"}");
+                "{\"serviceName\":\"com.webos.service.sleep\"}");
 
     callService(m_service, SuspendBlockerBase::cbSuspendRequest,
                 "palm://com.palm.bus/signal/addmatch",
@@ -99,7 +99,7 @@ bool SuspendBlockerBase::cbSuspendRequest(LSHandle* sh, LSMessage* msg, void* ct
                  val ? "true" : "false", s->m_id);
         
         s->callService(s->m_service, NULL,
-                       "palm://com.palm.power/com/palm/power/suspendRequestAck",
+                       "palm://com.webos.service.sleep/com/palm/power/suspendRequestAck",
                        message);
 
         free(message);
@@ -121,7 +121,7 @@ bool SuspendBlockerBase::cbPrepareSuspend(LSHandle* sh, LSMessage* msg, void* ct
                  val ? "true" : "false", s->m_id);
 
         s->callService(s->m_service, NULL,
-                       "palm://com.palm.power/com/palm/power/prepareSuspendAck",
+                       "palm://com.webos.service.sleep/com/palm/power/prepareSuspendAck",
                        message);
 
         // FIXME: Temporarily disable. We are seeing hangs with the new LS
@@ -216,7 +216,7 @@ bool SuspendBlockerBase::cbPowerdUp(LSHandle* sh, LSMessage* msg, void* ctx)
                          s->m_name);
             
                 s->callService(s->m_service, SuspendBlockerBase::cbIdentify,
-                               "palm://com.palm.power/com/palm/power/identify",
+                               "palm://com.webos.service.sleep/com/palm/power/identify",
                                message);
                 free(message);
             }
@@ -285,7 +285,7 @@ void SuspendBlockerBase::registerSuspendRequest()
     char* message = 0;
     asprintf(&message, "{\"register\":true,\"clientId\":\"%s\"}", m_id);
     callService(m_service, NULL,
-                "palm://com.palm.power/com/palm/power/suspendRequestRegister",
+                "palm://com.webos.service.sleep/com/palm/power/suspendRequestRegister",
                 message);
     free(message);      
 }
@@ -301,7 +301,7 @@ void SuspendBlockerBase::registerPrepareSuspend()
     char* message = 0;
     asprintf(&message, "{\"register\":true,\"clientId\":\"%s\"}", m_id);     
     callService(m_service, NULL,
-                "palm://com.palm.power/com/palm/power/prepareSuspendRegister",
+                "palm://com.webos.service.sleep/com/palm/power/prepareSuspendRegister",
                 message);
     free(message);                
 }

@@ -866,7 +866,7 @@ void SystemService::shutdownDevice()
     json_object* json = json_object_new_object();
     json_object_object_add(json, "reason", json_object_new_string("PowerOff Selected by User"));
 
-    if (!LSCall(m_service, "palm://com.palm.power/shutdown/machineOff",
+    if (!LSCall(m_service, "palm://com.webos.service.power/shutdown/machineOff",
                 json_object_to_json_string(json),
                 NULL, NULL, NULL, &lsError))
     {
