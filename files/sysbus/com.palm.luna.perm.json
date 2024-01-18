@@ -41,7 +41,7 @@
         "appmanager.management",
         "database.management",
         "database.operation",
-        "location-service.operation",
+        "location.query",
         "telephony.management",
         "preferences.systempropertyquery",
         "preferences.operation",
@@ -50,27 +50,27 @@
     "com.palm.keys": [
         "database.management",
         "database.operation",
-        "location-service.operation"
+        "location.query"
     ],
     "com.palm.sysMgrDataBackup": [
         "database.management",
         "database.operation",
-        "location-service.operation"
+        "location.query"
     ],
     "com.palm.eventreporter.LunaSysMgr": [
         "database.management",
         "database.operation",
-        "location-service.operation"
+        "location.query"
     ],
     "com.palm.eventreporter.WebAppMgr": [
         "database.management",
         "database.operation",
-        "location-service.operation"
+        "location.query"
     ],
     "org.webosports.bootmgr": [
         "database.management",
         "database.operation",
-        "location-service.operation"
+        "location.query"
     ],
     "com.palm.SuspendBlocker*": [
         "sleep.management"
