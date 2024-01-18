@@ -73,6 +73,6 @@
         "location-service.operation"
     ],
     "com.palm.SuspendBlocker*": [
-        "powerd.management"
+        "sleep.management"
     ]
 }
