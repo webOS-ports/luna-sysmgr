@@ -1,0 +1,4 @@
+{
+ "allowedNames": ["com.palm.lunastats", "com.palm.nativealertmanager", "com.palm.systemmanager", "com.palm.systemmanager-keymanager", "com.palm.systemmanager-prefs-*", "com.palm.systemmanager-localeprefs-*", "com.palm.vibrate", "com.palm.ambientLightSensor", "com.palm.display", "com.palm.keys", "com.palm.sysMgrDataBackup", "com.palm.eventreporter.LunaSysMgr", "com.palm.eventreporter.WebAppMgr", "com.palm.eventreporter.LunaAppManager", "com.palm.luna-*", "org.webosports.bootmgr", "com.palm.SuspendBlocker*"],
+ "luna-sysmgr.operation": ["dev"]
+}
