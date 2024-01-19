@@ -14,7 +14,8 @@
     "com.palm.systemmanager": [
         "database.management",
         "database.operation",
-        "telephony.management"
+        "telephony.management",
+        "systemsettings.management"
     ],
     "com.palm.systemmanager-keymanager": [
         "database.management",
