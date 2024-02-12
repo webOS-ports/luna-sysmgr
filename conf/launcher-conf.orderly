@@ -2,9 +2,9 @@
  * launcher card layout
  */
 array [
-	object {
-		string {1, } title;
-		array [ string ] items;
-	}*;
+    object {
+        string {1, } title;
+        array [ string ] items;
+    }*;
 ];
 
