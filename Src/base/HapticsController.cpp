@@ -27,7 +27,7 @@
 #include <json.h>
 
 #include <glib.h>
-#include <lunaservice.h>
+#include <luna-service2/lunaservice.h>
 #include <pthread.h>
 #include <sched.h>
 #include <string>

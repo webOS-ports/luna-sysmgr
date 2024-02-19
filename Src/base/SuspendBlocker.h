@@ -25,7 +25,7 @@
 #include "Common.h"
 
 #include <glib.h>
-#include <lunaservice.h>
+#include <luna-service2/lunaservice.h>
 
 class SuspendBlockerBase
 {

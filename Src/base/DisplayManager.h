@@ -35,7 +35,7 @@
 #include <QEvent>
 #include <QObject>
 
-#include "lunaservice.h"
+#include <luna-service2/lunaservice.h>
 
 #define DISPLAY_LOCK_SCREEN   1
 #define DISPLAY_UNLOCK_SCREEN 2

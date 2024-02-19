@@ -28,7 +28,7 @@
 #include <json.h>
 #include "PtrArray.h"
 
-#include <lunaservice.h>
+#include <luna-service2/lunaservice.h>
 
 #include <QObject>
 
