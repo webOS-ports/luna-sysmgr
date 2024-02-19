@@ -28,7 +28,7 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <lunaservice.h>
+#include <luna-service2/lunaservice.h>
 #include <glib.h>
 #include "HostBase.h"
 

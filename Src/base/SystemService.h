@@ -26,7 +26,7 @@
 
 #include <string>
 
-#include <lunaservice.h>
+#include <luna-service2/lunaservice.h>
 #include <QTimer>
 #include <QObject>
 

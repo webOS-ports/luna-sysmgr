@@ -34,7 +34,7 @@
 #if defined(HAS_LUNA_PREF)
 #include <lunaprefs.h>
 #endif
-#include <lunaservice.h>
+#include <luna-service2/lunaservice.h>
 
 #define AMBIENT_LIGHT_SENSOR_ID "com.palm.ambientLightSensor"
 

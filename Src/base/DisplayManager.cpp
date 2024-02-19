@@ -45,7 +45,7 @@
 #include <json.h>
 
 #include <glib.h>
-#include <lunaservice.h>
+#include <luna-service2/lunaservice.h>
 
 #if defined(HAS_LUNA_PREF)
 #include <lunaprefs.h>
