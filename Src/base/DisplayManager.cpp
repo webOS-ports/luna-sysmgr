@@ -467,7 +467,7 @@ void DisplayManager::clearStates()
     delete m_displayStates[DisplayStateOnPuck];
     delete m_displayStates[DisplayStateDockMode];
     delete m_displayStates[DisplayStateOffSuspended];
-    memset (m_displayStates, 0, sizeof (m_displayStates));
+    memset(m_displayStates, 0, sizeof(DisplayStateBase*) * DisplayStateMax);
     m_currentState = NULL;
 }
 
@@ -2571,16 +2571,46 @@ done:
 
 DisplayManager::~DisplayManager()
 {
+    // Stop timers first
+    if (m_activity) {
+        m_activity->stop();
+        delete m_activity;
+        m_activity = NULL;
+    }
+    if (m_power) {
+        m_power->stop();
+        delete m_power;
+        m_power = NULL;
+    }
+    if (m_slider) {
+        m_slider->stop();
+        delete m_slider;
+        m_slider = NULL;
+    }
+    if (m_alertTimer) {
+        m_alertTimer->stop();
+        delete m_alertTimer;
+        m_alertTimer = NULL;
+    }
+
+    // Clean up AmbientLightSensor
+    delete m_als;
+    m_als = NULL;
+
+    // Clean up display states
+    clearStates();
+    delete[] m_displayStates;
+    m_displayStates = NULL;
+
+    // Unregister Luna service
     LSError lserror;
     LSErrorInit(&lserror);
-    bool result;
-
-    result = LSUnregister(m_service, &lserror);
-    if (!result)
-    {
-        g_message ("%s: failed at %s with message %s", __FUNCTION__, lserror.func, lserror.message);
+    if (!LSUnregister(m_service, &lserror)) {
+        g_message("%s: failed at %s with message %s", __FUNCTION__, lserror.func, lserror.message);
         LSErrorFree(&lserror);
     }
+
+    m_instance = NULL;
 }
 
 void DisplayManager::slotEmergencyMode (bool enable)

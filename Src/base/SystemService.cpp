@@ -263,8 +263,8 @@ SystemService::SystemService()
 
 SystemService::~SystemService()
 {
-    // Should never reach here
-    s_instance = 0;
+    stopService();
+    s_instance = NULL;
 }
 
 void SystemService::init()

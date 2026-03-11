@@ -83,7 +83,37 @@ SuspendBlockerBase::SuspendBlockerBase(GMainLoop* mainLoop)
 
 SuspendBlockerBase::~SuspendBlockerBase()
 {
-    // Shouldn't reach here
+    // Free allocated strings
+    if (m_name) {
+        free(m_name);
+        m_name = NULL;
+    }
+    if (m_id) {
+        free(m_id);
+        m_id = NULL;
+    }
+
+    // Unregister Luna services
+    LSError lserror;
+    LSErrorInit(&lserror);
+
+    if (m_nestedService && !LSUnregister(m_nestedService, &lserror)) {
+        LSErrorFree(&lserror);
+    }
+    LSErrorInit(&lserror);
+    if (m_service && !LSUnregister(m_service, &lserror)) {
+        LSErrorFree(&lserror);
+    }
+
+    // Clean up GLib resources
+    if (m_nestedLoop) {
+        g_main_loop_unref(m_nestedLoop);
+        m_nestedLoop = NULL;
+    }
+    if (m_nestedCtxt) {
+        g_main_context_unref(m_nestedCtxt);
+        m_nestedCtxt = NULL;
+    }
 }
 
 bool SuspendBlockerBase::cbSuspendRequest(LSHandle* sh, LSMessage* msg, void* ctx)
