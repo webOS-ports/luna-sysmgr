@@ -107,7 +107,9 @@ EASPolicyManager::EASPolicyManager()
 
 EASPolicyManager::~EASPolicyManager()
 {
-    s_instance = 0;
+    delete m_aggregate;
+    m_aggregate = NULL;
+    s_instance = NULL;
 }
 
 
@@ -502,6 +504,8 @@ bool EASPolicyManager::importOldPolicySettings()
         EASPolicy* p = new EASPolicy;
         if(p->fromJSON(root))
             m_aggregate->merge (p);
+        delete p;
+        p = NULL;
     }
     else if (json_object_get_int(prop) == 2) {
 

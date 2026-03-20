@@ -70,7 +70,13 @@ Security::Security()
 
 Security::~Security()
 {
-    s_instance = 0;
+    LSError lserror;
+    LSErrorInit(&lserror);
+    if (m_service && !LSUnregister(m_service, &lserror)) {
+        g_message("%s: failed to unregister: %s", __FUNCTION__, lserror.message);
+        LSErrorFree(&lserror);
+    }
+    s_instance = NULL;
 }
 
 void Security::registerService()
