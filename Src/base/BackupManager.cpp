@@ -240,12 +240,16 @@ bool BackupManager::postRestoreCallback( LSHandle* lshandle, LSMessage *message,
 
     g_warning ("[BACKUPTRACE] %s: received %s", __func__, str);
     json_object* root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root || is_error(root)) {
+	if (root)
+	    json_object_put(root);
 	return true;
+    }
 
     json_object* files = json_object_object_get (root, "files");
     if (!files) {
 	g_warning ("No files specified in postRestore message");
+	json_object_put(root);
 	return true;
     }
 
@@ -259,9 +263,10 @@ bool BackupManager::postRestoreCallback( LSHandle* lshandle, LSMessage *message,
     g_message ("Sending response to postRestoreCallback: %s", json_object_to_json_string (response));
     if (!LSMessageReply (lshandle, message, json_object_to_json_string(response), &lserror )) {
 	g_warning("Can't send reply to postRestoreCallback error: %s", lserror.message);
-	LSErrorFree (&lserror); 
+	LSErrorFree (&lserror);
     }
 
     json_object_put (response);
+    json_object_put (root);
     return true;
 }

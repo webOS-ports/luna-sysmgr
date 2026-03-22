@@ -825,8 +825,11 @@ bool DisplayManager::audiodCallback(LSHandle *sh, LSMessage *message, void *ctx)
     if (!str)
         return true;
     json_object* root = json_tokener_parse(str);
-    if (!root || is_error(root))
+    if (!root || is_error(root)) {
+        if (root)
+            json_object_put(root);
         return true;
+    }
 
     action = json_object_object_get(root, "action");
     scenario = json_object_object_get (root, "scenario");
@@ -1390,8 +1393,11 @@ bool DisplayManager::cancelSubscription(LSHandle *sh, LSMessage *message, void *
 		if (!str)
 			return true;
 		json_object* root = json_tokener_parse(str);
-		if (!root || is_error(root))
+		if (!root || is_error(root)) {
+			if (root)
+				json_object_put(root);
 			return true;
+		}
 
 		bool value = json_object_get_boolean(json_object_object_get(root, "requestBlock"));
         if (value)
