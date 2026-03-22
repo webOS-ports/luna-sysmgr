@@ -107,6 +107,10 @@ EASPolicyManager::EASPolicyManager()
 
 EASPolicyManager::~EASPolicyManager()
 {
+	if (m_aggregate) {
+		delete m_aggregate;
+		m_aggregate = 0;
+	}
 	s_instance = 0;
 }
 

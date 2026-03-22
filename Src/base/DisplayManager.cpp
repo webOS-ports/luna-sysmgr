@@ -2374,6 +2374,41 @@ DisplayManager::~DisplayManager()
         g_message ("%s: failed at %s with message %s", __FUNCTION__, lserror.func, lserror.message);
         LSErrorFree(&lserror);
     }
+
+    // Clean up timer objects
+    if (m_activity) {
+        m_activity->stop();
+        delete m_activity;
+        m_activity = NULL;
+    }
+    if (m_power) {
+        m_power->stop();
+        delete m_power;
+        m_power = NULL;
+    }
+    if (m_slider) {
+        m_slider->stop();
+        delete m_slider;
+        m_slider = NULL;
+    }
+    if (m_alertTimer) {
+        m_alertTimer->stop();
+        delete m_alertTimer;
+        m_alertTimer = NULL;
+    }
+
+    // Clean up AmbientLightSensor
+    if (m_als) {
+        delete m_als;
+        m_als = NULL;
+    }
+
+    // Clean up display states
+    clearStates();
+    if (m_displayStates) {
+        delete[] m_displayStates;
+        m_displayStates = NULL;
+    }
 }
 
 void DisplayManager::slotEmergencyMode (bool enable)

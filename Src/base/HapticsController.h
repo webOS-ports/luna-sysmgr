@@ -41,7 +41,12 @@ class HapticsController
 public:
 	static HapticsController *instance();
 	
-	virtual ~HapticsController() { }
+	virtual ~HapticsController() {
+		if (m_mappingTable) {
+			g_hash_table_destroy(m_mappingTable);
+			m_mappingTable = NULL;
+		}
+	}
 	
 	virtual int vibrate(int period,int duration) {return -1;}
 	virtual int vibrate(const char *name) { return -1;}

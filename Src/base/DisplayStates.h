@@ -199,6 +199,7 @@ class DisplayOn : public DisplayStateBase {
         void startInternalInactivityTimer();
     public:
         DisplayOn();
+        virtual ~DisplayOn();
 
 	DisplayState state() const { return DisplayStateOn; }
 
@@ -230,6 +231,7 @@ class DisplayOnLocked : public DisplayStateBase {
 
     public:
         DisplayOnLocked();
+        virtual ~DisplayOnLocked();
 
 	DisplayState state() const { return DisplayStateOnLocked; }
 
@@ -259,6 +261,7 @@ class DisplayDim : public DisplayStateBase {
 
     public:
         DisplayDim();
+        virtual ~DisplayDim();
 	DisplayState state() const { return DisplayStateDim; }
 
 	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
@@ -284,6 +287,7 @@ class DisplayOnPuck : public DisplayStateBase {
 
     public:
         DisplayOnPuck();
+        virtual ~DisplayOnPuck();
 	DisplayState state() const { return DisplayStateOnPuck; }
 
 	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);
@@ -308,6 +312,7 @@ class DisplayOnPuck : public DisplayStateBase {
 class DisplayDockMode : public DisplayStateBase {
     public:
         DisplayDockMode();
+        virtual ~DisplayDockMode();
 	DisplayState state() const { return DisplayStateDockMode; }
 
 	void enter (DisplayState, DisplayEvent, sptr<Event> = NULL);

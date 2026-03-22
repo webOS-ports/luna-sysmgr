@@ -81,6 +81,18 @@ MemoryMonitor::MemoryMonitor()
 
 MemoryMonitor::~MemoryMonitor()
 {
+#if defined(HAS_MEMCHUTE)
+	if (m_memWatch) {
+		MemchuteWatcherFree(m_memWatch);
+		m_memWatch = NULL;
+	}
+
+	// Clean up any remaining ProcMemMonitor entries
+	for (ProcMemRestrictions::iterator it = memRestrict.begin(); it != memRestrict.end(); ++it) {
+		delete it->second;
+	}
+	memRestrict.clear();
+#endif
 }
 
 void MemoryMonitor::adjustOomScore()

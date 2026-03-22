@@ -804,6 +804,20 @@ DisplayOn::DisplayOn()
 {
 }
 
+DisplayOn::~DisplayOn()
+{
+    if (m_timerUser) {
+        m_timerUser->stop();
+        delete m_timerUser;
+        m_timerUser = NULL;
+    }
+    if (m_timerInternal) {
+        m_timerInternal->stop();
+        delete m_timerInternal;
+        m_timerInternal = NULL;
+    }
+}
+
 void DisplayOn::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
 {
     g_message ("%s: entering state", __PRETTY_FUNCTION__);
@@ -1087,6 +1101,15 @@ DisplayOnLocked::DisplayOnLocked()
 {
 }
 
+DisplayOnLocked::~DisplayOnLocked()
+{
+    if (m_timer) {
+        m_timer->stop();
+        delete m_timer;
+        m_timer = NULL;
+    }
+}
+
 void DisplayOnLocked::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
 {
     g_message ("%s: entering state", __PRETTY_FUNCTION__);
@@ -1307,6 +1330,15 @@ bool DisplayOnLocked::updateBrightness (int alsRegion)
 DisplayDim::DisplayDim()
     : m_timer (new Timer<DisplayDim>(HostBase::instance()->masterTimer(), this, &DisplayDim::timeout))
 {
+}
+
+DisplayDim::~DisplayDim()
+{
+    if (m_timer) {
+        m_timer->stop();
+        delete m_timer;
+        m_timer = NULL;
+    }
 }
 
 void DisplayDim::startInactivityTimer()
@@ -1546,7 +1578,15 @@ void DisplayDim::leave (DisplayState newState, DisplayEvent displayEvent, sptr<E
 DisplayOnPuck::DisplayOnPuck()
     : m_timer (new Timer<DisplayOnPuck>(HostBase::instance()->masterTimer(), this, &DisplayOnPuck::timeout))
 {
+}
 
+DisplayOnPuck::~DisplayOnPuck()
+{
+    if (m_timer) {
+        m_timer->stop();
+        delete m_timer;
+        m_timer = NULL;
+    }
 }
 
 void DisplayOnPuck::enter (DisplayState state, DisplayEvent displayEvent, sptr<Event> event)
@@ -1733,7 +1773,15 @@ bool DisplayOnPuck::updateBrightness (int alsRegion)
 DisplayDockMode::DisplayDockMode()
     : m_timerExit (new Timer<DisplayDockMode>(HostBase::instance()->masterTimer(), this, &DisplayDockMode::timeoutExit))
 {
+}
 
+DisplayDockMode::~DisplayDockMode()
+{
+    if (m_timerExit) {
+        m_timerExit->stop();
+        delete m_timerExit;
+        m_timerExit = NULL;
+    }
 }
 
 bool DisplayDockMode::timeoutExit()

@@ -423,8 +423,10 @@ bool Security::cbDeviceWipe (LSHandle *sh, LSMessage *message, void *data)
 		goto done;
 
 	root = json_tokener_parse(str);
-	if (!root || is_error(root))
+	if (!root || is_error(root)) {
+		root = 0;
 		goto done;
+	}
 
 	returnValue = json_object_object_get (root, "returnValue");
 	if (!returnValue || is_error (returnValue)) {
@@ -435,6 +437,9 @@ bool Security::cbDeviceWipe (LSHandle *sh, LSMessage *message, void *data)
 	success = json_object_get_boolean (returnValue);
 
 done:
+	if (root)
+		json_object_put(root);
+
 	if (success) {
 		g_warning ("%s: wipe call succeeded, exiting now", __func__);
 		exit(-2);

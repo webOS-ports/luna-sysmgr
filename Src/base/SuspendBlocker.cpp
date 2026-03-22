@@ -81,7 +81,25 @@ SuspendBlockerBase::SuspendBlockerBase(GMainLoop* mainLoop)
 
 SuspendBlockerBase::~SuspendBlockerBase()
 {
-	// Shouldn't reach here
+	// Clean up allocated strings
+	if (m_name) {
+		free(m_name);
+		m_name = 0;
+	}
+	if (m_id) {
+		free(m_id);
+		m_id = 0;
+	}
+
+	// Clean up GLib main loop and context
+	if (m_nestedLoop) {
+		g_main_loop_unref(m_nestedLoop);
+		m_nestedLoop = 0;
+	}
+	if (m_nestedCtxt) {
+		g_main_context_unref(m_nestedCtxt);
+		m_nestedCtxt = 0;
+	}
 }
 
 bool SuspendBlockerBase::cbSuspendRequest(LSHandle* sh, LSMessage* msg, void* ctx)
