@@ -3523,7 +3523,7 @@ Done:
 
     json_object_put(reply);
 
-    if (!root)
+    if (root)
         json_object_put(root);
 
     return true;
@@ -3588,7 +3588,7 @@ Done:
 
     json_object_put(reply);
 
-    if (!root)
+    if (root)
         json_object_put(root);
 
     return true;
