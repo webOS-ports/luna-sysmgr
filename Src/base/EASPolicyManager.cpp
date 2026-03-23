@@ -861,7 +861,7 @@ bool EASPolicy::fromJSON(json_object* policy)
 
     key = json_object_object_get(policy, "id");
     if (key) {
-        char* str = json_object_get_string(key);
+        const char* str = json_object_get_string(key);
         m_id = (str != NULL ? str : "");
     }
 
@@ -910,7 +910,7 @@ bool EASPolicy::fromNewJSON(json_object* policy)
 
     key = json_object_object_get(policy, "_id");
     if (key) {
-        char* str = json_object_get_string(key);
+        const char* str = json_object_get_string(key);
         m_id = (str != NULL ? str : "");
     }
 

@@ -93,6 +93,7 @@ class DisplayStateBase {
 
     public:
         DisplayStateBase();
+        virtual ~DisplayStateBase() = default;
 
     virtual DisplayState state() const = 0;
 

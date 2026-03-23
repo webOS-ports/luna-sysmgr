@@ -3474,7 +3474,6 @@ bool cbEnableFpsCounter(LSHandle* lsHandle, LSMessage *message, void *user_data)
     struct json_object* root = json_tokener_parse(str);
     struct json_object* label = 0;
     bool failed = true;
-    int reset = 0;
 
     if (!root)
         goto Done;
@@ -3498,7 +3497,7 @@ bool cbEnableFpsCounter(LSHandle* lsHandle, LSMessage *message, void *user_data)
             {
                 if (json_object_is_type(val, json_type_int))
                 {
-                    reset = json_object_get_int(val);
+                    (void)json_object_get_int(val);
                     // WindowServer::resetFpsBuffer(reset);
                     failed = false;
                 }
@@ -4585,7 +4584,7 @@ bool SystemService::msmProgress(LSMessage* message)
         return false;
     }
 
-    char* stageText = json_object_get_string( stage );
+    const char* stageText = json_object_get_string( stage );
     g_debug("MSM Progress: %s", stageText);
 
     // DisplayManager* dm = WindowServer::instance()->displayManager();
@@ -4655,7 +4654,7 @@ bool SystemService::msmEntry(LSMessage* message)
         return true;
     }
 
-    char* modeText = json_object_get_string(mode);
+    const char* modeText = json_object_get_string(mode);
     g_debug("MSM Mode: %s", modeText);
 
     //DisplayManager* dm = WindowServer::instance()->displayManager();

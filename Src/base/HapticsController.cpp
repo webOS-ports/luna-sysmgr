@@ -243,7 +243,7 @@ static bool cbVibrateNamedEffect(LSHandle *lh, LSMessage *m, void *ctx)
     struct json_object *root = json_tokener_parse(str);
     struct json_object *json_name;
     struct json_object *json_continous;
-    char *name;
+    const char *name;
     int id;
     bool continous;
     char reply[1024] = "{\"returnValue\":false,\"errorText\":\"Invalid arguments\"}";

@@ -289,7 +289,7 @@ static void installInnerCrashHandler(int sig,
  * 
  * @param    sig        The signal to handle using {@link outerCrashHandler outerCrashHandler}
  */
-static void installOuterCrashHandler(int sig)
+static void __attribute__((unused)) installOuterCrashHandler(int sig)
 {
     struct sigaction crash_action;
     sigset_t block_mask;
@@ -690,8 +690,6 @@ int main( int argc, char** argv)
     appArgv = argv;
 
     std::set_terminate(generateGoodBacktraceTerminateHandler);
-
-    g_thread_init(NULL);
 
     g_debug("SysMgr compiled against Qt %s, running on %s", QT_VERSION_STR, qVersion());
 
