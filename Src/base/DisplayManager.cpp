@@ -1740,7 +1740,10 @@ done:
         result = LSMessageReply(sh, message, "{\"returnValue\":false,\"errorCode\":1,\"errorText\":\"failed to get property\"}", &lserror);
 
     if (reply)
-    json_object_put(reply);
+        json_object_put(reply);
+
+    if (root)
+        json_object_put(root);
 
     if(!result)
     {

@@ -443,9 +443,13 @@ bool Security::cbDeviceWipe (LSHandle *sh, LSMessage *message, void *data)
 done:
     if (success) {
         g_warning ("%s: wipe call succeeded, exiting now", __func__);
+        if (root)
+            json_object_put(root);
         exit(-2);
     }
     g_warning ("%s: Wipe failed", __func__);
+    if (root)
+        json_object_put(root);
     return true;
 }
 
