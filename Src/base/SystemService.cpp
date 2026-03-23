@@ -3286,6 +3286,7 @@ void SystemService::postMessageToSystemUIResponses(const char* jsonStr)
     if (!LSSubscriptionAcquire(m_service, "/subscribeToSystemUIResponses", &iter, &lsError)) {
         g_warning("SysMgr::postMessageToSystemUIResponses - failed to retrieve subscription");
         LSErrorFree(&lsError);
+        json_object_put(json);
         return;
     }
     while (LSSubscriptionHasNext(iter)) {
