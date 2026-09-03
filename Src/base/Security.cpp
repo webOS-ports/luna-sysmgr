@@ -43,6 +43,28 @@ static const std::string s_passcodeFile = "/var/luna/data/.passcode";
 static const uint32_t s_deviceLockOutDuration = 15000; // in milliseconds
 static const uint32_t s_defaultMaxRetries = 3;
 
+// Lock modes that hash-and-store a passcode the same way: a PIN and a
+// password always did, and a drawn pattern needs nothing more than that
+// either - the nine dots visited, joined by index ("0-1-2-5-8"), is just
+// another string to hash and compare, the same as a typed PIN was.
+//
+// "face" is here too, ahead of anything that can actually check one: no
+// LuneOS device has the camera pipeline or the model that would tell a face
+// from a photo of one, so nothing calls setDevicePasscode with lockMode
+// "face" yet. Accepting the mode now means that service, whenever it exists,
+// only has to start calling this one rather than also getting a mode added
+// for it first.
+static const char* const s_storedLockModes[] = { "pin", "password", "pattern", "face", 0 };
+
+static bool isStoredLockMode(const std::string& mode)
+{
+    for (int i = 0; s_storedLockModes[i] != 0; ++i) {
+        if (mode == s_storedLockModes[i])
+            return true;
+    }
+    return false;
+}
+
 static Security* s_instance = 0;
 
 
@@ -215,7 +237,7 @@ int Security::setPasscode(const std::string& mode, const std::string& passcode, 
         success = true;
         unlink(s_passcodeFile.c_str()); // remove the passcode file
     }
-    else if (mode == "pin" || mode == "password") {
+    else if (isStoredLockMode(mode)) {
 
         if (passcode.empty()) {
             errorText = "Passcode empty";
@@ -369,17 +391,16 @@ void Security::readLockMode()
         json_object* root = json_object_from_file((char*)s_passcodeFile.c_str());
         if (root) {
 
-            json_object* obj = json_object_object_get(root, "pin");
-            if(obj) {
-                m_lockMode = "pin";
-            }
-            else {
-                obj = json_object_object_get(root, "password");
-                if (obj) {
-                    m_lockMode = "password";
+            // setPasscode() always writes a fresh object, under whichever
+            // one of these modes was chosen, so exactly one key is ever
+            // present - the first one found is the right one.
+            for (int i = 0; s_storedLockModes[i] != 0; ++i) {
+                if (json_object_object_get(root, s_storedLockModes[i])) {
+                    m_lockMode = s_storedLockModes[i];
+                    break;
                 }
             }
-            
+
             json_object_put(root);
         }
 
