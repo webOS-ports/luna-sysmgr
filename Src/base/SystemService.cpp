@@ -1851,7 +1851,10 @@ Done:
 
 com.palm.systemmanager/setDevicePasscode
 
-Set device lock mode and passcode. This can be a simple pin code with just digits, or a password with any characters.
+Set device lock mode and passcode. This can be a simple pin code with just digits, a password with any
+characters, or a pattern - the dots visited on a 3x3 grid, joined by index ("0-1-2-5-8"): the service only
+ever hashes and compares passCode, so a pattern is just another string to it, exactly as a pin or a
+password are. "face" is accepted too, ahead of anything able to call it with a real one.
 
 \subsection com_palm_systemmanager_set_device_passcode_syntax Syntax:
 \code
@@ -1861,8 +1864,8 @@ Set device lock mode and passcode. This can be a simple pin code with just digit
 }
 \endcode
 
-\param lockMode Can be "pin" or "password".
-\param passCode New passcode. Pin should contain only digits, but password can contain any characters.
+\param lockMode Can be "pin", "password", "pattern" or "face".
+\param passCode New passcode. Pin should contain only digits, password and pattern can contain any characters.
 
 \subsection com_palm_systemmanager_set_device_passcode_returns Returns:
 \code
@@ -2082,7 +2085,7 @@ Check the device lock mode.
 
 \param returnValue Indicates if the call was succesful
 \param subscribed True if subscribed to receive mode change events.
-\param lockMode Current lock mode, "password", "pin", or "none".
+\param lockMode Current lock mode, "password", "pin", "pattern", "face", or "none".
 \param policyState Exchange Auto Sync security policy state, "none", "active" or "pending".
 \param retriesLeft Number of passcode attempts left.
 

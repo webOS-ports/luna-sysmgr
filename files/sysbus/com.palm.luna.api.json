@@ -24,6 +24,8 @@
     "com.palm.keys/headset/status",
     "com.palm.keys/media/status",
     "com.palm.keys/switches/status",
+    "com.palm.sysMgrDataBackup/postRestore",
+    "com.palm.sysMgrDataBackup/preBackup",
     "com.palm.systemmanager/applicationHasBeenTerminated",
     "com.palm.systemmanager/clearCache",
     "com.palm.systemmanager/dismissModalApp",
