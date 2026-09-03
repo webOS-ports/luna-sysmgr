@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "DisplayManager.h"
 #include "InputEventMonitor.h"
+#include "BackupManager.h"
 
 #include <ProcessKiller.h>
 
@@ -781,6 +782,11 @@ int main( int argc, char** argv)
 
     // Initialize input event monitor
     InputEventMonitor::instance();
+
+    // Serve com.palm.sysMgrDataBackup. /etc/palm/backup names it, so a backup
+    // service will call preBackup on us whether or not anyone answers.
+    if (!BackupManager::instance()->init(HostBase::instance()->mainLoop()))
+        g_warning("Failed to start the backup manager; com.palm.sysMgrDataBackup will not answer");
 
     app.exec();
 
